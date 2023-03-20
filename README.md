@@ -14,3 +14,8 @@ sudo iptables -D INPUT -p tcp -m tcp --dport 6443 -m comment --comment "iX Custo
 * The Kubernetes management interface port must be exposed to the internet (through router port forwarding)
 
 * The domain jack-chapman.co.uk must point towards my public IP
+
+## Notes
+
+After initial setup, I should make the Kubernetes API inaccessible from the internet.
+This will need a route through the ingress to the API.
