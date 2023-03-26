@@ -1,18 +1,18 @@
 terraform {
   backend "kubernetes" {
     secret_suffix = "foundation-part1"
-    config_path = "../../cluster.yml"
-    namespace = "terraform-state"
+    config_path   = "../../cluster.yml"
+    namespace     = "terraform-state"
   }
 
   required_providers {
     helm = {
-      source = "hashicorp/helm"
+      source  = "hashicorp/helm"
       version = "2.9.0"
     }
 
     kubernetes = {
-      source = "hashicorp/kubernetes"
+      source  = "hashicorp/kubernetes"
       version = "2.18.1"
     }
   }
