@@ -12,10 +12,20 @@ sudo iptables -D INPUT -p tcp -m tcp --dport 6443 -m comment --comment "iX Custo
 ```
 
 * The Kubernetes management interface port must be exposed to the internet (through router port forwarding)
-
 * The domain jack-chapman.co.uk must point towards my public IP
 
-## Notes
+## Environment variables required for build
 
-After initial setup, I should make the Kubernetes API inaccessible from the internet.
-This will need a route through the ingress to the API.
+* KUBE_CLIENT_CERT_DATA
+* KUBE_CLIENT_KEY_DATA
+* KUBE_CLUSTER_CA_CERT_DATA
+* (TF_VARS_server_base_domain)
+* SERVER_KUBE_PORT
+
+## Terraform environment variables
+
+* TF_VARS_server_base_domain
+* TF_VARS_jdc_projects_runners_app_id
+* TF_VARS_jdc_projects_runners_app_installation_id
+* TF_VARS_jdc_projects_runners_app_private_key
+* TF_VARS_cloudflare_acme_token

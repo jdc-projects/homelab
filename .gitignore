@@ -3,3 +3,5 @@
 *.tfstate.backup
 .terraform
 cluster.yml
+terraform-old
+*.tfvars
