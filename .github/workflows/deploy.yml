@@ -11,6 +11,16 @@ jobs:
     defaults:
       run:
         working-directory: ./terraform/foundation/part1
+      env:
+        KUBE_CLIENT_CERT_DATA: {{ secrets.KUBE_CLIENT_CERT_DATA }}
+        KUBE_CLIENT_KEY_DATA: {{ secrets.KUBE_CLIENT_KEY_DATA }}
+        KUBE_CLUSTER_CA_CERT_DATA: {{ secrets.KUBE_CLUSTER_CA_CERT_DATA }}
+        SERVER_KUBE_PORT: {{ secrets.SERVER_KUBE_PORT }}
+        TF_VARS_server_base_domain: {{ secrets.TF_VARS_server_base_domain }}
+        TF_VARS_jdc_projects_runners_app_id: {{ secrets.TF_VARS_jdc_projects_runners_app_id }}
+        TF_VARS_jdc_projects_runners_app_installation_id: {{ secrets.TF_VARS_jdc_projects_runners_app_installation_id }}
+        TF_VARS_jdc_projects_runners_app_private_key: {{ secrets.TF_VARS_jdc_projects_runners_app_private_key }}
+        TF_VARS_cloudflare_acme_token: {{ secrets.TF_VARS_cloudflare_acme_token }}
 
     steps:
       - name: "Repo checkout"
@@ -28,9 +38,9 @@ jobs:
       #     KUBE_CONFIG: ../../config.yml
       #   with:
       #     args: apply -f ./terraform-state-namespace.yml
-      - name: "Debug cat out"
-        working-directory: ./terraform
-        run: cat ./cluster.yml
+      # - name: "Debug cat out"
+      #   working-directory: ./terraform
+      #   run: cat ./cluster.yml
       - name: "Terraform format check"
         run: "terraform fmt -check"
       - name: "Terraform init"
