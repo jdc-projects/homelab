@@ -46,7 +46,7 @@ jobs:
       - name: "Repo checkout"
         uses: actions/checkout@v3
       - name: "Terraform setup"
-        uses: hasicorp/setup-terraform
+        uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 2.0.3
       - name: "Terraform format check"
