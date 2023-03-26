@@ -37,7 +37,7 @@ jobs:
           version: 'v1.25.3'
       - name: "Create terraform-state namespace"
         working-directory: ./terraform
-        run: "kubectl ---kubeconfig cluster.yml apply -f ./terraform/terraform-state-namespace.yml"
+        run: "kubectl --kubeconfig cluster.yml apply -f ./terraform/terraform-state-namespace.yml"
       - name: "Terraform format check"
         working-directory: ./terraform/foundation/part1
         run: "terraform fmt -check"
