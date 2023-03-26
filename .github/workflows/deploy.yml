@@ -63,7 +63,8 @@ jobs:
     needs: deploy-foundational-services
 
     defaults:
-      working-directory: ./terraform/apps/external-services
+      run:
+        working-directory: ./terraform/apps/external-services
 
     steps:
       - name: "Repo checkout"
@@ -90,7 +91,8 @@ jobs:
     needs: deploy-foundational-services
 
     defaults:
-      working-directory: ./terraform/apps/services
+      run:
+        working-directory: ./terraform/apps/external-services
 
     steps:
       - name: "Repo checkout"
