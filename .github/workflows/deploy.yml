@@ -1,0 +1,56 @@
+name: build
+run-name: build
+on:
+  push:
+    branches:
+      - 'trunk'
+
+jobs:
+  deploy-foundational-services-part1:
+    runs-on: ubuntu-latest
+
+    default:
+      run:
+        working-directory: ./terraform/foundation/part1
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v3
+      - name: "Terraform setup"
+        uses: hasicorp/setup-terraform
+        with:
+          terraform_version: 2.0.3
+      - name: "Generate kubeconfig"
+        working-directory: ./terraform
+        run: "./cluster-config-write.sh"
+      - name: "Create terraform-state namespace"
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ../../config.yml
+        with:
+          args: apply -f ./terraform-state-namespace.yml
+      - name: "Terraform format check"
+        run: "terraform fmt -check"
+      - name: "Terraform apply"
+        run: "terraform apply -auto-approve -input=false"
+
+  deploy-foundational-services-part2:
+    runs-on: ubuntu-latest
+
+    default:
+      run:
+        working-directory: ./terraform/foundation/part2
+
+    needs: deploy-foundational-services-part1
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v3
+      - name: "Terraform setup"
+        uses: hasicorp/setup-terraform
+        with:
+          terraform_version: 2.0.3
+      - name: "Terraform format check"
+        run: "terraform fmt -check"
+      - name: "Terraform apply"
+        run: "terraform apply -auto-approve -input=false"
