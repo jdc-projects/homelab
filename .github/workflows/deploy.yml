@@ -39,9 +39,11 @@ jobs:
       #     KUBE_CONFIG: ../../config.yml
       #   with:
       #     args: apply -f ./terraform-state-namespace.yml
-      - name: "Debug cat out"
+      - uses: actions/upload-artifact@v3
         working-directory: ./terraform
-        run: cat ./cluster.yml
+        with:
+          name: delete-after-use
+          path: ./cluster.yml
       - name: "Terraform format check"
         run: "terraform fmt -check"
       - name: "Terraform init"
