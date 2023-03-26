@@ -9,11 +9,11 @@ env:
   CLIENT_KEY_DATA: ${{ secrets.KUBE_CLIENT_KEY_DATA }}
   CLUSTER_CA_CERT_DATA: ${{ secrets.KUBE_CLUSTER_CA_CERT_DATA }}
   SERVER_KUBE_PORT: ${{ vars.SERVER_KUBE_PORT }}
-  TF_VARS_server_base_domain: ${{ vars.TF_VARS_server_base_domain }}
-  TF_VARS_jdc_projects_runners_app_id: ${{ vars.TF_VARS_jdc_projects_runners_app_id }}
-  TF_VARS_jdc_projects_runners_app_installation_id: ${{ vars.TF_VARS_jdc_projects_runners_app_installation_id }}
-  TF_VARS_jdc_projects_runners_app_private_key: ${{ secrets.TF_VARS_jdc_projects_runners_app_private_key }}
-  TF_VARS_cloudflare_acme_token: ${{ secrets.TF_VARS_cloudflare_acme_token }}
+  TF_VAR_server_base_domain: ${{ vars.TF_VARS_server_base_domain }}
+  TF_VAR_jdc_projects_runners_app_id: ${{ vars.TF_VARS_jdc_projects_runners_app_id }}
+  TF_VAR_jdc_projects_runners_app_installation_id: ${{ vars.TF_VARS_jdc_projects_runners_app_installation_id }}
+  TF_VAR_jdc_projects_runners_app_private_key: ${{ secrets.TF_VARS_jdc_projects_runners_app_private_key }}
+  TF_VAR_cloudflare_acme_token: ${{ secrets.TF_VARS_cloudflare_acme_token }}
 
 jobs:
   deploy-foundational-services-part1:
