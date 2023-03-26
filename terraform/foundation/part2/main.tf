@@ -3,6 +3,7 @@ terraform {
     secret_suffix = "foundation-part2"
     config_path   = "../../cluster.yml"
     namespace     = "terraform-state"
+    insecure      = true
   }
 
   required_providers {
@@ -20,9 +21,11 @@ data "terraform_remote_state" "foundation_part1" {
     secret_suffix = "foundation-part1"
     config_path   = "../../cluster.yml"
     namespace     = "terraform-state"
+    insecure      = true
   }
 }
 
 provider "kubernetes" {
   config_path = "../../cluster.yml"
+  insecure    = true
 }
