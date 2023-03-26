@@ -34,7 +34,7 @@ jobs:
         working-directory: ./terraform
         run: "./cluster-config-write.sh"
       - name: "Add cluster CA certificate"
-        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && mkdir /usr/local/share/ca-certificates/extra && cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && update-ca-certificates"
+        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
       # - name: "Create terraform-state namespace"
       #   uses: actions-hub/kubectl@master
       #   env:
