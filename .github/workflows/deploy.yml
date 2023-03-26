@@ -1,5 +1,4 @@
-name: build
-run-name: build
+name: deploy
 on:
   push:
     branches:
@@ -23,12 +22,12 @@ jobs:
       - name: "Generate kubeconfig"
         working-directory: ./terraform
         run: "./cluster-config-write.sh"
-      - name: "Create terraform-state namespace"
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ../../config.yml
-        with:
-          args: apply -f ./terraform-state-namespace.yml
+      # - name: "Create terraform-state namespace"
+      #   uses: actions-hub/kubectl@master
+      #   env:
+      #     KUBE_CONFIG: ../../config.yml
+      #   with:
+      #     args: apply -f ./terraform-state-namespace.yml
       - name: "Terraform format check"
         run: "terraform fmt -check"
       - name: "Terraform apply"
