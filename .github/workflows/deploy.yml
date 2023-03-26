@@ -33,16 +33,14 @@ jobs:
       - name: "Generate kubeconfig"
         working-directory: ./terraform
         run: "./cluster-config-write.sh"
+      - name: "Add cluster CA certificate"
+        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && mkdir /usr/local/share/ca-certificates/extra && cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && update-ca-certificates"
       # - name: "Create terraform-state namespace"
       #   uses: actions-hub/kubectl@master
       #   env:
       #     KUBE_CONFIG: ../../config.yml
       #   with:
       #     args: apply -f ./terraform-state-namespace.yml
-      - uses: actions/upload-artifact@v3
-        with:
-          name: delete-after-use
-          path: ./terraform/cluster.yml
       - name: "Terraform format check"
         run: "terraform fmt -check"
       - name: "Terraform init"
