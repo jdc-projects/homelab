@@ -3,7 +3,6 @@ terraform {
     secret_suffix = "foundation-part1"
     config_path   = "../../cluster.yml"
     namespace     = "terraform-state"
-    insecure      = true
   }
 
   required_providers {
@@ -22,11 +21,9 @@ terraform {
 provider "helm" {
   kubernetes {
     config_path = "../../cluster.yml"
-    insecure    = true
   }
 }
 
 provider "kubernetes" {
   config_path = "../../cluster.yml"
-  insecure    = true
 }
