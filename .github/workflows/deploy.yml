@@ -30,6 +30,8 @@ jobs:
       #     args: apply -f ./terraform-state-namespace.yml
       - name: "Terraform format check"
         run: "terraform fmt -check"
+      - name: "Terraform init"
+        run: "terraform init"
       - name: "Terraform apply"
         run: "terraform apply -auto-approve -input=false"
 
@@ -51,5 +53,7 @@ jobs:
           terraform_version: 1.4.2
       - name: "Terraform format check"
         run: "terraform fmt -check"
+      - name: "Terraform init"
+        run: "terraform init"
       - name: "Terraform apply"
         run: "terraform apply -auto-approve -input=false"
