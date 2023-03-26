@@ -69,6 +69,10 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v3
+      - name: "Setup node"
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
       - name: "Terraform setup"
         uses: hashicorp/setup-terraform@v2
         with:
@@ -97,6 +101,10 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v3
+      - name: "Setup node"
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
       - name: "Terraform setup"
         uses: hashicorp/setup-terraform@v2
         with:
