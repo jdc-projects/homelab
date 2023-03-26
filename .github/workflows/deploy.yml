@@ -58,7 +58,7 @@ jobs:
         run: "terraform apply -auto-approve -input=false"
 
   deploy-external-services:
-    runs-on: [self-hosted, linux, x64]
+    runs-on: self-hosted
 
     needs: deploy-foundational-services
 
@@ -86,7 +86,7 @@ jobs:
         run: "terraform apply -auto-approve -input=false"
 
   deploy-services:
-    runs-on: [self-hosted, linux, x64]
+    runs-on: self-hosted
 
     needs: deploy-foundational-services
 
