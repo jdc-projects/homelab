@@ -31,6 +31,7 @@ resource "kubernetes_deployment" "cloudflare_ddns" {
 
       spec {
         container {
+          name  = "cloudflare-ddns"
           image = "oznu/cloudflare-ddns"
 
           env_from {
