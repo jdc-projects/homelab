@@ -85,8 +85,4 @@ resource "helm_release" "jdc_projects_runners_controller" {
     name  = "githubWebhookServer.ingress.hosts[0].paths[0].pathType"
     value = "ImplementationSpecific"
   }
-
-  depends_on = [
-    helm_release.traefik_ingress
-  ]
 }

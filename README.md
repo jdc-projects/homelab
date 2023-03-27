@@ -29,3 +29,9 @@ sudo iptables -D INPUT -p tcp -m tcp --dport 6443 -m comment --comment "iX Custo
 * TF_VARS_jdc_projects_runners_app_installation_id
 * TF_VARS_jdc_projects_runners_app_private_key
 * TF_VARS_cloudflare_acme_token
+
+## New stuff to add
+
+* Nextcloud
+* Bitwarden / Vaultwarden
+* Personal website
