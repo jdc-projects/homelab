@@ -32,6 +32,49 @@ resource "helm_release" "traefik_ingress" {
 
   namespace = kubernetes_namespace.traefik_namespace.metadata[0].name
 
+  # hack for acme.json permissions problem
+  set {
+    name  = "deployment.initContainers[0].name"
+    value = "volume-permissions"
+  }
+  set {
+    name  = "deployment.initContainers[0].image"
+    value = "busybox:1.35.0"
+  }
+  set {
+    name  = "deployment.initContainers[0].command[0]"
+    value = "sh"
+  }
+  set {
+    name  = "deployment.initContainers[0].command[1]"
+    value = "-c"
+  }
+  set {
+    name  = "deployment.initContainers[0].command[2]"
+    value = "touch /data/acme.json; chmod -v 600 /data/acme.json"
+  }
+  set {
+    name  = "deployment.initContainers[0].securityContext.runAsNonRoot"
+    value = "true"
+  }
+  set {
+    name  = "deployment.initContainers[0].securityContext.runAsGroup"
+    value = "65532"
+  }
+  set {
+    name  = "deployment.initContainers[0].securityContext.runAsUser"
+    value = "65532"
+  }
+  set {
+    name  = "deployment.initContainers[0].volumeMounts[0].name"
+    value = "data"
+  }
+  set {
+    name  = "deployment.initContainers[0].volumeMounts[0].mountPath"
+    value = "/data"
+  }
+  # end of hack
+
   set {
     name  = "ports.traefik.expose"
     value = "true"
