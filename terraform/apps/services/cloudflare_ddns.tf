@@ -25,6 +25,9 @@ resource "kubernetes_deployment" "cloudflare_ddns" {
   spec {
     replicas = 1
 
+    selector {
+    }
+
     template {
       metadata {
       }
