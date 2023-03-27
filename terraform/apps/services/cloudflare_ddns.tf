@@ -11,7 +11,7 @@ resource "kubernetes_secret" "cloudflare_ddns_token_secret" {
     namespace = kubernetes_namespace.cloudflare_ddns_namespace.metadata[0].name
   }
 
-  data {
+  data = {
     API_KEY = var.cloudflare_ddns_token
   }
 }
