@@ -26,16 +26,22 @@ resource "kubernetes_deployment" "cloudflare_ddns" {
     replicas = 1
 
     selector {
+      match_labels = {
+        app = "cloudflare-ddns"
+      }
     }
 
     template {
       metadata {
+        labels = {
+          app = "cloudflare-ddns"
+        }
       }
 
       spec {
         container {
-          name  = "cloudflare-ddns"
           image = "oznu/cloudflare-ddns"
+          name  = "cloudflare-ddns"
 
           env_from {
             secret_ref {
