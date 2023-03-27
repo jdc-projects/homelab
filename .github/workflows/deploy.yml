@@ -96,7 +96,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./terraform/apps/external-services
+        working-directory: ./terraform/apps/services
 
     steps:
       - name: "Repo checkout"
