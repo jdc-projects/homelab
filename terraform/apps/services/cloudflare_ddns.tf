@@ -1,13 +1,13 @@
 resource "kubernetes_namespace" "cloudflare_ddns_namespace" {
   metadata {
-    name = "cloudflare_ddns"
+    name = "cloudflare-ddns"
   }
 }
 
 # secret for api key
 resource "kubernetes_secret" "cloudflare_ddns_token_secret" {
   metadata {
-    name      = "cloudflare_ddns_token"
+    name      = "cloudflare-ddns-token"
     namespace = kubernetes_namespace.cloudflare_ddns_namespace.metadata[0].name
   }
 
@@ -18,7 +18,7 @@ resource "kubernetes_secret" "cloudflare_ddns_token_secret" {
 
 resource "kubernetes_deployment" "cloudflare_ddns" {
   metadata {
-    name      = "cloudflare_ddns"
+    name      = "cloudflare-ddns"
     namespace = kubernetes_namespace.cloudflare_ddns_namespace.metadata[0].name
   }
 
