@@ -16,7 +16,7 @@ resource "kubernetes_secret" "cloudflare_ddns_token_secret" {
   }
 }
 
-resource "kubernetes_deployment" "cloudflare_ddns" {
+resource "kubernetes_deployment" "cloudflare_ddns_deployment" {
   metadata {
     name      = "cloudflare-ddns"
     namespace = kubernetes_namespace.cloudflare_ddns_namespace.metadata[0].name
@@ -40,7 +40,7 @@ resource "kubernetes_deployment" "cloudflare_ddns" {
 
       spec {
         container {
-          image = "oznu/cloudflare-ddns"
+          image = "oznu/cloudflare-ddns:latest"
           name  = "cloudflare-ddns"
 
           env_from {
