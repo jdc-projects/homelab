@@ -32,7 +32,7 @@ resource "kubernetes_deployment" "cloudflare_ddns" {
 
           env_from {
             secret_ref {
-              name = kubernetes_secret.cloudflare_ddns_api__key_secret.metadata[0].name
+              name = kubernetes_secret.cloudflare_ddns_token_secret.metadata[0].name
             }
           }
 
