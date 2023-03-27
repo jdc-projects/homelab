@@ -26,6 +26,9 @@ resource "kubernetes_deployment" "cloudflare_ddns" {
     replicas = 1
 
     template {
+      metadata {
+      }
+
       spec {
         container {
           image = "oznu/cloudflare-ddns"
