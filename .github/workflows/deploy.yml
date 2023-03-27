@@ -14,6 +14,7 @@ env:
   TF_VAR_jdc_projects_runners_app_installation_id: ${{ vars.TF_VARS_jdc_projects_runners_app_installation_id }}
   TF_VAR_jdc_projects_runners_app_private_key: ${{ secrets.TF_VARS_jdc_projects_runners_app_private_key }}
   TF_VAR_cloudflare_acme_token: ${{ secrets.TF_VARS_cloudflare_acme_token }}
+  TF_VAR_cloudflare_ddns_token: ${{ secrets.TF_VAR_cloudflare_ddns_token }}
 
 jobs:
   deploy-foundational-services:
