@@ -3,8 +3,6 @@ resource "kubernetes_namespace" "idrac_fan_controller_namespace" {
     name = "idrac-fan-controller"
   }
 }
-
-# secret for api key
 resource "kubernetes_secret" "idrac_fan_controller_access_secret" {
   metadata {
     name      = "idrac-fan-controller-access"
