@@ -84,7 +84,7 @@ resource "kubernetes_manifest" "vaultwarden_websocket_ingress" {
         kind  = "Rule"
         match = "Host(`vault.${var.server_base_domain}`) && Path(`/notifications/hub`)"
         services = [{
-          name      = kubernetes_service.vaultwarden_socket_service.metadata[0].name
+          name      = kubernetes_service.vaultwarden_websocket_service.metadata[0].name
           namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
         }]
       }]
