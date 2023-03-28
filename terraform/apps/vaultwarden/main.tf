@@ -15,25 +15,14 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "2.18.1"
     }
-
-    helm = {
-      source  = "hashicorp/helm"
-      version = "2.9.0"
-    }
   }
 }
 
 provider "truenas" {
   api_key  = var.truenas_api_key
-  base_url = "https://nas.${var.server_base_domain}"
+  base_url = "https://nas.${var.server_base_domain}/api/v2.0"
 }
 
 provider "kubernetes" {
   config_path = "../../cluster.yml"
-}
-
-provider "helm" {
-  kubernetes {
-    config_path = "../../cluster.yml"
-  }
 }
