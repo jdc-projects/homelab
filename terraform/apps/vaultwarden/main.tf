@@ -25,7 +25,7 @@ terraform {
 
 provider "truenas" {
   api_key  = var.truenas_api_key
-  base_url = "nas.${var.server_base_domain}"
+  base_url = "https://nas.${var.server_base_domain}"
 }
 
 provider "kubernetes" {
