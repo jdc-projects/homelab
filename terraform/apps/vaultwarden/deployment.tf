@@ -63,7 +63,7 @@ resource "kubernetes_deployment" "vaultwarden_deployment" {
 
           volume_mount {
             mount_path = "/data"
-            name = "vaultwarden-data"
+            name       = "vaultwarden-data"
           }
         }
 
