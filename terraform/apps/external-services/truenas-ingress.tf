@@ -25,7 +25,7 @@ resource "kubernetes_manifest" "truenas_ingressroute" {
 
       routes = [{
         kind  = "Rule"
-        match = "Host(`nas.jack-chapman.co.uk`)"
+        match = "Host(`nas.${var.server_base_domain}`)"
         services = [{
           name      = "truenas"
           namespace = "traefik"
