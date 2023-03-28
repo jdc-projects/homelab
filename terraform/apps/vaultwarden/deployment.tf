@@ -68,8 +68,9 @@ resource "kubernetes_deployment" "vaultwarden_deployment" {
         }
 
         volume {
+          name = "vaultwarden-data"
+
           host_path {
-            name = "vaultwarden-data"
             path = truenas_dataset.vaultwarden_dataset.mount_point
           }
         }
