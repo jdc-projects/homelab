@@ -14,7 +14,7 @@ resource "kubernetes_config_map" "vaultwarden_configmap" {
     WEBSOCKET_ENABLED        = "true"
     WEBSOCKET_PORT           = "3012"
     EMERGENCY_ACCESS_ALLOWED = "false"
-    SIGNUPS_ALLOWED          = "true"
+    SIGNUPS_ALLOWED          = "false"
     SIGNUPS_VERIFY           = "false"
     INVITATIONS_ALLOWED      = "false"
     PASSWORD_HINTS_ALLOWED   = "false"
