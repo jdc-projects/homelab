@@ -57,7 +57,7 @@ resource "kubernetes_manifest" "vaultwarden_webvault_ingress" {
 
       routes = [{
         kind  = "Rule"
-        match = "Host(`vault.${var.server_base_domain}`) && (Path(`/`) || Path(`/notifications/hub`))"
+        match = "Host(`vault.${var.server_base_domain}`) && (Path(`/`) || Path(`/notifications/hub/negotiate`))"
         services = [{
           name      = kubernetes_service.vaultwarden_webvault_service.metadata[0].name
           namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
