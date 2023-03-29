@@ -30,7 +30,7 @@ resource "truenas_dataset" "vaultwarden_dataset" {
 
   lifecycle {
     prevent_destroy       = false
-    create_before_destroy = true
+    create_before_destroy = false
   }
 }
 
@@ -83,4 +83,8 @@ resource "kubernetes_deployment" "vaultwarden_deployment" {
       }
     }
   }
+
+  depends_on = [
+    truenas_dataset.vaultwarden_dataset
+  ]
 }
