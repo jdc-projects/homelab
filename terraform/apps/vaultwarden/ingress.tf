@@ -73,7 +73,7 @@ resource "kubernetes_manifest" "vaultwarden_websocket_ingress" {
     kind       = "IngressRoute"
 
     metadata = {
-      name      = "vaultwarden-webvault"
+      name      = "vaultwarden-websocket"
       namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
     }
 
