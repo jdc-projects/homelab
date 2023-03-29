@@ -9,6 +9,8 @@ resource "kubernetes_manifest" "jdc_projects_runners_deployment" {
     }
 
     spec = {
+      # image = "<repo>/<image>:<linux-tag>" ***** CUSTOM IMAGE
+
       template = {
         spec = {
           organization = "jdc-projects"
