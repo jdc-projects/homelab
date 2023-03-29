@@ -22,7 +22,7 @@ resource "kubernetes_service" "vaultwarden_webvault_service" {
 
 resource "kubernetes_service" "vaultwarden_websocket_service" {
   metadata {
-    name      = "vaultwarden-webvault"
+    name      = "vaultwarden-websocket"
     namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
   }
 
