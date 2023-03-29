@@ -82,4 +82,10 @@ resource "kubernetes_deployment" "vaultwarden_deployment" {
       }
     }
   }
+
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_config_map.vaultwarden_configmap
+    ]
+  }
 }
