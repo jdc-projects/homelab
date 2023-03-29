@@ -30,6 +30,7 @@ resource "truenas_dataset" "vaultwarden_dataset" {
 
   lifecycle {
     prevent_destroy = false
+    create_before_destroy = true
   }
 }
 
