@@ -82,9 +82,9 @@ resource "kubernetes_manifest" "vaultwarden_webvault_negotiate_ingress" {
       entryPoints = ["websecure"]
 
       routes = [{
-        kind  = "Rule"
+        kind     = "Rule"
         priority = "20"
-        match = "Host(`vault.${var.server_base_domain}`) && Path(`/notifications/hub/negotiate`)"
+        match    = "Host(`vault.${var.server_base_domain}`) && Path(`/notifications/hub/negotiate`)"
         services = [{
           name      = kubernetes_service.vaultwarden_webvault_service.metadata[0].name
           namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
@@ -109,9 +109,9 @@ resource "kubernetes_manifest" "vaultwarden_websocket_ingress" {
       entryPoints = ["websecure"]
 
       routes = [{
-        kind  = "Rule"
+        kind     = "Rule"
         priority = "10"
-        match = "Host(`vault.${var.server_base_domain}`) && Path(`/notifications/hub`)"
+        match    = "Host(`vault.${var.server_base_domain}`) && Path(`/notifications/hub`)"
         services = [{
           name      = kubernetes_service.vaultwarden_websocket_service.metadata[0].name
           namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
