@@ -24,8 +24,8 @@ resource "kubernetes_config_map" "vaultwarden_configmap" {
 }
 
 resource "truenas_dataset" "vaultwarden_dataset" {
-  pool = "vault"
-  name = "vaultwarden"
+  pool               = "vault"
+  name               = "vaultwarden"
   inherit_encryption = true
 
   lifecycle {
