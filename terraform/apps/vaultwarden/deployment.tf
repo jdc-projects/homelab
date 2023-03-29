@@ -14,7 +14,7 @@ resource "kubernetes_config_map" "vaultwarden_configmap" {
     WEBSOCKET_ENABLED        = "true"
     WEBSOCKET_PORT           = "3012"
     EMERGENCY_ACCESS_ALLOWED = "false"
-    SIGNUPS_ALLOWED          = "false"
+    SIGNUPS_ALLOWED          = "true"
     SIGNUPS_VERIFY           = "false"
     INVITATIONS_ALLOWED      = "false"
     PASSWORD_HINTS_ALLOWED   = "false"
@@ -29,8 +29,7 @@ resource "truenas_dataset" "vaultwarden_dataset" {
   inherit_encryption = true
 
   lifecycle {
-    prevent_destroy       = false
-    create_before_destroy = false
+    prevent_destroy = true
   }
 }
 
@@ -83,8 +82,4 @@ resource "kubernetes_deployment" "vaultwarden_deployment" {
       }
     }
   }
-
-  depends_on = [
-    truenas_dataset.vaultwarden_dataset
-  ]
 }
