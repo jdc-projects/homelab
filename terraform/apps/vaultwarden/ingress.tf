@@ -10,6 +10,7 @@ resource "kubernetes_service" "vaultwarden_webvault_service" {
     }
 
     port {
+      port        = kubernetes_config_map.vaultwarden_configmap.data.ROCKET_PORT
       target_port = kubernetes_config_map.vaultwarden_configmap.data.ROCKET_PORT
     }
   }
@@ -31,6 +32,7 @@ resource "kubernetes_service" "vaultwarden_websocket_service" {
     }
 
     port {
+      port        = kubernetes_config_map.vaultwarden_configmap.data.WEBSOCKET_PORT
       target_port = kubernetes_config_map.vaultwarden_configmap.data.WEBSOCKET_PORT
     }
   }
