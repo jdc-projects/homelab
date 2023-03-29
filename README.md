@@ -33,5 +33,4 @@ sudo iptables -D INPUT -p tcp -m tcp --dport 6443 -m comment --comment "iX Custo
 ## New stuff to add
 
 * Nextcloud
-* Bitwarden / Vaultwarden
 * Personal website
