@@ -10,7 +10,6 @@ resource "kubernetes_service" "vaultwarden_webvault_service" {
     }
 
     port {
-      port        = kubernetes_config_map.vaultwarden_configmap.data.ROCKET_PORT
       target_port = kubernetes_config_map.vaultwarden_configmap.data.ROCKET_PORT
     }
   }
@@ -32,7 +31,6 @@ resource "kubernetes_service" "vaultwarden_websocket_service" {
     }
 
     port {
-      port        = kubernetes_config_map.vaultwarden_configmap.data.WEBSOCKET_PORT
       target_port = kubernetes_config_map.vaultwarden_configmap.data.WEBSOCKET_PORT
     }
   }
@@ -61,6 +59,7 @@ resource "kubernetes_manifest" "vaultwarden_webvault_ingress" {
         services = [{
           name      = kubernetes_service.vaultwarden_webvault_service.metadata[0].name
           namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
+          port = kubernetes_service.vaultwarden_webvault_service.spec.port.target_port
         }]
       }]
     }
@@ -86,6 +85,7 @@ resource "kubernetes_manifest" "vaultwarden_websocket_ingress" {
         services = [{
           name      = kubernetes_service.vaultwarden_websocket_service.metadata[0].name
           namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
+          port = kubernetes_service.vaultwarden_websocket_service.spec.port.target_port
         }]
       }]
     }
