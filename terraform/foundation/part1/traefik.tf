@@ -91,7 +91,7 @@ resource "helm_release" "traefik_ingress" {
   }
   set {
     name  = "ports.websecure.tls.domains[0].main"
-    value = "${var.server_base_domain}"
+    value = var.server_base_domain
   }
   set {
     name  = "ports.websecure.tls.domains[0].sans[0]"

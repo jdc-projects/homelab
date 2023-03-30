@@ -11,7 +11,7 @@ resource "kubernetes_config_map" "nextcloud_configmap" {
   }
 
   data = {
-    SQLITE_DATABASE = "nextcloud"
+    SQLITE_DATABASE    = "nextcloud"
     NEXTCLOUD_DATA_DIR = "/var/www/html/data"
   }
 }
@@ -23,7 +23,7 @@ resource "kubernetes_secret" "nextcloud_secret" {
   }
 
   data = {
-    NEXTCLOUD_ADMIN_USER = var.nextcloud_admin_username
+    NEXTCLOUD_ADMIN_USER     = var.nextcloud_admin_username
     NEXTCLOUD_ADMIN_PASSWORD = var.nextcloud_admin_password
   }
 }
