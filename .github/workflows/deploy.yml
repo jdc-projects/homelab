@@ -18,6 +18,8 @@ env:
   TF_VAR_idrac_username: ${{ secrets.TF_VAR_idrac_username }}
   TF_VAR_idrac_password: ${{ secrets.TF_VAR_idrac_password }}
   TF_VAR_truenas_api_key: ${{ secrets.TF_VAR_truenas_api_key }}
+  TF_VAR_nextcloud_admin_username: ${{ secrets.TF_VAR_idrac_username }} # this is temporary
+  TF_VAR_nextcloud_admin_password: ${{ secrets.TF_VAR_idrac_password }} # this is temporary
 
 jobs:
   deploy-foundational-services:
@@ -133,6 +135,38 @@ jobs:
     defaults:
       run:
         working-directory: ./terraform/apps/vaultwarden
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v3
+      - name: "Setup node"
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - name: "Terraform setup"
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.4.2
+      - name: "Generate kubeconfig"
+        working-directory: ./terraform
+        run: "./cluster-config-write.sh"
+      - name: "Add cluster CA certificate"
+        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
+      - name: "Terraform format check"
+        run: "terraform fmt -check"
+      - name: "Terraform init"
+        run: "terraform init"
+      - name: "Terraform apply"
+        run: "terraform apply -auto-approve -input=false"
+
+  deploy-nextcloud:
+    runs-on: self-hosted
+
+    needs: deploy-external-services
+
+    defaults:
+      run:
+        working-directory: ./terraform/apps/nextcloud
 
     steps:
       - name: "Repo checkout"
