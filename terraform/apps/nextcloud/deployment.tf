@@ -13,7 +13,7 @@ resource "kubernetes_config_map" "nextcloud_configmap" {
   data = {
     SQLITE_DATABASE           = "nextcloud"
     NEXTCLOUD_DATA_DIR        = "/var/www/html/data"
-    NEXTCLOUD_TRUSTED_DOMAINS = ["nextcloud.${var.server_base_domain}"]
+    NEXTCLOUD_TRUSTED_DOMAINS = "nextcloud.${var.server_base_domain}"
   }
 }
 
