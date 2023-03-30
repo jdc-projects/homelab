@@ -69,7 +69,9 @@ resource "kubernetes_deployment" "nextcloud_deployment" {
             config_map_ref {
               name = kubernetes_config_map.nextcloud_configmap.metadata[0].name
             }
+          }
 
+          env_from {
             secret_ref {
               name = kubernetes_secret.nextcloud_secret.metadata[0].name
             }
