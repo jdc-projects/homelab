@@ -14,10 +14,6 @@ resource "kubernetes_service" "vaultwarden_webvault_service" {
       target_port = kubernetes_config_map.vaultwarden_configmap.data.ROCKET_PORT
     }
   }
-
-  depends_on = [
-    kubernetes_deployment.vaultwarden_deployment
-  ]
 }
 
 resource "kubernetes_service" "vaultwarden_websocket_service" {
@@ -36,10 +32,6 @@ resource "kubernetes_service" "vaultwarden_websocket_service" {
       target_port = kubernetes_config_map.vaultwarden_configmap.data.WEBSOCKET_PORT
     }
   }
-
-  depends_on = [
-    kubernetes_deployment.vaultwarden_deployment
-  ]
 }
 
 resource "kubernetes_manifest" "vaultwarden_webvault_ingress" {
