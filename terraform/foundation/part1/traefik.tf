@@ -91,11 +91,11 @@ resource "helm_release" "traefik_ingress" {
   }
   set {
     name  = "ports.websecure.tls.domains[0].main"
-    value = "jack-chapman.co.uk"
+    value = "${var.server_base_domain}"
   }
   set {
     name  = "ports.websecure.tls.domains[0].sans[0]"
-    value = "*.jack-chapman.co.uk"
+    value = "*.${var.server_base_domain}"
   }
 
   set {
@@ -137,7 +137,7 @@ resource "helm_release" "traefik_ingress" {
     name  = "env[0].name"
     value = "CF_DNS_API_TOKEN"
   }
-  set {
+  set_sensitive {
     name  = "env[0].value"
     value = var.cloudflare_acme_token
   }

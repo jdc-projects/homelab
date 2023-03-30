@@ -25,7 +25,7 @@ resource "helm_release" "jdc_projects_runners_controller" {
     name  = "authSecret.github_app_installation_id"
     value = var.jdc_projects_runners_app_installation_id
   }
-  set {
+  set_sensitive {
     name  = "authSecret.github_app_private_key"
     value = var.jdc_projects_runners_app_private_key
   }
@@ -64,7 +64,7 @@ resource "helm_release" "jdc_projects_runners_controller" {
     name  = "githubWebhookServer.secret.github_app_installation_id"
     value = var.jdc_projects_runners_app_installation_id
   }
-  set {
+  set_sensitive {
     name  = "githubWebhookServer.secret.github_app_private_key"
     value = var.jdc_projects_runners_app_private_key
   }
@@ -75,7 +75,7 @@ resource "helm_release" "jdc_projects_runners_controller" {
   }
   set {
     name  = "githubWebhookServer.ingress.hosts[0].host"
-    value = "github-jdc-projects-runners-webhook.jack-chapman.co.uk"
+    value = "github-jdc-projects-runners-webhook.${var.server_base_domain}"
   }
   set {
     name  = "githubWebhookServer.ingress.hosts[0].paths[0].path"
