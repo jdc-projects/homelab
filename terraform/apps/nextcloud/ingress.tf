@@ -1,7 +1,7 @@
 resource "kubernetes_service" "nextcloud_service" {
   metadata {
     name      = "nextcloud"
-    namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
+    namespace = kubernetes_namespace.nextcloud_namespace.metadata[0].name
   }
 
   spec {
