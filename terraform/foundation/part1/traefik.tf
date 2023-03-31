@@ -99,6 +99,68 @@ resource "helm_release" "traefik_ingress" {
   }
 
   set {
+    name  = "ports.ldap.port"
+    value = "8389"
+  }
+  set {
+    name  = "ports.ldap.expose"
+    value = "true"
+  }
+  set {
+    name  = "ports.ldap.exposedPort"
+    value = "389"
+  }
+  set {
+    name  = "ports.ldap.protocol"
+    value = "tcp"
+  }
+  set {
+    name  = "ports.ldap.http3.enabled"
+    value = "false"
+  }
+  set {
+    name  = "ports.ldap.tls.enabled"
+    value = "false"
+  }
+
+  set {
+    name  = "ports.ldaps.port"
+    value = "8636"
+  }
+  set {
+    name  = "ports.ldaps.expose"
+    value = "true"
+  }
+  set {
+    name  = "ports.ldaps.exposedPort"
+    value = "636"
+  }
+  set {
+    name  = "ports.ldaps.protocol"
+    value = "tcp"
+  }
+  set {
+    name  = "ports.ldaps.http3.enabled"
+    value = "false"
+  }
+  set {
+    name  = "ports.ldaps.tls.enabled"
+    value = "true"
+  }
+  set {
+    name  = "ports.ldaps.tls.certResolver"
+    value = "letsencrypt"
+  }
+  set {
+    name  = "ports.ldaps.tls.domains[0].main"
+    value = var.server_base_domain
+  }
+  set {
+    name  = "ports.ldaps.tls.domains[0].sans[0]"
+    value = "*.${var.server_base_domain}"
+  }
+
+  set {
     name  = "additionalArguments[0]"
     value = "--providers.kubernetesingress.allowexternalnameservices"
   }
