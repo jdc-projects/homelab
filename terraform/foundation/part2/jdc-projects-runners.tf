@@ -11,7 +11,7 @@ resource "kubernetes_manifest" "jdc_projects_runners_deployment" {
     spec = {
       template = {
         spec = {
-          image = "summerwind/actions-runner:v2.303.0-ubuntu-20.04"
+          image = "summerwind/actions-runner:v2.303.0-ubuntu-22.04"
 
           organization = "jdc-projects"
         }
