@@ -133,6 +133,7 @@ jobs:
     uses: ./.github/workflows/kubernetes.yml
     with:
       terraform-dir: ./terraform/apps/vaultwarden
+    secrets: inherit
 
   # deploy-nextcloud:
   #   runs-on: self-hosted
