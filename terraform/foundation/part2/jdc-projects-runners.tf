@@ -9,7 +9,7 @@ resource "kubernetes_manifest" "jdc_projects_runners_deployment" {
     }
 
     spec = {
-      # image = "<repo>/<image>:<linux-tag>" ***** CUSTOM IMAGE
+      image = "summerwind/actions-runner:v2.303.0-ubuntu-20.04"
 
       template = {
         spec = {
