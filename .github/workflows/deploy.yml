@@ -14,12 +14,6 @@ env:
   TF_VAR_jdc_projects_runners_app_installation_id: ${{ vars.TF_VARS_jdc_projects_runners_app_installation_id }}
   TF_VAR_jdc_projects_runners_app_private_key: ${{ secrets.TF_VARS_jdc_projects_runners_app_private_key }}
   TF_VAR_cloudflare_acme_token: ${{ secrets.TF_VARS_cloudflare_acme_token }}
-  TF_VAR_cloudflare_ddns_token: ${{ secrets.TF_VAR_cloudflare_ddns_token }}
-  TF_VAR_idrac_username: ${{ secrets.TF_VAR_idrac_username }}
-  TF_VAR_idrac_password: ${{ secrets.TF_VAR_idrac_password }}
-  TF_VAR_truenas_api_key: ${{ secrets.TF_VAR_truenas_api_key }}
-  TF_VAR_nextcloud_admin_username: ${{ secrets.TF_VAR_idrac_username }} # this is temporary
-  TF_VAR_nextcloud_admin_password: ${{ secrets.TF_VAR_idrac_password }} # this is temporary
 
 jobs:
   deploy-foundational-services:
@@ -64,105 +58,33 @@ jobs:
         run: "terraform apply -auto-approve -input=false"
 
   deploy-external-services:
-    runs-on: self-hosted
-
     needs: deploy-foundational-services
 
-    defaults:
-      run:
-        working-directory: ./terraform/apps/external-services
-
-    steps:
-      - name: "Repo checkout"
-        uses: actions/checkout@v3
-      - name: "Setup node"
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18'
-      - name: "Terraform setup"
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.4.2
-      - name: "Generate kubeconfig"
-        working-directory: ./terraform
-        run: "./cluster-config-write.sh"
-      - name: "Add cluster CA certificate"
-        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
-      - name: "Terraform format check"
-        run: "terraform fmt -check"
-      - name: "Terraform init"
-        run: "terraform init"
-      - name: "Terraform apply"
-        run: "terraform apply -auto-approve -input=false"
+    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
+    with:
+      terraform-dir: ./terraform/apps/external-services
+    secrets: inherit
 
   deploy-services:
-    runs-on: self-hosted
-
     needs: deploy-foundational-services
 
-    defaults:
-      run:
-        working-directory: ./terraform/apps/services
-
-    steps:
-      - name: "Repo checkout"
-        uses: actions/checkout@v3
-      - name: "Setup node"
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18'
-      - name: "Terraform setup"
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.4.2
-      - name: "Generate kubeconfig"
-        working-directory: ./terraform
-        run: "./cluster-config-write.sh"
-      - name: "Add cluster CA certificate"
-        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
-      - name: "Terraform format check"
-        run: "terraform fmt -check"
-      - name: "Terraform init"
-        run: "terraform init"
-      - name: "Terraform apply"
-        run: "terraform apply -auto-approve -input=false"
+    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
+    with:
+      terraform-dir: ./terraform/apps/services
+    secrets: inherit
 
   deploy-vaultwarden:
     needs: deploy-external-services
 
-    uses: ./.github/workflows/kubernetes.yml
+    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
     with:
       terraform-dir: ./terraform/apps/vaultwarden
     secrets: inherit
 
-  # deploy-nextcloud:
-  #   runs-on: self-hosted
+  deploy-nextcloud:
+    needs: deploy-external-services
 
-  #   needs: deploy-external-services
-
-  #   defaults:
-  #     run:
-  #       working-directory: ./terraform/apps/nextcloud
-
-  #   steps:
-  #     - name: "Repo checkout"
-  #       uses: actions/checkout@v3
-  #     - name: "Setup node"
-  #       uses: actions/setup-node@v2
-  #       with:
-  #         node-version: '18'
-  #     - name: "Terraform setup"
-  #       uses: hashicorp/setup-terraform@v2
-  #       with:
-  #         terraform_version: 1.4.2
-  #     - name: "Generate kubeconfig"
-  #       working-directory: ./terraform
-  #       run: "./cluster-config-write.sh"
-  #     - name: "Add cluster CA certificate"
-  #       run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
-  #     - name: "Terraform format check"
-  #       run: "terraform fmt -check"
-  #     - name: "Terraform init"
-  #       run: "terraform init"
-  #     - name: "Terraform apply"
-  #       run: "terraform apply -auto-approve -input=false"
+    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
+    with:
+      terraform-dir: ./terraform/apps/nextcloud
+    secrets: inherit
