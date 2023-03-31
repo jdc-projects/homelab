@@ -112,7 +112,7 @@ resource "helm_release" "traefik_ingress" {
   }
   set {
     name  = "ports.ldap.protocol"
-    value = "tcp"
+    value = "TCP"
   }
   set {
     name  = "ports.ldap.http3.enabled"
@@ -137,7 +137,7 @@ resource "helm_release" "traefik_ingress" {
   }
   set {
     name  = "ports.ldaps.protocol"
-    value = "tcp"
+    value = "TCP"
   }
   set {
     name  = "ports.ldaps.http3.enabled"
