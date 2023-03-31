@@ -81,10 +81,10 @@ jobs:
       terraform-dir: ./terraform/apps/vaultwarden
     secrets: inherit
 
-  deploy-nextcloud:
-    needs: deploy-external-services
+  # deploy-nextcloud:
+  #   needs: deploy-external-services
 
-    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
-    with:
-      terraform-dir: ./terraform/apps/nextcloud
-    secrets: inherit
+  #   uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
+  #   with:
+  #     terraform-dir: ./terraform/apps/nextcloud
+  #   secrets: inherit
