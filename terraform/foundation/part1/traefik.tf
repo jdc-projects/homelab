@@ -116,7 +116,7 @@ resource "helm_release" "traefik_ingress" {
     value = "389"
   }
   set {
-    name = "ports.ldap.redirectTo"
+    name  = "ports.ldap.redirectTo"
     value = "ldaps"
   }
   set {
