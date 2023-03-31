@@ -1,9 +1,3 @@
-resource "kubernetes_namespace" "vaultwarden_namespace" {
-  metadata {
-    name = "vaultwarden"
-  }
-}
-
 resource "kubernetes_config_map" "vaultwarden_configmap" {
   metadata {
     name      = "vaultwarden"
@@ -20,16 +14,6 @@ resource "kubernetes_config_map" "vaultwarden_configmap" {
     PASSWORD_HINTS_ALLOWED   = "false"
     DOMAIN                   = "https://vault.${var.server_base_domain}"
     ROCKET_PORT              = "80"
-  }
-}
-
-resource "truenas_dataset" "vaultwarden_dataset" {
-  pool               = "vault"
-  name               = "vaultwarden"
-  inherit_encryption = true
-
-  lifecycle {
-    prevent_destroy = true
   }
 }
 

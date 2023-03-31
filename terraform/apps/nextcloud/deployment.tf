@@ -1,8 +1,3 @@
-resource "kubernetes_namespace" "nextcloud_namespace" {
-  metadata {
-    name = "nextcloud"
-  }
-}
 
 resource "kubernetes_config_map" "nextcloud_configmap" {
   metadata {
@@ -26,16 +21,6 @@ resource "kubernetes_secret" "nextcloud_secret" {
   data = {
     NEXTCLOUD_ADMIN_USER     = var.nextcloud_admin_username
     NEXTCLOUD_ADMIN_PASSWORD = var.nextcloud_admin_password
-  }
-}
-
-resource "truenas_dataset" "nextcloud_dataset" {
-  pool               = "vault"
-  name               = "nextcloud"
-  inherit_encryption = true
-
-  lifecycle {
-    prevent_destroy = true
   }
 }
 

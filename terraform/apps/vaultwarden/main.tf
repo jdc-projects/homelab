@@ -26,3 +26,9 @@ provider "truenas" {
 provider "kubernetes" {
   config_path = "../../cluster.yml"
 }
+
+resource "kubernetes_namespace" "vaultwarden_namespace" {
+  metadata {
+    name = "vaultwarden"
+  }
+}
