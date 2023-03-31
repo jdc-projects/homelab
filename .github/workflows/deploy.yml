@@ -132,7 +132,7 @@ jobs:
 
     needs: deploy-external-services
 
-    uses: ./github/workflows/kubernetes.yml
+    uses: ./.github/workflows/kubernetes.yml
     with:
       terraform-dir: ./terraform/apps/vaultwarden
 
