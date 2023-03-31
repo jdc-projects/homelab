@@ -99,7 +99,7 @@ resource "helm_release" "traefik_ingress" {
   }
 
   set {
-    name = "ports.metrics.expose"
+    name  = "ports.metrics.expose"
     value = "true"
   }
 
