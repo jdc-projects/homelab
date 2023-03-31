@@ -132,61 +132,38 @@ jobs:
 
     needs: deploy-external-services
 
-    defaults:
-      run:
-        working-directory: ./terraform/apps/vaultwarden
+    uses: ./github/workflows/kubernetes.yml
+    with:
+      terraform-dir: ./terraform/apps/vaultwarden
 
-    steps:
-      - name: "Repo checkout"
-        uses: actions/checkout@v3
-      - name: "Setup node"
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18'
-      - name: "Terraform setup"
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.4.2
-      - name: "Generate kubeconfig"
-        working-directory: ./terraform
-        run: "./cluster-config-write.sh"
-      - name: "Add cluster CA certificate"
-        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
-      - name: "Terraform format check"
-        run: "terraform fmt -check"
-      - name: "Terraform init"
-        run: "terraform init"
-      - name: "Terraform apply"
-        run: "terraform apply -auto-approve -input=false"
+  # deploy-nextcloud:
+  #   runs-on: self-hosted
 
-  deploy-nextcloud:
-    runs-on: self-hosted
+  #   needs: deploy-external-services
 
-    needs: deploy-external-services
+  #   defaults:
+  #     run:
+  #       working-directory: ./terraform/apps/nextcloud
 
-    defaults:
-      run:
-        working-directory: ./terraform/apps/nextcloud
-
-    steps:
-      - name: "Repo checkout"
-        uses: actions/checkout@v3
-      - name: "Setup node"
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18'
-      - name: "Terraform setup"
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.4.2
-      - name: "Generate kubeconfig"
-        working-directory: ./terraform
-        run: "./cluster-config-write.sh"
-      - name: "Add cluster CA certificate"
-        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
-      - name: "Terraform format check"
-        run: "terraform fmt -check"
-      - name: "Terraform init"
-        run: "terraform init"
-      - name: "Terraform apply"
-        run: "terraform apply -auto-approve -input=false"
+  #   steps:
+  #     - name: "Repo checkout"
+  #       uses: actions/checkout@v3
+  #     - name: "Setup node"
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: '18'
+  #     - name: "Terraform setup"
+  #       uses: hashicorp/setup-terraform@v2
+  #       with:
+  #         terraform_version: 1.4.2
+  #     - name: "Generate kubeconfig"
+  #       working-directory: ./terraform
+  #       run: "./cluster-config-write.sh"
+  #     - name: "Add cluster CA certificate"
+  #       run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
+  #     - name: "Terraform format check"
+  #       run: "terraform fmt -check"
+  #     - name: "Terraform init"
+  #       run: "terraform init"
+  #     - name: "Terraform apply"
+  #       run: "terraform apply -auto-approve -input=false"
