@@ -31,6 +31,11 @@ resource "helm_release" "jdc_projects_runners_controller" {
   }
 
   set {
+    name = "image.repository"
+    value = "summerwind/actions-runner-controller:v0.27.2"
+  }
+
+  set {
     name  = "scope.singleNamespace"
     value = "true"
   }
@@ -72,6 +77,10 @@ resource "helm_release" "jdc_projects_runners_controller" {
   set {
     name  = "githubWebhookServer.ingress.enabled"
     value = "true"
+  }
+  set {
+    name  = "githubWebhookServer.ingress.annotations[0]"
+    value = "traefik.ingress.kubernetes.io/router.entrypoints: websecure"
   }
   set {
     name  = "githubWebhookServer.ingress.hosts[0].host"
