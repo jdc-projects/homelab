@@ -31,8 +31,8 @@ resource "helm_release" "jdc_projects_runners_controller" {
   }
 
   set {
-    name  = "image.repository"
-    value = "summerwind/actions-runner-controller:v0.27.2"
+    name  = "image.dindSidecarRepositoryAndTag"
+    value = "docker:23.0.2-dind"
   }
 
   set {
