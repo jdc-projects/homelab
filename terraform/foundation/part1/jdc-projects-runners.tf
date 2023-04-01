@@ -13,6 +13,8 @@ resource "helm_release" "jdc_projects_runners_controller" {
 
   namespace = kubernetes_namespace.jdc_projects_runners_namespace.metadata[0].name
 
+  timeout = 300
+
   set {
     name  = "authSecret.create"
     value = "true"

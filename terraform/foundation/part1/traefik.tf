@@ -32,6 +32,8 @@ resource "helm_release" "traefik_ingress" {
 
   namespace = kubernetes_namespace.traefik_namespace.metadata[0].name
 
+  timeout = 300
+
   # hack for acme.json permissions problem
   set {
     name  = "deployment.initContainers[0].name"
