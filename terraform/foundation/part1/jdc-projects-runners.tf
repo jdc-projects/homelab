@@ -79,8 +79,12 @@ resource "helm_release" "jdc_projects_runners_controller" {
     value = "true"
   }
   set {
-    name  = "githubWebhookServer.ingress.annotations[0]"
-    value = "traefik.ingress.kubernetes.io/router.entrypoints: websecure"
+    name  = "githubWebhookServer.ingress.annotations[0].name"
+    value = "traefik.ingress.kubernetes.io/router.entrypoints"
+  }
+  set {
+    name  = "githubWebhookServer.ingress.annotations[0].value"
+    value = "websecure"
   }
   set {
     name  = "githubWebhookServer.ingress.hosts[0].host"
