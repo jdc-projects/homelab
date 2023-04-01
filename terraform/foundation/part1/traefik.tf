@@ -178,7 +178,7 @@ resource "helm_release" "traefik_ingress" {
     value = "--providers.kubernetescrd.allowexternalnameservices"
   }
   set {
-    name  = "additionalArguments[0]"
+    name  = "additionalArguments[2]"
     value = "--serverstransport.insecureskipverify=true"
   }
 
