@@ -154,22 +154,6 @@ resource "helm_release" "traefik_ingress" {
     name  = "ports.ldaps.http3.enabled"
     value = "false"
   }
-  set {
-    name  = "ports.ldaps.tls.enabled"
-    value = "true"
-  }
-  set {
-    name  = "ports.ldaps.tls.certResolver"
-    value = "letsencrypt"
-  }
-  set {
-    name  = "ports.ldaps.tls.domains[0].main"
-    value = var.server_base_domain
-  }
-  set {
-    name  = "ports.ldaps.tls.domains[0].sans[0]"
-    value = "*.${var.server_base_domain}"
-  }
 
   set {
     name  = "additionalArguments[0]"
