@@ -35,7 +35,7 @@ resource "helm_release" "traefik_ingress" {
   timeout = 300
 
   set {
-    name = "logs.general.level"
+    name  = "logs.general.level"
     value = "DEBUG"
   }
 
