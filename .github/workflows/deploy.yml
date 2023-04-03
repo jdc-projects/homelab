@@ -73,8 +73,16 @@ jobs:
       terraform-dir: ./terraform/apps/services
     secrets: inherit
 
-  deploy-vaultwarden:
+  deploy-ldap:
     needs: deploy-external-services
+
+    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
+    with:
+      terraform-dir: ./terraform/apps/ldap
+    secrets: inherit
+
+  deploy-vaultwarden:
+    needs: deploy-ldap
 
     uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
     with:

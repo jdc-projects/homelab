@@ -5,3 +5,6 @@
 cluster.yml
 *-old
 *.tfvars
+*.cert
+*.key
+*.pem

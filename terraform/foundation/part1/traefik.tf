@@ -34,6 +34,11 @@ resource "helm_release" "traefik_ingress" {
 
   timeout = 300
 
+  set {
+    name = "logs.general.level"
+    value = "DEBUG"
+  }
+
   # hack for acme.json permissions problem
   set {
     name  = "deployment.initContainers[0].name"
@@ -78,6 +83,19 @@ resource "helm_release" "traefik_ingress" {
   # end of hack
 
   set {
+    name  = "additionalArguments[0]"
+    value = "--providers.kubernetesingress.allowexternalnameservices"
+  }
+  set {
+    name  = "additionalArguments[1]"
+    value = "--providers.kubernetescrd.allowexternalnameservices"
+  }
+  set {
+    name  = "additionalArguments[2]"
+    value = "--serverstransport.insecureskipverify=true"
+  }
+
+  set {
     name  = "ports.traefik.expose"
     value = "true"
   }
@@ -106,31 +124,6 @@ resource "helm_release" "traefik_ingress" {
   }
 
   set {
-    name  = "ports.ldap.port"
-    value = "8389"
-  }
-  set {
-    name  = "ports.ldap.expose"
-    value = "true"
-  }
-  set {
-    name  = "ports.ldap.exposedPort"
-    value = "389"
-  }
-  set {
-    name  = "ports.ldap.protocol"
-    value = "TCP"
-  }
-  set {
-    name  = "ports.ldap.http3.enabled"
-    value = "false"
-  }
-  set {
-    name  = "ports.ldap.tls.enabled"
-    value = "false"
-  }
-
-  set {
     name  = "ports.ldaps.port"
     value = "8636"
   }
@@ -152,16 +145,16 @@ resource "helm_release" "traefik_ingress" {
   }
 
   set {
-    name  = "additionalArguments[0]"
-    value = "--providers.kubernetesingress.allowexternalnameservices"
+    name  = "tlsStore.default.defaultGeneratedCert.resolver"
+    value = "letsencrypt"
   }
   set {
-    name  = "additionalArguments[1]"
-    value = "--providers.kubernetescrd.allowexternalnameservices"
+    name  = "tlsStore.default.defaultGeneratedCert.domain.main"
+    value = var.server_base_domain
   }
   set {
-    name  = "additionalArguments[2]"
-    value = "--serverstransport.insecureskipverify=true"
+    name  = "tlsStore.default.defaultGeneratedCert.domain.sans[0]"
+    value = "*.${var.server_base_domain}"
   }
 
   set {
