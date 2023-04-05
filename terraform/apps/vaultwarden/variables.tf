@@ -15,7 +15,6 @@ variable "lldap_admin_password" {
   description = "Password for the LLDAP admin user."
 }
 
-
 variable "smtp_host" {
   type        = string
   description = "Hostname of the SMTP server."

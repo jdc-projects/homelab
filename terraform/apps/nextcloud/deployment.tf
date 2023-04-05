@@ -7,8 +7,13 @@ resource "kubernetes_config_map" "nextcloud_configmap" {
 
   data = {
     SQLITE_DATABASE           = "nextcloud"
-    NEXTCLOUD_DATA_DIR        = "/var/www/html/data"
+    NEXTCLOUD_ADMIN_USER      = "admin"
     NEXTCLOUD_TRUSTED_DOMAINS = "nextcloud.${var.server_base_domain}"
+    SMTP_HOST                 = var.smtp_host
+    SMTP_SECURE               = "tls"
+    SMTP_PORT                 = var.smtp_port
+    SMTP_NAME                 = var.smtp_username
+    MAIL_FROM_ADDRESS         = "noreply@${var.server_base_domain}"
   }
 }
 
@@ -19,8 +24,8 @@ resource "kubernetes_secret" "nextcloud_secret" {
   }
 
   data = {
-    NEXTCLOUD_ADMIN_USER     = var.nextcloud_admin_username
     NEXTCLOUD_ADMIN_PASSWORD = var.nextcloud_admin_password
+    SMTP_PASSWORD            = var.smtp_password
   }
 }
 
@@ -48,7 +53,7 @@ resource "kubernetes_deployment" "nextcloud_deployment" {
 
       spec {
         container {
-          image = "nextcloud:24.0.11-apache"
+          image = "nextcloud:26.0.0-apache"
           name  = "nextcloud"
 
           env_from {
@@ -64,7 +69,7 @@ resource "kubernetes_deployment" "nextcloud_deployment" {
           }
 
           volume_mount {
-            mount_path = "/var/www/html/data"
+            mount_path = "/var/www/html"
             name       = "nextcloud-data"
           }
         }
