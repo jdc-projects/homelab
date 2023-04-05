@@ -62,7 +62,7 @@ resource "kubernetes_deployment" "vaultwarden_ldap_deployment" {
 
           env_from {
             secret_ref {
-              name = kubernetes_secret.vaultwarden_ldap_secret
+              name = kubernetes_secret.vaultwarden_ldap_secret.metadata[0].name
             }
           }
         }

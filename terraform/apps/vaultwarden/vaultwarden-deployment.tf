@@ -75,7 +75,7 @@ resource "kubernetes_deployment" "vaultwarden_deployment" {
 
           env_from {
             secret_ref {
-              name = kubernetes_secret.vaultwarden_secret
+              name = kubernetes_secret.vaultwarden_secret.metadata[0].name
             }
           }
 
