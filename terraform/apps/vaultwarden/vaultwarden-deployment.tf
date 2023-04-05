@@ -16,7 +16,7 @@ resource "kubernetes_config_map" "vaultwarden_configmap" {
     EMERGENCY_ACCESS_ALLOWED = "false"
     SIGNUPS_ALLOWED          = "false"
     SIGNUPS_VERIFY           = "false"
-    INVITATIONS_ALLOWED      = "false"
+    INVITATIONS_ALLOWED      = "true"
     PASSWORD_HINTS_ALLOWED   = "false"
     DOMAIN                   = "https://vault.${var.server_base_domain}"
     ROCKET_PORT              = "80"
