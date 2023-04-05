@@ -5,7 +5,7 @@ resource "kubernetes_config_map" "vaultwarden_ldap_configmap" {
   }
 
   data = {
-    APP_VAULTWARDEN_URL            = "vault.${var.server_base_domain}"
+    APP_VAULTWARDEN_URL            = "https://vault.${var.server_base_domain}"
     APP_LDAP_HOST                  = "idm.${var.server_base_domain}"
     APP_LDAP_SSL                   = "true"
     APP_LDAP_BIND_DN               = "uid=admin,ou=people,dc=idm,dc=${var.server_base_domain}"
