@@ -51,7 +51,7 @@ resource "kubernetes_deployment" "vaultwarden_ldap_deployment" {
 
       spec {
         container {
-          image = "vividboarder/vaultwarden_ldap:v1.0.0-alpine"
+          image = "vividboarder/vaultwarden_ldap:1.0.0-alpine"
           name  = "vaultwarden-ldap"
 
           env_from {
