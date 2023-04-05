@@ -1,3 +1,9 @@
+resource "random_password" "vaultwarden_admin_token" {
+  length           = 16
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
 resource "kubernetes_config_map" "vaultwarden_configmap" {
   metadata {
     name      = "vaultwarden"
@@ -14,6 +20,23 @@ resource "kubernetes_config_map" "vaultwarden_configmap" {
     PASSWORD_HINTS_ALLOWED   = "false"
     DOMAIN                   = "https://vault.${var.server_base_domain}"
     ROCKET_PORT              = "80"
+    SMTP_HOST                = var.smtp_host
+    SMTP_FROM                = "noreply@${var.server_base_domain}"
+    SMTP_PORT                = var.smtp_port
+    SMTP_SECURITY            = "starttls"
+    SMTP_USERNAME            = var.smtp_username
+  }
+}
+
+resource "kubernetes_secret" "vaultwarden_secret" {
+  metadata {
+    name      = "vaultwarden"
+    namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
+  }
+
+  data = {
+    SMTP_PASSWORD = var.smtp_password
+    ADMIN_TOKEN   = random_password.vaultwarden_admin_token.result
   }
 }
 
@@ -47,6 +70,12 @@ resource "kubernetes_deployment" "vaultwarden_deployment" {
           env_from {
             config_map_ref {
               name = kubernetes_config_map.vaultwarden_configmap.metadata[0].name
+            }
+          }
+
+          env_from {
+            secret_ref {
+              name = kubernetes_secret.vaultwarden_secret
             }
           }
 

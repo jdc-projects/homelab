@@ -15,6 +15,11 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "2.18.1"
     }
+
+    random = {
+      source  = "hashicorp/random"
+      version = "3.4.3"
+    }
   }
 }
 
@@ -25,6 +30,9 @@ provider "truenas" {
 
 provider "kubernetes" {
   config_path = "../../cluster.yml"
+}
+
+provider "random" {
 }
 
 resource "kubernetes_namespace" "vaultwarden_namespace" {
