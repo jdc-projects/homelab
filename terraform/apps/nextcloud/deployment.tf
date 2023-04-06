@@ -12,8 +12,10 @@ resource "kubernetes_config_map" "nextcloud_configmap" {
     SMTP_HOST                 = var.smtp_host
     SMTP_SECURE               = "tls"
     SMTP_PORT                 = var.smtp_port
+    SMTP_AUTHTYPE             = "LOGIN"
     SMTP_NAME                 = var.smtp_username
     MAIL_FROM_ADDRESS         = "noreply@${var.server_base_domain}"
+    MAIL_DOMAIN               = "${var.server_base_domain}"
   }
 }
 
