@@ -6,7 +6,7 @@ resource "kubernetes_config_map" "keycloak_configmap" {
 
   data = {
     POSTGRES_DB = "keycloak"
-    PGDATA = "/var/lib/postgresql/data"
+    PGDATA      = "/var/lib/postgresql/data"
   }
 }
 
@@ -18,7 +18,7 @@ resource "kubernetes_secret" "keycloak_secret" {
 
   data = {
     POSTGRES_PASSWORD = random_password.db_admin_username.result
-    POSTGRES_USER = random_password.db_admin_password.result
+    POSTGRES_USER     = random_password.db_admin_password.result
   }
 }
 

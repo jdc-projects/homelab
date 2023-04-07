@@ -5,17 +5,17 @@ resource "kubernetes_config_map" "keycloak_configmap" {
   }
 
   data = {
-    KC_CACHE = "ispn"
-    KC_CACHE_STACK = "kubernetes"
-    KC_DB = "postgres"
-    KC_DB_URL_DATABASE = kubernetes_config_map.keycloak_db_configmap.data.POSTGRES_DB
-    KC_DB_URL_HOST = kubernetes_deployment.keycloak_db_deployment.metadata[0].name
-    KC_DB_URL_PORT = "5432"
-    KC_FEATURES = ""
+    KC_CACHE             = "ispn"
+    KC_CACHE_STACK       = "kubernetes"
+    KC_DB                = "postgres"
+    KC_DB_URL_DATABASE   = kubernetes_config_map.keycloak_db_configmap.data.POSTGRES_DB
+    KC_DB_URL_HOST       = kubernetes_deployment.keycloak_db_deployment.metadata[0].name
+    KC_DB_URL_PORT       = "5432"
+    KC_FEATURES          = ""
     KC_FEATURES_DISABLED = "account-api, account2, admin-api, admin-fine-grained-authz, admin2, authorization, ciba, client-policies, client-secret-rotation, declarative-user-profile, docker, dynamic-scopes, fips, impersonation, js-adapter, kerberos, map-storage, openshift-integration, par, preview, recovery-codes, scripts, step-up-authentication, token-exchange, update-email, web-authn"
-    KC_HOSTNAME_URL = "https://idp.${var.base_server_domain}/"
-    KC_HTTP_ENABLED = "true"
-    KC_HTTP_PORT = "8080"
+    KC_HOSTNAME_URL      = "https://idp.${var.base_server_domain}/"
+    KC_HTTP_ENABLED      = "true"
+    KC_HTTP_PORT         = "8080"
   }
 }
 
@@ -26,10 +26,10 @@ resource "kubernetes_secret" "keycloak_secret" {
   }
 
   data = {
-    KEYCLOAK_ADMIN = random_password.keycloak_admin_username.result
+    KEYCLOAK_ADMIN          = random_password.keycloak_admin_username.result
     KEYCLOAK_ADMIN_PASSWORD = random_password.keycloak_admin_password.result
-    KC_DB_PASSWORD = random_password.db_admin_username.result
-    KC_DB_USERNAME = random_password.db_admin_password.result
+    KC_DB_PASSWORD          = random_password.db_admin_username.result
+    KC_DB_USERNAME          = random_password.db_admin_password.result
   }
 }
 
