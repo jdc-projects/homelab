@@ -1,5 +1,23 @@
 resource "kubernetes_service" "keycloak_service" {
   metadata {
+    name      = "keycloak-db"
+    namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
+  }
+
+  spec {
+    selector = {
+      app = "keycloak-db"
+    }
+
+    port {
+      port        = "5432"
+      target_port = kubernetes_config_map.keycloak_configmap.data.KC_DB_URL_PORT
+    }
+  }
+}
+
+resource "kubernetes_service" "keycloak_service" {
+  metadata {
     name      = "keycloak"
     namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
   }
