@@ -1,4 +1,4 @@
-resource "kubernetes_service" "keycloak_service" {
+resource "kubernetes_service" "keycloak_db_service" {
   metadata {
     name      = "keycloak-db"
     namespace = kubernetes_namespace.ldap_namespace.metadata[0].name

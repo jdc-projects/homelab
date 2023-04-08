@@ -1,4 +1,4 @@
-resource "kubernetes_config_map" "keycloak_configmap" {
+resource "kubernetes_config_map" "keycloak_db_configmap" {
   metadata {
     name      = "keycloak"
     namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
@@ -10,7 +10,7 @@ resource "kubernetes_config_map" "keycloak_configmap" {
   }
 }
 
-resource "kubernetes_secret" "keycloak_secret" {
+resource "kubernetes_secret" "keycloak_db_secret" {
   metadata {
     name      = "keycloak"
     namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
