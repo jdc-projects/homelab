@@ -44,7 +44,7 @@ provider "keycloak" {
   client_id = "admin-cli"
   username  = random_password.keycloak_admin_username.result
   password  = random_password.keycloak_admin_password.result
-  url       = kubernetes_config_map.keycloak_configmap.data.KC_DB_URL_HOST
+  url       = "https://idp.${var.server_base_domain}"
 }
 
 resource "kubernetes_namespace" "keycloak_namespace" {

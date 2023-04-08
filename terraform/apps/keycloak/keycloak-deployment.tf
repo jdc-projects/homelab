@@ -5,18 +5,11 @@ resource "kubernetes_config_map" "keycloak_configmap" {
   }
 
   data = {
-    # KC_CACHE                 = "ispn"
-    # KC_CACHE_STACK           = "kubernetes"
     KEYCLOAK_DATABASE_VENDOR = "postgresql"
     KEYCLOAK_DATABASE_NAME   = kubernetes_config_map.keycloak_db_configmap.data.POSTGRES_DB
     KEYCLOAK_DATABASE_HOST   = "keycloak-db"
     KEYCLOAK_DATABASE_PORT   = 5432
-    # KC_FEATURES              = ""
-    # KC_FEATURES_DISABLED     = "account-api, account2, admin-api, admin-fine-grained-authz, admin2, authorization, ciba, client-policies, client-secret-rotation, declarative-user-profile, docker, dynamic-scopes, fips, impersonation, js-adapter, kerberos, map-storage, openshift-integration, par, preview, recovery-codes, scripts, step-up-authentication, token-exchange, update-email, web-authn"
-    # KC_HOSTNAME_URL          = "https://idp.${var.server_base_domain}/"
-    # KC_HTTP_ENABLED          = "true"
-    KEYCLOAK_HTTP_PORT = "8080"
-    # KC_HOSTNAME              = "idp.${var.server_base_domain}"
+    KEYCLOAK_HTTP_PORT       = "8080"
   }
 }
 
