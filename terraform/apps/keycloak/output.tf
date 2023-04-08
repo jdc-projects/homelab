@@ -9,5 +9,5 @@ output "keycloak_admin_password" {
 }
 
 output "keycloak_hostname_url" {
-  value     = kubernetes_config_map.keycloak_configmap.data.KC_HOSTNAME_URL
+  value = kubernetes_config_map.keycloak_configmap.data.KC_HOSTNAME_URL
 }
