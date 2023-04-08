@@ -1,6 +1,10 @@
 resource "keycloak_realm" "lldap_realm" {
   realm   = "my-realm"
   enabled = true
+
+  depends_on = [
+    kubernetes_manifest.keycloak_ingress
+  ]
 }
 
 resource "keycloak_ldap_user_federation" "lldap_user_federation" {
