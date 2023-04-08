@@ -9,7 +9,9 @@ resource "kubernetes_config_map" "keycloak_configmap" {
     KEYCLOAK_DATABASE_NAME   = kubernetes_config_map.keycloak_db_configmap.data.POSTGRES_DB
     KEYCLOAK_DATABASE_HOST   = "keycloak-db"
     KEYCLOAK_DATABASE_PORT   = 5432
-    KEYCLOAK_HTTP_PORT       = "8080"
+    KEYCLOAK_HTTP_PORT       = 8080
+    KEYCLOAK_PRODUCTION      = true
+    KEYCLOAK_ENABLE_HTTPS    = true
   }
 }
 
