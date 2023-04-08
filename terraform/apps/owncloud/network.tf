@@ -35,7 +35,7 @@ resource "kubernetes_manifest" "ocis_ingress" {
         services = [{
           name      = kubernetes_service.ocis_service.metadata[0].name
           namespace = kubernetes_namespace.ocis_namespace.metadata[0].name
-          port      = kubernetes_service.ocis_service.spec[0].port[0].target_port
+          port      = kubernetes_service.ocis_service.spec[0].port[0].port
         }]
       }]
     }

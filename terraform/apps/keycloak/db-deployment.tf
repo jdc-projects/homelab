@@ -1,7 +1,7 @@
 resource "kubernetes_config_map" "keycloak_db_configmap" {
   metadata {
-    name      = "keycloak"
-    namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
+    name      = "keycloak-db"
+    namespace = kubernetes_namespace.keycloak_namespace.metadata[0].name
   }
 
   data = {
@@ -12,8 +12,8 @@ resource "kubernetes_config_map" "keycloak_db_configmap" {
 
 resource "kubernetes_secret" "keycloak_db_secret" {
   metadata {
-    name      = "keycloak"
-    namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
+    name      = "keycloak-db"
+    namespace = kubernetes_namespace.keycloak_namespace.metadata[0].name
   }
 
   data = {
@@ -51,13 +51,13 @@ resource "kubernetes_deployment" "keycloak_db_deployment" {
 
           env_from {
             config_map_ref {
-              name = kubernetes_config_map.keycloak_configmap.metadata[0].name
+              name = kubernetes_config_map.keycloak_db_configmap.metadata[0].name
             }
           }
 
           env_from {
             secret_ref {
-              name = kubernetes_secret.keycloak_secret.metadata[0].name
+              name = kubernetes_secret.keycloak_db_secret.metadata[0].name
             }
           }
 

@@ -1,7 +1,6 @@
 resource "random_password" "keycloak_admin_username" {
   length           = 16
-  special          = true
-  override_special = "!#$%&*()-_=+[]{}<>:?"
+  special          = false
 }
 
 resource "random_password" "keycloak_admin_password" {
@@ -12,8 +11,7 @@ resource "random_password" "keycloak_admin_password" {
 
 resource "random_password" "db_admin_username" {
   length           = 16
-  special          = true
-  override_special = "!#$%&*()-_=+[]{}<>:?"
+  special          = false
 }
 
 resource "random_password" "db_admin_password" {

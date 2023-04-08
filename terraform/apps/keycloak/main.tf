@@ -1,6 +1,6 @@
 terraform {
   backend "kubernetes" {
-    secret_suffix = "apps-ldap"
+    secret_suffix = "apps-keycloak"
     config_path   = "../../cluster.yml"
     namespace     = "terraform-state"
   }
@@ -20,6 +20,11 @@ terraform {
       source  = "hashicorp/random"
       version = "3.4.3"
     }
+
+    keycloak = {
+      source  = "mrparkers/keycloak"
+      version = "4.2.0"
+    }
   }
 }
 
@@ -33,6 +38,13 @@ provider "kubernetes" {
 }
 
 provider "random" {
+}
+
+provider "keycloak" {
+  client_id = "admin-cli"
+  username  = random_password.keycloak_admin_username.result
+  password  = random_password.keycloak_admin_password.result
+  url       = kubernetes_config_map.keycloak_configmap.data.KC_DB_URL_HOST
 }
 
 resource "kubernetes_namespace" "keycloak_namespace" {

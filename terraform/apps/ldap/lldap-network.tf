@@ -81,7 +81,7 @@ resource "kubernetes_manifest" "lldap_http_ingress" {
         services = [{
           name      = kubernetes_service.lldap_http_service.metadata[0].name
           namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
-          port      = kubernetes_service.lldap_http_service.spec[0].port[0].target_port
+          port      = kubernetes_service.lldap_http_service.spec[0].port[0].port
         }]
       }]
     }

@@ -35,7 +35,7 @@ resource "kubernetes_manifest" "nextcloud_ingress" {
         services = [{
           name      = kubernetes_service.nextcloud_service.metadata[0].name
           namespace = kubernetes_namespace.nextcloud_namespace.metadata[0].name
-          port      = kubernetes_service.nextcloud_service.spec[0].port[0].target_port
+          port      = kubernetes_service.nextcloud_service.spec[0].port[0].port
         }]
       }]
     }

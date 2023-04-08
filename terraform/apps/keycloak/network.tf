@@ -1,7 +1,7 @@
 resource "kubernetes_service" "keycloak_db_service" {
   metadata {
-    name      = "keycloak-db"
-    namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
+    name      = kubernetes_config_map.keycloak_configmap.data.KEYCLOAK_DATABASE_HOST
+    namespace = kubernetes_namespace.keycloak_namespace.metadata[0].name
   }
 
   spec {
@@ -10,8 +10,8 @@ resource "kubernetes_service" "keycloak_db_service" {
     }
 
     port {
-      port        = "5432"
-      target_port = kubernetes_config_map.keycloak_configmap.data.KC_DB_URL_PORT
+      port        = 5432
+      target_port = kubernetes_config_map.keycloak_configmap.data.KEYCLOAK_DATABASE_PORT
     }
   }
 }
@@ -19,7 +19,7 @@ resource "kubernetes_service" "keycloak_db_service" {
 resource "kubernetes_service" "keycloak_service" {
   metadata {
     name      = "keycloak"
-    namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
+    namespace = kubernetes_namespace.keycloak_namespace.metadata[0].name
   }
 
   spec {
@@ -28,8 +28,8 @@ resource "kubernetes_service" "keycloak_service" {
     }
 
     port {
-      port        = "80"
-      target_port = kubernetes_config_map.keycloak_configmap.data.KC_HTTP_PORT
+      port        = 80
+      target_port = kubernetes_config_map.keycloak_configmap.data.KEYCLOAK_HTTP_PORT
     }
   }
 }
@@ -41,7 +41,7 @@ resource "kubernetes_manifest" "keycloak_ingress" {
 
     metadata = {
       name      = "keycloak"
-      namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
+      namespace = kubernetes_namespace.keycloak_namespace.metadata[0].name
     }
 
     spec = {
@@ -51,9 +51,9 @@ resource "kubernetes_manifest" "keycloak_ingress" {
         kind  = "Rule"
         match = "Host(`idp.${var.server_base_domain}`)"
         services = [{
-          name      = kubernetes_service.keycloak_http_service.metadata[0].name
-          namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
-          port      = kubernetes_service.keycloak_http_service.spec[0].port[0].target_port
+          name      = kubernetes_service.keycloak_service.metadata[0].name
+          namespace = kubernetes_namespace.keycloak_namespace.metadata[0].name
+          port      = kubernetes_service.keycloak_service.spec[0].port[0].port
         }]
       }]
     }
