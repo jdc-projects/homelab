@@ -10,8 +10,7 @@ resource "kubernetes_config_map" "keycloak_configmap" {
     KEYCLOAK_DATABASE_HOST   = "keycloak-db"
     KEYCLOAK_DATABASE_PORT   = 5432
     KEYCLOAK_HTTP_PORT       = 8080
-    KEYCLOAK_PRODUCTION      = true
-    KEYCLOAK_ENABLE_HTTPS    = true
+    KC_HOSTNAME_URL          = "https://idp.${var.server_base_domain}"
   }
 }
 

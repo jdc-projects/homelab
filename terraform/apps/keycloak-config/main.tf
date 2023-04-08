@@ -27,5 +27,5 @@ provider "keycloak" {
   client_id = "admin-cli"
   username  = terraform_remote_state.keycloak.outputs.keycloak_admin_username
   password  = terraform_remote_state.keycloak.outputs.keycloak_admin_password
-  url       = "https://idp.${var.server_base_domain}"
+  url       = terraform_remote_state.keycloak.outputs.keycloak_hostname_url
 }
