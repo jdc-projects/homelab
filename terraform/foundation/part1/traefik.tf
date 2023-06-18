@@ -28,7 +28,7 @@ resource "helm_release" "traefik_ingress" {
 
   repository = "https://traefik.github.io/charts"
   chart      = "traefik"
-  version    = "v23.1.0"
+  version    = "v21.2.0"
 
   namespace = kubernetes_namespace.traefik_namespace.metadata[0].name
 
