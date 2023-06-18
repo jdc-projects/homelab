@@ -23,8 +23,10 @@ resource "kubernetes_persistent_volume_claim" "traefik_pvc" {
   }
 }
 
-locals {
-  traefik_version = "23.1.0"
+resource "null_resource" "traefik_version" {
+  triggers = {
+    traefik_version = "21.2.0"
+  }
 }
 
 resource "helm_release" "traefik_ingress" {
@@ -32,7 +34,7 @@ resource "helm_release" "traefik_ingress" {
 
   repository = "https://traefik.github.io/charts"
   chart      = "traefik"
-  version    = local.traefik_version
+  version    = null_resource.traefik_version.triggers.traefik_version
 
   namespace = kubernetes_namespace.traefik_namespace.metadata[0].name
 
@@ -209,7 +211,7 @@ resource "helm_release" "traefik_ingress" {
   }
 
   lifecycle {
-    replace_triggered_by  = [local.traefik_version]
+    replace_triggered_by  = null_resource.traefik_version
     create_before_destroy = false
   }
 }

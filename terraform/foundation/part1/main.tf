@@ -15,6 +15,11 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "2.21.1"
     }
+
+    null = {
+      source = "hashicorp/null"
+      version = "3.2.1"
+    }
   }
 }
 
@@ -26,4 +31,8 @@ provider "helm" {
 
 provider "kubernetes" {
   config_path = "../../cluster.yml"
+}
+
+provider "null" {
+  # Configuration options
 }
