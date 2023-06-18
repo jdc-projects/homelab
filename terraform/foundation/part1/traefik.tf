@@ -211,7 +211,7 @@ resource "helm_release" "traefik_ingress" {
   }
 
   lifecycle {
-    replace_triggered_by  = null_resource.traefik_version
+    replace_triggered_by  = [null_resource.traefik_version]
     create_before_destroy = false
   }
 }
