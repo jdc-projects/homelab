@@ -1,6 +1,6 @@
 import {
   to = truenas_dataset.lldap_dataset
-  id = "lldap"
+  id = "vault/lldap"
 }
 
 resource "truenas_dataset" "lldap_dataset" {
