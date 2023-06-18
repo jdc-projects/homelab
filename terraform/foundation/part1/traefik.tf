@@ -23,12 +23,16 @@ resource "kubernetes_persistent_volume_claim" "traefik_pvc" {
   }
 }
 
+locals {
+  traefik_version = "23.1.0"
+}
+
 resource "helm_release" "traefik_ingress" {
   name = "traefik"
 
   repository = "https://traefik.github.io/charts"
   chart      = "traefik"
-  version    = "v21.2.0"
+  version    = local.traefik_version
 
   namespace = kubernetes_namespace.traefik_namespace.metadata[0].name
 
@@ -202,5 +206,10 @@ resource "helm_release" "traefik_ingress" {
   set {
     name  = "certResolvers.letsencrypt.storage"
     value = "/data/acme.json"
+  }
+
+  lifecycle {
+    replace_triggered_by = [ local.traefik_version ]
+    create_before_destroy = false
   }
 }
