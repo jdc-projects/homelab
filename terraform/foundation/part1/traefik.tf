@@ -209,7 +209,7 @@ resource "helm_release" "traefik_ingress" {
   }
 
   lifecycle {
-    replace_triggered_by = [ local.traefik_version ]
+    replace_triggered_by  = [local.traefik_version]
     create_before_destroy = false
   }
 }
