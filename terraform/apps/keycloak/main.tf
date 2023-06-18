@@ -8,22 +8,22 @@ terraform {
   required_providers {
     truenas = {
       source  = "dariusbakunas/truenas"
-      version = "0.11.0"
+      version = "0.11.1"
     }
 
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "2.18.1"
+      version = "2.21.1"
     }
 
     random = {
       source  = "hashicorp/random"
-      version = "3.4.3"
+      version = "3.5.1"
     }
 
     # keycloak = {
     #   source  = "mrparkers/keycloak"
-    #   version = "4.2.0"
+    #   version = "4.3.1"
     # }
   }
 }
