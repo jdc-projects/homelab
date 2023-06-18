@@ -58,7 +58,7 @@ resource "kubernetes_deployment" "lldap_deployment" {
 
       spec {
         container {
-          image = "nitnelave/lldap:v0.4.2-alpine"
+          image = "nitnelave/lldap:v0.4.3-alpine"
           name  = "lldap"
 
           env_from {

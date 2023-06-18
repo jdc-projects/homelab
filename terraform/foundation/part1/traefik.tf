@@ -28,7 +28,7 @@ resource "helm_release" "traefik_ingress" {
 
   repository = "https://traefik.github.io/charts"
   chart      = "traefik"
-  version    = "v21.2.0"
+  version    = "v23.1.0"
 
   namespace = kubernetes_namespace.traefik_namespace.metadata[0].name
 
@@ -46,7 +46,7 @@ resource "helm_release" "traefik_ingress" {
   }
   set {
     name  = "deployment.initContainers[0].image"
-    value = "busybox:1.35.0"
+    value = "busybox:1.36.1"
   }
   set {
     name  = "deployment.initContainers[0].command[0]"

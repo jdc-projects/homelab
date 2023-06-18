@@ -9,7 +9,7 @@ resource "helm_release" "jdc_projects_runners_controller" {
 
   repository = "https://actions-runner-controller.github.io/actions-runner-controller"
   chart      = "actions-runner-controller"
-  version    = "v0.22.0"
+  version    = "v0.23.3"
 
   namespace = kubernetes_namespace.jdc_projects_runners_namespace.metadata[0].name
 
@@ -34,7 +34,7 @@ resource "helm_release" "jdc_projects_runners_controller" {
 
   set {
     name  = "image.dindSidecarRepositoryAndTag"
-    value = "docker:23.0.2-dind"
+    value = "docker:24.0.2-dind"
   }
 
   set {
