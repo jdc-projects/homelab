@@ -2,6 +2,9 @@ name: Disaster Recovery
 on:
   workflow_dispatch:
 
+permissions:
+  issues: read|write
+
 env:
   CLIENT_CERT_DATA: ${{ secrets.KUBE_CLIENT_CERT_DATA }}
   CLIENT_KEY_DATA: ${{ secrets.KUBE_CLIENT_KEY_DATA }}
@@ -103,7 +106,7 @@ jobs:
           secret: ${{ secrets.GITHUB_TOKEN }}
           approvers: jd-chapman
           minimum-approvals: 1
-          issue-title: "Restor backup data to new storage"
+          issue-title: "Restore backup data to new storage"
           issue-body: "Please approve this issue (reply 'approved' or similar) after backup data has been restored to the new storage."
           exclude-workflow-initiator-as-approver: false
   # once approved, deployment can happen as normal
