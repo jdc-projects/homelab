@@ -69,7 +69,7 @@ jobs:
       resource-name: PLACEHOLDER
     secrets: inherit
 
-  # wait for backup data to be restored into the new storage (manual process with approval through a PR)
+  # wait for backup data to be restored into the new storage (manual process with approval through an issue)
   wait-for-data-restore:
     runs-on: self-hosted
 
@@ -83,7 +83,7 @@ jobs:
           approvers: jd-chapman
           minimum-approvals: 1
           issue-title: "Restor backup data to new storage"
-          issue-body: "Please approve this PR after backup data has been restored to the new storage."
+          issue-body: "Please approve this issue (reply 'approved' or similar) after backup data has been restored to the new storage."
           exclude-workflow-initiator-as-approver: false
   # once approved, deployment can happen as normal
       - name: "Start normal deployment"
