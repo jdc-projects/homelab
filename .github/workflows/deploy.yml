@@ -63,14 +63,6 @@ jobs:
         working-directory: ./terraform/foundation/part2
         run: "terraform apply -auto-approve -input=false"
 
-  deploy-external-services:
-    needs: deploy-foundational-services
-
-    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
-    with:
-      terraform-dir: ./terraform/apps/external-services
-    secrets: inherit
-
   deploy-services:
     needs: deploy-foundational-services
 
