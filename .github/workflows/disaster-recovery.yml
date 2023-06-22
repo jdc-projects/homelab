@@ -3,6 +3,8 @@ on:
   workflow_dispatch:
 
 permissions:
+  contents: read
+  metadata: read
   issues: write
 
 env:
