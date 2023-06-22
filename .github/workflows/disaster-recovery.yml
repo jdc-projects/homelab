@@ -2,11 +2,6 @@ name: Disaster Recovery
 on:
   workflow_dispatch:
 
-permissions:
-  contents: read
-  metadata: read
-  issues: write
-
 env:
   CLIENT_CERT_DATA: ${{ secrets.KUBE_CLIENT_CERT_DATA }}
   CLIENT_KEY_DATA: ${{ secrets.KUBE_CLIENT_KEY_DATA }}
@@ -98,6 +93,9 @@ jobs:
   wait-for-data-restore:
     runs-on: self-hosted
     needs: [deploy-ldap-storage, deploy-vaultwarden-storage]
+
+    permissions:
+      issues: write
 
     steps:
       - name: "Setup node"
