@@ -1,7 +1,7 @@
 name: deploy
 on:
-  workflow-dispatch:
-  repository-dispatch:
+  workflow_dispatch:
+  repository_dispatch:
     type: [deployment]
 
 env:
