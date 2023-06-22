@@ -1,0 +1,71 @@
+on:
+  workflow_call:
+
+env:
+  CLIENT_CERT_DATA: ${{ secrets.KUBE_CLIENT_CERT_DATA }}
+  CLIENT_KEY_DATA: ${{ secrets.KUBE_CLIENT_KEY_DATA }}
+  CLUSTER_CA_CERT_DATA: ${{ secrets.KUBE_CLUSTER_CA_CERT_DATA }}
+  SERVER_KUBE_PORT: ${{ vars.SERVER_KUBE_PORT }}
+  TF_VAR_server_base_domain: ${{ vars.TF_VARS_server_base_domain }}
+  TF_VAR_jdc_projects_runners_app_id: ${{ vars.TF_VARS_jdc_projects_runners_app_id }}
+  TF_VAR_jdc_projects_runners_app_installation_id: ${{ vars.TF_VARS_jdc_projects_runners_app_installation_id }}
+  TF_VAR_jdc_projects_runners_app_private_key: ${{ secrets.TF_VARS_jdc_projects_runners_app_private_key }}
+  TF_VAR_cloudflare_acme_token: ${{ secrets.TF_VARS_cloudflare_acme_token }}
+  TF_VAR_cloudflare_ddns_token: ${{ secrets.TF_VAR_cloudflare_ddns_token }}
+  TF_VAR_idrac_username: ${{ secrets.TF_VAR_idrac_username }}
+  TF_VAR_idrac_password: ${{ secrets.TF_VAR_idrac_password }}
+  TF_VAR_truenas_api_key: ${{ secrets.TF_VAR_truenas_api_key }}
+  TF_VAR_lldap_admin_password: ${{ secrets.TF_VAR_idrac_password }} # this is temporary
+  TF_VAR_nextcloud_admin_password: ${{ secrets.TF_VAR_idrac_password }} # this is temporary
+  TF_VAR_smtp_host: ${{ vars.SMTP_SERVER }}
+  TF_VAR_smtp_port: ${{ vars.SMTP_PORT }}
+  TF_VAR_smtp_username: ${{ vars.SMTP_USERNAME }}
+  TF_VAR_smtp_password: ${{ secrets.SMTP_PASSWORD }}
+
+jobs:
+  deploy-kubernetes-terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v3
+      - name: "Terraform setup"
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.4.2
+      - name: "Generate kubeconfig"
+        working-directory: ./terraform
+        run: "./cluster-config-write.sh"
+      - name: "Add cluster CA certificate"
+        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.25.3'
+      - name: "Create terraform-state namespace"
+        working-directory: ./terraform
+        run: "kubectl --kubeconfig ./cluster.yml apply -f ./terraform-state-namespace.yml"
+      - name: "Terraform format check"
+        working-directory: ./terraform/foundation/part1
+        run: "terraform fmt -check"
+      - name: "Terraform init"
+        working-directory: ./terraform/foundation/part1
+        run: "terraform init"
+      - name: "Terraform plan"
+        working-directory: ./terraform/foundation/part1
+        run: "terraform plan -input=false"
+      - name: "Terraform apply"
+        working-directory: ./terraform/foundation/part1
+        run: "terraform apply -auto-approve -input=false"
+      - name: "Terraform format check"
+        working-directory: ./terraform/foundation/part2
+        run: "terraform fmt -check"
+      - name: "Terraform init"
+        working-directory: ./terraform/foundation/part2
+        run: "terraform init"
+      - name: "Terraform plan"
+        working-directory: ./terraform/foundation/part2
+        run: "terraform plan -input=false"
+      - name: "Terraform apply"
+        working-directory: ./terraform/foundation/part2
+        run: "terraform apply -auto-approve -input=false"
