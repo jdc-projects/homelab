@@ -1,6 +1,6 @@
 resource "truenas_dataset" "lldap_dataset" {
-  pool               = "vault/apps"
-  name               = "lldap"
+  pool               = "vault"
+  name               = "apps/lldap"
   inherit_encryption = true
 
   lifecycle {

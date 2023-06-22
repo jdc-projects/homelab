@@ -1,6 +1,6 @@
 resource "truenas_dataset" "vaultwarden_dataset" {
-  pool               = "vault/apps"
-  name               = "vaultwarden"
+  pool               = "vault"
+  name               = "apps/vaultwarden"
   inherit_encryption = true
 
   lifecycle {
