@@ -1,5 +1,5 @@
 resource "truenas_dataset" "ocis_dataset" {
-  pool               = "vault"
+  pool               = "vault/apps"
   name               = "ocis"
   inherit_encryption = true
 

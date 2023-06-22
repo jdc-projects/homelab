@@ -1,10 +1,5 @@
-import {
-  to = truenas_dataset.lldap_dataset
-  id = "vault/lldap"
-}
-
 resource "truenas_dataset" "lldap_dataset" {
-  pool               = "vault"
+  pool               = "vault/apps"
   name               = "lldap"
   inherit_encryption = true
 

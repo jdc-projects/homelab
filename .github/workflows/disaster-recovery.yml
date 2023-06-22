@@ -62,22 +62,31 @@ jobs:
         run: "terraform apply -auto-approve -input=false"
 
   # deploy storage (and only storage)
-  deploy-ldap-storage:
+  deploy-services-storage:
     needs: deploy-foundational-services
+
+    uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
+    with:
+      terraform-dir: ./terraform/apps/services
+      resource-name: truenas_dataset.apps_dataset
+    secrets: inherit
+
+  deploy-ldap-storage:
+    needs: deploy-services-storage
 
     uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
     with:
       terraform-dir: ./terraform/apps/ldap
-      resource-name: PLACEHOLDER
+      resource-name: truenas_dataset.lldap_dataset
     secrets: inherit
 
   deploy-vaultwarden-storage:
-    needs: deploy-foundational-services
+    needs: deploy-services-storage
 
     uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
     with:
       terraform-dir: ./terraform/apps/vaultwarden
-      resource-name: PLACEHOLDER
+      resource-name: truenas_dataset.vaultwarden_dataset
     secrets: inherit
 
   # wait for backup data to be restored into the new storage (manual process with approval through an issue)
