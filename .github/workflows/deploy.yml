@@ -3,6 +3,9 @@ on:
   workflow_dispatch:
   repository_dispatch:
     type: [deployment]
+  push:
+    branches:
+      - 'trunk'
 
 jobs:
   deploy-foundational-services:
