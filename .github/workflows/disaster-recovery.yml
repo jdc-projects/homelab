@@ -92,6 +92,7 @@ jobs:
   # wait for backup data to be restored into the new storage (manual process with approval through an issue)
   wait-for-data-restore:
     runs-on: self-hosted
+    needs: [deploy-ldap-storage, deploy-vaultwarden-storage]
 
     steps:
       - name: "Setup node"
