@@ -42,6 +42,7 @@ jobs:
 
     permissions:
       issues: write
+      actions: write
 
     steps:
       - name: "Setup node"
