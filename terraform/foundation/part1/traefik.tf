@@ -25,7 +25,7 @@ resource "kubernetes_persistent_volume_claim" "traefik_pvc" {
 
 resource "null_resource" "traefik_version" {
   triggers = {
-    traefik_version = "22.3.0"
+    traefik_version = "21.2.1"
   }
 }
 
