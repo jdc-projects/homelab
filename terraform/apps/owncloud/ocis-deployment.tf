@@ -26,9 +26,9 @@ resource "kubernetes_config_map" "ocis_configmap" {
     OCIS_URL                        = "https://owncloud.${var.server_base_domain}"
     OCIS_LOG_LEVEL                  = "info"
     # OCIS_LOG_COLOR                  = ""
-    PROXY_TLS                       = "false" # *****
-    OCIS_INSECURE                   = "" # *****
-    PROXY_ENABLE_BASIC_AUTH         = "" # *****
+    PROXY_TLS               = "false" # *****
+    OCIS_INSECURE           = ""      # *****
+    PROXY_ENABLE_BASIC_AUTH = ""      # *****
   }
 }
 
@@ -39,7 +39,7 @@ resource "kubernetes_secret" "ocis_secret" {
   }
 
   data = {
-    LDAP_BIND_PASSWORD              = var.lldap_admin_password
+    LDAP_BIND_PASSWORD = var.lldap_admin_password
   }
 }
 
