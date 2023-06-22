@@ -1,7 +1,13 @@
+resource "kubernetes_namespace" "truenas_namespace" {
+  metadata {
+    name = "truenas"
+  }
+}
+
 resource "kubernetes_service" "truenas_service" {
   metadata {
     name      = "truenas"
-    namespace = "traefik"
+    namespace = kubernetes_namespace.truenas_namespace.metadata[0].name
   }
 
   spec {
@@ -17,7 +23,7 @@ resource "kubernetes_manifest" "truenas_ingressroute" {
 
     metadata = {
       name      = "truenas"
-      namespace = "traefik"
+      namespace = kubernetes_namespace.truenas_namespace.metadata[0].name
     }
 
     spec = {
@@ -28,7 +34,7 @@ resource "kubernetes_manifest" "truenas_ingressroute" {
         match = "Host(`nas.${var.server_base_domain}`)"
         services = [{
           name      = "truenas"
-          namespace = "traefik"
+          namespace = kubernetes_namespace.truenas_namespace.metadata[0].name
           scheme    = "https"
           port      = 444
         }]
