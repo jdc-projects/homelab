@@ -100,7 +100,7 @@ jobs:
       - name: "Wait for approval"
         uses: trstringer/manual-approval@v1
         with:
-          secret: ${{ github.TOKEN }}
+          secret: ${{ secrets.GITHUB_TOKEN }}
           approvers: jd-chapman
           minimum-approvals: 1
           issue-title: "Restor backup data to new storage"
