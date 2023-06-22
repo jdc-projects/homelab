@@ -6,6 +6,29 @@ resource "kubernetes_config_map" "ocis_configmap" {
   }
 
   data = {
+    LDAP_URI                        = "ldaps://idm.${var.server_base_domain}"
+    LDAP_INSECURE                   = "false"
+    LDAP_BIND_DN                    = "uid=admin,dc=idm,dc=${var.server_base_domain}"
+    LDAP_GROUP_BASE_DN              = "ou=groups,dc=idm,dc=${var.server_base_domain}"
+    LDAP_GROUP_FILTER               = "" # *****
+    LDAP_GROUP_OBJECTCLASS          = "" # *****
+    LDAP_USER_BASE_DN               = "ou=people,dc=idm,dc=${var.server_base_domain}"
+    LDAP_USER_FILTER                = "" # *****
+    LDAP_USER_OBJECTCLASS           = "" # *****
+    LDAP_LOGIN_ATTRIBUTES           = "uid"
+    OCIS_ADMIN_USER_ID              = "" # *****
+    IDP_LDAP_LOGIN_ATTRIBUTE        = "" # *****
+    IDP_LDAP_UUID_ATTRIBUTE         = "" # *****
+    IDP_LDAP_UUID_ATTRIBUTE_TYPE    = "" # *****
+    GRAPH_LDAP_SERVER_WRITE_ENABLED = "false"
+    GRAPH_LDAP_REFINT_ENABLED       = "false"
+    OCIS_RUN_SERVICES               = "app-registry,app-provider,audit,auth-basic,auth-machine,frontend,gateway,graph,groups,idp,nats,notifications,ocdav,ocs,proxy,search,settings,sharing,storage-system,storage-publiclink,storage-shares,storage-users,store,thumbnails,users,web,webdav"
+    OCIS_URL                        = "https://owncloud.${var.server_base_domain}"
+    OCIS_LOG_LEVEL                  = "info"
+    # OCIS_LOG_COLOR                  = ""
+    PROXY_TLS                       = "false" # *****
+    OCIS_INSECURE                   = "" # *****
+    PROXY_ENABLE_BASIC_AUTH         = "" # *****
   }
 }
 
@@ -16,6 +39,7 @@ resource "kubernetes_secret" "ocis_secret" {
   }
 
   data = {
+    LDAP_BIND_PASSWORD              = var.lldap_admin_password
   }
 }
 
@@ -59,7 +83,7 @@ resource "kubernetes_deployment" "ocis_deployment" {
           }
 
           volume_mount {
-            mount_path = "/var/www/html"
+            mount_path = "/var/lib/ocis"
             name       = "ocis-data"
           }
         }

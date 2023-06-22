@@ -28,3 +28,9 @@ variable "smtp_password" {
   sensitive   = true
   description = "Password for the SMTP server."
 }
+
+variable "lldap_admin_password" {
+  type        = string
+  sensitive   = true
+  description = "Password for the LLDAP admin user."
+}
