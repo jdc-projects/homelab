@@ -35,11 +35,3 @@ jobs:
     with:
       terraform-dir: ./terraform/apps/vaultwarden
     secrets: inherit
-
-  # deploy-nextcloud:
-  #   needs: deploy-ldap
-
-  #   uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
-  #   with:
-  #     terraform-dir: ./terraform/apps/nextcloud
-  #   secrets: inherit
