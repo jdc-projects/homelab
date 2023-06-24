@@ -20,11 +20,6 @@ terraform {
       source  = "hashicorp/random"
       version = "3.5.1"
     }
-
-    # keycloak = {
-    #   source  = "mrparkers/keycloak"
-    #   version = "4.3.1"
-    # }
   }
 }
 
@@ -39,13 +34,6 @@ provider "kubernetes" {
 
 provider "random" {
 }
-
-# provider "keycloak" {
-#   client_id = "admin-cli"
-#   username  = random_password.keycloak_admin_username.result
-#   password  = random_password.keycloak_admin_password.result
-#   url       = "https://idp.${var.server_base_domain}"
-# }
 
 resource "kubernetes_namespace" "keycloak_namespace" {
   metadata {
