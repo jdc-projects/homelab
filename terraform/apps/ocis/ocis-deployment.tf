@@ -71,19 +71,19 @@ resource "kubernetes_deployment" "ocis_deployment" {
             }
           }
 
-          volume_mount {
-            mount_path = "/var/lib/ocis"
-            name       = "ocis-data"
-          }
+          # volume_mount {
+          #   mount_path = "/var/lib/ocis"
+          #   name       = "ocis-data"
+          # }
         }
 
-        volume {
-          name = "ocis-data"
+        # volume {
+        #   name = "ocis-data"
 
-          host_path {
-            path = truenas_dataset.ocis_dataset.mount_point
-          }
-        }
+        #   host_path {
+        #     path = truenas_dataset.ocis_dataset.mount_point
+        #   }
+        # }
       }
     }
   }
