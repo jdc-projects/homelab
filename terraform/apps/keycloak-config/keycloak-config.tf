@@ -34,7 +34,7 @@ resource "keycloak_ldap_group_mapper" "lldap_group_mapper" {
   ldap_user_federation_id = keycloak_ldap_user_federation.lldap_user_federation.id
   name                    = "group-mapper"
 
-  ldap_groups_dn            = "ou=group,dc=idm,dc=${var.server_base_domain}"
+  ldap_groups_dn            = "ou=groups,dc=idm,dc=${var.server_base_domain}"
   group_name_ldap_attribute = "cn"
   group_object_classes = [
     "groupOfUniqueNames"
