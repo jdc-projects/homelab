@@ -5,9 +5,9 @@ resource "random_password" "keycloak_admin_username" {
 }
 
 resource "random_password" "keycloak_admin_password" {
-  length  = 16
-  numeric = true
-  special = false
+  length           = 16
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 
 resource "random_password" "db_admin_username" {
@@ -17,7 +17,7 @@ resource "random_password" "db_admin_username" {
 }
 
 resource "random_password" "db_admin_password" {
-  length  = 16
-  numeric = true
-  special = false
+  length           = 16
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
 }
