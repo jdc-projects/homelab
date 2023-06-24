@@ -27,6 +27,18 @@ resource "random_password" "ocis_jwt_secret" {
   override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 
+resource "random_password" "ocis_transfer_secret" {
+  length           = 16
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
+resource "random_password" "ocis_machine_auth_api_key" {
+  length           = 16
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
 resource "kubernetes_secret" "ocis_secret" {
   metadata {
     name      = "ocis"
@@ -36,6 +48,8 @@ resource "kubernetes_secret" "ocis_secret" {
   data = {
     AUTH_BASIC_LDAP_BIND_PASSWORD = var.lldap_admin_password
     OCIS_JWT_SECRET               = random_password.ocis_jwt_secret.result
+    STORAGE_TRANSFER_SECRET       = random_password.ocis_transfer_secret.result
+    OCIS_MACHINE_AUTH_API_KEY     = random_password.ocis_machine_auth_api_key.result
   }
 }
 
