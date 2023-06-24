@@ -18,7 +18,7 @@ resource "keycloak_ldap_user_federation" "lldap_user_federation" {
   ]
   connection_url  = "ldaps://idm.${var.server_base_domain}"
   users_dn        = "ou=people,dc=idm,dc=${var.server_base_domain}"
-  bind_dn         = "uid=admin,ou=peopledc=idm,dc=${var.server_base_domain}"
+  bind_dn         = "uid=admin,ou=people,dc=idm,dc=${var.server_base_domain}"
   bind_credential = var.lldap_admin_password
 
   pagination = false
