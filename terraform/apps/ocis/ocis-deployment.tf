@@ -7,7 +7,7 @@ resource "kubernetes_config_map" "ocis_configmap" {
 
   data = {
     OCIS_URL                      = "https://owncloud.${var.server_base_domain}"
-    OCIS_LOG_LEVEL                = "info"
+    OCIS_LOG_LEVEL                = "debug"
     PROXY_TLS                     = "false"
     OCIS_INSECURE                 = "true"
     PROXY_ENABLE_BASIC_AUTH       = "true"
