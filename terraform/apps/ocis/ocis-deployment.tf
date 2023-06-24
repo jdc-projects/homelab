@@ -15,7 +15,6 @@ resource "kubernetes_config_map" "ocis_configmap" {
     AUTH_BASIC_LDAP_URI           = "ldaps://idm.${var.server_base_domain}"
     AUTH_BASIC_LDAP_INSECURE      = "false"
     AUTH_BASIC_LDAP_BIND_DN       = "uid=admin,dc=idm,dc=${var.server_base_domain}"
-    AUTH_BASIC_LDAP_BIND_PASSWORD = "${var.lldap_admin_password}"
     AUTH_BASIC_LDAP_USER_BASE_DN  = "ou=people,dc=idm,dc=${var.server_base_domain}"
     AUTH_BASIC_LDAP_GROUP_BASE_DN = "ou=groups,dc=idm,dc=${var.server_base_domain}"
     # OCIS_RUN_SERVICES               = "app-registry,app-provider,audit,auth-basic,auth-machine,frontend,gateway,graph,groups,idp,nats,notifications,ocdav,ocs,proxy,search,settings,sharing,storage-system,storage-publiclink,storage-shares,storage-users,store,thumbnails,users,web,webdav"
@@ -29,7 +28,7 @@ resource "kubernetes_secret" "ocis_secret" {
   }
 
   data = {
-    LDAP_BIND_PASSWORD = var.lldap_admin_password
+    AUTH_BASIC_LDAP_BIND_PASSWORD = var.lldap_admin_password
   }
 }
 
