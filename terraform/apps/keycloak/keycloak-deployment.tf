@@ -21,8 +21,8 @@ resource "kubernetes_secret" "keycloak_secret" {
   }
 
   data = {
-    KEYCLOAK_ADMIN_USER        = random_password.keycloak_admin_username.result
-    KEYCLOAK_ADMIN_PASSWORD    = random_password.keycloak_admin_password.result
+    KEYCLOAK_ADMIN_USER        = var.keycloak_admin_username
+    KEYCLOAK_ADMIN_PASSWORD    = var.keycloak_admin_password
     KEYCLOAK_DATABASE_PASSWORD = random_password.db_admin_username.result
     KEYCLOAK_DATABASE_USER     = random_password.db_admin_password.result
   }
