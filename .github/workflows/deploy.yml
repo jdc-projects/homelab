@@ -52,10 +52,10 @@ jobs:
       terraform-dir: ./terraform/apps/keycloak
     secrets: inherit
 
-  deploy-keycloak-config:
-    needs: deploy-keycloak
+  # deploy-keycloak-config:
+  #   needs: deploy-keycloak
 
-    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
-    with:
-      terraform-dir: ./terraform/apps/keycloak-config
-    secrets: inherit
+  #   uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
+  #   with:
+  #     terraform-dir: ./terraform/apps/keycloak-config
+  #   secrets: inherit
