@@ -25,7 +25,8 @@ resource "keycloak_ldap_user_federation" "lldap_user_federation" {
   bind_dn         = "uid=admin,ou=people,dc=idm,dc=${var.server_base_domain}"
   bind_credential = var.lldap_admin_password
 
-  pagination = false
+  pagination                      = false
+  use_password_modify_extended_op = true
 }
 
 resource "keycloak_ldap_group_mapper" "lldap_group_mapper" {
