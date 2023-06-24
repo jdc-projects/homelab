@@ -56,7 +56,7 @@ resource "kubernetes_deployment" "ocis_deployment" {
 
       spec {
         container {
-          image = "owncloud/ocis:2.0.0"
+          image = "owncloud/ocis:3.0.0"
           name  = "ocis"
 
           env_from {
