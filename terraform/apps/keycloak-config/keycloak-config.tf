@@ -24,14 +24,14 @@ resource "keycloak_ldap_user_federation" "lldap_user_federation" {
   pagination = false
 }
 
-resource "keycloak_ldap_role_mapper" "lldap_role_mapper" {
+resource "keycloak_ldap_group_mapper" "lldap_group_mapper" {
   realm_id                = keycloak_realm.lldap_realm.id
   ldap_user_federation_id = keycloak_ldap_user_federation.lldap_user_federation.id
-  name                    = "role-mapper"
+  name                    = "group-mapper"
 
-  ldap_roles_dn            = "ou=group,dc=idm,dc=${var.server_base_domain}"
-  role_name_ldap_attribute = "cn"
-  role_object_classes = [
+  ldap_groups_dn            = "ou=group,dc=idm,dc=${var.server_base_domain}"
+  group_name_ldap_attribute = "cn"
+  group_object_classes = [
     "groupOfUniqueNames"
   ]
   membership_ldap_attribute      = "member"
