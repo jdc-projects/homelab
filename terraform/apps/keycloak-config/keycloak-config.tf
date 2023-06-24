@@ -1,6 +1,10 @@
 resource "keycloak_realm" "lldap_realm" {
   realm   = "my-realm"
   enabled = true
+
+  registration_email_as_username = false
+  login_with_email_allowed       = false
+  duplicate_emails_allowed       = true
 }
 
 resource "keycloak_ldap_user_federation" "lldap_user_federation" {
