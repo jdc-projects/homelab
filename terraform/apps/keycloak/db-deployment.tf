@@ -61,19 +61,19 @@ resource "kubernetes_deployment" "keycloak_db_deployment" {
             }
           }
 
-          volume_mount {
-            mount_path = kubernetes_config_map.keycloak_db_configmap.data.PGDATA
-            name       = "keycloak-db-data"
-          }
+          # volume_mount {
+          #   mount_path = kubernetes_config_map.keycloak_db_configmap.data.PGDATA
+          #   name       = "keycloak-db-data"
+          # }
         }
 
-        volume {
-          name = "keycloak-db-data"
+        # volume {
+        #   name = "keycloak-db-data"
 
-          host_path {
-            path = truenas_dataset.keycloak_db_dataset.mount_point
-          }
-        }
+        #   host_path {
+        #     path = truenas_dataset.keycloak_db_dataset.mount_point
+        #   }
+        # }
       }
     }
   }
