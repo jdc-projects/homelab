@@ -6,18 +6,19 @@ resource "kubernetes_config_map" "ocis_configmap" {
   }
 
   data = {
-    OCIS_URL                      = "https://owncloud.${var.server_base_domain}"
-    OCIS_LOG_LEVEL                = "debug"
-    PROXY_TLS                     = "false"
-    OCIS_INSECURE                 = "true"
-    PROXY_ENABLE_BASIC_AUTH       = "true"
-    AUTH_BASIC_AUTH_MANAGER       = "ldap"
-    AUTH_BASIC_LDAP_URI           = "ldaps://idm.${var.server_base_domain}"
-    AUTH_BASIC_LDAP_INSECURE      = "false"
-    AUTH_BASIC_LDAP_BIND_DN       = "uid=admin,dc=idm,dc=${var.server_base_domain}"
-    AUTH_BASIC_LDAP_USER_BASE_DN  = "ou=people,dc=idm,dc=${var.server_base_domain}"
-    AUTH_BASIC_LDAP_GROUP_BASE_DN = "ou=groups,dc=idm,dc=${var.server_base_domain}"
-    OCIS_ADMIN_USER_ID            = "jack"
+    IDM_CREATE_DEMO_USERS = "true"
+    # OCIS_URL                      = "https://owncloud.${var.server_base_domain}"
+    # OCIS_LOG_LEVEL                = "debug"
+    # PROXY_TLS                     = "false"
+    # OCIS_INSECURE                 = "true"
+    # PROXY_ENABLE_BASIC_AUTH       = "true"
+    # AUTH_BASIC_AUTH_MANAGER       = "ldap"
+    # AUTH_BASIC_LDAP_URI           = "ldaps://idm.${var.server_base_domain}"
+    # AUTH_BASIC_LDAP_INSECURE      = "false"
+    # AUTH_BASIC_LDAP_BIND_DN       = "uid=admin,dc=idm,dc=${var.server_base_domain}"
+    # AUTH_BASIC_LDAP_USER_BASE_DN  = "ou=people,dc=idm,dc=${var.server_base_domain}"
+    # AUTH_BASIC_LDAP_GROUP_BASE_DN = "ou=groups,dc=idm,dc=${var.server_base_domain}"
+    # OCIS_ADMIN_USER_ID            = "jack"
     # OCIS_RUN_SERVICES               = "app-registry,app-provider,audit,auth-basic,auth-machine,frontend,gateway,graph,groups,idp,nats,notifications,ocdav,ocs,proxy,search,settings,sharing,storage-system,storage-publiclink,storage-shares,storage-users,store,thumbnails,users,web,webdav"
   }
 }
@@ -47,10 +48,10 @@ resource "kubernetes_secret" "ocis_secret" {
   }
 
   data = {
-    AUTH_BASIC_LDAP_BIND_PASSWORD = var.lldap_admin_password
-    OCIS_JWT_SECRET               = random_password.ocis_jwt_secret.result
-    STORAGE_TRANSFER_SECRET       = random_password.ocis_transfer_secret.result
-    OCIS_MACHINE_AUTH_API_KEY     = random_password.ocis_machine_auth_api_key.result
+    # AUTH_BASIC_LDAP_BIND_PASSWORD = var.lldap_admin_password
+    # OCIS_JWT_SECRET               = random_password.ocis_jwt_secret.result
+    # STORAGE_TRANSFER_SECRET       = random_password.ocis_transfer_secret.result
+    # OCIS_MACHINE_AUTH_API_KEY     = random_password.ocis_machine_auth_api_key.result
   }
 }
 
