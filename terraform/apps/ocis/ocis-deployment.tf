@@ -7,10 +7,10 @@ resource "kubernetes_config_map" "ocis_configmap" {
 
   data = {
     # IDM_CREATE_DEMO_USERS = "true"
-    OCIS_URL                      = "https://owncloud.${var.server_base_domain}"
-    OCIS_LOG_LEVEL                = "debug"
+    OCIS_URL       = "https://owncloud.${var.server_base_domain}"
+    OCIS_LOG_LEVEL = "debug"
     # PROXY_TLS                     = "false"
-    OCIS_INSECURE                 = "true"
+    OCIS_INSECURE = "true"
     # PROXY_ENABLE_BASIC_AUTH       = "true"
     # AUTH_BASIC_AUTH_MANAGER       = "ldap"
     # AUTH_BASIC_LDAP_URI           = "ldaps://idm.${var.server_base_domain}"
