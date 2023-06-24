@@ -17,6 +17,7 @@ resource "kubernetes_config_map" "ocis_configmap" {
     AUTH_BASIC_LDAP_BIND_DN       = "uid=admin,dc=idm,dc=${var.server_base_domain}"
     AUTH_BASIC_LDAP_USER_BASE_DN  = "ou=people,dc=idm,dc=${var.server_base_domain}"
     AUTH_BASIC_LDAP_GROUP_BASE_DN = "ou=groups,dc=idm,dc=${var.server_base_domain}"
+    OCIS_ADMIN_USER_ID            = "jack"
     # OCIS_RUN_SERVICES               = "app-registry,app-provider,audit,auth-basic,auth-machine,frontend,gateway,graph,groups,idp,nats,notifications,ocdav,ocs,proxy,search,settings,sharing,storage-system,storage-publiclink,storage-shares,storage-users,store,thumbnails,users,web,webdav"
   }
 }
