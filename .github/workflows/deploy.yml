@@ -35,3 +35,11 @@ jobs:
     with:
       terraform-dir: ./terraform/apps/vaultwarden
     secrets: inherit
+
+  deploy-ocis:
+    needs: deploy-ldap
+
+    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
+    with:
+      terraform-dir: ./terraform/apps/ocis
+    secrets: inherit
