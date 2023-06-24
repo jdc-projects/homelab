@@ -35,7 +35,7 @@ resource "kubernetes_secret" "ocis_secret" {
 
   data = {
     AUTH_BASIC_LDAP_BIND_PASSWORD = var.lldap_admin_password
-    OCIS_JWT_SECRET = random_password.ocis_jwt_secret.result
+    OCIS_JWT_SECRET               = random_password.ocis_jwt_secret.result
   }
 }
 
