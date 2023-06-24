@@ -21,6 +21,12 @@ resource "kubernetes_config_map" "ocis_configmap" {
   }
 }
 
+resource "random_password" "ocis_jwt_secret" {
+  length           = 16
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
 resource "kubernetes_secret" "ocis_secret" {
   metadata {
     name      = "ocis"
@@ -29,6 +35,7 @@ resource "kubernetes_secret" "ocis_secret" {
 
   data = {
     AUTH_BASIC_LDAP_BIND_PASSWORD = var.lldap_admin_password
+    OCIS_JWT_SECRET = random_password.ocis_jwt_secret.result
   }
 }
 
