@@ -25,8 +25,12 @@ resource "keycloak_ldap_user_federation" "lldap_user_federation" {
   bind_dn         = "uid=admin,ou=people,dc=idm,dc=${var.server_base_domain}"
   bind_credential = var.lldap_admin_password
 
-  pagination                      = false
   use_password_modify_extended_op = true
+
+  pagination = false
+
+  full_sync_period    = 3600
+  changed_sync_period = 60
 }
 
 resource "keycloak_ldap_group_mapper" "lldap_group_mapper" {
@@ -43,4 +47,6 @@ resource "keycloak_ldap_group_mapper" "lldap_group_mapper" {
   membership_user_ldap_attribute = "cn"
 
   mode = "READ_ONLY"
+
+  drop_non_existing_groups_during_sync = true
 }
