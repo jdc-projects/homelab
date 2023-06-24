@@ -14,15 +14,3 @@ variable "lldap_admin_password" {
   sensitive   = true
   description = "Password for the LLDAP admin user."
 }
-
-variable "keycloak_admin_username" {
-  type        = string
-  sensitive   = true
-  description = "Password for the LLDAP admin user."
-}
-
-variable "keycloak_admin_password" {
-  type        = string
-  sensitive   = true
-  description = "Password for the LLDAP admin user."
-}
