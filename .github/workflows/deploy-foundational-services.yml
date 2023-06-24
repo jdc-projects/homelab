@@ -51,9 +51,6 @@ jobs:
       - name: "Terraform init"
         working-directory: ./terraform/foundation/part1
         run: "terraform init"
-      - name: "Terraform plan"
-        working-directory: ./terraform/foundation/part1
-        run: "terraform plan -input=false"
       - name: "Terraform apply"
         working-directory: ./terraform/foundation/part1
         run: "terraform apply -auto-approve -input=false"
@@ -63,9 +60,6 @@ jobs:
       - name: "Terraform init"
         working-directory: ./terraform/foundation/part2
         run: "terraform init"
-      - name: "Terraform plan"
-        working-directory: ./terraform/foundation/part2
-        run: "terraform plan -input=false"
       - name: "Terraform apply"
         working-directory: ./terraform/foundation/part2
         run: "terraform apply -auto-approve -input=false"
