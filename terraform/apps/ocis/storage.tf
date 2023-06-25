@@ -5,7 +5,7 @@ resource "truenas_dataset" "ocis_base_dataset" {
   inherit_encryption = true
 
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = true
   }
 }
 
@@ -18,7 +18,7 @@ resource "truenas_dataset" "ocis_storageusers_dataset" {
   depends_on = [truenas_dataset.ocis_base_dataset]
 
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = true
   }
 }
 
@@ -31,7 +31,7 @@ resource "truenas_dataset" "ocis_store_dataset" {
   depends_on = [truenas_dataset.ocis_base_dataset]
 
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = true
   }
 }
 
