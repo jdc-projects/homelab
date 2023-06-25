@@ -22,7 +22,7 @@ resource "helm_release" "ocis" {
   }
   set { # ***** TEMPORARY *****
     name  = "features.externalUserManagement.ldap.adminUUID"
-    value = "false"
+    value = "e25b0b56-6478-4a95-b8be-f5cd1636d2a9"
   }
   set {
     name  = "features.externalUserManagement.oidc.issuerURI"
