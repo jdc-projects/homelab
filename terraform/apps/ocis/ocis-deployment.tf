@@ -72,4 +72,6 @@ resource "helm_release" "ocis" {
     name  = "services.web.persistence.enabled"
     value = "false" # ***** CHANGE THIS LATER *****
   }
+
+  depends_on = [ null_resource.ocis_helm_repo ]
 }
