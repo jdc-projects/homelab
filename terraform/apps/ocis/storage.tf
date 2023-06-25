@@ -54,7 +54,7 @@ resource "kubernetes_persistent_volume" "ocis_storageusers_pv" {
       }
     }
 
-    storage_class_name = "ocis_host_path"
+    storage_class_name = "ocis-storageusers-host-path"
   }
 }
 
@@ -94,7 +94,7 @@ resource "kubernetes_persistent_volume" "ocis_store_pv" {
       }
     }
 
-    storage_class_name = "ocis_host_path"
+    storage_class_name = "ocis-store-host-path"
   }
 }
 
