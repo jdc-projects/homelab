@@ -76,26 +76,26 @@ resource "helm_release" "ocis" {
     name  = "features.externalUserManagement.ldap.passwordModifyExOpEnabled"
     value = "true"
   }
-  # set {
-  #   name  = "features.externalUserManagement.ldap.useServerUUID"
-  #   value = "true"
-  # }
-  # ***** user schema options need to be filled out
-  # set {
-  #   name  = "features.externalUserManagement.ldap.useServerUUID"
-  #   value = ""
-  # }
-  # *****
   set {
-    name  = "features.externalUserManagement.ldap.user.baseDN"
-    value = "ou=people,dc=idm,dc=${var.server_base_domain}"
+    name  = "features.externalUserManagement.ldap.useServerUUID"
+    value = "true"
   }
-  # ***** group schema options nee to be filled out
-  # set {
-  #   name  = "features.externalUserManagement.ldap.useServerUUID"
-  #   value = ""
-  # }
-  # *****
+  set {
+    name  = "features.externalUserManagement.ldap.user.schema.id"
+    value = "uid"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.user.schema.filter"
+    value = "(&(objectClass=person)(memberOf=uid=ocis,ou=groups,dc=idm,dc=${var.server_base_domain}))"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.user.schema.objectClass"
+    value = "person"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.group.schema.id"
+    value = "uid"
+  }
   set {
     name  = "features.externalUserManagement.ldap.group.baseDN"
     value = "ou=groups,dc=idm,dc=${var.server_base_domain}"
