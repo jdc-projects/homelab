@@ -45,7 +45,7 @@ resource "kubernetes_persistent_volume" "ocis_storageusers_pv" {
 
     persistent_volume_source {
       host_path {
-        path = truenas_dataset.ocis_storageuser_dataset.mount_point
+        path = truenas_dataset.ocis_storageusers_dataset.mount_point
       }
     }
 
