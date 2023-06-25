@@ -1,5 +1,9 @@
 resource "null_resource" "ocis_helm_repo" {
+  triggers = {
+    always_run = "${timestamp()}"
+  }
+
   provisioner "local-exec" {
-    command = "git clone --depth 1 -b v0.4.0 https://github.com/owncloud/ocis-charts.git && sleep 1"
+    command = "git clone --depth 1 -b v0.4.0 https://github.com/owncloud/ocis-charts.git"
   }
 }
