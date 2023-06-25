@@ -16,30 +16,79 @@ resource "helm_release" "ocis" {
     value = "ocis.${var.server_base_domain}"
   }
 
+  set {
+    name  = "features.externalUserManagement.enabled"
+    value = "true"
+  }
+  set { # ***** TEMPORARY *****
+    name  = "features.externalUserManagement.ldap.adminUUID"
+    value = "false"
+  }
+  set {
+    name  = "features.externalUserManagement.oidc.issuerURI"
+    value = "https://idp.${var.server_base_domain}/realms/${data.terraform_remote_state.keycloak_config.outputs.keycloak_lldap_realm_id}"
+  }
+  set {
+    name  = "features.externalUserManagement.oidc.webClientID"
+    value = keycloak_openid_client.client_id
+  }
+  set {
+    name  = "features.externalUserManagement.oidc.userIDClaim"
+    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_lldap_realm_id}.user.uuid"
+  }
+  set {
+    name  = "features.externalUserManagement.oidc.userIDClaimAttributeMapping"
+    value = "userID"
+  }
   # set {
-  #   name  = "features.externalUserManagement.enabled"
+  #   name  = "features.externalUserManagement.oidc.roleAssignment.enabled"
   #   value = "true"
   # }
+
+  set {
+    name  = "features.externalUserManagement.ldap.writeable"
+    value = "false"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.uri"
+    value = "ldaps://idm.${var.server_base_domain}"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.bindDN"
+    value = "uid=admin,ou=people,dc=idm,dc=${var.server_base_domain}"
+  }
+  set {
+    name  = "secretRefs.ldapSecretRef"
+    value = "" # need to create a secret and reference it here, with the field reva-ldap-bind-password containing the LLDAP admin pasword
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.passwordModifyExOpEnabled"
+    value = "true"
+  }
   # set {
-  #   name  = "features.externalUserManagement.enabled"
+  #   name  = "features.externalUserManagement.ldap.useServerUUID"
+  #   value = "true"
+  # }
+  # ***** user schema options need to be filled out
+  # set {
+  #   name  = "features.externalUserManagement.ldap.useServerUUID"
   #   value = ""
   # }
+  # *****
+  set {
+    name  = "features.externalUserManagement.ldap.user.baseDN"
+    value = "ou=people,dc=idm,dc=${var.server_base_domain}"
+  }
+  # ***** group schema options nee to be filled out
   # set {
-  #   name  = "features.externalUserManagement.enabled"
+  #   name  = "features.externalUserManagement.ldap.useServerUUID"
   #   value = ""
   # }
-  # set {
-  #   name  = "features.externalUserManagement.enabled"
-  #   value = ""
-  # }
-  # set {
-  #   name  = "features.externalUserManagement.enabled"
-  #   value = ""
-  # }
-  # set {
-  #   name  = "features.externalUserManagement.enabled"
-  #   value = ""
-  # }
+  # *****
+  set {
+    name  = "features.externalUserManagement.ldap.group.baseDN"
+    value = "ou=groups,dc=idm,dc=${var.server_base_domain}"
+  }
 
   set {
     name  = "ingress.enabled"
