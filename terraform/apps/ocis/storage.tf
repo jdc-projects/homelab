@@ -1,7 +1,29 @@
-resource "truenas_dataset" "ocis_dataset" {
+resource "truenas_dataset" "ocis_base_dataset" {
   pool               = "vault"
   parent             = "apps"
   name               = "ocis"
+  inherit_encryption = true
+
+  lifecycle {
+    prevent_destroy = false
+  }
+}
+
+resource "truenas_dataset" "ocis_storageusers_dataset" {
+  pool               = "vault"
+  parent             = "apps/ocis"
+  name               = "storageusers"
+  inherit_encryption = true
+
+  lifecycle {
+    prevent_destroy = false
+  }
+}
+
+resource "truenas_dataset" "ocis_store_dataset" {
+  pool               = "vault"
+  parent             = "apps/ocis"
+  name               = "store"
   inherit_encryption = true
 
   lifecycle {
@@ -23,7 +45,7 @@ resource "kubernetes_persistent_volume" "ocis_storageusers_pv" {
 
     persistent_volume_source {
       host_path {
-        path = truenas_dataset.ocis_dataset.mount_point
+        path = truenas_dataset.ocis_storageuser_dataset.mount_point
       }
     }
 
@@ -62,7 +84,7 @@ resource "kubernetes_persistent_volume" "ocis_store_pv" {
 
     persistent_volume_source {
       host_path {
-        path = truenas_dataset.ocis_dataset.mount_point
+        path = truenas_dataset.ocis_store_dataset.mount_point
       }
     }
 
