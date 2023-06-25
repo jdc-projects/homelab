@@ -73,5 +73,5 @@ resource "helm_release" "ocis" {
     value = "false" # ***** CHANGE THIS LATER *****
   }
 
-  depends_on = [ null_resource.ocis_helm_repo ]
+  depends_on = [null_resource.ocis_helm_repo]
 }
