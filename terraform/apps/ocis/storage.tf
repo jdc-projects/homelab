@@ -62,11 +62,11 @@ resource "kubernetes_persistent_volume_claim" "ocis_storageusers_pvc" {
     access_modes = ["ReadWriteMany"]
     resources {
       requests = {
-        storage = kubernetes_persistent_volume.ocis_storageusers_pv.spec.capacity.storage
+        storage = kubernetes_persistent_volume.ocis_storageusers_pv.spec[0].capacity.storage
       }
     }
 
-    storage_class_name = kubernetes_persistent_volume.ocis_storageusers_pv.spec.storage_class_name
+    storage_class_name = kubernetes_persistent_volume.ocis_storageusers_pv.spec[0].storage_class_name
   }
 }
 
@@ -101,10 +101,10 @@ resource "kubernetes_persistent_volume_claim" "ocis_store_pvc" {
     access_modes = ["ReadWriteMany"]
     resources {
       requests = {
-        storage = kubernetes_persistent_volume.ocis_store_pv.spec.capacity.storage
+        storage = kubernetes_persistent_volume.ocis_store_pv.spec[0].capacity.storage
       }
     }
 
-    storage_class_name = kubernetes_persistent_volume.ocis_store_pv.spec.storage_class_name
+    storage_class_name = kubernetes_persistent_volume.ocis_store_pv.spec[0].storage_class_name
   }
 }
