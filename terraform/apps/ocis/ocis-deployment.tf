@@ -134,4 +134,11 @@ resource "helm_release" "ocis" {
   }
 
   depends_on = [null_resource.ocis_helm_repo]
+
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_secret.ocis_ldap_password_secret,
+      null_resource.ocis_helm_repo # ***** temporary for debug - will for replace each time *****
+    ]
+  }
 }
