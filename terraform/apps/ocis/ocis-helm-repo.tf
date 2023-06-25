@@ -1,6 +1,6 @@
 resource "null_resource" "ocis_helm_repo" {
   triggers = {
-    always_run = "${timestamp()}"
+    always_run = timestamp()
   }
 
   provisioner "local-exec" {
