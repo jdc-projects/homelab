@@ -37,8 +37,7 @@ resource "truenas_dataset" "ocis_store_dataset" {
 
 resource "kubernetes_persistent_volume" "ocis_storageusers_pv" {
   metadata {
-    name      = "ocis-storageusers-pv"
-    namespace = kubernetes_namespace.ocis_namespace.metadata[0].name
+    name = "ocis-storageusers-pv"
   }
 
   spec {
@@ -77,8 +76,7 @@ resource "kubernetes_persistent_volume_claim" "ocis_storageusers_pvc" {
 
 resource "kubernetes_persistent_volume" "ocis_store_pv" {
   metadata {
-    name      = "ocis-store-pv"
-    namespace = kubernetes_namespace.ocis_namespace.metadata[0].name
+    name = "ocis-store-pv"
   }
 
   spec {
