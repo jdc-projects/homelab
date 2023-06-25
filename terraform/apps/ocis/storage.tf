@@ -10,8 +10,8 @@ resource "truenas_dataset" "ocis_base_dataset" {
 }
 
 resource "truenas_dataset" "ocis_storageusers_dataset" {
-  pool               = "vault"
-  parent             = "apps/ocis"
+  pool               = "vault/apps"
+  parent             = "ocis"
   name               = "storageusers"
   inherit_encryption = true
 
@@ -21,8 +21,8 @@ resource "truenas_dataset" "ocis_storageusers_dataset" {
 }
 
 resource "truenas_dataset" "ocis_store_dataset" {
-  pool               = "vault"
-  parent             = "apps/ocis"
+  pool               = "vault/apps"
+  parent             = "ocis"
   name               = "store"
   inherit_encryption = true
 
