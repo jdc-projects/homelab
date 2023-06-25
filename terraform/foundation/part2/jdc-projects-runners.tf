@@ -31,7 +31,7 @@ resource "kubernetes_manifest" "jdc_projects_runners_autoscaler" {
     }
 
     spec = {
-      minReplicas = "0"
+      minReplicas = "5"
       maxReplicas = "20"
 
       scaleTargetRef = {
