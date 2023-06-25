@@ -33,7 +33,7 @@ resource "truenas_dataset" "ocis_store_dataset" {
 
 resource "kubernetes_persistent_volume" "ocis_storageusers_pv" {
   metadata {
-    name = "ocis_pv"
+    name = "ocis-storageusers-pv"
   }
 
   spec {
@@ -55,7 +55,7 @@ resource "kubernetes_persistent_volume" "ocis_storageusers_pv" {
 
 resource "kubernetes_persistent_volume_claim" "ocis_storageusers_pvc" {
   metadata {
-    name      = "ocis-pvc"
+    name      = "ocis-storageusers-pvc"
     namespace = kubernetes_namespace.ocis_namespace.metadata[0].name
   }
   spec {
@@ -72,7 +72,7 @@ resource "kubernetes_persistent_volume_claim" "ocis_storageusers_pvc" {
 
 resource "kubernetes_persistent_volume" "ocis_store_pv" {
   metadata {
-    name = "ocis_pv"
+    name = "ocis-store-pv"
   }
 
   spec {
@@ -94,7 +94,7 @@ resource "kubernetes_persistent_volume" "ocis_store_pv" {
 
 resource "kubernetes_persistent_volume_claim" "ocis_store_pvc" {
   metadata {
-    name      = "ocis-pvc"
+    name      = "ocis-store-pvc"
     namespace = kubernetes_namespace.ocis_namespace.metadata[0].name
   }
   spec {
