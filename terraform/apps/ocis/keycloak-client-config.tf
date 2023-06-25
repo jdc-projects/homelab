@@ -12,15 +12,10 @@ resource "keycloak_openid_client" "ocis_web_client" {
 
   client_authenticator_type = "client-jwt"
 
-  standard_flow_enabled        = true
-  direct_access_grants_enabled = true
+#   standard_flow_enabled        = true
+#   direct_access_grants_enabled = true
 
-  full_scope_allowed = true
+#   full_scope_allowed = true
 
   login_theme = "keycloak"
-
-  extra_config = {
-    "key1" = "value1"
-    "key2" = "value2"
-  }
 }
