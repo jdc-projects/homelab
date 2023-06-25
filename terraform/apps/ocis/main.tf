@@ -25,6 +25,11 @@ terraform {
       source  = "hashicorp/null"
       version = "3.2.1"
     }
+
+    keycloak = {
+      source  = "mrparkers/keycloak"
+      version = "4.3.1"
+    }
   }
 }
 
@@ -47,11 +52,18 @@ provider "null" {
   # Configuration options
 }
 
-data "terraform_remote_state" "keycloak" {
+provider "keycloak" {
+  client_id = "admin-cli"
+  username  = data.terraform_remote_state.keycloak_config.outputs.keycloak_admin_username
+  password  = data.terraform_remote_state.keycloak_config.outputs.keycloak_admin_password
+  url       = data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url
+}
+
+data "terraform_remote_state" "keycloak_config" {
   backend = "kubernetes"
 
   config = {
-    secret_suffix = "apps-keycloak"
+    secret_suffix = "apps-keycloak-config"
     config_path   = "../../cluster.yml"
     namespace     = "terraform-state"
   }
