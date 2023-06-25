@@ -1,5 +1,5 @@
 resource "helm_release" "ocis" {
-  name = "ocis"
+  name  = "ocis"
   chart = "./ocis-charts/charts/ocis"
 
   namespace = kubernetes_namespace.ocis_namespace.metadata[0].name
@@ -7,69 +7,69 @@ resource "helm_release" "ocis" {
   timeout = 300
 
   set {
-    name = "logging.level"
+    name  = "logging.level"
     value = "debug"
   }
 
   set {
-    name = "externalDomain"
+    name  = "externalDomain"
     value = "ocis.${var.server_base_domain}"
   }
 
   set {
-    name = "features.externalUserManagement.enabled"
+    name  = "features.externalUserManagement.enabled"
     value = "true"
   }
   set {
-    name = "features.externalUserManagement.enabled"
+    name  = "features.externalUserManagement.enabled"
     value = ""
   }
   set {
-    name = "features.externalUserManagement.enabled"
+    name  = "features.externalUserManagement.enabled"
     value = ""
   }
   set {
-    name = "features.externalUserManagement.enabled"
+    name  = "features.externalUserManagement.enabled"
     value = ""
   }
   set {
-    name = "features.externalUserManagement.enabled"
+    name  = "features.externalUserManagement.enabled"
     value = ""
   }
   set {
-    name = "features.externalUserManagement.enabled"
+    name  = "features.externalUserManagement.enabled"
     value = ""
   }
 
   set {
-    name = "ingress.enabled"
+    name  = "ingress.enabled"
     value = "true"
   }
   set {
-    name = "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/router\\.entrypoints"
+    name  = "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/router\\.entrypoints"
     value = "websecure"
   }
 
   set {
-    name = "services.storageusers.storageBackend.persistence.enabled"
+    name  = "services.storageusers.storageBackend.persistence.enabled"
     value = "false" # ***** CHANGE THIS LATER *****
   }
   set {
-    name = "services.storageusers.storageBackend.persistence.existingClaim"
+    name  = "services.storageusers.storageBackend.persistence.existingClaim"
     value = ""
   }
 
   set {
-    name = "services.store.persistence.enabled"
+    name  = "services.store.persistence.enabled"
     value = "false" # ***** CHANGE THIS LATER *****
   }
   set {
-    name = "services.store.persistence.existingClaim"
+    name  = "services.store.persistence.existingClaim"
     value = ""
   }
 
   set {
-    name = "services.web.persistence.enabled"
+    name  = "services.web.persistence.enabled"
     value = "false" # ***** CHANGE THIS LATER *****
   }
 }
