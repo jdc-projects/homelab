@@ -19,7 +19,7 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "logging.level"
-    value = "debug"
+    value = "info"
   }
 
   set {
