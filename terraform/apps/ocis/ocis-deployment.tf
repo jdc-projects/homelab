@@ -56,7 +56,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "services.storageusers.storageBackend.persistence.existingClaim"
-    value = ""
+    value = kubernetes_persistent_volume_claim.ocis_storageusers_pvc.metadata[0].name
   }
 
   set {
@@ -65,7 +65,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "services.store.persistence.existingClaim"
-    value = ""
+    value = kubernetes_persistent_volume_claim.ocis_store_pvc.metadata[0].name
   }
 
   set {
