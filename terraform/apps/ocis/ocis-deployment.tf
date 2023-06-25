@@ -16,30 +16,30 @@ resource "helm_release" "ocis" {
     value = "ocis.${var.server_base_domain}"
   }
 
-  set {
-    name  = "features.externalUserManagement.enabled"
-    value = "true"
-  }
-  set {
-    name  = "features.externalUserManagement.enabled"
-    value = ""
-  }
-  set {
-    name  = "features.externalUserManagement.enabled"
-    value = ""
-  }
-  set {
-    name  = "features.externalUserManagement.enabled"
-    value = ""
-  }
-  set {
-    name  = "features.externalUserManagement.enabled"
-    value = ""
-  }
-  set {
-    name  = "features.externalUserManagement.enabled"
-    value = ""
-  }
+  # set {
+  #   name  = "features.externalUserManagement.enabled"
+  #   value = "true"
+  # }
+  # set {
+  #   name  = "features.externalUserManagement.enabled"
+  #   value = ""
+  # }
+  # set {
+  #   name  = "features.externalUserManagement.enabled"
+  #   value = ""
+  # }
+  # set {
+  #   name  = "features.externalUserManagement.enabled"
+  #   value = ""
+  # }
+  # set {
+  #   name  = "features.externalUserManagement.enabled"
+  #   value = ""
+  # }
+  # set {
+  #   name  = "features.externalUserManagement.enabled"
+  #   value = ""
+  # }
 
   set {
     name  = "ingress.enabled"
