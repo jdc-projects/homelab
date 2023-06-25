@@ -1,3 +1,14 @@
+resource "kubernetes_secret" "ocis_ldap_password_secret" {
+  metadata {
+    name      = "ocis-ldap-password"
+    namespace = kubernetes_namespace.ocis_namespace.metadata[0].name
+  }
+
+  data = {
+    reva-ldap-bind-password = var.lldap_admin_password
+  }
+}
+
 resource "helm_release" "ocis" {
   name  = "ocis"
   chart = "./ocis-charts/charts/ocis"
@@ -59,7 +70,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "secretRefs.ldapSecretRef"
-    value = "" # need to create a secret and reference it here, with the field reva-ldap-bind-password containing the LLDAP admin pasword
+    value = kubernetes_secret.ocis_ldap_password_secret.metadata[0].name
   }
   set {
     name  = "features.externalUserManagement.ldap.passwordModifyExOpEnabled"
