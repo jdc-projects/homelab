@@ -55,7 +55,7 @@ resource "helm_release" "ocis" {
     value = "true"
   }
   set { # ***** TEMPORARY *****
-    name  = "features.externalUserManagement.ldap.adminUUID"
+    name  = "features.externalUserManagement.adminUUID"
     value = "jack"
   }
   set {
