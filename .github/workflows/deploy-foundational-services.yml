@@ -1,5 +1,10 @@
 on:
   workflow_call:
+    inputs:
+      runner-type:
+        required: true
+        type: string
+        default: ubuntu-latest
 
 env:
   CLIENT_CERT_DATA: ${{ secrets.KUBE_CLIENT_CERT_DATA }}
@@ -23,11 +28,15 @@ env:
 
 jobs:
   deploy-kubernetes-terraform:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner-type }}
 
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v3
+      - name: "Setup node"
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
       - name: "Terraform setup"
         uses: hashicorp/setup-terraform@v2
         with:

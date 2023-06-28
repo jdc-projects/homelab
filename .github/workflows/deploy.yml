@@ -12,6 +12,9 @@ jobs:
     uses: ./.github/workflows/deploy-foundational-services.yml
     secrets: inherit
 
+    with:
+      runner-type: self-hosted
+
   deploy-services:
     needs: deploy-foundational-services
 
