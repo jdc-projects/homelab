@@ -46,7 +46,7 @@ resource "helm_release" "ocis" {
   }
 
   set {
-    name = "secretRefs.jwtSecretRef"
+    name  = "secretRefs.jwtSecretRef"
     value = kubernetes_secret.ocis_jwt_secret.metadata[0].name
   }
 
