@@ -5,7 +5,7 @@ resource "kubernetes_secret" "ocis_ldap_password_secret" {
   }
 
   data = {
-    reva-ldap-bind-password = "rubbishValue"
+    reva-ldap-bind-password = var.lldap_admin_password
   }
 }
 
