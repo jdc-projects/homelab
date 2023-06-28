@@ -120,15 +120,15 @@ resource "helm_release" "ocis" {
     value = "ou=users\\,dc=owncloud\\,dc=com"
   }
   set {
-    name  = "features.externalUserManagement.ldap.user.schema.filter"
+    name  = "features.externalUserManagement.ldap.user.filter"
     value = ""
   }
   # set {
-  #   name  = "features.externalUserManagement.ldap.user.schema.filter"
+  #   name  = "features.externalUserManagement.ldap.user.filter"
   #   value = "(&(objectClass=person)(memberOf=uid=ocis,ou=groups,dc=idm,dc=${var.server_base_domain}))"
   # }
   set {
-    name  = "features.externalUserManagement.ldap.user.schema.objectClass"
+    name  = "features.externalUserManagement.ldap.user.objectClass"
     value = "person"
   }
   set {
