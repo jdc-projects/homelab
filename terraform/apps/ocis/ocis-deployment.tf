@@ -97,7 +97,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.ldap.bindDN"
-    value = "uid=admin,ou=people,dc=idm,dc=${var.server_base_domain}"
+    value = "uid=admin\\,ou=people\\,dc=idm\\,dc=${var.server_base_domain}"
   }
   set {
     name  = "secretRefs.ldapSecretRef"
@@ -137,7 +137,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.ldap.group.baseDN"
-    value = "ou=groups,dc=idm,dc=${var.server_base_domain}"
+    value = "ou=groups\\,dc=idm\\,dc=${var.server_base_domain}"
   }
 
   set {
