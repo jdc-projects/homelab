@@ -29,8 +29,7 @@ resource "keycloak_ldap_user_federation" "lldap_user_federation" {
 
   pagination = false
 
-  full_sync_period    = 3600
-  changed_sync_period = 60
+  full_sync_period    = 600
 }
 
 resource "keycloak_ldap_group_mapper" "lldap_group_mapper" {
