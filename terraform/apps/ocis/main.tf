@@ -30,6 +30,11 @@ terraform {
       source  = "mrparkers/keycloak"
       version = "4.3.1"
     }
+
+    random = {
+      source  = "hashicorp/random"
+      version = "3.5.1"
+    }
   }
 }
 
@@ -57,6 +62,9 @@ provider "keycloak" {
   username  = data.terraform_remote_state.keycloak_config.outputs.keycloak_admin_username
   password  = data.terraform_remote_state.keycloak_config.outputs.keycloak_admin_password
   url       = data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url
+}
+
+provider "random" {
 }
 
 data "terraform_remote_state" "keycloak_config" {

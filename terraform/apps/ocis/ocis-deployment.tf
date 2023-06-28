@@ -9,6 +9,24 @@ resource "kubernetes_secret" "ocis_ldap_password_secret" {
   }
 }
 
+resource "random_password" "jwt_secret" {
+  length  = 16
+  numeric = true
+  special = false
+  upper   = true
+}
+
+resource "kubernetes_secret" "ocis_jwt_secret" {
+  metadata {
+    name      = "ocis-jwt-secret"
+    namespace = kubernetes_namespace.ocis_namespace.metadata[0].name
+  }
+
+  data = {
+    jwt-secret = random_password.jwt_secret.result
+  }
+}
+
 resource "helm_release" "ocis" {
   name  = "ocis"
   chart = "./ocis-charts/charts/ocis"
@@ -25,6 +43,11 @@ resource "helm_release" "ocis" {
   set {
     name  = "externalDomain"
     value = "ocis.${var.server_base_domain}"
+  }
+
+  set {
+    name = "secretRefs.jwtSecretRef"
+    value = kubernetes_secret.ocis_jwt_secret.metadata[0].name
   }
 
   set {
@@ -138,6 +161,7 @@ resource "helm_release" "ocis" {
   lifecycle {
     replace_triggered_by = [
       kubernetes_secret.ocis_ldap_password_secret,
+      kubernetes_secret.ocis_jwt_secret,
       null_resource.ocis_helm_repo # ***** temporary for debug - will for replace each time *****
     ]
   }
