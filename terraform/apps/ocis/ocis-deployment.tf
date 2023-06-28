@@ -115,6 +115,10 @@ resource "helm_release" "ocis" {
     name  = "features.externalUserManagement.ldap.user.schema.id"
     value = "uid"
   }
+  set {
+    name  = "features.externalUserManagement.ldap.user.baseDN"
+    value = "ou=people,dc=idm,dc=${var.server_base_domain}"
+  }
   # set {
   #   name  = "features.externalUserManagement.ldap.user.schema.filter"
   #   value = "(&(objectClass=person)(memberOf=uid=ocis,ou=groups,dc=idm,dc=${var.server_base_domain}))"
