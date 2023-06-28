@@ -31,7 +31,7 @@ jobs:
       - name: "Terraform setup"
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.4.2
+          terraform_version: 1.5.0
       - name: "Generate kubeconfig"
         working-directory: ./terraform
         run: "./cluster-config-write.sh"
