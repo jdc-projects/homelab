@@ -5,7 +5,7 @@ resource "keycloak_openid_client" "ocis_web_client" {
   name    = "ocis-web"
   enabled = true
 
-  access_type = "CONFIDENTIAL"
+  access_type = "PUBLIC"
   valid_redirect_uris = [
     "https://ocis.${var.server_base_domain}/*"
   ]
