@@ -72,7 +72,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.oidc.userIDClaimAttributeMapping"
-    value = "username"
+    value = "userid"
   }
   # set {
   #   name  = "features.externalUserManagement.oidc.roleAssignment.enabled"
