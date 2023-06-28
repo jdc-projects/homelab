@@ -45,11 +45,11 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.oidc.userIDClaim"
-    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_lldap_realm_id}.user.uuid"
+    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_lldap_realm_id}.user.username"
   }
   set {
     name  = "features.externalUserManagement.oidc.userIDClaimAttributeMapping"
-    value = "userID"
+    value = "username"
   }
   # set {
   #   name  = "features.externalUserManagement.oidc.roleAssignment.enabled"
