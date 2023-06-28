@@ -117,7 +117,11 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.ldap.user.baseDN"
-    value = "ou=people,dc=idm,dc=${var.server_base_domain}"
+    value = "ou=users,dc=owncloud,dc=com"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.user.schema.filter"
+    value = ""
   }
   # set {
   #   name  = "features.externalUserManagement.ldap.user.schema.filter"
