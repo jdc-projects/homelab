@@ -9,5 +9,5 @@ output "keycloak_admin_password" {
 }
 
 output "keycloak_hostname_url" {
-  value = null_resource.keycloak_domain.triggers.keycloak_domain
+  value = "https://${null_resource.keycloak_domain.triggers.keycloak_domain}"
 }
