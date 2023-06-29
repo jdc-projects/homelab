@@ -53,21 +53,21 @@ jobs:
       - name: "Create terraform-state namespace"
         working-directory: ./terraform
         run: "kubectl --kubeconfig ./cluster.yml apply -f ./terraform-state-namespace.yml"
-      - name: "Terraform format check"
+      - name: "Part 1: Terraform format check"
         working-directory: ./terraform/foundation/part1
         run: "terraform fmt -check"
-      - name: "Terraform init"
+      - name: "Part 1: Terraform init"
         working-directory: ./terraform/foundation/part1
         run: "terraform init"
-      - name: "Terraform apply"
+      - name: "Part 1: Terraform apply"
         working-directory: ./terraform/foundation/part1
         run: "terraform apply -auto-approve -input=false"
-      - name: "Terraform format check"
+      - name: "Part 2: Terraform format check"
         working-directory: ./terraform/foundation/part2
         run: "terraform fmt -check"
-      - name: "Terraform init"
+      - name: "Part 2: Terraform init"
         working-directory: ./terraform/foundation/part2
         run: "terraform init"
-      - name: "Terraform apply"
+      - name: "Part 2: Terraform apply"
         working-directory: ./terraform/foundation/part2
         run: "terraform apply -auto-approve -input=false"
