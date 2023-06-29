@@ -11,9 +11,19 @@ terraform {
       version = "0.11.1"
     }
 
+    helm = {
+      source  = "hashicorp/helm"
+      version = "2.10.1"
+    }
+
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = "2.21.1"
+    }
+
+    null = {
+      source  = "hashicorp/null"
+      version = "3.2.1"
     }
 
     random = {
@@ -28,8 +38,18 @@ provider "truenas" {
   base_url = "https://nas.${var.server_base_domain}/api/v2.0"
 }
 
+provider "helm" {
+  kubernetes {
+    config_path = "../../cluster.yml"
+  }
+}
+
 provider "kubernetes" {
   config_path = "../../cluster.yml"
+}
+
+provider "null" {
+  # Configuration options
 }
 
 provider "random" {
