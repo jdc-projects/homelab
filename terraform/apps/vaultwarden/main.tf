@@ -35,6 +35,16 @@ provider "kubernetes" {
 provider "random" {
 }
 
+data "terraform_remote_state" "lldap" {
+  backend = "kubernetes"
+
+  config = {
+    secret_suffix = "apps-lldap"
+    config_path   = "../../cluster.yml"
+    namespace     = "terraform-state"
+  }
+}
+
 resource "kubernetes_namespace" "vaultwarden_namespace" {
   metadata {
     name = "vaultwarden"

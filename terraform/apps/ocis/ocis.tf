@@ -5,7 +5,7 @@ resource "kubernetes_secret" "ocis_ldap_password_secret" {
   }
 
   data = {
-    reva-ldap-bind-password = var.lldap_admin_password
+    reva-ldap-bind-password = data.terraform_remote_state.lldap.outputs.lldap_admin_password
   }
 }
 

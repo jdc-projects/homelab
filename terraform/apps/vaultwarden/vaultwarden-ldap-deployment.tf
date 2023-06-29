@@ -23,7 +23,7 @@ resource "kubernetes_secret" "vaultwarden_ldap_secret" {
 
   data = {
     APP_VAULTWARDEN_ADMIN_TOKEN = random_password.vaultwarden_admin_token.result
-    APP_LDAP_BIND_PASSWORD      = var.lldap_admin_password
+    APP_LDAP_BIND_PASSWORD      = data.terraform_remote_state.lldap.outputs.lldap_admin_password
   }
 }
 

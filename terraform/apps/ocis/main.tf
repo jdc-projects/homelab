@@ -77,6 +77,16 @@ data "terraform_remote_state" "keycloak_config" {
   }
 }
 
+data "terraform_remote_state" "lldap" {
+  backend = "kubernetes"
+
+  config = {
+    secret_suffix = "apps-lldap"
+    config_path   = "../../cluster.yml"
+    namespace     = "terraform-state"
+  }
+}
+
 resource "kubernetes_namespace" "ocis_namespace" {
   metadata {
     name = "ocis"

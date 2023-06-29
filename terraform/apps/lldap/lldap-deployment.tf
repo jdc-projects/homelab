@@ -22,6 +22,13 @@ resource "random_password" "lldap_jwt_secret" {
   override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 
+resource "random_password" "lldap_admin_password" {
+  length  = 16
+  numeric = true
+  special = false
+  upper   = true
+}
+
 resource "kubernetes_secret" "lldap_secret" {
   metadata {
     name      = "lldap"
@@ -30,7 +37,7 @@ resource "kubernetes_secret" "lldap_secret" {
 
   data = {
     LLDAP_JWT_SECRET     = random_password.lldap_jwt_secret.result
-    LLDAP_LDAP_USER_PASS = var.lldap_admin_password
+    LLDAP_LDAP_USER_PASS = random_password.lldap_admin_password.result
   }
 }
 
