@@ -23,16 +23,16 @@ jobs:
       terraform-dir: ./terraform/apps/services
     secrets: inherit
 
-  deploy-ldap:
+  deploy-lldap:
     needs: deploy-foundational-services
 
     uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
     with:
-      terraform-dir: ./terraform/apps/ldap
+      terraform-dir: ./terraform/apps/l;dap
     secrets: inherit
 
   deploy-vaultwarden:
-    needs: deploy-ldap
+    needs: deploy-lldap
 
     uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
     with:
@@ -48,7 +48,7 @@ jobs:
     secrets: inherit
 
   deploy-keycloak-config:
-    needs: [deploy-ldap, deploy-keycloak]
+    needs: [deploy-lldap, deploy-keycloak]
 
     uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
     with:

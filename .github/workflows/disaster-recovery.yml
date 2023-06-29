@@ -17,12 +17,12 @@ jobs:
       resource-name: truenas_dataset.apps_dataset
     secrets: inherit
 
-  deploy-ldap-storage:
+  deploy-lldap-storage:
     needs: deploy-foundational-services
 
     uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
     with:
-      terraform-dir: ./terraform/apps/ldap
+      terraform-dir: ./terraform/apps/lldap
       resource-name: truenas_dataset.lldap_dataset
     secrets: inherit
 
@@ -56,7 +56,7 @@ jobs:
   # wait for backup data to be restored into the new storage (manual process with approval through an issue)
   wait-for-data-restore:
     runs-on: self-hosted
-    needs: [deploy-services-storage, deploy-ldap-storage, deploy-vaultwarden-storage, deploy-ocis-store-storage]
+    needs: [deploy-services-storage, deploy-lldap-storage, deploy-vaultwarden-storage, deploy-ocis-store-storage]
 
     permissions:
       issues: write

@@ -37,6 +37,6 @@ provider "random" {
 
 resource "kubernetes_namespace" "ldap_namespace" {
   metadata {
-    name = "ldap"
+    name = "lldap"
   }
 }
