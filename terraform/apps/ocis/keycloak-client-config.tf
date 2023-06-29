@@ -27,5 +27,5 @@ resource "keycloak_openid_client" "ocis_web_client" {
 
   full_scope_allowed = true
 
-  login_theme = "base"
+  login_theme = "keycloak"
 }
