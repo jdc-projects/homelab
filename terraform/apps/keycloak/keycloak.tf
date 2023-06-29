@@ -65,3 +65,14 @@ resource "helm_release" "keycloak" {
     value = random_password.db_admin_password.result
   }
 }
+
+resource "null_resource" "traefik_cert_check" {
+  triggers = {
+    always_run = timestamp()
+  }
+
+  provisioner "local-exec" {
+    command = "timeout 300 bash -c 'while ! curl -sI https://${null_resource.keycloak_domain.triggers.keycloak_domain}; do echo \"Waiting for Keycloak to be live.\" && sleep 1; done'"
+  }
+}
+

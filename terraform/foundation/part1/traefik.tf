@@ -192,3 +192,13 @@ resource "helm_release" "traefik_ingress" {
     create_before_destroy = false
   }
 }
+
+resource "null_resource" "traefik_cert_check" {
+  triggers = {
+    always_run = timestamp()
+  }
+
+  provisioner "local-exec" {
+    command = "timeout 300 bash -c 'while ! curl -sI https://${var.server_base_domain}; do echo \"Waiting for valid HTTPS cert\" && sleep 1; done'"
+  }
+}
