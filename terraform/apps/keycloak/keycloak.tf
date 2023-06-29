@@ -72,7 +72,7 @@ resource "null_resource" "traefik_cert_check" {
   }
 
   provisioner "local-exec" {
-    command = "timeout 300 bash -c 'while ! curl -sI https://${null_resource.keycloak_domain.triggers.keycloak_domain}; do echo \"Waiting for Keycloak to be live.\" && sleep 1; done'"
+    command = "timeout 300 bash -c 'while ! curl -sfI https://${null_resource.keycloak_domain.triggers.keycloak_domain}; do echo \"Waiting for Keycloak to be live.\" && sleep 1; done'"
   }
 
   depends_on = [helm_release.keycloak]
