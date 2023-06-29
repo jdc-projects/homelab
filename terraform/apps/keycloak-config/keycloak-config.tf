@@ -1,5 +1,5 @@
 resource "keycloak_realm" "lldap_realm" {
-  realm   = "lldap"
+  realm   = "jack-chapman.co.uk"
   enabled = true
 
   registration_email_as_username = false

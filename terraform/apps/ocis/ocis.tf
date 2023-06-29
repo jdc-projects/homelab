@@ -50,7 +50,7 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "externalDomain"
-    value = "ocis.${var.server_base_domain}"
+    value = "${null_resource.ocis_keycloak_client_id.triggers.client_id}.${var.server_base_domain}"
   }
 
   set {
@@ -68,7 +68,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.oidc.issuerURI"
-    value = "https://idp.${var.server_base_domain}/realms/${data.terraform_remote_state.keycloak_config.outputs.keycloak_lldap_realm_id}"
+    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.keycloak_lldap_realm_id}"
   }
   set {
     name  = "features.externalUserManagement.oidc.webClientID"
