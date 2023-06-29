@@ -5,11 +5,11 @@ resource "null_resource" "keycloak_domain" {
 }
 
 resource "helm_release" "keycloak" {
-  name  = "keycloak"
+  name      = "keycloak"
   namespace = kubernetes_namespace.keycloak_namespace.metadata[0].name
 
   repository = "oci://registry-1.docker.io/bitnamicharts"
-  chart = "keycloak"
+  chart      = "keycloak"
   version    = "v15.1.6"
 
   timeout = 300
