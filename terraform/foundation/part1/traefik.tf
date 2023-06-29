@@ -19,7 +19,7 @@ resource "kubernetes_persistent_volume_claim" "traefik_pvc" {
   }
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
 
@@ -166,10 +166,6 @@ resource "helm_release" "traefik_ingress" {
   set {
     name  = "persistence.enabled"
     value = "true"
-  }
-  set {
-    name  = "persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.traefik_pvc.metadata[0].name
   }
 
   set {
