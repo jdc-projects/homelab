@@ -18,7 +18,7 @@ jobs:
     secrets: inherit
 
   deploy-ldap-storage:
-    needs: deploy-services-storage
+    needs: deploy-foundational-services
 
     uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
     with:
@@ -27,7 +27,7 @@ jobs:
     secrets: inherit
 
   deploy-vaultwarden-storage:
-    needs: deploy-services-storage
+    needs: deploy-foundational-services
 
     uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
     with:
@@ -36,7 +36,7 @@ jobs:
     secrets: inherit
 
   deploy-ocis-storageusers-storage:
-    needs: deploy-services-storage
+    needs: deploy-foundational-services
 
     uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
     with:
@@ -56,7 +56,7 @@ jobs:
   # wait for backup data to be restored into the new storage (manual process with approval through an issue)
   wait-for-data-restore:
     runs-on: self-hosted
-    needs: [deploy-ldap-storage, deploy-vaultwarden-storage]
+    needs: [deploy-services-storage, deploy-ldap-storage, deploy-vaultwarden-storage, deploy-ocis-store-storage]
 
     permissions:
       issues: write
