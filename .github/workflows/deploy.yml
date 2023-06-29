@@ -24,7 +24,7 @@ jobs:
     secrets: inherit
 
   deploy-ldap:
-    needs: deploy-services
+    needs: deploy-foundational-services
 
     uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
     with:
@@ -40,7 +40,7 @@ jobs:
     secrets: inherit
 
   deploy-keycloak:
-    needs: deploy-ldap
+    needs: deploy-foundational-services
 
     uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
     with:
@@ -48,7 +48,7 @@ jobs:
     secrets: inherit
 
   deploy-keycloak-config:
-    needs: deploy-keycloak
+    needs: [deploy-ldap, deploy-keycloak]
 
     uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
     with:
