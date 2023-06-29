@@ -28,7 +28,7 @@ jobs:
 
     uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
     with:
-      terraform-dir: ./terraform/apps/l;dap
+      terraform-dir: ./terraform/apps/lldap
     secrets: inherit
 
   deploy-vaultwarden:
