@@ -1,10 +1,10 @@
 output "keycloak_admin_username" {
-  value     = kubernetes_secret.keycloak_secret.data.KEYCLOAK_ADMIN_USER
+  value     = random_password.keycloak_admin_username.result
   sensitive = true
 }
 
 output "keycloak_admin_password" {
-  value     = kubernetes_secret.keycloak_secret.data.KEYCLOAK_ADMIN_PASSWORD
+  value     = random_password.keycloak_admin_password.result
   sensitive = true
 }
 
