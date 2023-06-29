@@ -59,6 +59,69 @@ resource "helm_release" "ocis" {
   }
 
   set {
+    name  = "services.nats.persistence.enabled"
+    value = "false" # ***** CHANGE THIS LATER *****
+  }
+  set {
+    name  = "services.web.persistence.existingClaim"
+    value = "" # ***** 10Gi
+  }
+
+  set {
+    name  = "services.search.persistence.enabled"
+    value = "false" # ***** CHANGE THIS LATER *****
+  }
+  set {
+    name  = "services.search.persistence.existingClaim"
+    value = "" # ***** 10Gi
+  }
+
+  set {
+    name  = "services.storagesystem.persistence.enabled"
+    value = "false" # ***** CHANGE THIS LATER *****
+  }
+  set {
+    name  = "services.storagesystem.persistence.existingClaim"
+    value = "" # ***** 5Gi
+  }
+
+  set {
+    name  = "services.storageusers.storageBackend.persistence.enabled"
+    value = "false" # ***** CHANGE THIS LATER *****
+  }
+  set {
+    name  = "services.storageusers.storageBackend.persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.ocis_storageusers_pvc.metadata[0].name
+  }
+
+  set {
+    name  = "services.store.persistence.enabled"
+    value = "false" # ***** CHANGE THIS LATER *****
+  }
+  set {
+    name  = "services.store.persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.ocis_store_pvc.metadata[0].name
+  }
+
+  set {
+    name  = "services.thumbnails.persistence.enabled"
+    value = "false" # ***** CHANGE THIS LATER *****
+  }
+  set {
+    name  = "services.thumbnails.persistence.existingClaim"
+    value = "" # ***** 10Gi
+  }
+
+  set {
+    name  = "services.web.persistence.enabled"
+    value = "false" # ***** CHANGE THIS LATER *****
+  }
+  set {
+    name  = "services.web.persistence.existingClaim"
+    value = "" # ***** 1Gi
+  }
+
+  set {
     name  = "features.externalUserManagement.enabled"
     value = "true"
   }
@@ -147,29 +210,6 @@ resource "helm_release" "ocis" {
   set {
     name  = "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/router\\.entrypoints"
     value = "websecure"
-  }
-
-  set {
-    name  = "services.storageusers.storageBackend.persistence.enabled"
-    value = "false" # ***** CHANGE THIS LATER *****
-  }
-  set {
-    name  = "services.storageusers.storageBackend.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.ocis_storageusers_pvc.metadata[0].name
-  }
-
-  set {
-    name  = "services.store.persistence.enabled"
-    value = "false" # ***** CHANGE THIS LATER *****
-  }
-  set {
-    name  = "services.store.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.ocis_store_pvc.metadata[0].name
-  }
-
-  set {
-    name  = "services.web.persistence.enabled"
-    value = "false" # ***** CHANGE THIS LATER *****
   }
 
   depends_on = [null_resource.ocis_helm_repo]
