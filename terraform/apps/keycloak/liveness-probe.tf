@@ -5,10 +5,10 @@ resource "kubernetes_config_map" "wait_for_keycloak_configmap" {
   }
 
   data = {
-    url = "https://${null_resource.keycloak_domain.triggers.keycloak_domain}"
+    url          = "https://${null_resource.keycloak_domain.triggers.keycloak_domain}"
     responseCode = "200"
-    timeout = "300000"
-    interval = "200"
+    timeout      = "300000"
+    interval     = "200"
   }
 }
 
@@ -46,5 +46,5 @@ resource "kubernetes_job" "wait_for_keycloak" {
 
   wait_for_completion = true
 
-  depends_on = [ helm_release.keycloak ]
+  depends_on = [helm_release.keycloak]
 }
