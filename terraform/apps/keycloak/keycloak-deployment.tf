@@ -21,10 +21,12 @@ resource "kubernetes_secret" "keycloak_secret" {
   }
 
   data = {
-    KEYCLOAK_ADMIN_USER        = random_password.keycloak_admin_username.result
-    KEYCLOAK_ADMIN_PASSWORD    = random_password.keycloak_admin_password.result
-    KEYCLOAK_DATABASE_PASSWORD = random_password.db_admin_username.result
-    KEYCLOAK_DATABASE_USER     = random_password.db_admin_password.result
+    KEYCLOAK_ADMIN_USER          = random_password.keycloak_admin_username.result
+    KEYCLOAK_ADMIN_PASSWORD      = random_password.keycloak_admin_password.result
+    KEYCLOAK_MANAGEMENT_USER     = random_password.keycloak_management_password.result
+    KEYCLOAK_MANAGEMENT_PASSWORD = random_password.keycloak_management_password.result
+    KEYCLOAK_DATABASE_PASSWORD   = random_password.db_admin_username.result
+    KEYCLOAK_DATABASE_USER       = random_password.db_admin_password.result
   }
 }
 
@@ -52,7 +54,7 @@ resource "kubernetes_deployment" "keycloak_deployment" {
 
       spec {
         container {
-          image = "bitnami/keycloak:21.0.2"
+          image = "bitnami/keycloak:21.1.2"
           name  = "keycloak"
 
           env_from {
