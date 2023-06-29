@@ -1,6 +1,6 @@
 terraform {
   backend "kubernetes" {
-    secret_suffix = "apps-ldap"
+    secret_suffix = "apps-lldap"
     config_path   = "../../cluster.yml"
     namespace     = "terraform-state"
   }
