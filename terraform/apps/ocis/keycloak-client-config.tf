@@ -1,5 +1,5 @@
 resource "null_resource" "ocis_keycloak_client_id" {
-  triggers {
+  triggers = {
     client_id = "ocis"
   }
 }
