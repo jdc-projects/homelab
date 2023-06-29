@@ -4,25 +4,6 @@ resource "kubernetes_namespace" "traefik_namespace" {
   }
 }
 
-resource "kubernetes_persistent_volume_claim" "traefik_pvc" {
-  metadata {
-    name      = "treafik-pvc"
-    namespace = kubernetes_namespace.traefik_namespace.metadata[0].name
-  }
-  spec {
-    access_modes = ["ReadWriteOnce"]
-    resources {
-      requests = {
-        storage = "128Mi"
-      }
-    }
-  }
-
-  lifecycle {
-    prevent_destroy = false
-  }
-}
-
 resource "null_resource" "traefik_version" {
   triggers = {
     traefik_version = "21.2.0"
