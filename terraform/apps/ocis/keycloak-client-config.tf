@@ -13,10 +13,12 @@ resource "keycloak_openid_client" "ocis_client" {
 
   access_type = "PUBLIC"
   valid_redirect_uris = [
-    "https://${null_resource.ocis_keycloak_client_name.triggers.client_name}.${var.server_base_domain}/*"
+    "https://${null_resource.ocis_keycloak_client_name.triggers.client_name}.${var.server_base_domain}/*",
+    "*android.owncloud.com"
   ]
   web_origins = [
-    "https://${null_resource.ocis_keycloak_client_name.triggers.client_name}.${var.server_base_domain}"
+    "https://${null_resource.ocis_keycloak_client_name.triggers.client_name}.${var.server_base_domain}",
+    "android.owncloud.com"
   ]
 
   client_authenticator_type = "client-jwt"
