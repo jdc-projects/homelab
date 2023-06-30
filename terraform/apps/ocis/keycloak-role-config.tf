@@ -4,7 +4,7 @@ resource "keycloak_role" "ocis_admin_client_role" {
   name        = "ocisAdmin"
   description = "OCIS Admin"
 
-  depends_on = [ keycloak_openid_client.ocis_web_client ]
+  depends_on = [keycloak_openid_client.ocis_web_client]
 }
 
 resource "keycloak_role" "ocis_space_admin_client_role" {
@@ -13,7 +13,7 @@ resource "keycloak_role" "ocis_space_admin_client_role" {
   name        = "ocisSpaceAdmin"
   description = "OCIS Space Admin"
 
-  depends_on = [ keycloak_openid_client.ocis_web_client ]
+  depends_on = [keycloak_openid_client.ocis_web_client]
 }
 
 resource "keycloak_role" "ocis_user_client_role" {
@@ -22,7 +22,7 @@ resource "keycloak_role" "ocis_user_client_role" {
   name        = "ocisUser"
   description = "OCIS User"
 
-  depends_on = [ keycloak_openid_client.ocis_web_client ]
+  depends_on = [keycloak_openid_client.ocis_web_client]
 }
 
 resource "keycloak_role" "ocis_guest_client_role" {
@@ -31,7 +31,7 @@ resource "keycloak_role" "ocis_guest_client_role" {
   name        = "ocisGuest"
   description = "OCIS Guest"
 
-  depends_on = [ keycloak_openid_client.ocis_web_client ]
+  depends_on = [keycloak_openid_client.ocis_web_client]
 }
 
 resource "keycloak_group_roles" "ocis_admin_group_role" {
