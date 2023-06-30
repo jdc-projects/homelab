@@ -261,4 +261,16 @@ resource "helm_release" "ocis" {
   }
 
   depends_on = [null_resource.ocis_helm_repo]
+
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_persistent_volume.ocis_nats_pv,
+      kubernetes_persistent_volume.ocis_search_pv,
+      kubernetes_persistent_volume.ocis_storagesystem_pv,
+      kubernetes_persistent_volume.ocis_storageusers_pv,
+      kubernetes_persistent_volume.ocis_store_pv,
+      kubernetes_persistent_volume.ocis_thumbnails_pv,
+      kubernetes_persistent_volume.ocis_web_pv
+    ]
+  }
 }
