@@ -67,12 +67,8 @@ resource "helm_release" "ocis" {
     value = "true"
   }
   set {
-    name  = "services.nats.persistence.storageClassName"
-    value = kubernetes_persistent_volume.ocis_nats_pv.spec[0].storage_class_name
-  }
-  set {
-    name  = "services.nats.persistence.size"
-    value = kubernetes_persistent_volume.ocis_nats_pv.spec[0].capacity.storage
+    name  = "services.nats.persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.ocis_nats_pvc.id
   }
 
   set {
@@ -84,12 +80,8 @@ resource "helm_release" "ocis" {
     value = "true"
   }
   set {
-    name  = "services.search.persistence.storageClassName"
-    value = kubernetes_persistent_volume.ocis_search_pv.spec[0].storage_class_name
-  }
-  set {
-    name  = "services.search.persistence.size"
-    value = kubernetes_persistent_volume.ocis_search_pv.spec[0].capacity.storage
+    name  = "services.search.persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.ocis_search_pvc.id
   }
 
   set {
@@ -101,12 +93,8 @@ resource "helm_release" "ocis" {
     value = "true"
   }
   set {
-    name  = "services.storagesystem.persistence.storageClassName"
-    value = kubernetes_persistent_volume.ocis_storagesystem_pv.spec[0].storage_class_name
-  }
-  set {
-    name  = "services.storagesystem.persistence.size"
-    value = kubernetes_persistent_volume.ocis_storagesystem_pv.spec[0].capacity.storage
+    name  = "services.storagesystem.persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.ocis_storagesystem_pvc.id
   }
 
   set {
@@ -118,12 +106,8 @@ resource "helm_release" "ocis" {
     value = "true"
   }
   set {
-    name  = "services.storageusers.persistence.storageClassName"
-    value = kubernetes_persistent_volume.ocis_storageusers_pv.spec[0].storage_class_name
-  }
-  set {
-    name  = "services.storageusers.persistence.size"
-    value = kubernetes_persistent_volume.ocis_storageusers_pv.spec[0].capacity.storage
+    name  = "services.storageusers.persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.ocis_storageusers_pvc.id
   }
 
   set {
@@ -135,12 +119,8 @@ resource "helm_release" "ocis" {
     value = "true"
   }
   set {
-    name  = "services.store.persistence.storageClassName"
-    value = kubernetes_persistent_volume.ocis_store_pv.spec[0].storage_class_name
-  }
-  set {
-    name  = "services.store.persistence.size"
-    value = kubernetes_persistent_volume.ocis_store_pv.spec[0].capacity.storage
+    name  = "services.store.persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.ocis_store_pvc.id
   }
 
   set {
@@ -152,12 +132,8 @@ resource "helm_release" "ocis" {
     value = "true"
   }
   set {
-    name  = "services.thumbnails.persistence.storageClassName"
-    value = kubernetes_persistent_volume.ocis_thumbnails_pv.spec[0].storage_class_name
-  }
-  set {
-    name  = "services.thumbnails.persistence.size"
-    value = kubernetes_persistent_volume.ocis_thumbnails_pv.spec[0].capacity.storage
+    name  = "services.thumbnails.persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.ocis_thumbnails_pvc.id
   }
 
   set {
@@ -169,12 +145,8 @@ resource "helm_release" "ocis" {
     value = "true"
   }
   set {
-    name  = "services.web.persistence.storageClassName"
-    value = kubernetes_persistent_volume.ocis_web_pv.spec[0].storage_class_name
-  }
-  set {
-    name  = "services.web.persistence.size"
-    value = kubernetes_persistent_volume.ocis_web_pv.spec[0].capacity.storage
+    name  = "services.web.persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.ocis_web_pvc.id
   }
 
   set {
@@ -264,13 +236,6 @@ resource "helm_release" "ocis" {
 
   lifecycle {
     replace_triggered_by = [
-      kubernetes_persistent_volume.ocis_nats_pv,
-      kubernetes_persistent_volume.ocis_search_pv,
-      kubernetes_persistent_volume.ocis_storagesystem_pv,
-      kubernetes_persistent_volume.ocis_storageusers_pv,
-      kubernetes_persistent_volume.ocis_store_pv,
-      kubernetes_persistent_volume.ocis_thumbnails_pv,
-      kubernetes_persistent_volume.ocis_web_pv,
       null_resource.ocis_helm_repo # debugging
     ]
   }
