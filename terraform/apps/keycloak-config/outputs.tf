@@ -12,6 +12,6 @@ output "keycloak_hostname_url" {
   value = data.terraform_remote_state.keycloak.outputs.keycloak_hostname_url
 }
 
-output "keycloak_lldap_realm_id" {
-  value = keycloak_realm.lldap_realm.realm
+output "keycloak_jack_chapman_co_uk_realm_id" {
+  value = keycloak_realm.jack_chapman_co_uk_realm.id
 }

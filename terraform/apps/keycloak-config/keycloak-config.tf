@@ -1,4 +1,4 @@
-resource "keycloak_realm" "lldap_realm" {
+resource "keycloak_realm" "jack_chapman_co_uk_realm" {
   realm   = "jack-chapman.co.uk"
   enabled = true
 
@@ -9,7 +9,7 @@ resource "keycloak_realm" "lldap_realm" {
 
 resource "keycloak_ldap_user_federation" "lldap_user_federation" {
   name      = "lldap"
-  realm_id  = keycloak_realm.lldap_realm.id
+  realm_id  = keycloak_realm.jack_chapman_co_uk_realm.id
   enabled   = true
   vendor    = "OTHER"
   edit_mode = "READ_ONLY"
@@ -33,7 +33,7 @@ resource "keycloak_ldap_user_federation" "lldap_user_federation" {
 }
 
 resource "keycloak_ldap_group_mapper" "lldap_group_mapper" {
-  realm_id                = keycloak_realm.lldap_realm.id
+  realm_id                = keycloak_realm.jack_chapman_co_uk_realm.id
   ldap_user_federation_id = keycloak_ldap_user_federation.lldap_user_federation.id
   name                    = "lldap-group-mapper"
 

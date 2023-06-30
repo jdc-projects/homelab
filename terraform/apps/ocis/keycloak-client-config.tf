@@ -5,7 +5,7 @@ resource "null_resource" "ocis_keycloak_client_name" {
 }
 
 resource "keycloak_openid_client" "ocis_client" {
-  realm_id  = data.terraform_remote_state.keycloak_config.outputs.keycloak_lldap_realm_id
+  realm_id  = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
   client_id = null_resource.ocis_keycloak_client_name.triggers.client_name
 
   name    = null_resource.ocis_keycloak_client_name.triggers.client_name
