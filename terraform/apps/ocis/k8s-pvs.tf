@@ -18,6 +18,10 @@ resource "kubernetes_persistent_volume" "ocis_nats_pv" {
 
     storage_class_name = "ocis-nats-host-path"
   }
+
+  lifecycle {
+    replace_triggered_by = [helm_release.ocis]
+  }
 }
 
 resource "kubernetes_persistent_volume" "ocis_search_pv" {
@@ -39,6 +43,10 @@ resource "kubernetes_persistent_volume" "ocis_search_pv" {
     }
 
     storage_class_name = "ocis-search-host-path"
+  }
+
+  lifecycle {
+    replace_triggered_by = [helm_release.ocis]
   }
 }
 
@@ -62,6 +70,10 @@ resource "kubernetes_persistent_volume" "ocis_storagesystem_pv" {
 
     storage_class_name = "ocis-storagesystem-host-path"
   }
+
+  lifecycle {
+    replace_triggered_by = [helm_release.ocis]
+  }
 }
 
 resource "kubernetes_persistent_volume" "ocis_storageusers_pv" {
@@ -83,6 +95,10 @@ resource "kubernetes_persistent_volume" "ocis_storageusers_pv" {
     }
 
     storage_class_name = "ocis-storageusers-host-path"
+  }
+
+  lifecycle {
+    replace_triggered_by = [helm_release.ocis]
   }
 }
 
@@ -106,6 +122,10 @@ resource "kubernetes_persistent_volume" "ocis_store_pv" {
 
     storage_class_name = "ocis-store-host-path"
   }
+
+  lifecycle {
+    replace_triggered_by = [helm_release.ocis]
+  }
 }
 
 resource "kubernetes_persistent_volume" "ocis_thumbnails_pv" {
@@ -128,6 +148,10 @@ resource "kubernetes_persistent_volume" "ocis_thumbnails_pv" {
 
     storage_class_name = "ocis-thumbnails-host-path"
   }
+
+  lifecycle {
+    replace_triggered_by = [helm_release.ocis]
+  }
 }
 
 resource "kubernetes_persistent_volume" "ocis_web_pv" {
@@ -149,5 +173,9 @@ resource "kubernetes_persistent_volume" "ocis_web_pv" {
     }
 
     storage_class_name = "ocis-web-host-path"
+  }
+
+  lifecycle {
+    replace_triggered_by = [helm_release.ocis]
   }
 }
