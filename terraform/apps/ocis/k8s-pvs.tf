@@ -1,7 +1,7 @@
 # increment / change value here whenever the PVs need to be recreated
 resource "null_resource" "recreate_pvs" {
   triggers = {
-    version = 1
+    version = 2
   }
 }
 
