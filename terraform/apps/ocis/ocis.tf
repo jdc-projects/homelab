@@ -63,7 +63,7 @@ resource "helm_release" "ocis" {
     value = "false" # ***** CHANGE THIS LATER *****
   }
   set {
-    name  = "services.web.persistence.existingClaim"
+    name  = "services.nats.persistence.existingClaim"
     value = "" # ***** 10Gi
   }
 
@@ -86,11 +86,11 @@ resource "helm_release" "ocis" {
   }
 
   set {
-    name  = "services.storageusers.storageBackend.persistence.enabled"
+    name  = "services.storageusers.persistence.enabled"
     value = "false" # ***** CHANGE THIS LATER *****
   }
   set {
-    name  = "services.storageusers.storageBackend.persistence.existingClaim"
+    name  = "services.storageusers.persistence.existingClaim"
     value = kubernetes_persistent_volume_claim.ocis_storageusers_pvc.metadata[0].name
   }
 
