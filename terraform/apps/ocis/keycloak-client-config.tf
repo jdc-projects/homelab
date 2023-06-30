@@ -1,26 +1,16 @@
-resource "null_resource" "ocis_keycloak_client_name" {
-  triggers = {
-    client_name = "ocis"
-  }
-}
-
 resource "keycloak_openid_client" "ocis_client" {
   realm_id  = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  client_id = null_resource.ocis_keycloak_client_name.triggers.client_name
+  client_id = "ocis-web"
 
-  name    = null_resource.ocis_keycloak_client_name.triggers.client_name
+  name    = "ocis-web"
   enabled = true
 
   access_type = "PUBLIC"
   valid_redirect_uris = [
-    "https://${null_resource.ocis_keycloak_client_name.triggers.client_name}.${var.server_base_domain}/*",
-    "oc://android.owncloud.com",
-    "http://127.0.0.1"
+    "https://ocis.${var.server_base_domain}/*"
   ]
   web_origins = [
-    "https://${null_resource.ocis_keycloak_client_name.triggers.client_name}.${var.server_base_domain}",
-    "oc://android.owncloud.com",
-    "http://127.0.0.1"
+    "https://ocis.${var.server_base_domain}"
   ]
 
   client_authenticator_type = "client-jwt"
@@ -63,8 +53,8 @@ resource "keycloak_openid_client_default_scopes" "ocis_client_default_scopes" {
 
 resource "keycloak_openid_user_client_role_protocol_mapper" "ocis_client_role_claim_mapper" {
   realm_id                    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  client_id                   = keycloak_openid_client.ocis_client.id
-  client_id_for_role_mappings = null_resource.ocis_keycloak_client_name.triggers.client_name
+  client_id                   = keycloak_openid_client.ocis_client.client_id
+  client_id_for_role_mappings = keycloak_openid_client.ocis_client.client_id
 
   name             = "role-mapper"
   claim_name       = "roles"

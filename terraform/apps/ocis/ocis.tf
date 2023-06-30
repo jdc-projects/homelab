@@ -50,7 +50,7 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "externalDomain"
-    value = "${null_resource.ocis_keycloak_client_name.triggers.client_name}.${var.server_base_domain}"
+    value = "ocis.${var.server_base_domain}"
   }
 
   set {
