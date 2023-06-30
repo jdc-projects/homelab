@@ -60,7 +60,7 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "services.nats.persistence.enabled"
-    value = "false" # ***** CHANGE THIS LATER *****
+    value = "true"
   }
   set {
     name  = "services.nats.persistence.storageClassName"
@@ -73,7 +73,7 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "services.search.persistence.enabled"
-    value = "false" # ***** CHANGE THIS LATER *****
+    value = "true"
   }
   set {
     name  = "services.search.persistence.storageClassName"
@@ -86,7 +86,7 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "services.storagesystem.persistence.enabled"
-    value = "false" # ***** CHANGE THIS LATER *****
+    value = "true"
   }
   set {
     name  = "services.storagesystem.persistence.storageClassName"
@@ -99,7 +99,7 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "services.storageusers.persistence.enabled"
-    value = "false" # ***** CHANGE THIS LATER *****
+    value = "true"
   }
   set {
     name  = "services.storageusers.persistence.storageClassName"
@@ -112,7 +112,7 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "services.store.persistence.enabled"
-    value = "false" # ***** CHANGE THIS LATER *****
+    value = "true"
   }
   set {
     name  = "services.store.persistence.storageClassName"
@@ -125,7 +125,7 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "services.thumbnails.persistence.enabled"
-    value = "false" # ***** CHANGE THIS LATER *****
+    value = "true"
   }
   set {
     name  = "services.thumbnails.persistence.storageClassName"
@@ -138,7 +138,7 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "services.web.persistence.enabled"
-    value = "false" # ***** CHANGE THIS LATER *****
+    value = "true"
   }
   set {
     name  = "services.web.persistence.storageClassName"
@@ -210,10 +210,6 @@ resource "helm_release" "ocis" {
     name  = "features.externalUserManagement.ldap.user.baseDN"
     value = "ou=people\\,dc=idm\\,dc=${var.server_base_domain}"
   }
-  # set {
-  #   name  = "features.externalUserManagement.ldap.user.filter"
-  #   value = "(&(objectClass=person)(memberOf=uid=ocis,ou=groups,dc=idm,dc=${var.server_base_domain}))"
-  # }
   set {
     name  = "features.externalUserManagement.ldap.user.objectClass"
     value = "person"
