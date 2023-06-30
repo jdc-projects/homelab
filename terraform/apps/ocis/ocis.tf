@@ -233,10 +233,4 @@ resource "helm_release" "ocis" {
   }
 
   depends_on = [null_resource.ocis_helm_repo_clone]
-
-  lifecycle {
-    replace_triggered_by = [
-      null_resource.ocis_helm_repo_clone # debugging
-    ]
-  }
 }
