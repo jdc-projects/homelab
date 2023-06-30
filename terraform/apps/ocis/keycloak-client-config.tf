@@ -29,3 +29,17 @@ resource "keycloak_openid_client" "ocis_client" {
 
   login_theme = "keycloak"
 }
+
+resource "keycloak_openid_client_default_scopes" "ocis_client_default_scopes" {
+  realm_id  = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
+  client_id = keycloak_openid_client.ocis_client.id
+
+  default_scopes = [
+    "acr",
+    "email",
+    "microprofile-jwt",
+    "profile",
+    "roles",
+    "web-origins",
+  ]
+}
