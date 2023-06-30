@@ -1,37 +1,29 @@
 resource "keycloak_role" "ocis_admin_client_role" {
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_lldap_realm_id
-  client_id   = null_resource.ocis_keycloak_client_id.triggers.client_id
+  client_id   = keycloak_openid_client.ocis_client.id
   name        = "ocisAdmin"
   description = "OCIS Admin"
-
-  depends_on = [keycloak_openid_client.ocis_web_client]
 }
 
 resource "keycloak_role" "ocis_space_admin_client_role" {
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_lldap_realm_id
-  client_id   = null_resource.ocis_keycloak_client_id.triggers.client_id
+  client_id   = keycloak_openid_client.ocis_client.id
   name        = "ocisSpaceAdmin"
   description = "OCIS Space Admin"
-
-  depends_on = [keycloak_openid_client.ocis_web_client]
 }
 
 resource "keycloak_role" "ocis_user_client_role" {
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_lldap_realm_id
-  client_id   = null_resource.ocis_keycloak_client_id.triggers.client_id
+  client_id   = keycloak_openid_client.ocis_client.id
   name        = "ocisUser"
   description = "OCIS User"
-
-  depends_on = [keycloak_openid_client.ocis_web_client]
 }
 
 resource "keycloak_role" "ocis_guest_client_role" {
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_lldap_realm_id
-  client_id   = null_resource.ocis_keycloak_client_id.triggers.client_id
+  client_id   = keycloak_openid_client.ocis_client.id
   name        = "ocisGuest"
   description = "OCIS Guest"
-
-  depends_on = [keycloak_openid_client.ocis_web_client]
 }
 
 resource "keycloak_group_roles" "ocis_admin_group_role" {
