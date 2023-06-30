@@ -175,7 +175,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.oidc.roleAssignment.claim"
-    value = "resource_access.ocis.roles"
+    value = "roles"
   }
 
   set {
@@ -209,10 +209,6 @@ resource "helm_release" "ocis" {
   set {
     name  = "features.externalUserManagement.ldap.user.baseDN"
     value = "ou=people\\,dc=idm\\,dc=${var.server_base_domain}"
-  }
-  set {
-    name  = "features.externalUserManagement.ldap.user.filter"
-    value = ""
   }
   # set {
   #   name  = "features.externalUserManagement.ldap.user.filter"
