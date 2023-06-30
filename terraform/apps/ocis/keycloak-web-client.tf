@@ -1,4 +1,4 @@
-resource "keycloak_openid_client" "ocis_client" {
+resource "keycloak_openid_client" "ocis_web_client" {
   realm_id  = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
   client_id = "ocis-web"
 
