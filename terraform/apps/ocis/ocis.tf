@@ -68,7 +68,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "services.nats.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.ocis_nats_pvc.id
+    value = kubernetes_persistent_volume_claim.ocis_nats_pvc.metadata[0].name
   }
 
   set {
@@ -81,7 +81,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "services.search.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.ocis_search_pvc.id
+    value = kubernetes_persistent_volume_claim.ocis_search_pvc.metadata[0].name
   }
 
   set {
@@ -94,7 +94,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "services.storagesystem.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.ocis_storagesystem_pvc.id
+    value = kubernetes_persistent_volume_claim.ocis_storagesystem_pvc.metadata[0].name
   }
 
   set {
@@ -107,7 +107,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "services.storageusers.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.ocis_storageusers_pvc.id
+    value = kubernetes_persistent_volume_claim.ocis_storageusers_pvc.metadata[0].name
   }
 
   set {
@@ -120,7 +120,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "services.store.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.ocis_store_pvc.id
+    value = kubernetes_persistent_volume_claim.ocis_store_pvc.metadata[0].name
   }
 
   set {
@@ -133,7 +133,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "services.thumbnails.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.ocis_thumbnails_pvc.id
+    value = kubernetes_persistent_volume_claim.ocis_thumbnails_pvc.metadata[0].name
   }
 
   set {
@@ -146,7 +146,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "services.web.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.ocis_web_pvc.id
+    value = kubernetes_persistent_volume_claim.ocis_web_pvc.metadata[0].name
   }
 
   set {
