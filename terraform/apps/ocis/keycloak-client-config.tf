@@ -11,7 +11,7 @@ resource "keycloak_openid_client" "ocis_client" {
   name    = null_resource.ocis_keycloak_client_name.triggers.client_name
   enabled = true
 
-  access_type = "PUBLIC"
+  access_type = "CONFIDENTIAL"
   valid_redirect_uris = [
     "https://${null_resource.ocis_keycloak_client_name.triggers.client_name}.${var.server_base_domain}/*",
     "oc://android.owncloud.com"
