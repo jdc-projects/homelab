@@ -270,7 +270,8 @@ resource "helm_release" "ocis" {
       kubernetes_persistent_volume.ocis_storageusers_pv,
       kubernetes_persistent_volume.ocis_store_pv,
       kubernetes_persistent_volume.ocis_thumbnails_pv,
-      kubernetes_persistent_volume.ocis_web_pv
+      kubernetes_persistent_volume.ocis_web_pv,
+      null_resource.ocis_helm_repo # debugging
     ]
   }
 }
