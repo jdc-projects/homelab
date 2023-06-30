@@ -163,7 +163,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.oidc.webClientID"
-    value = keycloak_openid_client.ocis_web_client.client_id
+    value = keycloak_openid_client.ocis_client.client_id
   }
   set {
     name  = "features.externalUserManagement.oidc.userIDClaim"
