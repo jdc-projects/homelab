@@ -63,8 +63,12 @@ resource "helm_release" "ocis" {
     value = "false" # ***** CHANGE THIS LATER *****
   }
   set {
-    name  = "services.nats.persistence.existingClaim"
-    value = "" # ***** 10Gi
+    name  = "services.nats.persistence.storageClassName"
+    value = kubernetes_persistent_volume.ocis_nats_pv.spec[0].storage_class_name
+  }
+  set {
+    name  = "services.nats.persistence.size"
+    value = kubernetes_persistent_volume.ocis_nats_pv.spec[0].capacity.storage
   }
 
   set {
@@ -72,8 +76,12 @@ resource "helm_release" "ocis" {
     value = "false" # ***** CHANGE THIS LATER *****
   }
   set {
-    name  = "services.search.persistence.existingClaim"
-    value = "" # ***** 10Gi
+    name  = "services.search.persistence.storageClassName"
+    value = kubernetes_persistent_volume.ocis_search_pv.spec[0].storage_class_name
+  }
+  set {
+    name  = "services.search.persistence.size"
+    value = kubernetes_persistent_volume.ocis_search_pv.spec[0].capacity.storage
   }
 
   set {
@@ -81,8 +89,12 @@ resource "helm_release" "ocis" {
     value = "false" # ***** CHANGE THIS LATER *****
   }
   set {
-    name  = "services.storagesystem.persistence.existingClaim"
-    value = "" # ***** 5Gi
+    name  = "services.storagesystem.persistence.storageClassName"
+    value = kubernetes_persistent_volume.ocis_storagesystem_pv.spec[0].storage_class_name
+  }
+  set {
+    name  = "services.storagesystem.persistence.size"
+    value = kubernetes_persistent_volume.ocis_storagesystem_pv.spec[0].capacity.storage
   }
 
   set {
@@ -90,8 +102,12 @@ resource "helm_release" "ocis" {
     value = "false" # ***** CHANGE THIS LATER *****
   }
   set {
-    name  = "services.storageusers.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.ocis_storageusers_pvc.metadata[0].name
+    name  = "services.storageusers.persistence.storageClassName"
+    value = kubernetes_persistent_volume.ocis_storageusers_pv.spec[0].storage_class_name
+  }
+  set {
+    name  = "services.storageusers.persistence.size"
+    value = kubernetes_persistent_volume.ocis_storageusers_pv.spec[0].capacity.storage
   }
 
   set {
@@ -99,8 +115,12 @@ resource "helm_release" "ocis" {
     value = "false" # ***** CHANGE THIS LATER *****
   }
   set {
-    name  = "services.store.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.ocis_store_pvc.metadata[0].name
+    name  = "services.store.persistence.storageClassName"
+    value = kubernetes_persistent_volume.ocis_store_pv.spec[0].storage_class_name
+  }
+  set {
+    name  = "services.store.persistence.size"
+    value = kubernetes_persistent_volume.ocis_store_pv.spec[0].capacity.storage
   }
 
   set {
@@ -108,8 +128,12 @@ resource "helm_release" "ocis" {
     value = "false" # ***** CHANGE THIS LATER *****
   }
   set {
-    name  = "services.thumbnails.persistence.existingClaim"
-    value = "" # ***** 10Gi
+    name  = "services.thumbnails.persistence.storageClassName"
+    value = kubernetes_persistent_volume.ocis_thumbnails_pv.spec[0].storage_class_name
+  }
+  set {
+    name  = "services.thumbnails.persistence.size"
+    value = kubernetes_persistent_volume.ocis_thumbnails_pv.spec[0].capacity.storage
   }
 
   set {
@@ -117,8 +141,12 @@ resource "helm_release" "ocis" {
     value = "false" # ***** CHANGE THIS LATER *****
   }
   set {
-    name  = "services.web.persistence.existingClaim"
-    value = "" # ***** 1Gi
+    name  = "services.web.persistence.storageClassName"
+    value = kubernetes_persistent_volume.ocis_web_pv.spec[0].storage_class_name
+  }
+  set {
+    name  = "services.web.persistence.size"
+    value = kubernetes_persistent_volume.ocis_web_pv.spec[0].capacity.storage
   }
 
   set {
