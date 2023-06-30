@@ -153,10 +153,6 @@ resource "helm_release" "ocis" {
     name  = "features.externalUserManagement.enabled"
     value = "true"
   }
-  set { # ***** TEMPORARY *****
-    name  = "features.externalUserManagement.adminUUID"
-    value = "jack"
-  }
   set {
     name  = "features.externalUserManagement.oidc.issuerURI"
     value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id}"
@@ -167,16 +163,20 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.oidc.userIDClaim"
-    value = "preferred_username"
+    value = "upn"
   }
   set {
     name  = "features.externalUserManagement.oidc.userIDClaimAttributeMapping"
     value = "userid"
   }
-  # set {
-  #   name  = "features.externalUserManagement.oidc.roleAssignment.enabled"
-  #   value = "true"
-  # }
+  set {
+    name  = "features.externalUserManagement.oidc.roleAssignment.enabled"
+    value = "true"
+  }
+  set {
+    name  = "features.externalUserManagement.oidc.roleAssignment.claim"
+    value = "resource_access.ocis.roles"
+  }
 
   set {
     name  = "features.externalUserManagement.ldap.writeable"
