@@ -26,7 +26,7 @@ resource "keycloak_openid_client" "ocis_client" {
 
 resource "keycloak_openid_client_optional_scopes" "ocis_client_optional_scopes" {
   realm_id  = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  client_id = keycloak_openid_client.ocis_client.id
+  client_id = keycloak_openid_client.ocis_web_client.id
 
   optional_scopes = [
     "address",
@@ -37,7 +37,7 @@ resource "keycloak_openid_client_optional_scopes" "ocis_client_optional_scopes" 
 
 resource "keycloak_openid_client_default_scopes" "ocis_client_default_scopes" {
   realm_id  = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  client_id = keycloak_openid_client.ocis_client.id
+  client_id = keycloak_openid_client.ocis_web_client.id
 
   default_scopes = [
     "acr",
@@ -48,13 +48,13 @@ resource "keycloak_openid_client_default_scopes" "ocis_client_default_scopes" {
     "web-origins",
   ]
 
-  depends_on = [keycloak_openid_client_optional_scopes.ocis_client_optional_scopes]
+  depends_on = [keycloak_openid_client_optional_scopes.ocis_web_client_optional_scopes]
 }
 
 resource "keycloak_openid_user_client_role_protocol_mapper" "ocis_client_role_claim_mapper" {
   realm_id                    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  client_id                   = keycloak_openid_client.ocis_client.id
-  client_id_for_role_mappings = keycloak_openid_client.ocis_client.client_id
+  client_id                   = keycloak_openid_client.ocis_web_client.id
+  client_id_for_role_mappings = keycloak_openid_client.ocis_web_client.client_id
 
   name             = "role-mapper"
   claim_name       = "roles"
