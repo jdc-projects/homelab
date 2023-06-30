@@ -63,6 +63,10 @@ resource "helm_release" "ocis" {
     value = "true"
   }
   set {
+    name  = "services.nats.persistence.chownInitContainer"
+    value = "true"
+  }
+  set {
     name  = "services.nats.persistence.storageClassName"
     value = kubernetes_persistent_volume.ocis_nats_pv.spec[0].storage_class_name
   }
@@ -73,6 +77,10 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "services.search.persistence.enabled"
+    value = "true"
+  }
+  set {
+    name  = "services.search.persistence.chownInitContainer"
     value = "true"
   }
   set {
@@ -89,6 +97,10 @@ resource "helm_release" "ocis" {
     value = "true"
   }
   set {
+    name  = "services.storagesystem.persistence.chownInitContainer"
+    value = "true"
+  }
+  set {
     name  = "services.storagesystem.persistence.storageClassName"
     value = kubernetes_persistent_volume.ocis_storagesystem_pv.spec[0].storage_class_name
   }
@@ -99,6 +111,10 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "services.storageusers.persistence.enabled"
+    value = "true"
+  }
+  set {
+    name  = "services.storageusers.persistence.chownInitContainer"
     value = "true"
   }
   set {
@@ -115,6 +131,10 @@ resource "helm_release" "ocis" {
     value = "true"
   }
   set {
+    name  = "services.store.persistence.chownInitContainer"
+    value = "true"
+  }
+  set {
     name  = "services.store.persistence.storageClassName"
     value = kubernetes_persistent_volume.ocis_store_pv.spec[0].storage_class_name
   }
@@ -128,6 +148,10 @@ resource "helm_release" "ocis" {
     value = "true"
   }
   set {
+    name  = "services.thumbnails.persistence.chownInitContainer"
+    value = "true"
+  }
+  set {
     name  = "services.thumbnails.persistence.storageClassName"
     value = kubernetes_persistent_volume.ocis_thumbnails_pv.spec[0].storage_class_name
   }
@@ -138,6 +162,10 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "services.web.persistence.enabled"
+    value = "true"
+  }
+  set {
+    name  = "services.web.persistence.chownInitContainer"
     value = "true"
   }
   set {
