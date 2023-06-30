@@ -264,8 +264,6 @@ resource "helm_release" "ocis" {
 
   lifecycle {
     replace_triggered_by = [
-      kubernetes_secret.ocis_ldap_password_secret,
-      kubernetes_secret.ocis_jwt_secret,
       null_resource.ocis_helm_repo # ***** temporary for debug - will for replace each time *****
     ]
   }

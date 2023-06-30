@@ -1,3 +1,10 @@
+# increment / change value here whenever the PVs need to be recreated
+resource "null_resource" "recreate_pvs" {
+  triggers = {
+    version = 1
+  }
+}
+
 resource "kubernetes_persistent_volume" "ocis_nats_pv" {
   metadata {
     name = "ocis-nats-pv"
@@ -20,7 +27,7 @@ resource "kubernetes_persistent_volume" "ocis_nats_pv" {
   }
 
   lifecycle {
-    replace_triggered_by = [helm_release.ocis]
+    replace_triggered_by = [null_resource.recreate_pvs]
   }
 }
 
@@ -46,7 +53,7 @@ resource "kubernetes_persistent_volume" "ocis_search_pv" {
   }
 
   lifecycle {
-    replace_triggered_by = [helm_release.ocis]
+    replace_triggered_by = [null_resource.recreate_pvs]
   }
 }
 
@@ -72,7 +79,7 @@ resource "kubernetes_persistent_volume" "ocis_storagesystem_pv" {
   }
 
   lifecycle {
-    replace_triggered_by = [helm_release.ocis]
+    replace_triggered_by = [null_resource.recreate_pvs]
   }
 }
 
@@ -98,7 +105,7 @@ resource "kubernetes_persistent_volume" "ocis_storageusers_pv" {
   }
 
   lifecycle {
-    replace_triggered_by = [helm_release.ocis]
+    replace_triggered_by = [null_resource.recreate_pvs]
   }
 }
 
@@ -124,7 +131,7 @@ resource "kubernetes_persistent_volume" "ocis_store_pv" {
   }
 
   lifecycle {
-    replace_triggered_by = [helm_release.ocis]
+    replace_triggered_by = [null_resource.recreate_pvs]
   }
 }
 
@@ -150,7 +157,7 @@ resource "kubernetes_persistent_volume" "ocis_thumbnails_pv" {
   }
 
   lifecycle {
-    replace_triggered_by = [helm_release.ocis]
+    replace_triggered_by = [null_resource.recreate_pvs]
   }
 }
 
@@ -176,6 +183,6 @@ resource "kubernetes_persistent_volume" "ocis_web_pv" {
   }
 
   lifecycle {
-    replace_triggered_by = [helm_release.ocis]
+    replace_triggered_by = [null_resource.recreate_pvs]
   }
 }
