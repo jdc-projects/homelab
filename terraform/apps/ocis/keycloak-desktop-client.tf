@@ -3,7 +3,7 @@ resource "keycloak_openid_client" "ocis_desktop_client" {
   client_id = "xdXOt13JKxym1B1QcEncf2XDkLAexMBFwiT9j6EfhhHFJhs2KM9jbjTmf8JBXE69"
 
   name    = "ocis-desktop"
-  enabled = true
+  enabled = false
 
   access_type = "CONFIDENTIAL"
   valid_redirect_uris = [
