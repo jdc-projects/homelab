@@ -171,7 +171,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.oidc.accessTokenVerifyMethod"
-    value = "none"
+    value = "jwt"
   }
   set {
     name  = "features.externalUserManagement.oidc.roleAssignment.enabled"
