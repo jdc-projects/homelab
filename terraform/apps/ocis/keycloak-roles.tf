@@ -78,16 +78,16 @@ resource "keycloak_group_roles" "ocis_guest_group_role" {
   ]
 }
 
-data "keycloak_openid_client_scope" "keycloak_acr_scope" {
+data "keycloak_openid_client_scope" "keycloak_roles_scope" {
   realm_id = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  name     = "acr"
+  name     = "roles"
 }
 
 resource "keycloak_openid_user_realm_role_protocol_mapper" "user_realm_role_mapper" {
   realm_id = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
   name     = "user-realm-role-mapper"
 
-  client_scope_id = data.keycloak_openid_client_scope.keycloak_acr_scope.id
+  client_scope_id = data.keycloak_openid_client_scope.keycloak_roles_scope.id
 
   claim_name       = "roles"
   claim_value_type = "String"
