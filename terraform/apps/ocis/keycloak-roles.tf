@@ -1,27 +1,23 @@
 resource "keycloak_role" "ocis_admin_client_role" {
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  client_id   = keycloak_openid_client.ocis_web_client.id
   name        = "ocisAdmin"
   description = "OCIS Admin"
 }
 
 resource "keycloak_role" "ocis_space_admin_client_role" {
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  client_id   = keycloak_openid_client.ocis_web_client.id
   name        = "ocisSpaceAdmin"
   description = "OCIS Space Admin"
 }
 
 resource "keycloak_role" "ocis_user_client_role" {
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  client_id   = keycloak_openid_client.ocis_web_client.id
   name        = "ocisUser"
   description = "OCIS User"
 }
 
 resource "keycloak_role" "ocis_guest_client_role" {
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  client_id   = keycloak_openid_client.ocis_web_client.id
   name        = "ocisGuest"
   description = "OCIS Guest"
 }
@@ -80,4 +76,25 @@ resource "keycloak_group_roles" "ocis_guest_group_role" {
   role_ids = [
     keycloak_role.ocis_guest_client_role.id
   ]
+}
+
+data "keycloak_openid_client_scope" "keycloak_acr_scope" {
+  realm_id = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
+  name     = "acr"
+}
+
+resource "keycloak_openid_user_realm_role_protocol_mapper" "user_realm_role_mapper" {
+  realm_id = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
+  name     = "user-realm-role-mapper"
+
+  client_scope_id = data.keycloak_openid_client_scope.keycloak_acr_scope.id
+
+  claim_name       = "roles"
+  claim_value_type = "String"
+
+  multivalued = true
+
+  add_to_id_token     = false
+  add_to_access_token = false
+  add_to_userinfo     = true
 }
