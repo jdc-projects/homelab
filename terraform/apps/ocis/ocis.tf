@@ -170,6 +170,10 @@ resource "helm_release" "ocis" {
     value = "userid"
   }
   set {
+    name  = "features.externalUserManagement.oidc.accessTokenVerifyMethod"
+    value = "none"
+  }
+  set {
     name  = "features.externalUserManagement.oidc.roleAssignment.enabled"
     value = "true"
   }
