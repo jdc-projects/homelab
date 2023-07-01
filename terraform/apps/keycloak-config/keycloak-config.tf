@@ -49,3 +49,24 @@ resource "keycloak_ldap_group_mapper" "lldap_group_mapper" {
 
   drop_non_existing_groups_during_sync = true
 }
+
+data "keycloak_openid_client_scope" "keycloak_roles_scope" {
+  realm_id = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
+  name     = "roles"
+}
+
+resource "keycloak_openid_user_realm_role_protocol_mapper" "user_realm_role_mapper" {
+  realm_id = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
+  name     = "user-info-role-mapper"
+
+  client_scope_id = data.keycloak_openid_client_scope.keycloak_roles_scope.id
+
+  claim_name       = "roles"
+  claim_value_type = "String"
+
+  multivalued = true
+
+  add_to_id_token     = false
+  add_to_access_token = false
+  add_to_userinfo     = true
+}
