@@ -163,7 +163,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.oidc.userIDClaim"
-    value = "upn"
+    value = "preferred_username"
   }
   set {
     name  = "features.externalUserManagement.oidc.userIDClaimAttributeMapping"

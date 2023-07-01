@@ -23,36 +23,9 @@ resource "keycloak_openid_client" "ocis_android_client" {
   login_theme = "keycloak"
 }
 
-resource "keycloak_openid_client_optional_scopes" "ocis_android_client_optional_scopes" {
-  realm_id  = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  client_id = keycloak_openid_client.ocis_android_client.id
-
-  optional_scopes = [
-    "address",
-    "phone",
-    "offline_access",
-  ]
-}
-
-resource "keycloak_openid_client_default_scopes" "ocis_android_client_default_scopes" {
-  realm_id  = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  client_id = keycloak_openid_client.ocis_android_client.id
-
-  default_scopes = [
-    "acr",
-    "email",
-    "microprofile-jwt",
-    "profile",
-    "roles",
-    "web-origins",
-  ]
-
-  depends_on = [keycloak_openid_client_optional_scopes.ocis_android_client_optional_scopes]
-}
-
 resource "keycloak_openid_user_client_role_protocol_mapper" "ocis_android_client_role_claim_mapper" {
-  realm_id                    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  client_id                   = keycloak_openid_client.ocis_android_client.id
+  realm_id  = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
+  client_id = keycloak_openid_client.ocis_android_client.id
 
   name             = "role-mapper"
   claim_name       = "roles"
