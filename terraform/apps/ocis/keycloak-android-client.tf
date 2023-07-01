@@ -16,7 +16,7 @@ resource "keycloak_openid_client" "ocis_android_client" {
 
   standard_flow_enabled        = true
   direct_access_grants_enabled = true
-  implicit_flow_enabled        = true
+  implicit_flow_enabled        = false
 
   full_scope_allowed = true
 
