@@ -13,7 +13,7 @@ resource "keycloak_openid_client" "ocis_desktop_client" {
 
   client_secret = "UBntmLjC2yYCeHwsyj73Uwo9TAaecAetRwMw0xYcvNL9yRdLSUi0hUAHfvCHFeFh"
 
-  client_authenticator_type = "client-secret-jwt"
+  client_authenticator_type = "client-secret"
 
   standard_flow_enabled        = true
   direct_access_grants_enabled = true

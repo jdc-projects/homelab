@@ -12,7 +12,7 @@ resource "keycloak_openid_client" "ocis_android_client" {
 
   client_secret = "dInFYGV33xKzhbRmpqQltYNdfLdJIfJ9L5ISoKhNoT9qZftpdWSP71VrpGR9pmoD"
 
-  client_authenticator_type = "client-secret-jwt"
+  client_authenticator_type = "client-secret"
 
   standard_flow_enabled        = true
   direct_access_grants_enabled = true
