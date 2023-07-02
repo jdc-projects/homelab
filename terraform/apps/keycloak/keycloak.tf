@@ -28,8 +28,8 @@ resource "kubernetes_config_map" "keycloak_custom_scripts" {
     namespace = kubernetes_namespace.keycloak_namespace.metadata[0].name
   }
 
-  binary_data = {
-    "scripts.jar" = "${filebase64("${data.archive_file.keycloak_scripts_jar.output_path}")}"
+  data = {
+    "scripts.jar" = "${file("${data.archive_file.keycloak_scripts_jar.output_path}")}"
   }
 
   depends_on = [data.archive_file.keycloak_scripts_jar]
