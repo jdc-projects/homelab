@@ -1,0 +1,9 @@
+{
+    "mappers": [
+        {
+            "name": "Username@Domain Mapper",
+            "fileName": "user-domain-mapper.js",
+            "description": "Maps new claim in the form of username@domain"
+        }
+    ]
+}

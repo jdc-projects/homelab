@@ -15,6 +15,25 @@ resource "kubernetes_config_map" "keycloak_extra_env_vars" {
   }
 }
 
+data "archive_file" "keycloak_scripts_jar" {
+  type = "zip"
+  output_path = "./scripts.jar"
+  source_dir = "./scripts"
+}
+
+resource "kubernetes_config_map" "keycloak_custom_scripts" {
+  metadata {
+    name      = "keycloak-custom-scripts"
+    namespace = kubernetes_namespace.keycloak_namespace.metadata[0].name
+  }
+
+  data = {
+    "scripts.jar" = "${filebase64("${data.archive_file.keycloak_scripts_jar.output_path}")}"
+  }
+
+  depends_on = [ data.archive_file.keycloak_scripts_jar ]
+}
+
 resource "helm_release" "keycloak" {
   name      = "keycloak"
   namespace = kubernetes_namespace.keycloak_namespace.metadata[0].name
@@ -61,6 +80,23 @@ resource "helm_release" "keycloak" {
   set {
     name  = "service.http.enabled"
     value = "false"
+  }
+
+  set {
+    name  = "extraVolumes[0].name"
+    value = "scripts-jar"
+  }
+  set {
+    name  = "extraVolumes[0].configMap.name"
+    value = kubernetes_config_map.keycloak_custom_scripts.metadata[0].name
+  }
+  set {
+    name  = "extraVolumeMounts[0].name"
+    value = "scripts-jar"
+  }
+  set {
+    name  = "extraVolumes[0].mountPath"
+    value = "/bitnami/keycloak/providers"
   }
 
   set {

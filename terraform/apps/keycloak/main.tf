@@ -25,6 +25,11 @@ terraform {
       source  = "hashicorp/random"
       version = "3.5.1"
     }
+
+    archive = {
+      source = "hashicorp/archive"
+      version = "2.4.0"
+    }
   }
 }
 
@@ -43,6 +48,10 @@ provider "null" {
 }
 
 provider "random" {
+}
+
+provider "archive" {
+  # Configuration options
 }
 
 resource "kubernetes_namespace" "keycloak_namespace" {
