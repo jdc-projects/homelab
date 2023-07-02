@@ -1,6 +1,6 @@
 terraform {
   backend "kubernetes" {
-    secret_suffix = "apps-nextcloud"
+    secret_suffix = "apps-ocis"
     config_path   = "../../cluster.yml"
     namespace     = "terraform-state"
   }
