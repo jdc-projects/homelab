@@ -16,9 +16,9 @@ resource "kubernetes_config_map" "keycloak_extra_env_vars" {
 }
 
 data "archive_file" "keycloak_scripts_jar" {
-  type        = "zip"
-  output_path = "./scripts.jar"
-  source_dir  = "./scripts"
+  type             = "zip"
+  output_path      = "./scripts.jar"
+  source_dir       = "./scripts"
   output_file_mode = "0444"
 }
 
