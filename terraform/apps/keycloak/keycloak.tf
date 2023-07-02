@@ -125,6 +125,11 @@ resource "helm_release" "keycloak" {
   lifecycle {
     replace_triggered_by = [kubernetes_config_map.keycloak_custom_scripts]
   }
+
+  provisioner "local-exec" {
+    when = destroy
+    command = "kubectl -n ${self.namespace} delete pvc --all"
+  }
 }
 
 resource "null_resource" "keycloak_liveness_check" {
