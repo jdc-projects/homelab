@@ -4,6 +4,17 @@ resource "null_resource" "keycloak_domain" {
   }
 }
 
+resource "kubernetes_config_map" "keycloak_extra_env_vars" {
+  metadata {
+    name      = "keycloak-extra-env-vars"
+    namespace = kubernetes_namespace.keycloak_namespace.metadata[0].name
+  }
+
+  data = {
+    KC_FEATURES = "scripts"
+  }
+}
+
 resource "helm_release" "keycloak" {
   name      = "keycloak"
   namespace = kubernetes_namespace.keycloak_namespace.metadata[0].name
@@ -43,8 +54,8 @@ resource "helm_release" "keycloak" {
   }
 
   set {
-    name  = "extraStartupArgs"
-    value = "-Dkeycloak.profile.feature.docker=enabled"
+    name  = "extraEnvVarsCM"
+    value = kubernetes_config_map.keycloak_extra_env_vars.metadata[0].name
   }
 
   set {
