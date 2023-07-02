@@ -12,7 +12,7 @@ resource "random_password" "keycloak_admin_password" {
   upper   = true
 }
 
-resource "random_password" "db_admin_password" {
+resource "random_password" "keycloak_db_password" {
   length  = 16
   numeric = true
   special = false

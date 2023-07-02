@@ -118,17 +118,16 @@ resource "helm_release" "keycloak" {
   }
 
   set {
-    name  = "postgres.auth.postgresPassword"
-    value = random_password.db_admin_password.result
+    name  = "postgresql.auth.password"
+    value = random_password.keycloak_db_password.result
+  }
+  set {
+    name  = "externalDatabase.password"
+    value = random_password.keycloak_db_password.result
   }
 
   lifecycle {
     replace_triggered_by = [kubernetes_config_map.keycloak_custom_scripts]
-  }
-
-  provisioner "local-exec" {
-    when = destroy
-    command = "kubectl -n ${self.namespace} delete pvc data-${self.name}-postgres-0"
   }
 }
 
