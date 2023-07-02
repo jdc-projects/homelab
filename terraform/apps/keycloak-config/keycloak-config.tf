@@ -29,7 +29,7 @@ resource "keycloak_ldap_user_federation" "lldap_user_federation" {
 
   pagination = false
 
-  full_sync_period = 600
+  full_sync_period = 60
 }
 
 resource "keycloak_ldap_group_mapper" "lldap_group_mapper" {
@@ -48,6 +48,11 @@ resource "keycloak_ldap_group_mapper" "lldap_group_mapper" {
   mode = "READ_ONLY"
 
   drop_non_existing_groups_during_sync = true
+
+  provisioner "local-exec" {
+    # wait for a sync so that groups have a change to sync
+    command = "sleep ${keycload_ldap_user_federation.lldap_user_federation.full_sync_period}"
+  }
 }
 
 data "keycloak_openid_client_scope" "keycloak_roles_scope" {
