@@ -121,6 +121,10 @@ resource "helm_release" "keycloak" {
     name  = "postgres.auth.postgresPassword"
     value = random_password.db_admin_password.result
   }
+
+  lifecycle {
+    replace_triggered_by = [kubernetes_config_map.keycloak_custom_scripts]
+  }
 }
 
 resource "null_resource" "keycloak_liveness_check" {
