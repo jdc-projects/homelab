@@ -28,8 +28,8 @@ resource "kubernetes_config_map" "keycloak_custom_scripts" {
     namespace = kubernetes_namespace.keycloak_namespace.metadata[0].name
   }
 
-  data = {
-    "scripts.jar" = "${file("${data.archive_file.keycloak_scripts_jar.output_path}")}"
+  binary_data = {
+    "scripts.jar" = "${file(data.archive_file.keycloak_scripts_jar.output_path)}"
   }
 
   depends_on = [data.archive_file.keycloak_scripts_jar]
@@ -97,7 +97,7 @@ resource "helm_release" "keycloak" {
   }
   set {
     name  = "extraVolumeMounts[0].mountPath"
-    value = "/opt/bitnami/keycloak/providers"
+    value = "/bitnami/keycloak/providers"
   }
   set {
     name  = "extraVolumeMounts[0].readOnly"
