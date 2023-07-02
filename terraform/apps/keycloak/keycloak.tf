@@ -98,6 +98,10 @@ resource "helm_release" "keycloak" {
     name  = "extraVolumeMounts[0].mountPath"
     value = "/bitnami/keycloak/providers"
   }
+  set {
+    name  = "extraVolumeMounts[0].readOnly"
+    value = "true"
+  }
 
   set {
     name  = "ingress.enabled"
