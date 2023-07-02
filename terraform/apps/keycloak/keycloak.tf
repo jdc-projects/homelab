@@ -44,7 +44,7 @@ resource "helm_release" "keycloak" {
 
   set {
     name  = "extraStartupArgs"
-    value = "\"-Dkeycloak.profile.feature.scripts=enabled\""
+    value = "\"-Dkeycloak.profile.feature.script=enabled\""
   }
 
   set {
