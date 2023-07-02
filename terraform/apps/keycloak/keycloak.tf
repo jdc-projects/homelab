@@ -66,7 +66,7 @@ resource "helm_release" "keycloak" {
   }
 }
 
-resource "null_resource" "traefik_cert_check" {
+resource "null_resource" "keycloak_liveness_check" {
   triggers = {
     always_run = timestamp()
   }
@@ -77,4 +77,3 @@ resource "null_resource" "traefik_cert_check" {
 
   depends_on = [helm_release.keycloak]
 }
-
