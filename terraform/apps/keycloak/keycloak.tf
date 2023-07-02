@@ -16,9 +16,9 @@ resource "kubernetes_config_map" "keycloak_extra_env_vars" {
 }
 
 data "archive_file" "keycloak_scripts_jar" {
-  type = "zip"
+  type        = "zip"
   output_path = "./scripts.jar"
-  source_dir = "./scripts"
+  source_dir  = "./scripts"
 }
 
 resource "kubernetes_config_map" "keycloak_custom_scripts" {
@@ -31,7 +31,7 @@ resource "kubernetes_config_map" "keycloak_custom_scripts" {
     "scripts.jar" = "${filebase64("${data.archive_file.keycloak_scripts_jar.output_path}")}"
   }
 
-  depends_on = [ data.archive_file.keycloak_scripts_jar ]
+  depends_on = [data.archive_file.keycloak_scripts_jar]
 }
 
 resource "helm_release" "keycloak" {
