@@ -92,16 +92,16 @@ resource "helm_release" "keycloak" {
     value = kubernetes_config_map.keycloak_custom_scripts.metadata[0].name
   }
   set {
+    name  = "extraVolumes[0].readOnly"
+    value = "true"
+  }
+  set {
     name  = "extraVolumeMounts[0].name"
     value = "scripts-jar"
   }
   set {
     name  = "extraVolumeMounts[0].mountPath"
     value = "/opt/bitnami/keycloak/providers"
-  }
-  set {
-    name  = "extraVolumeMounts[0].readOnly"
-    value = "false"
   }
 
   set {
