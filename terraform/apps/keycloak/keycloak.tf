@@ -46,6 +46,11 @@ resource "helm_release" "keycloak" {
   timeout = 300
 
   set {
+    name  = "containerSecurityContext.runAsNonRoot"
+    value = "false"
+  }
+
+  set {
     name  = "auth.adminUser"
     value = random_password.keycloak_admin_username.result
   }
