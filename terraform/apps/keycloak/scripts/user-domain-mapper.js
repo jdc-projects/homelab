@@ -17,3 +17,4 @@ forEach.call(user.getClientRoleMappings(client).toArray(), function(roleModel) {
 });
 
 exports = roles;
+
