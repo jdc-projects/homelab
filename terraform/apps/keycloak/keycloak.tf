@@ -95,7 +95,7 @@ resource "helm_release" "keycloak" {
     value = "scripts-jar"
   }
   set {
-    name  = "extraVolumes[0].mountPath"
+    name  = "extraVolumeMounts[0].mountPath"
     value = "/bitnami/keycloak/providers"
   }
 
