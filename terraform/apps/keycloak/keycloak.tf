@@ -128,7 +128,7 @@ resource "helm_release" "keycloak" {
 
   provisioner "local-exec" {
     when = destroy
-    command = "kubectl -n ${self.namespace} delete pvc --all"
+    command = "kubectl -n ${self.namespace} delete pvc data-${self.name}-postgres-0"
   }
 }
 
