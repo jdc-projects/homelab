@@ -96,7 +96,7 @@ resource "helm_release" "keycloak" {
   }
   set {
     name  = "extraVolumeMounts[0].mountPath"
-    value = "/bitnami/keycloak/providers"
+    value = "/opt/bitnami/keycloak/providers"
   }
   set {
     name  = "extraVolumeMounts[0].readOnly"
