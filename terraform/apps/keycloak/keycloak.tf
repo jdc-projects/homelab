@@ -101,7 +101,7 @@ resource "helm_release" "keycloak" {
   }
   set {
     name  = "extraVolumeMounts[0].readOnly"
-    value = "true"
+    value = "false"
   }
 
   set {
