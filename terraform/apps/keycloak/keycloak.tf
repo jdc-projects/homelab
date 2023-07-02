@@ -43,6 +43,11 @@ resource "helm_release" "keycloak" {
   }
 
   set {
+    name  = "extraStartupArgs"
+    value = "-Dkeycloak.profile.feature.scripts=enabled"
+  }
+
+  set {
     name  = "service.http.enabled"
     value = "false"
   }
