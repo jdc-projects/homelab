@@ -22,9 +22,9 @@ resource "null_resource" "seafile_config_file_population" {
   }
 }
 
-resource "kubernetes_config_map" "seafile_config_file" {
+resource "kubernetes_config_map" "seafile_config_files" {
   metadata {
-    name      = "seafile_config_file"
+    name      = "seafile-config-files"
     namespace = kubernetes_namespace.seafile.metadata[0].name
   }
 
@@ -87,7 +87,7 @@ resource "kubernetes_deployment" "seafile" {
           name = "seafile-config"
 
           config_map {
-            name = kubernetes_config_map.seafile_config_file.metadata[0].name
+            name = kubernetes_config_map.seafile_config_files.metadata[0].name
           }
         }
       }
