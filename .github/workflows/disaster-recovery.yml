@@ -35,73 +35,10 @@ jobs:
       resource-name: truenas_dataset.vaultwarden_dataset
     secrets: inherit
 
-  deploy-ocis-nats-storage:
-    needs: deploy-foundational-services
-
-    uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
-    with:
-      terraform-dir: ./terraform/apps/ocis
-      resource-name: truenas_dataset.ocis_nats_dataset
-    secrets: inherit
-
-  deploy-ocis-search-storage:
-    needs: deploy-ocis-nats-storage
-
-    uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
-    with:
-      terraform-dir: ./terraform/apps/ocis
-      resource-name: truenas_dataset.ocis_search_dataset
-    secrets: inherit
-
-  deploy-ocis-storagesystem-storage:
-    needs: deploy-ocis-search-storage
-
-    uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
-    with:
-      terraform-dir: ./terraform/apps/ocis
-      resource-name: truenas_dataset.ocis_storagesystem_dataset
-    secrets: inherit
-
-  deploy-ocis-storageusers-storage:
-    needs: deploy-ocis-storagesystem-storage
-
-    uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
-    with:
-      terraform-dir: ./terraform/apps/ocis
-      resource-name: truenas_dataset.ocis_storagusers_dataset
-    secrets: inherit
-
-  deploy-ocis-store-storage:
-    needs: deploy-ocis-storageusers-storage
-
-    uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
-    with:
-      terraform-dir: ./terraform/apps/ocis
-      resource-name: truenas_dataset.ocis_store_dataset
-    secrets: inherit
-
-  deploy-ocis-thumbnails-storage:
-    needs: deploy-ocis-store-storage
-
-    uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
-    with:
-      terraform-dir: ./terraform/apps/ocis
-      resource-name: truenas_dataset.ocis_thumbnails_dataset
-    secrets: inherit
-
-  deploy-ocis-web-storage:
-    needs: deploy-ocis-thumbnails-storage
-
-    uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
-    with:
-      terraform-dir: ./terraform/apps/ocis
-      resource-name: truenas_dataset.ocis_web_dataset
-    secrets: inherit
-
   # wait for backup data to be restored into the new storage (manual process with approval through an issue)
   wait-for-data-restore:
     runs-on: self-hosted
-    needs: [deploy-services-storage, deploy-lldap-storage, deploy-vaultwarden-storage, deploy-ocis-web-storage]
+    needs: [deploy-services-storage, deploy-lldap-storage, deploy-vaultwarden-storage]
 
     permissions:
       issues: write
