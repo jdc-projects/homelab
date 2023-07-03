@@ -96,7 +96,7 @@ resource "kubernetes_deployment" "seafile" {
 
   lifecycle {
     replace_triggered_by = [
-      kubernetes_config_map.vaultwarden_configmap
+      kubernetes_config_map.seafile_config_files
     ]
   }
 }
