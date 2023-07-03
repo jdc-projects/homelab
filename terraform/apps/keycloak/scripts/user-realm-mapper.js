@@ -1,4 +1,4 @@
 // you can set claims in the token
-let username = user.getUsername()
-let realmName = realm.getName()
+var username = user.getUsername()
+var realmName = realm.getName()
 token.setOtherClaims("userRealmId", username.concat("@", realmName));
