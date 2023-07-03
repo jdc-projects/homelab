@@ -7,7 +7,7 @@ resource "keycloak_openid_client" "seafile" {
 
   access_type = "CONFIDENTIAL"
   valid_redirect_uris = [
-    "https://seafile.${var.server_base_domain}}/oauth/callback/"
+    "https://seafile.${var.server_base_domain}}/*"
   ]
 
   client_secret = random_password.seafile_keycloak_client_secret.result
