@@ -29,9 +29,9 @@ resource "kubernetes_config_map" "seafile_config_file" {
   }
 
   data = {
-    "ccnet.conf"         = file("*****")
-    "seafile.conf"       = file("*****")
-    "seahub_settings.py" = file("*****")
+    "ccnet.conf"         = file("./config/ccnet.conf")
+    "seafile.conf"       = file("./config/seafile.conf")
+    "seahub_settings.py" = file("./config/seahub_settings.py")
   }
 
   depends_on = []
