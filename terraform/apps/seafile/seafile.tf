@@ -12,7 +12,7 @@ resource "null_resource" "seafile_config_file_population" {
       "sed -i'' -e \"s#{{NOTIFICATION_SERVER_PORT}}#${kubernetes_service.seafile_notification.spec[0].port[0].target_port}#g\" ./config/*"
       "sed -i'' -e \"s#{{NOTIFICATION_JWT_PRIVATE_KEY}}#${random_password.seafile_notification_jwt_private_key.result}#g\" ./config/*"
       "sed -i'' -e \"s#{{SMTP_HOST}}#${var.smtp_host}#g\" ./config/*"
-      "sed -i'' -e \"s#{{SMTP_USER}}#${var.smtp_user}#g\" ./config/*"
+      "sed -i'' -e \"s#{{SMTP_USER}}#${var.smtp_username}#g\" ./config/*"
       "sed -i'' -e \"s#{{SMTP_PASSWORD}}#${var.smtp_password}#g\" ./config/*"
       "sed -i'' -e \"s#{{SMTP_PORT}}#${var.smtp_port}#g\" ./config/*"
       "sed -i'' -e \"s#{{OAUTH_CLIENT_ID}}#${keycloak_openid_client.seafile.client_id}#g\" ./config/*"
