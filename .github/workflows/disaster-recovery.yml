@@ -35,10 +35,28 @@ jobs:
       resource-name: truenas_dataset.vaultwarden_dataset
     secrets: inherit
 
+  deploy-seafile-storage:
+    needs: deploy-foundational-services
+
+    uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
+    with:
+      terraform-dir: ./terraform/apps/seafile
+      resource-name: truenas_dataset.seafile
+    secrets: inherit
+
+  deploy-seafile-mariadb-primary-storage:
+    needs: deploy-seafile-storage
+
+    uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
+    with:
+      terraform-dir: ./terraform/apps/seafile
+      resource-name: truenas_dataset.mariadb_primary
+    secrets: inherit
+
   # wait for backup data to be restored into the new storage (manual process with approval through an issue)
   wait-for-data-restore:
     runs-on: self-hosted
-    needs: [deploy-services-storage, deploy-lldap-storage, deploy-vaultwarden-storage]
+    needs: [deploy-services-storage, deploy-lldap-storage, deploy-vaultwarden-storage, deploy-seafile-mariadb-primary-storage]
 
     permissions:
       issues: write
