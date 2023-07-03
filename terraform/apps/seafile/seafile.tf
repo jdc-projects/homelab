@@ -84,7 +84,7 @@ resource "kubernetes_deployment" "seafile" {
         }
 
         volume {
-          name     = "seafile-config"
+          name      = "seafile-config"
           read_only = true
 
           config_map {
