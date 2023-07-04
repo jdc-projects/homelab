@@ -4,6 +4,10 @@ on:
       terraform-dir:
         required: true
         type: string
+      resource-name:
+        required: true
+        type: string
+        default: null
 
 env:
   CLIENT_CERT_DATA: ${{ secrets.KUBE_CLIENT_CERT_DATA }}
@@ -49,5 +53,9 @@ jobs:
         run: "terraform fmt -check"
       - name: "Terraform init"
         run: "terraform init"
-      - name: "Terraform apply"
+      - name: "Terraform apply all resources"
+        if: null == ${{ inputs.resource-name }}
         run: "terraform apply -auto-approve -input=false"
+      - name: "Terraform apply specific resource"
+        if: null != ${{ inputs.resource-name }}
+        run: "terraform apply -auto-approve -input=false -target=${{ inputs.resource-name }}"

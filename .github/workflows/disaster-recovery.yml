@@ -11,7 +11,7 @@ jobs:
   deploy-services-storage:
     needs: deploy-foundational-services
 
-    uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
+    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
     with:
       terraform-dir: ./terraform/apps/services
       resource-name: truenas_dataset.apps_dataset
@@ -20,7 +20,7 @@ jobs:
   deploy-lldap-storage:
     needs: deploy-foundational-services
 
-    uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
+    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
     with:
       terraform-dir: ./terraform/apps/lldap
       resource-name: truenas_dataset.lldap_dataset
@@ -29,7 +29,7 @@ jobs:
   deploy-vaultwarden-storage:
     needs: deploy-foundational-services
 
-    uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
+    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
     with:
       terraform-dir: ./terraform/apps/vaultwarden
       resource-name: truenas_dataset.vaultwarden_dataset
@@ -38,7 +38,7 @@ jobs:
   deploy-seafile-storage:
     needs: deploy-foundational-services
 
-    uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
+    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
     with:
       terraform-dir: ./terraform/apps/seafile
       resource-name: truenas_dataset.seafile
@@ -47,7 +47,7 @@ jobs:
   deploy-seafile-mariadb-primary-storage:
     needs: deploy-seafile-storage
 
-    uses: ./.github/workflows/kubernetes-terraform-deploy-specific-resource-self-hosted-runner.yml
+    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
     with:
       terraform-dir: ./terraform/apps/seafile
       resource-name: truenas_dataset.mariadb_primary
