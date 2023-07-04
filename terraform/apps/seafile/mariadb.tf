@@ -19,7 +19,7 @@ resource "helm_release" "mariadb" {
 
   set {
     name  = "primary.persistence.enabled"
-    value = "true"
+    value = "false"
   }
   set {
     name  = "primary.persistence.existingClaim"
