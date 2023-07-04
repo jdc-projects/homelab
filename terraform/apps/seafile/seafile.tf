@@ -64,10 +64,10 @@ resource "kubernetes_deployment" "seafile" {
           image = "seafileltd/seafile-mc:10.0.1"
           name  = "seafile"
 
-          volume_mount {
-            mount_path = "/shared"
-            name       = "seafile-data"
-          }
+          # volume_mount {
+          #   mount_path = "/shared"
+          #   name       = "seafile-data"
+          # }
 
           volume_mount {
             mount_path = "/shared/seafile"
@@ -75,13 +75,13 @@ resource "kubernetes_deployment" "seafile" {
           }
         }
 
-        volume {
-          name = "seafile-data"
+        # volume {
+        #   name = "seafile-data"
 
-          host_path {
-            path = truenas_dataset.seafile.mount_point
-          }
-        }
+        #   host_path {
+        #     path = truenas_dataset.seafile.mount_point
+        #   }
+        # }
 
         volume {
           name = "seafile-config"
