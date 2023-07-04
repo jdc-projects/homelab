@@ -34,7 +34,7 @@ resource "kubernetes_config_map" "seafile_config_files" {
     "seahub_settings.py" = file("./config/seahub_settings.py")
   }
 
-  depends_on = []
+  depends_on = [null_resource.seafile_config_file_population]
 }
 
 resource "kubernetes_deployment" "seafile" {
