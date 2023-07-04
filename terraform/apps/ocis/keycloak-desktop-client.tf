@@ -11,7 +11,7 @@ resource "keycloak_openid_client" "ocis_desktop_client" {
     "http://localhost:*"
   ]
 
-  client_secret = "UBntmLjC2yYCeHwsyj73Uwo9TAaecAetRwMw0xYcvNL9yRdAoisdOIncoiJIO"
+  client_secret = "UBntmLjC2yYCeHwsyj73Uwo9TAaecAetRwMw0xYcvNL9yRdLSUi0hUAHfvCHFeFh"
 
   client_authenticator_type = "client-secret"
 
@@ -50,4 +50,3 @@ resource "keycloak_openid_client_default_scopes" "ocis_desktop_client_default_sc
 
   depends_on = [keycloak_openid_client_optional_scopes.ocis_desktop_client_optional_scopes]
 }
-
