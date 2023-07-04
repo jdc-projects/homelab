@@ -85,10 +85,10 @@ resource "kubernetes_deployment" "seafile" {
           #   name       = "seafile-data"
           # }
 
-          # volume_mount {
-          #   mount_path = "/shared/seafile"
-          #   name       = "seafile-config"
-          # }
+          volume_mount {
+            mount_path = "/shared/seafile/conf"
+            name       = "seafile-config"
+          }
         }
 
         # volume {
@@ -99,13 +99,13 @@ resource "kubernetes_deployment" "seafile" {
         #   }
         # }
 
-        # volume {
-        #   name = "seafile-config"
+        volume {
+          name = "seafile-config"
 
-        #   config_map {
-        #     name = kubernetes_config_map.seafile_config_files.metadata[0].name
-        #   }
-        # }
+          config_map {
+            name = kubernetes_config_map.seafile_config_files.metadata[0].name
+          }
+        }
       }
     }
   }
