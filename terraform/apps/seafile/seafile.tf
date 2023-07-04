@@ -22,6 +22,24 @@ resource "null_resource" "seafile_config_file_population" {
   }
 }
 
+data "local_sensitive_file" "seafile_ccnet_conf" {
+  filename = "./config/ccnet.conf"
+
+  depends_on = [null_resource.seafile_config_file_population]
+}
+
+data "local_sensitive_file" "seafile_seafile_conf" {
+  filename = "./config/seafile.conf"
+
+  depends_on = [null_resource.seafile_config_file_population]
+}
+
+data "local_sensitive_file" "seafile_seahub_settings_py" {
+  filename = "./config/seahub_settings.py"
+
+  depends_on = [null_resource.seafile_config_file_population]
+}
+
 resource "kubernetes_config_map" "seafile_config_files" {
   metadata {
     name      = "seafile-config-files"
@@ -29,12 +47,10 @@ resource "kubernetes_config_map" "seafile_config_files" {
   }
 
   data = {
-    "ccnet.conf"         = file("./config/ccnet.conf")
-    "seafile.conf"       = file("./config/seafile.conf")
-    "seahub_settings.py" = file("./config/seahub_settings.py")
+    "ccnet.conf"         = data.local_sensitive_file.seafile_ccnet_conf.content
+    "seafile.conf"       = data.local_sensitive_file.seafile_seafile_conf.content
+    "seahub_settings.py" = data.local_sensitive_file.seafile_seahub_settings_py.content
   }
-
-  depends_on = [null_resource.seafile_config_file_population]
 }
 
 resource "kubernetes_deployment" "seafile" {
