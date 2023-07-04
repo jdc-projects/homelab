@@ -7,7 +7,7 @@ on:
       resource-name:
         required: false
         type: string
-        default: null
+        default: ''
 
 env:
   CLIENT_CERT_DATA: ${{ secrets.KUBE_CLIENT_CERT_DATA }}
@@ -54,8 +54,8 @@ jobs:
       - name: "Terraform init"
         run: "terraform init"
       - name: "Terraform apply all resources"
-        if: null == ${{ inputs.resource-name }}
+        if: "${{ '' == inputs.resource-name }}"
         run: "terraform apply -auto-approve -input=false"
       - name: "Terraform apply specific resource"
-        if: null != ${{ inputs.resource-name }}
+        if: "${{ '' != inputs.resource-name }}"
         run: "terraform apply -auto-approve -input=false -target=${{ inputs.resource-name }}"
