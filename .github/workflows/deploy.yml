@@ -54,11 +54,3 @@ jobs:
     with:
       terraform-dir: ./terraform/apps/keycloak-config
     secrets: inherit
-
-  deploy-seafile:
-    needs: deploy-keycloak-config
-
-    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
-    with:
-      terraform-dir: ./terraform/apps/seafile
-    secrets: inherit
