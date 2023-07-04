@@ -53,6 +53,22 @@ resource "kubernetes_config_map" "seafile_config_files" {
   }
 }
 
+resource "kubernetes_secret" "seafile_env_config" {
+  metadata {
+    name      = "seafile-env-config"
+    namespace = kubernetes_namespace.seafile.metadata[0].name
+  }
+
+  data = {
+    DB_HOST                    = helm_release.mariadb.name
+    DB_ROOT_PASSWORD           = random_password.mariadb_root_password.result
+    TIME_ZONE                  = "UTC"
+    SEAFILE_ADMIN_EMAIL        = "a@b.c"
+    SEAFILE_SERVER_LETSENCRYPT = "false"
+    SEAFILE_SERVER_HOSTNAME    = "seafile.${var.server_base_domain}"
+  }
+}
+
 resource "kubernetes_deployment" "seafile" {
   metadata {
     name      = "seafile"
@@ -79,6 +95,12 @@ resource "kubernetes_deployment" "seafile" {
         container {
           image = "seafileltd/seafile-mc:10.0.1"
           name  = "seafile"
+
+          env_from {
+            secret_ref {
+              name = kubernetes_secret.seafile_env_config.metadata[0].name
+            }
+          }
 
           # volume_mount {
           #   mount_path = "/shared"
