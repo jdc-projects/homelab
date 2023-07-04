@@ -101,6 +101,12 @@ resource "kubernetes_deployment" "seafile" {
           image = "seafileltd/seafile-mc:${null_resource.seafile_version.triggers.version}"
           name  = "seafile"
 
+          env_from {
+            secret_ref {
+              name = kubernetes_secret.seafile_provisioner_env.metadata[0].name
+            }
+          }
+
           volume_mount {
             mount_path = "/shared"
             name       = "seafile-data"
