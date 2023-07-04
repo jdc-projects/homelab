@@ -24,7 +24,7 @@ resource "null_resource" "seafile_config_file_population" {
       find ./config -type f -exec sed -i'' -e "s#{{OAUTH_CLIENT_ID}}#${keycloak_openid_client.seafile.client_id}#g" {} \;
       find ./config -type f -exec sed -i'' -e "s#{{OAUTH_CLIENT_SECRET}}#${random_password.seafile_keycloak_client_secret.result}#g" {} \;
       find ./config -type f -exec sed -i'' -e "s#{{OAUTH_REALM_NAME}}#${data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id}#g" {} \;
-      find ./config -type f -exec sed -i'' -e "s#{{SEAHUB_SECRET_KEY}}#${*****}#g" {} \;
+      find ./config -type f -exec sed -i'' -e "s#{{SEAHUB_SECRET_KEY}}#${random_password.seafile_seahub_private_key.result}#g" {} \;
     EOT
   }
 }
@@ -66,9 +66,9 @@ resource "kubernetes_config_map" "seafile_config_files" {
   }
 
   data = {
-    "ccnet.conf" = data.local_sensitive_file.seafile_ccnet_conf.content
-    "gunicorn.conf.py" = data.local_sensitive_file.seafile_gunicorn_conf_py.content
-    "seafdav.conf" = data.local_sensitive_file.seafile_seafdav_conf.content
+    "ccnet.conf"         = data.local_sensitive_file.seafile_ccnet_conf.content
+    "gunicorn.conf.py"   = data.local_sensitive_file.seafile_gunicorn_conf_py.content
+    "seafdav.conf"       = data.local_sensitive_file.seafile_seafdav_conf.content
     "seafile.conf"       = data.local_sensitive_file.seafile_seafile_conf.content
     "seahub_settings.py" = data.local_sensitive_file.seafile_seahub_settings_py.content
   }

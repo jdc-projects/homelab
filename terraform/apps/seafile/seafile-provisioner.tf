@@ -28,8 +28,8 @@ resource "kubernetes_job" "seafile-provisioner" {
 
       spec {
         container {
-          image = "seafileltd/seafile-mc:${null_resource.seafile_version.triggers.version}"
-          name  = "seafile-provisioner"
+          image   = "seafileltd/seafile-mc:${null_resource.seafile_version.triggers.version}"
+          name    = "seafile-provisioner"
           command = ["/opt/seafile/seafile-server-latest/setup-seafile-mysql.sh", "auto", "-n", "seafile"]
 
           env_from {
@@ -53,7 +53,7 @@ resource "kubernetes_job" "seafile-provisioner" {
         }
 
         active_deadline_seconds = "30"
-        restart_policy = "Never"
+        restart_policy          = "Never"
       }
     }
 
