@@ -52,7 +52,7 @@ resource "kubernetes_job" "seafile-provisioner" {
         #   }
         # }
 
-        active_deadline_seconds = "30"
+        active_deadline_seconds = "90"
         restart_policy          = "Never"
       }
     }
@@ -63,7 +63,7 @@ resource "kubernetes_job" "seafile-provisioner" {
   wait_for_completion = true
 
   timeouts {
-    create = "1m"
-    update = "1m"
+    create = "2m"
+    update = "2m"
   }
 }
