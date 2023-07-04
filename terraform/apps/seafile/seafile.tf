@@ -61,7 +61,7 @@ resource "kubernetes_secret" "seafile_env_config" {
 
   data = {
     DB_HOST                    = helm_release.mariadb.name
-    DB_ROOT_PASSWORD           = random_password.mariadb_root_password.result
+    DB_ROOT_PASSWD             = random_password.mariadb_root_password.result
     TIME_ZONE                  = "UTC"
     SEAFILE_ADMIN_EMAIL        = "a@b.c"
     SEAFILE_SERVER_LETSENCRYPT = "false"
