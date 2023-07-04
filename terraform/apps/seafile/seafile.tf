@@ -6,6 +6,7 @@ resource "null_resource" "seafile_config_file_population" {
   provisioner "local-exec" {
     command = <<EOT
       find ./config -type f -exec sed -i'' -e "s#{{SERVER_BASE_DOMAIN}}#${var.server_base_domain}#g" {} \;
+      find ./config -type f -exec sed -i'' -e "s#{{SEAFILE_NAMESPACE}}#${kubernetes_namespace.seafile.metadata[0].name}#g" {} \;
       find ./config -type f -exec sed -i'' -e "s#{{MARIADB_HOST}}#${helm_release.mariadb.name}#g" {} \;
       find ./config -type f -exec sed -i'' -e "s#{{MARIADB_ROOT_PASSWORD}}#${random_password.mariadb_root_password.result}#g" {} \;
       find ./config -type f -exec sed -i'' -e "s#{{FILESERVER_PORT}}#${kubernetes_service.seafile_fileserver.spec[0].port[0].target_port}#g" {} \;
