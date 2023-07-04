@@ -1,3 +1,29 @@
+# -*- coding: utf-8 -*-
+SECRET_KEY = "{{SEAHUB_SECRET_KEY}}"
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'seahub_db',
+        'USER': 'root',
+        'PASSWORD': '{{MARIADB_ROOT_PASSWORD}}',
+        'HOST': '{{MARIADB_HOST}}',
+        'PORT': '3306',
+        'OPTIONS': {'charset': 'utf8mb4'},
+    }
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
+        'LOCATION': 'memcached:11211',
+    },
+    'locmem': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    },
+}
+COMPRESS_CACHE_BACKEND = 'locmem'
+
 # For security consideration, please set to match the host/domain of your site, e.g., ALLOWED_HOSTS = ['.example.com'].
 # Please refer https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts for details.
 ALLOWED_HOSTS = ['.{{SERVER_BASE_DOMAIN}}']
@@ -218,7 +244,7 @@ ENABLE_SHIBBOLETH_LOGIN = False
 # The domain part (i.e., www.example.com) will be used in generating share links and download/upload file via web.
 # Note: Outside URL means "if you use Nginx, it should be the Nginx's address"
 # Note: SERVICE_URL is moved to seahub_settings.py since 9.0.0
-SERVICE_URL = 'https://seafile.{{SERVER_BASE_DOMAIN}}'
+SERVICE_URL = 'https://seafile.{{SERVER_BASE_DOMAIN}}/'
 
 # Fileserver URL
 FILE_SERVER_ROOT = 'https://seafile.{{SERVER_BASE_DOMAIN}}/seafhttp'

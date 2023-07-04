@@ -28,8 +28,9 @@ resource "kubernetes_job" "seafile-provisioner" {
 
       spec {
         container {
-          image = "seafileltd/seafile-mc:10.0.1"
+          image = "seafileltd/seafile-mc:${null_resource.seafile_version.triggers.version}"
           name  = "seafile-provisioner"
+          command = ["/opt/seafile/seafile-server-latest/setup-seafile-mysql.sh", "auto", "-n", "seafile"]
 
           env_from {
             secret_ref {
@@ -37,20 +38,21 @@ resource "kubernetes_job" "seafile-provisioner" {
             }
           }
 
-          # volume_mount {
-          #   mount_path = "/shared"
-          #   name       = "seafile-data"
-          # }
+          volume_mount {
+            mount_path = "/shared"
+            name       = "seafile-data"
+          }
         }
 
-        # volume {
-        #   name = "seafile-data"
+        volume {
+          name = "seafile-data"
 
-        #   host_path {
-        #     path = truenas_dataset.seafile.mount_point
-        #   }
-        # }
+          host_path {
+            path = truenas_dataset.seafile.mount_point
+          }
+        }
 
+        active_deadline_seconds = "30"
         restart_policy = "Never"
       }
     }
@@ -61,7 +63,7 @@ resource "kubernetes_job" "seafile-provisioner" {
   wait_for_completion = true
 
   timeouts {
-    create = "30m"
-    update = "30m"
+    create = "30s"
+    update = "30s"
   }
 }

@@ -1,3 +1,9 @@
+resource "null_resource" "seafile_version" {
+  triggers = {
+    version = "10.0.1"
+  }
+}
+
 resource "null_resource" "seafile_config_file_population" {
   triggers = {
     always_run = timestamp()
@@ -18,8 +24,27 @@ resource "null_resource" "seafile_config_file_population" {
       find ./config -type f -exec sed -i'' -e "s#{{OAUTH_CLIENT_ID}}#${keycloak_openid_client.seafile.client_id}#g" {} \;
       find ./config -type f -exec sed -i'' -e "s#{{OAUTH_CLIENT_SECRET}}#${random_password.seafile_keycloak_client_secret.result}#g" {} \;
       find ./config -type f -exec sed -i'' -e "s#{{OAUTH_REALM_NAME}}#${data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id}#g" {} \;
+      find ./config -type f -exec sed -i'' -e "s#{{SEAHUB_SECRET_KEY}}#${*****}#g" {} \;
     EOT
   }
+}
+
+data "local_sensitive_file" "seafile_ccnet_conf" {
+  filename = "./config/ccnet.conf"
+
+  depends_on = [null_resource.seafile_config_file_population]
+}
+
+data "local_sensitive_file" "seafile_gunicorn_conf_py" {
+  filename = "./config/gunicorn.conf.py"
+
+  depends_on = [null_resource.seafile_config_file_population]
+}
+
+data "local_sensitive_file" "seafile_seafdav_conf" {
+  filename = "./config/seafdav.conf"
+
+  depends_on = [null_resource.seafile_config_file_population]
 }
 
 data "local_sensitive_file" "seafile_seafile_conf" {
@@ -41,6 +66,9 @@ resource "kubernetes_config_map" "seafile_config_files" {
   }
 
   data = {
+    "ccnet.conf" = data.local_sensitive_file.seafile_ccnet_conf.content
+    "gunicorn.conf.py" = data.local_sensitive_file.seafile_gunicorn_conf_py.content
+    "seafdav.conf" = data.local_sensitive_file.seafile_seafdav_conf.content
     "seafile.conf"       = data.local_sensitive_file.seafile_seafile_conf.content
     "seahub_settings.py" = data.local_sensitive_file.seafile_seahub_settings_py.content
   }
@@ -70,33 +98,27 @@ resource "kubernetes_deployment" "seafile" {
 
       spec {
         container {
-          image = "seafileltd/seafile-mc:10.0.1"
+          image = "seafileltd/seafile-mc:${null_resource.seafile_version.triggers.version}"
           name  = "seafile"
 
-          # volume_mount {
-          #   mount_path = "/shared"
-          #   name       = "seafile-data"
-          # }
+          volume_mount {
+            mount_path = "/shared"
+            name       = "seafile-data"
+          }
 
           volume_mount {
-            mount_path = "/shared/seafile/conf/seafile.conf"
-            sub_path   = "seafile.conf"
-            name       = "seafile-config"
-          }
-          volume_mount {
-            mount_path = "/shared/seafile/conf/seahub_settings.py"
-            sub_path   = "seahub_settings.py"
+            mount_path = "/shared/seafile/conf"
             name       = "seafile-config"
           }
         }
 
-        # volume {
-        #   name = "seafile-data"
+        volume {
+          name = "seafile-data"
 
-        #   host_path {
-        #     path = truenas_dataset.seafile.mount_point
-        #   }
-        # }
+          host_path {
+            path = truenas_dataset.seafile.mount_point
+          }
+        }
 
         volume {
           name = "seafile-config"
@@ -113,8 +135,7 @@ resource "kubernetes_deployment" "seafile" {
 
   lifecycle {
     replace_triggered_by = [
-      kubernetes_config_map.seafile_config_files,
-      null_resource.seafile_config_file_population # DEBUG
+      kubernetes_config_map.seafile_config_files
     ]
   }
 }
