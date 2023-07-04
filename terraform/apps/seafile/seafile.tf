@@ -102,7 +102,13 @@ resource "kubernetes_deployment" "seafile" {
           # }
 
           volume_mount {
-            mount_path = "/shared/seafile/conf"
+            mount_path = "/shared/seafile/conf/seafile.conf"
+            sub_path   = "seafile.conf"
+            name       = "seafile-config"
+          }
+          volume_mount {
+            mount_path = "/shared/seafile/conf/seahub_settings.py"
+            sub_path   = "seahub_settings.py"
             name       = "seafile-config"
           }
         }
