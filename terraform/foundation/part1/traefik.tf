@@ -23,7 +23,7 @@ resource "helm_release" "traefik_ingress" {
 
   set {
     name  = "logs.general.level"
-    value = "DEBUG"
+    value = "INFO"
   }
 
   # hack for acme.json permissions problem
