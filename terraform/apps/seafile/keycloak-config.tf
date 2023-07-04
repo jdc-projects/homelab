@@ -28,7 +28,7 @@ resource "keycloak_generic_protocol_mapper" "user_domain_claim" {
   realm_id        = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
   name            = "username-realm-mapper"
   protocol        = "openid-connect"
-  protocol_mapper = "username-realm-mapper"
+  protocol_mapper = "Username@Realm Mapper"
   client_id       = keycloak_openid_client.seafile.id
   config = {
   }
