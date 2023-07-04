@@ -38,19 +38,19 @@ resource "kubernetes_job" "seafile-provisioner" {
             }
           }
 
-          # volume_mount {
-          #   mount_path = "/shared"
-          #   name       = "seafile-data"
-          # }
+          volume_mount {
+            mount_path = "/shared"
+            name       = "seafile-data"
+          }
         }
 
-        # volume {
-        #   name = "seafile-data"
+        volume {
+          name = "seafile-data"
 
-        #   host_path {
-        #     path = truenas_dataset.seafile.mount_point
-        #   }
-        # }
+          host_path {
+            path = truenas_dataset.seafile.mount_point
+          }
+        }
 
         active_deadline_seconds = "90"
         restart_policy          = "Never"
