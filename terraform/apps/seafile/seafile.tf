@@ -88,6 +88,7 @@ resource "kubernetes_deployment" "seafile" {
           volume_mount {
             mount_path = "/shared/seafile"
             name       = "seafile-config"
+            read_only  = false
           }
         }
 
