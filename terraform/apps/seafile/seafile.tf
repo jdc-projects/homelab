@@ -114,7 +114,28 @@ resource "kubernetes_deployment" "seafile" {
           }
 
           volume_mount {
-            mount_path = "/shared/seafile/conf"
+            mount_path = "/shared/seafile/conf/ccnet.conf"
+            sub_path   = "ccnet.conf"
+            name       = "seafile-config"
+          }
+          volume_mount {
+            mount_path = "/shared/seafile/conf/gunicorn.conf.py"
+            sub_path   = "gunicorn.conf.py"
+            name       = "seafile-config"
+          }
+          volume_mount {
+            mount_path = "/shared/seafile/conf/seafdav.conf"
+            sub_path   = "seafdav.conf"
+            name       = "seafile-config"
+          }
+          volume_mount {
+            mount_path = "/shared/seafile/conf/seafile.conf"
+            sub_path   = "seafile.conf"
+            name       = "seafile-config"
+          }
+          volume_mount {
+            mount_path = "/shared/seafile/conf/seahub_settings.py"
+            sub_path   = "seahub_settings.py"
             name       = "seafile-config"
           }
         }
