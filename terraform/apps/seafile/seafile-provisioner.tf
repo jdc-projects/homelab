@@ -30,7 +30,7 @@ resource "kubernetes_job" "seafile-provisioner" {
         container {
           image   = "seafileltd/seafile-mc:${null_resource.seafile_version.triggers.version}"
           name    = "seafile-provisioner"
-          command = ["/opt/seafile/seafile-server-${null_resource.seafile_version.triggers.version}/setup-seafile-mysql.sh", "auto", "-n", "seafile"]
+          command = ["/scripts/start.py"]
 
           env_from {
             secret_ref {
@@ -57,7 +57,7 @@ resource "kubernetes_job" "seafile-provisioner" {
       }
     }
 
-    backoff_limit = 1
+    backoff_limit = 0
   }
 
   wait_for_completion = true
