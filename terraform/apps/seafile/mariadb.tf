@@ -1,3 +1,9 @@
+resource "null_resource" "debug_recreate" {
+  triggers = {
+    always_run = timestamp()
+  }
+}
+
 resource "helm_release" "mariadb" {
   name      = "mariadb"
   namespace = kubernetes_namespace.seafile.metadata[0].name
@@ -29,5 +35,9 @@ resource "helm_release" "mariadb" {
   set {
     name  = "volumePermissions.enabled"
     value = "true"
+  }
+
+  lifecycle {
+    replace_triggered_by = [null_resource.debug_recreate]
   }
 }
