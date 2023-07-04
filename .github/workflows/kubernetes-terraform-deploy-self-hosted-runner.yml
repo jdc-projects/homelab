@@ -11,6 +11,8 @@ env:
   CLUSTER_CA_CERT_DATA: ${{ secrets.KUBE_CLUSTER_CA_CERT_DATA }}
   SERVER_KUBE_PORT: ${{ vars.SERVER_KUBE_PORT }}
   TF_VAR_server_base_domain: ${{ vars.TF_VARS_server_base_domain }}
+  TF_VAR_cloudflare_acme_token: ${{ secrets.TF_VARS_cloudflare_acme_token }}
+  TF_VAR_cloudflare_ddns_token: ${{ secrets.TF_VAR_cloudflare_ddns_token }}
   TF_VAR_idrac_username: ${{ secrets.TF_VAR_idrac_username }}
   TF_VAR_idrac_password: ${{ secrets.TF_VAR_idrac_password }}
   TF_VAR_truenas_api_key: ${{ secrets.TF_VAR_truenas_api_key }}
