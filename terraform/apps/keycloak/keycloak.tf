@@ -116,6 +116,10 @@ resource "helm_release" "keycloak" {
     name  = "ingress.servicePort"
     value = "https"
   }
+  set {
+    name  = "ingress.annotations"
+    value = "traefik.ingress.kubernetes.io/router.entrypoints: websecure"
+  }
 
   set {
     name  = "postgresql.auth.password"
