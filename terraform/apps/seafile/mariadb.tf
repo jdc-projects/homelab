@@ -30,10 +30,4 @@ resource "helm_release" "mariadb" {
     name  = "volumePermissions.enabled"
     value = "true"
   }
-
-  lifecycle {
-    replace_triggered_by = [
-      null_resource.seafile_config_file_population # DEBUG
-    ]
-  }
 }
