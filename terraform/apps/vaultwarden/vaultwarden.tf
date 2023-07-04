@@ -23,7 +23,7 @@ resource "kubernetes_config_map" "vaultwarden_configmap" {
     SMTP_HOST                = var.smtp_host
     SMTP_FROM                = "noreply@${var.server_base_domain}"
     SMTP_PORT                = var.smtp_port
-    SMTP_SECURITY            = "starttls"
+    SMTP_SECURITY            = "force_tls"
     SMTP_USERNAME            = var.smtp_username
   }
 }
