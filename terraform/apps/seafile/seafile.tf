@@ -13,7 +13,7 @@ resource "null_resource" "seafile_config_file_population" {
     command = <<EOT
       find ./config -type f -exec sed -i'' -e "s#{{SERVER_BASE_DOMAIN}}#${var.server_base_domain}#g" {} \;
       find ./config -type f -exec sed -i'' -e "s#{{MARIADB_HOST}}#${helm_release.mariadb.name}#g" {} \;
-      find ./config -type f -exec sed -i'' -e "s#{{MARIADB_ROOT_PASSWORD}}#${random_password.mariadb_root_password.result}#g" {} \;
+      find ./config -type f -exec sed -i'' -e "s#{{MARIADB_PASSWORD}}#${random_password.mariadb_seafile_password.result}#g" {} \;
       find ./config -type f -exec sed -i'' -e "s#{{FILESERVER_PORT}}#${kubernetes_service.seafile_fileserver.spec[0].port[0].target_port}#g" {} \;
       find ./config -type f -exec sed -i'' -e "s#{{NOTIFICATION_SERVER_PORT}}#${kubernetes_service.seafile_notification.spec[0].port[0].target_port}#g" {} \;
       find ./config -type f -exec sed -i'' -e "s#{{NOTIFICATION_JWT_PRIVATE_KEY}}#${random_password.seafile_notification_jwt_private_key.result}#g" {} \;

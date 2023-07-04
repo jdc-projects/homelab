@@ -5,8 +5,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'seahub_db',
-        'USER': 'root',
-        'PASSWORD': '{{MARIADB_ROOT_PASSWORD}}',
+        'USER': 'seafile',
+        'PASSWORD': '{{MARIADB_PASSWORD}}',
         'HOST': '{{MARIADB_HOST}}',
         'PORT': '3306',
         'OPTIONS': {'charset': 'utf8mb4'},
