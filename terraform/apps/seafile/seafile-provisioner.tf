@@ -30,7 +30,8 @@ resource "kubernetes_job" "seafile-provisioner" {
         container {
           image   = "seafileltd/seafile-mc:${null_resource.seafile_version.triggers.version}"
           name    = "seafile-provisioner"
-          command = ["/bin/bash", "-c", "if test -d /shared/seafile/seafile-data; then echo \"Nothing to do.\"; else /opt/seafile/seafile-server-${null_resource.seafile_version.triggers.version}/setup-seafile-mysql.sh auto -n seafile -i seafile.${var.server_base_domain} -o ${helm_release.mariadb.name} -u seafile -w ${random_password.mariadb_seafile_password.result} -q % -r ${random_password.mariadb_root_password.result} && mkdir -p /shared/seafile/seafile-data && mkdir -p /shared/seafile/seahub-data/avatars; fi"]
+          command = ["/bin/bash", "-c", "/sbin/my_init && /scripts/start.py & sleep 30"]
+          # command = ["/bin/bash", "-c", "if test -d /shared/seafile/seafile-data; then echo \"Nothing to do.\"; else /opt/seafile/seafile-server-${null_resource.seafile_version.triggers.version}/setup-seafile-mysql.sh auto -n seafile -i seafile.${var.server_base_domain} -o ${helm_release.mariadb.name} -u seafile -w ${random_password.mariadb_seafile_password.result} -q % -r ${random_password.mariadb_root_password.result} && mkdir -p /shared/seafile/seafile-data && mkdir -p /shared/seafile/seahub-data/avatars && mkdir /opt/seafile/ccnet; fi"]
 
           env_from {
             secret_ref {
