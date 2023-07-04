@@ -25,6 +25,7 @@ resource "null_resource" "seafile_config_file_population" {
       find ./config -type f -exec sed -i'' -e "s#{{OAUTH_CLIENT_SECRET}}#${random_password.seafile_keycloak_client_secret.result}#g" {} \;
       find ./config -type f -exec sed -i'' -e "s#{{OAUTH_REALM_NAME}}#${data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id}#g" {} \;
       find ./config -type f -exec sed -i'' -e "s#{{SEAHUB_SECRET_KEY}}#${random_password.seafile_seahub_private_key.result}#g" {} \;
+      rm -rf ./config/*-e*
     EOT
   }
 }
