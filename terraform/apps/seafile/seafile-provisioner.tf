@@ -57,7 +57,7 @@ resource "kubernetes_job" "seafile-provisioner" {
       }
     }
 
-    backoff_limit = 4
+    backoff_limit = 1
   }
 
   wait_for_completion = true
