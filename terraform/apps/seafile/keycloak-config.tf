@@ -29,7 +29,7 @@ resource "keycloak_generic_protocol_mapper" "user_domain_claim" {
   name            = "username-realm-mapper"
   protocol        = "openid-connect"
   protocol_mapper = "username-realm-mapper.js"
-  client_id       = keycloak_openid_client.seafile.claim_id
+  client_id       = keycloak_openid_client.seafile.id
   config = {
     "access.token.claim"   = false
     "claim.name"           = ""
