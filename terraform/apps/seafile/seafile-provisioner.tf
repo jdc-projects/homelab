@@ -30,7 +30,7 @@ resource "kubernetes_job" "seafile-provisioner" {
         container {
           image   = "seafileltd/seafile-mc:${null_resource.seafile_version.triggers.version}"
           name    = "seafile-provisioner"
-          command = ["/opt/seafile/seafile-server-${null_resource.seafile_version.triggers.version}/setup-seafile-mysql.sh", "auto", "-n", "seafile", "-i", "seafile.${var.server_base_domain}", "-o", "${helm_release.mariadb.name}", "-u", "seafile", "-w", "${random_password.mariadb_seafile_password.result}", "-r", "${random_password.mariadb_root_password.result}"]
+          command = ["/opt/seafile/seafile-server-${null_resource.seafile_version.triggers.version}/setup-seafile-mysql.sh", "auto", "-n", "seafile", "-i", "seafile.${var.server_base_domain}", "-o", "${helm_release.mariadb.name}", "-u", "seafile", "-w", "${random_password.mariadb_seafile_password.result}", "-q", "${helm_release.mariadb.name}", "-r", "${random_password.mariadb_root_password.result}"]
 
           env_from {
             secret_ref {
