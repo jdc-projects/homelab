@@ -63,7 +63,7 @@ resource "kubernetes_job" "seafile-provisioner" {
   wait_for_completion = true
 
   timeouts {
-    create = "30s"
-    update = "30s"
+    create = "1m"
+    update = "1m"
   }
 }
