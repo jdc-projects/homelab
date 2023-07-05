@@ -1,7 +1,7 @@
 resource "kubernetes_persistent_volume_claim" "ocis_nats_pvc" {
   metadata {
     name      = "ocis-nats-pvc"
-    namespace = kubernetes_namespace.ocis_namespace.metadata[0].name
+    namespace = kubernetes_namespace.ocis.metadata[0].name
   }
   spec {
     access_modes = ["ReadWriteMany"]
@@ -18,7 +18,7 @@ resource "kubernetes_persistent_volume_claim" "ocis_nats_pvc" {
 resource "kubernetes_persistent_volume_claim" "ocis_search_pvc" {
   metadata {
     name      = "ocis-search-pvc"
-    namespace = kubernetes_namespace.ocis_namespace.metadata[0].name
+    namespace = kubernetes_namespace.ocis.metadata[0].name
   }
   spec {
     access_modes = ["ReadWriteMany"]
@@ -35,7 +35,7 @@ resource "kubernetes_persistent_volume_claim" "ocis_search_pvc" {
 resource "kubernetes_persistent_volume_claim" "ocis_storagesystem_pvc" {
   metadata {
     name      = "ocis-storagesystem-pvc"
-    namespace = kubernetes_namespace.ocis_namespace.metadata[0].name
+    namespace = kubernetes_namespace.ocis.metadata[0].name
   }
   spec {
     access_modes = ["ReadWriteMany"]
@@ -52,7 +52,7 @@ resource "kubernetes_persistent_volume_claim" "ocis_storagesystem_pvc" {
 resource "kubernetes_persistent_volume_claim" "ocis_storageusers_pvc" {
   metadata {
     name      = "ocis-storageusers-pvc"
-    namespace = kubernetes_namespace.ocis_namespace.metadata[0].name
+    namespace = kubernetes_namespace.ocis.metadata[0].name
   }
   spec {
     access_modes = ["ReadWriteMany"]
@@ -69,7 +69,7 @@ resource "kubernetes_persistent_volume_claim" "ocis_storageusers_pvc" {
 resource "kubernetes_persistent_volume_claim" "ocis_store_pvc" {
   metadata {
     name      = "ocis-store-pvc"
-    namespace = kubernetes_namespace.ocis_namespace.metadata[0].name
+    namespace = kubernetes_namespace.ocis.metadata[0].name
   }
   spec {
     access_modes = ["ReadWriteMany"]
@@ -86,7 +86,7 @@ resource "kubernetes_persistent_volume_claim" "ocis_store_pvc" {
 resource "kubernetes_persistent_volume_claim" "ocis_thumbnails_pvc" {
   metadata {
     name      = "ocis-thumbnails-pvc"
-    namespace = kubernetes_namespace.ocis_namespace.metadata[0].name
+    namespace = kubernetes_namespace.ocis.metadata[0].name
   }
   spec {
     access_modes = ["ReadWriteMany"]
@@ -103,7 +103,7 @@ resource "kubernetes_persistent_volume_claim" "ocis_thumbnails_pvc" {
 resource "kubernetes_persistent_volume_claim" "ocis_web_pvc" {
   metadata {
     name      = "ocis-web-pvc"
-    namespace = kubernetes_namespace.ocis_namespace.metadata[0].name
+    namespace = kubernetes_namespace.ocis.metadata[0].name
   }
   spec {
     access_modes = ["ReadWriteMany"]

@@ -1,7 +1,7 @@
 resource "kubernetes_secret" "ocis_ldap_password_secret" {
   metadata {
     name      = "ocis-ldap-password"
-    namespace = kubernetes_namespace.ocis_namespace.metadata[0].name
+    namespace = kubernetes_namespace.ocis.metadata[0].name
   }
 
   data = {
@@ -19,7 +19,7 @@ resource "random_password" "jwt_secret" {
 resource "kubernetes_secret" "ocis_jwt_secret" {
   metadata {
     name      = "ocis-jwt-secret"
-    namespace = kubernetes_namespace.ocis_namespace.metadata[0].name
+    namespace = kubernetes_namespace.ocis.metadata[0].name
   }
 
   data = {
@@ -31,7 +31,7 @@ resource "helm_release" "ocis" {
   name  = "ocis"
   chart = "./ocis-charts/charts/ocis"
 
-  namespace = kubernetes_namespace.ocis_namespace.metadata[0].name
+  namespace = kubernetes_namespace.ocis.metadata[0].name
 
   timeout = 300
 

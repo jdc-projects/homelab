@@ -87,7 +87,7 @@ data "terraform_remote_state" "lldap" {
   }
 }
 
-resource "kubernetes_namespace" "ocis_namespace" {
+resource "kubernetes_namespace" "ocis" {
   metadata {
     name = "ocis"
   }
