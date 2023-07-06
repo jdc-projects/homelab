@@ -15,7 +15,7 @@ resource "keycloak_openid_client" "ocis_web_client" {
 
   client_authenticator_type = "client-jwt"
 
-  standard_flow_enabled        = false
+  standard_flow_enabled        = true
   direct_access_grants_enabled = true
   implicit_flow_enabled        = true
 
