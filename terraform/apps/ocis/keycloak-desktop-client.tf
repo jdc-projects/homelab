@@ -5,7 +5,7 @@ resource "keycloak_openid_client" "ocis_desktop_client" {
   name    = "ocis-desktop"
   enabled = true
 
-  access_type = "CONFIDENTIAL"
+  access_type = "PUBLIC"
   valid_redirect_uris = [
     "http://127.0.0.1:*",
     "http://localhost:*"
