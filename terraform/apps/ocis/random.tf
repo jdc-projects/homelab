@@ -31,3 +31,24 @@ resource "random_password" "system_user_api_key" {
   special = false
   upper   = true
 }
+
+resource "random_password" "idm_svc_password" {
+  length  = 16
+  numeric = true
+  special = false
+  upper   = true
+}
+
+resource "random_password" "idm_revasvc_password" {
+  length  = 16
+  numeric = true
+  special = false
+  upper   = true
+}
+
+resource "random_password" "idm_idpsvc_password" {
+  length  = 16
+  numeric = true
+  special = false
+  upper   = true
+}
