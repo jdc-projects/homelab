@@ -26,6 +26,7 @@ resource "kubernetes_secret" "ocis_config" {
     PROXY_TLS                         = "false"
     PROXY_USER_OIDC_CLAIM             = "preferred_username"
     PROXY_USER_CS3_CLAIM              = "userid"
+    OCIS_JWT_SECRET                   = random_password.jwt_secret.result
   }
 }
 
