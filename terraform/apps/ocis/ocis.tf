@@ -175,10 +175,10 @@ resource "helm_release" "ocis" {
     value = "roles"
   }
 
-  set {
-    name  = "features.externalUserManagement.ldap.writeable"
-    value = "false"
-  }
+  # set {
+  #   name  = "features.externalUserManagement.ldap.writeable"
+  #   value = "false"
+  # }
   set {
     name  = "features.externalUserManagement.ldap.uri"
     value = "ldaps://idm.${var.server_base_domain}"
