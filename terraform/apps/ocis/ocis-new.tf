@@ -1,6 +1,6 @@
 resource "kubernetes_secret" "ocis_config" {
   metadata {
-    name      = "ocis-global-config"
+    name      = "ocis-config"
     namespace = kubernetes_namespace.ocis.metadata[0].name
   }
 
