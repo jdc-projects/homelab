@@ -33,9 +33,9 @@ resource "kubernetes_secret" "ocis_config" {
     OCIS_SYSTEM_USER_API_KEY          = random_password.system_user_api_key.result
     OCIS_SYSTEM_USER_ID               = random_uuid.system_user_id.result
     STORAGE_USERS_MOUNT_ID            = random_uuid.storage_users_mount_id.result
-    IDM_SVC_PASSWORD = random_password.idm_svc_password.result
-    IDM_REVASVC_PASSWORD = random_password.idm_revasvc_password.result
-    IDM_IDPSVC_PASSWORD = random_password.idm_idpsvc_password.result
+    IDM_SVC_PASSWORD                  = random_password.idm_svc_password.result
+    IDM_REVASVC_PASSWORD              = random_password.idm_revasvc_password.result
+    IDM_IDPSVC_PASSWORD               = random_password.idm_idpsvc_password.result
   }
 }
 
