@@ -219,6 +219,14 @@ resource "helm_release" "ocis" {
     name  = "features.externalUserManagement.ldap.group.baseDN"
     value = "ou=groups\\,dc=idm\\,dc=${var.server_base_domain}"
   }
+  set {
+    name  = "features.externalUserManagement.ldap.disableUsers.disableMechanism"
+    value = "group"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.disableUsers.disabledUsersGroupDN"
+    value = "cn=ocis_disabled,ou=groups\\,dc=idm\\,dc=${var.server_base_domain}"
+  }
 
   set {
     name  = "ingress.enabled"
