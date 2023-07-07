@@ -225,7 +225,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.ldap.disableUsers.disabledUsersGroupDN"
-    value = "cn=ocis_disabled\\,ou=groups\\,dc=idm\\,dc=${var.server_base_domain}"
+    value = "uid=ocis_disabled\\,ou=people\\,dc=idm\\,dc=${var.server_base_domain}"
   }
 
   set {
