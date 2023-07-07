@@ -82,6 +82,12 @@ resource "kubernetes_deployment" "ocis" {
     }
   }
 
+  timeouts {
+    create = "1 minute"
+    update = "1 minute"
+    delete = "1 minute"
+  }
+
   lifecycle {
     replace_triggered_by = [
       kubernetes_secret.ocis_config
