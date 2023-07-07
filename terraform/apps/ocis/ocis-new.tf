@@ -26,6 +26,7 @@ resource "kubernetes_secret" "ocis_config" {
     PROXY_TLS                         = "false"
     PROXY_USER_OIDC_CLAIM             = "preferred_username"
     PROXY_USER_CS3_CLAIM              = "userid"
+    PROXY_ENABLE_BASIC_AUTH           = "false"
     OCIS_JWT_SECRET                   = random_password.jwt_secret.result
     OCIS_TRANSFER_SECRET              = random_password.transfer_secret.result
     OCIS_MACHINE_AUTH_API_KEY         = random_password.machine_auth_api_key.result
