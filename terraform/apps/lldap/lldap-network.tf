@@ -1,7 +1,7 @@
 resource "kubernetes_service" "lldap_ldap_service" {
   metadata {
     name      = "lldap-ldap"
-    namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
+    namespace = kubernetes_namespace.lldap.metadata[0].name
   }
 
   spec {
@@ -19,7 +19,7 @@ resource "kubernetes_service" "lldap_ldap_service" {
 resource "kubernetes_service" "lldap_http_service" {
   metadata {
     name      = "lldap-http"
-    namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
+    namespace = kubernetes_namespace.lldap.metadata[0].name
   }
 
   spec {
@@ -41,7 +41,7 @@ resource "kubernetes_manifest" "lldap_ldaps_ingress" {
 
     metadata = {
       name      = "lldap-ldaps"
-      namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
+      namespace = kubernetes_namespace.lldap.metadata[0].name
     }
 
     spec = {
@@ -51,7 +51,7 @@ resource "kubernetes_manifest" "lldap_ldaps_ingress" {
         match = "HostSNI(`*`)"
         services = [{
           name      = kubernetes_service.lldap_ldap_service.metadata[0].name
-          namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
+          namespace = kubernetes_namespace.lldap.metadata[0].name
           port      = kubernetes_service.lldap_ldap_service.spec[0].port[0].port
         }]
       }]
@@ -69,7 +69,7 @@ resource "kubernetes_manifest" "lldap_http_ingress" {
 
     metadata = {
       name      = "lldap-http"
-      namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
+      namespace = kubernetes_namespace.lldap.metadata[0].name
     }
 
     spec = {
@@ -80,7 +80,7 @@ resource "kubernetes_manifest" "lldap_http_ingress" {
         match = "Host(`idm.${var.server_base_domain}`)"
         services = [{
           name      = kubernetes_service.lldap_http_service.metadata[0].name
-          namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
+          namespace = kubernetes_namespace.lldap.metadata[0].name
           port      = kubernetes_service.lldap_http_service.spec[0].port[0].port
         }]
       }]

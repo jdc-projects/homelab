@@ -1,7 +1,7 @@
 resource "kubernetes_config_map" "lldap_configmap" {
   metadata {
     name      = "lldap"
-    namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
+    namespace = kubernetes_namespace.lldap.metadata[0].name
   }
 
   data = {
@@ -32,7 +32,7 @@ resource "random_password" "lldap_admin_password" {
 resource "kubernetes_secret" "lldap_secret" {
   metadata {
     name      = "lldap"
-    namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
+    namespace = kubernetes_namespace.lldap.metadata[0].name
   }
 
   data = {
@@ -44,7 +44,7 @@ resource "kubernetes_secret" "lldap_secret" {
 resource "kubernetes_deployment" "lldap_deployment" {
   metadata {
     name      = "lldap"
-    namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
+    namespace = kubernetes_namespace.lldap.metadata[0].name
   }
 
   spec {

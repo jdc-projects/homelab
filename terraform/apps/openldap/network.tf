@@ -1,7 +1,7 @@
 resource "kubernetes_service" "openldap" {
   metadata {
     name      = "openldap"
-    namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
+    namespace = kubernetes_namespace.openldap.metadata[0].name
   }
 
   spec {
@@ -19,7 +19,7 @@ resource "kubernetes_service" "openldap" {
 resource "kubernetes_service" "phpldapadmin" {
   metadata {
     name      = "phpldapadmin"
-    namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
+    namespace = kubernetes_namespace.openldap.metadata[0].name
   }
 
   spec {
@@ -41,7 +41,7 @@ resource "kubernetes_manifest" "openldap_ingress" {
 
     metadata = {
       name      = "openldap"
-      namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
+      namespace = kubernetes_namespace.openldap.metadata[0].name
     }
 
     spec = {
@@ -50,9 +50,9 @@ resource "kubernetes_manifest" "openldap_ingress" {
       routes = [{
         match = "HostSNI(`*`)"
         services = [{
-          name      = kubernetes_service.lldap_ldap_service.metadata[0].name
-          namespace = kubernetes_namespace.ldap_namespace.metadata[0].name
-          port      = kubernetes_service.lldap_ldap_service.spec[0].port[0].port
+          name      = kubernetes_service.openldap.metadata[0].name
+          namespace = kubernetes_namespace.openldap.metadata[0].name
+          port      = kubernetes_service.openldap.spec[0].port[0].port
         }]
       }]
 
