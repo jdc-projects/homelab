@@ -16,6 +16,13 @@ resource "random_password" "jwt_secret" {
   upper   = true
 }
 
+resource "random_password" "transfer_secret" {
+  length  = 16
+  numeric = true
+  special = false
+  upper   = true
+}
+
 resource "kubernetes_secret" "ocis_jwt_secret" {
   metadata {
     name      = "ocis-jwt-secret"
