@@ -132,6 +132,27 @@ resource "helm_release" "traefik_ingress" {
   }
 
   set {
+    name  = "ports.ldaps-2.port"
+    value = "8637"
+  }
+  set {
+    name  = "ports.ldaps-2.expose"
+    value = "true"
+  }
+  set {
+    name  = "ports.ldaps-2.exposedPort"
+    value = "637"
+  }
+  set {
+    name  = "ports.ldaps-2.protocol"
+    value = "TCP"
+  }
+  set {
+    name  = "ports.ldaps-2.http3.enabled"
+    value = "false"
+  }
+
+  set {
     name  = "tlsStore.default.defaultGeneratedCert.resolver"
     value = "letsencrypt"
   }
