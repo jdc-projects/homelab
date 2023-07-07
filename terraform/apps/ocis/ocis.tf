@@ -175,10 +175,10 @@ resource "helm_release" "ocis" {
     value = "roles"
   }
 
-  # set {
-  #   name  = "features.externalUserManagement.ldap.writeable"
-  #   value = "false"
-  # }
+  set {
+    name  = "features.externalUserManagement.ldap.writeable"
+    value = "false"
+  }
   set {
     name  = "features.externalUserManagement.ldap.uri"
     value = "ldaps://idm.${var.server_base_domain}"
@@ -218,14 +218,6 @@ resource "helm_release" "ocis" {
   set {
     name  = "features.externalUserManagement.ldap.group.baseDN"
     value = "ou=groups\\,dc=idm\\,dc=${var.server_base_domain}"
-  }
-  set {
-    name  = "features.externalUserManagement.ldap.disableUsers.disableMechanism"
-    value = "group"
-  }
-  set {
-    name  = "features.externalUserManagement.ldap.disableUsers.disabledUsersGroupDN"
-    value = "uid=ocis_disabled\\,ou=people\\,dc=idm\\,dc=${var.server_base_domain}"
   }
 
   set {
