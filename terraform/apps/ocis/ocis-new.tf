@@ -29,6 +29,8 @@ resource "kubernetes_secret" "ocis_config" {
     OCIS_JWT_SECRET                   = random_password.jwt_secret.result
     OCIS_TRANSFER_SECRET              = random_password.transfer_secret.result
     OCIS_MACHINE_AUTH_API_KEY         = random_password.machine_auth_api_key.result
+    OCIS_SYSTEM_USER_API_KEY          = random_password.system_user_api_key.result
+    OCIS_SYSTEM_USER_ID               = random_uuid.system_user_id.result
   }
 }
 
