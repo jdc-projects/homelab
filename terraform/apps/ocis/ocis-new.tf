@@ -36,6 +36,7 @@ resource "kubernetes_secret" "ocis_config" {
     IDM_SVC_PASSWORD                  = random_password.idm_svc_password.result
     IDM_REVASVC_PASSWORD              = random_password.idm_revasvc_password.result
     IDM_IDPSVC_PASSWORD               = random_password.idm_idpsvc_password.result
+    OCIS_EXCLUDE_RUN_SERVICES         = "idp"
   }
 }
 
