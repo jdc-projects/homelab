@@ -28,6 +28,7 @@ resource "kubernetes_secret" "ocis_config" {
     PROXY_USER_CS3_CLAIM              = "userid"
     OCIS_JWT_SECRET                   = random_password.jwt_secret.result
     OCIS_TRANSFER_SECRET              = random_password.transfer_secret.result
+    OCIS_MACHINE_AUTH_API_KEY         = random_password.machine_auth_api_key.result
   }
 }
 
