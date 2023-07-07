@@ -1,6 +1,9 @@
 resource "random_uuid" "system_user_id" {
 }
 
+resource "random_uuid" "storage_users_mount_id" {
+}
+
 resource "random_password" "jwt_secret" {
   length  = 16
   numeric = true

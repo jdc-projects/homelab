@@ -32,6 +32,7 @@ resource "kubernetes_secret" "ocis_config" {
     OCIS_MACHINE_AUTH_API_KEY         = random_password.machine_auth_api_key.result
     OCIS_SYSTEM_USER_API_KEY          = random_password.system_user_api_key.result
     OCIS_SYSTEM_USER_ID               = random_uuid.system_user_id.result
+    STORAGE_USERS_MOUNT_ID            = random_uuid.storage_users_mount_id.result
   }
 }
 
