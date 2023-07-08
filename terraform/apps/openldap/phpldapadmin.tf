@@ -9,17 +9,17 @@ resource "kubernetes_config_map" "phpldapadmin_env" {
       PHPLDAPADMIN_LDAP_HOSTS_FRIENDLY:
         - OpenLDAP:
           - server:
-            - host: idm2.${var.server_base_domain}
+            - host: "idm2.${var.server_base_domain}"
             - port: 637
           - login:
-            - bind_id: cn=${random_password.openldap_admin_username.result},dc=idm,dc=${var.server_base_domain}
+            - bind_id: "cn=${random_password.openldap_admin_username.result},dc=idm,dc=${var.server_base_domain}"
         - LLDAP:
           - server:
-            - host: idm.${var.server_base_domain}
+            - host: "idm.${var.server_base_domain}"
             - tls: true
             - port: 636
           - login:
-            - bind_id: cn=admin,dc=idm,dc=${var.server_base_domain}
+            - bind_id: "cn=admin,dc=idm,dc=${var.server_base_domain}"
     EOF
   }
 }
