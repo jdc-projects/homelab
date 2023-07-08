@@ -6,7 +6,7 @@ resource "kubernetes_config_map" "phpldapadmin_env" {
 
   data = {
     "env.yaml" = <<-EOF
-      PHPLDAPADMIN_LDAP_HOSTS_FRIENDLY:
+      PHPLDAPADMIN_LDAP_HOSTS:
         - OpenLDAP:
           - server:
             - host: "idm2.${var.server_base_domain}"
