@@ -1,7 +1,7 @@
 resource "kubernetes_config_map" "phpldapadmin_env" {
   metadata {
     name      = "phpldapadmin-env"
-    namespace = kubernetes_namespace.phpldapadmin.metadata[0].name
+    namespace = kubernetes_namespace.openldap.metadata[0].name
   }
 
   data = {
@@ -12,7 +12,7 @@ resource "kubernetes_config_map" "phpldapadmin_env" {
 resource "kubernetes_secret" "phpldapadmin_env" {
   metadata {
     name      = "phpldapadmin-env"
-    namespace = kubernetes_namespace.phpldapadmin.metadata[0].name
+    namespace = kubernetes_namespace.openldap.metadata[0].name
   }
 
   data = {
@@ -22,7 +22,7 @@ resource "kubernetes_secret" "phpldapadmin_env" {
 resource "kubernetes_deployment" "phpldapadmin" {
   metadata {
     name      = "phpldapadmin"
-    namespace = kubernetes_namespace.phpldapadmin.metadata[0].name
+    namespace = kubernetes_namespace.openldap.metadata[0].name
   }
 
   spec {
