@@ -2,7 +2,7 @@ resource "random_password" "openldap_admin_username" {
   length  = 16
   numeric = true
   special = false
-  upper   = false
+  upper   = true
 }
 
 resource "random_password" "openldap_admin_password" {
