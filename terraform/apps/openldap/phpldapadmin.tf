@@ -5,24 +5,13 @@ resource "kubernetes_config_map" "phpldapadmin_env" {
   }
 
   data = {
-    PHPLDAPADMIN_LDAP_HOSTS = <<-EOF
-        [
+    "env.yaml" = <<-EOF
+      PHPLDAPADMIN_LDAP_HOSTS:
         - idm2.${var.server_base_domain}:
           - server:
             - tls: true
             - port: 637
-        ]
     EOF
-  }
-}
-
-resource "kubernetes_secret" "phpldapadmin_env" {
-  metadata {
-    name      = "phpldapadmin-env"
-    namespace = kubernetes_namespace.openldap.metadata[0].name
-  }
-
-  data = {
   }
 }
 
@@ -53,22 +42,24 @@ resource "kubernetes_deployment" "phpldapadmin" {
           image = "osixia/phpldapadmin:0.9.0"
           name  = "phpldapadmin"
 
-          env_from {
-            config_map_ref {
-              name = kubernetes_config_map.phpldapadmin_env.metadata[0].name
-            }
-          }
-
-          env_from {
-            secret_ref {
-              name = kubernetes_secret.phpldapadmin_env.metadata[0].name
-            }
+          volume_mount {
+            name = "custom-env"
+            subpath = "env.yaml"
+            mount_path = "/container/environment/01-custom/env.yaml"
           }
 
           #   volume_mount {
           #     mount_path = "/data"
           #     name       = "phpldapadmin-data"
           #   }
+        }
+
+        volume {
+          name = "custom-env"
+
+          config_map {
+            name = kubernetes_config_map.phpldapadmin_env.metadata[0].name
+          }
         }
 
         # volume {
