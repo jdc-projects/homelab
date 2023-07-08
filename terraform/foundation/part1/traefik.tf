@@ -132,23 +132,23 @@ resource "helm_release" "traefik_ingress" {
   }
 
   set {
-    name  = "ports.ldaps-2.port"
+    name  = "ports.ldaps2.port"
     value = "8637"
   }
   set {
-    name  = "ports.ldaps-2.expose"
+    name  = "ports.ldaps2.expose"
     value = "true"
   }
   set {
-    name  = "ports.ldaps-2.exposedPort"
+    name  = "ports.ldaps2.exposedPort"
     value = "637"
   }
   set {
-    name  = "ports.ldaps-2.protocol"
+    name  = "ports.ldaps2.protocol"
     value = "TCP"
   }
   set {
-    name  = "ports.ldaps-2.http3.enabled"
+    name  = "ports.ldaps2.http3.enabled"
     value = "false"
   }
 

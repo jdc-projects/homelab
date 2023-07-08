@@ -34,33 +34,33 @@ resource "kubernetes_service" "phpldapadmin" {
   }
 }
 
-# resource "kubernetes_manifest" "openldap_ingress" {
-#   manifest = {
-#     apiVersion = "traefik.containo.us/v1alpha1"
-#     kind       = "IngressRouteTCP"
+resource "kubernetes_manifest" "openldap_ingress" {
+  manifest = {
+    apiVersion = "traefik.containo.us/v1alpha1"
+    kind       = "IngressRouteTCP"
 
-#     metadata = {
-#       name      = "openldap"
-#       namespace = kubernetes_namespace.openldap.metadata[0].name
-#     }
+    metadata = {
+      name      = "openldap"
+      namespace = kubernetes_namespace.openldap.metadata[0].name
+    }
 
-#     spec = {
-#       entryPoints = ["ldaps-2"]
+    spec = {
+      entryPoints = ["ldaps2"]
 
-#       routes = [{
-#         match = "HostSNI(`*`)"
-#         services = [{
-#           name      = kubernetes_service.openldap.metadata[0].name
-#           namespace = kubernetes_namespace.openldap.metadata[0].name
-#           port      = kubernetes_service.openldap.spec[0].port[0].port
-#         }]
-#       }]
+      routes = [{
+        match = "HostSNI(`*`)"
+        services = [{
+          name      = kubernetes_service.openldap.metadata[0].name
+          namespace = kubernetes_namespace.openldap.metadata[0].name
+          port      = kubernetes_service.openldap.spec[0].port[0].port
+        }]
+      }]
 
-#       tls = {
-#       }
-#     }
-#   }
-# }
+      tls = {
+      }
+    }
+  }
+}
 
 resource "kubernetes_manifest" "phpldapadmin_ingress" {
   manifest = {
