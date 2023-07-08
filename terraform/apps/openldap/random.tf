@@ -1,6 +1,6 @@
 resource "random_password" "openldap_admin_username" {
   length  = 16
-  numeric = true
+  numeric = false
   special = false
   upper   = false
 }
