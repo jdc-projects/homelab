@@ -19,7 +19,7 @@ resource "kubernetes_config_map" "phpldapadmin_env" {
             - tls: true
             - port: 636
           - login:
-            - bind_id: "cn=admin,dc=idm,dc=${var.server_base_domain}"
+            - bind_id: "uid=admin,ou=people,dc=idm,dc=${var.server_base_domain}"
     EOF
   }
 }
