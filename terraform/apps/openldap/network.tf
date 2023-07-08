@@ -10,8 +10,8 @@ resource "kubernetes_service" "openldap" {
     }
 
     port {
-      port        = kubernetes_config_map.openldap_env.data.LDAP_PORT_NUMBER
-      target_port = kubernetes_config_map.openldap_env.data.LDAP_PORT_NUMBER
+      port        = "1389"
+      target_port = "1389"
     }
   }
 }
