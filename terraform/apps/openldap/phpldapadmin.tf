@@ -78,7 +78,7 @@ resource "kubernetes_deployment" "phpldapadmin" {
   lifecycle {
     replace_triggered_by = [
       kubernetes_config_map.phpldapadmin_env,
-      kuberkubernetes_secret.phpldapadmin_env
+      kubernetes_secret.phpldapadmin_env
     ]
   }
 }
