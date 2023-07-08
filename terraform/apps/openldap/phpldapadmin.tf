@@ -7,9 +7,10 @@ resource "kubernetes_config_map" "phpldapadmin_env" {
   data = {
     "env.yaml" = <<-EOF
       PHPLDAPADMIN_LDAP_HOSTS:
-        - Test:
+        - OpenLDAP:
           - server:
             - host: "openldap"
+            - port: ${kubernets_config_map.openldap_env.data.LDAP_PORT_NUMBER}
           - login:
             - bind_id: "cn=${random_password.openldap_admin_username.result},dc=idm,dc=${var.server_base_domain}"
     EOF
