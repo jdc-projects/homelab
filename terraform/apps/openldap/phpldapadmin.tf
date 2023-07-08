@@ -10,7 +10,6 @@ resource "kubernetes_config_map" "phpldapadmin_env" {
         - Test:
           - server:
             - host: "openldap"
-            - port: 1389
           - login:
             - bind_id: "cn=${random_password.openldap_admin_username.result},dc=idm,dc=${var.server_base_domain}"
     EOF
