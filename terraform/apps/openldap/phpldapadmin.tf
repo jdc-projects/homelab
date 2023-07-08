@@ -52,6 +52,11 @@ resource "kubernetes_deployment" "phpldapadmin" {
           image = "osixia/phpldapadmin:0.9.0"
           name  = "phpldapadmin"
 
+          env {
+            name  = "LOG_LEVEL"
+            value = "debug"
+          }
+
           volume_mount {
             name       = "custom-env"
             sub_path   = "env.yaml"
