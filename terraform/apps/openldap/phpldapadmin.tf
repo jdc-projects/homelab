@@ -9,7 +9,6 @@ resource "kubernetes_config_map" "phpldapadmin_env" {
       PHPLDAPADMIN_LDAP_HOSTS:
         - idm2.${var.server_base_domain}:
           - server:
-            - tls: true
             - port: 637
     EOF
   }
