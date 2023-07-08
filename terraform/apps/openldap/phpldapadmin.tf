@@ -44,7 +44,7 @@ resource "kubernetes_deployment" "phpldapadmin" {
 
           volume_mount {
             name       = "custom-env"
-            subpath    = "env.yaml"
+            sub_path   = "env.yaml"
             mount_path = "/container/environment/01-custom/env.yaml"
           }
 
