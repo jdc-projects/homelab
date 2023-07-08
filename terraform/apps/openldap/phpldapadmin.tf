@@ -5,7 +5,13 @@ resource "kubernetes_config_map" "phpldapadmin_env" {
   }
 
   data = {
-    PHPLDAPADMIN_LDAP_HOSTS = "idm2.${var.server_base_domain}:637"
+    PHPLDAPADMIN_LDAP_HOSTS = <<-EOF
+        [
+        - idm2.${var.server_base_domain}:
+          - server:
+            - port: 637
+        ]
+    EOF
   }
 }
 
