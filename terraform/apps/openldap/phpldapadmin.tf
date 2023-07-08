@@ -10,7 +10,7 @@ resource "kubernetes_config_map" "phpldapadmin_env" {
         - idm2.${var.server_base_domain}:
           - server:
             - port: 637
-        - idm.${var.server_base_domain}
+        - idm.${var.server_base_domain}:
           - server:
             - port: 636
     EOF
