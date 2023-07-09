@@ -80,7 +80,7 @@ resource "kubernetes_deployment" "openldap" {
           name = "custom-ldifs"
 
           config_map {
-            name = kubernetes_config_map.openldap_custom_ldifs.metadata[0].name
+            name         = kubernetes_config_map.openldap_custom_ldifs.metadata[0].name
             default_mode = "0444"
           }
         }
