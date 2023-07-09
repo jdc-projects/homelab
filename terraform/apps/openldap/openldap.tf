@@ -13,7 +13,7 @@ resource "kubernetes_config_map" "openldap_env" {
     LDAP_CONFIG_ADMIN_PASSWORD = random_password.openldap_config_admin_password.result
     LDAP_SKIP_DEFAULT_TREE     = "yes"
     LDAP_ADD_SCHEMAS           = "yes"
-    LDAP_EXTRA_SCHEMAS         = "cosine,inetorgperson,rfc2307bis"
+    LDAP_EXTRA_SCHEMAS         = "cosine,inetorgperson"
     BITNAMI_DEBUG              = "true"
   }
 }
@@ -69,9 +69,8 @@ resource "kubernetes_deployment" "openldap" {
           }
 
           volume_mount {
-            mount_path = "/etc/openldap/schema/rfc2307bis.schema"
+            mount_path = "/schemas"
             name       = "custom-ldifs"
-            sub_path   = "rfc2307bis.ldif"
 
           }
 
