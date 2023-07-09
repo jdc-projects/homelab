@@ -1,4 +1,8 @@
 resource "null_resource" "get_custom_ldif" {
+  triggers = {
+    always_run = timestamp()
+  }
+
   provisioner "local-exec" {
     command = <<-EOF
         mkdir ./ldifs
