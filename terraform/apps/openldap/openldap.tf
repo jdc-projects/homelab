@@ -1,3 +1,24 @@
+resource "null_resource" "get_custom_ldif" {
+  provisioner "local-exec" {
+    command = <<-EOF
+        mkdir ./ldifs
+        cd ./ldifs
+        wget https://raw.githubusercontent.com/osixia/docker-openldap/635034a75878773f8576d646422cf26e43741fab/image/service/slapd/assets/config/bootstrap/schema/rfc2307bis.ldif
+      EOF
+  }
+}
+
+resource "kubernetes_config_map" "openldap_custom_ldifs" {
+  metadata {
+    name      = "openldap-custom-ldifs"
+    namespace = kubernetes_namespace.openldap.metadata[0].name
+  }
+
+  data = {
+    "rfc2307bis.ldif" = file("./ldifs/rfc2307bis.ldif")
+  }
+}
+
 resource "kubernetes_config_map" "openldap_env" {
   metadata {
     name      = "openldap-env"
@@ -9,8 +30,7 @@ resource "kubernetes_config_map" "openldap_env" {
     LDAP_ROOT               = "dc=idm,dc=${var.server_base_domain}"
     LDAP_ADMIN_USERNAME     = random_password.openldap_admin_username.result
     LDAP_SKIP_DEFAULT_TREE  = "yes"
-    LDAP_ADD_SCHEMAS        = "yes"
-    LDAP_EXTRA_SCHEMAS      = "nis"
+    LDAP_ADD_SCHEMAS        = "no"
     LDAP_ALLOW_ANON_BINDING = "no"
   }
 }
@@ -65,10 +85,23 @@ resource "kubernetes_deployment" "openldap" {
             }
           }
 
+          volume_mount {
+            mount_path = "/ldifs"
+            name       = "custom-ldifs"
+          }
+
           #   volume_mount {
           #     mount_path = "/data"
           #     name       = "openldap-data"
           #   }
+        }
+
+        volume {
+          name = "custom-ldifs"
+
+          config_map {
+            name = kubernetes_config_map.openldap_custom_ldifs.metadata[0].name
+          }
         }
 
         # volume {
