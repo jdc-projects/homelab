@@ -7,13 +7,13 @@ resource "null_resource" "get_custom_ldif" {
     command = <<-EOF
         mkdir ./ldifs
         cd ./ldifs
-        curl https://raw.githubusercontent.com/osixia/docker-openldap/635034a75878773f8576d646422cf26e43741fab/image/service/slapd/assets/config/bootstrap/schema/rfc2307bis.ldif -o rfc2307bis.ldif
+        curl https://raw.githubusercontent.com/github/github-ldap/master/test/fixtures/openldap/memberof.ldif -o memberof.ldif
       EOF
   }
 }
 
-data "local_file" "rfc2307bis" {
-  filename = "./ldifs/rfc2307bis.ldif"
+data "local_file" "memberof" {
+  filename = "./ldifs/memberof.ldif"
 
   depends_on = [null_resource.get_custom_ldif]
 }
@@ -25,6 +25,6 @@ resource "kubernetes_config_map" "openldap_custom_ldifs" {
   }
 
   data = {
-    "rfc2307bis.ldif" = data.local_file.rfc2307bis.content
+    "memberof.ldif" = data.local_file.memberof.content
   }
 }
