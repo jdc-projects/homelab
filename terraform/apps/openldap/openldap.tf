@@ -103,7 +103,8 @@ resource "kubernetes_deployment" "openldap" {
   lifecycle {
     replace_triggered_by = [
       kubernetes_config_map.openldap_env,
-      kubernetes_secret.openldap_env
+      kubernetes_secret.openldap_env,
+      kubernetes_config_map.openldap_custom_schemas
     ]
   }
 }
