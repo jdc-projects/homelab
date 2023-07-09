@@ -3,13 +3,13 @@ resource "null_resource" "get_custom_schemas" {
     always_run = timestamp()
   }
 
-  provisioner "local-exec" {
-    command = <<-EOF
-        mkdir ./schemas
-        cd ./schemas
-        curl https://raw.githubusercontent.com/github/github-ldap/master/test/fixtures/openldap/memberof.ldif -o memberof.ldif
-      EOF
-  }
+  # provisioner "local-exec" {
+  #   command = <<-EOF
+  #       mkdir ./schemas
+  #       cd ./schemas
+  #       curl https://raw.githubusercontent.com/github/github-ldap/master/test/fixtures/openldap/memberof.ldif -o memberof.ldif
+  #     EOF
+  # }
 }
 
 data "local_file" "memberof" {
