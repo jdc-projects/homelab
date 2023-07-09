@@ -70,7 +70,7 @@ resource "kubernetes_deployment" "openldap" {
 
           volume_mount {
             mount_path = "/schemas"
-            name       = "custom-ldifs"
+            name       = "custom-schemas"
 
           }
 
@@ -81,10 +81,10 @@ resource "kubernetes_deployment" "openldap" {
         }
 
         volume {
-          name = "custom-ldifs"
+          name = "custom-schemas"
 
           config_map {
-            name         = kubernetes_config_map.openldap_custom_ldifs.metadata[0].name
+            name         = kubernetes_config_map.openldap_custom_schemas.metadata[0].name
             default_mode = "0444"
           }
         }
