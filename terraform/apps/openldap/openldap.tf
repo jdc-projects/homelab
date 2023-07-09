@@ -13,7 +13,7 @@ resource "kubernetes_config_map" "openldap_env" {
     LDAP_CONFIG_ADMIN_PASSWORD = random_password.openldap_config_admin_password.result
     LDAP_SKIP_DEFAULT_TREE     = "yes"
     LDAP_ADD_SCHEMAS           = "yes"
-    LDAP_EXTRA_SCHEMAS         = "cosine,inetorgperson"
+    LDAP_EXTRA_SCHEMAS         = "cosine,inetorgperson,nis,memberof"
     BITNAMI_DEBUG              = "true"
   }
 }
