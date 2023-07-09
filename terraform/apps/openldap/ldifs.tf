@@ -3,13 +3,13 @@ resource "null_resource" "get_custom_ldif" {
     always_run = timestamp()
   }
 
-  provisioner "local-exec" {
-    command = <<-EOF
-        mkdir ./ldifs
-        cd ./ldifs
-        curl https://raw.githubusercontent.com/osixia/docker-openldap/635034a75878773f8576d646422cf26e43741fab/image/service/slapd/assets/config/bootstrap/schema/rfc2307bis.ldif -o rfc2307bis.ldif
-      EOF
-  }
+  # provisioner "local-exec" {
+  #   command = <<-EOF
+  #       mkdir ./ldifs
+  #       cd ./ldifs
+  #       curl https://raw.githubusercontent.com/osixia/docker-openldap/635034a75878773f8576d646422cf26e43741fab/image/service/slapd/assets/config/bootstrap/schema/rfc2307bis.ldif -o rfc2307bis.ldif
+  #     EOF
+  # }
 }
 
 data "local_file" "rfc2307bis" {
