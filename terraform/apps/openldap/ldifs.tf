@@ -8,7 +8,7 @@ resource "null_resource" "get_custom_ldif" {
   }
 }
 
-resource "local_file" "rfc2307bis" {
+data "local_file" "rfc2307bis" {
   filename = "./ldifs/rfc2307bis.ldif"
 
   depends_on = [null_resource.get_custom_ldif]
@@ -21,6 +21,6 @@ resource "kubernetes_config_map" "openldap_custom_ldifs" {
   }
 
   data = {
-    "rfc2307bis.ldif" = local_file.rfc2307bis.content
+    "rfc2307bis.ldif" = data.local_file.rfc2307bis.content
   }
 }
