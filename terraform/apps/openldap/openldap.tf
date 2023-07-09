@@ -8,9 +8,7 @@ resource "kubernetes_config_map" "openldap_env" {
     LDAP_PORT_NUMBER    = "1389"
     LDAP_ROOT           = "dc=idm,dc=${var.server_base_domain}"
     LDAP_ADMIN_USERNAME = random_password.openldap_admin_username.result
-    LDAP_USERS          = "" # need empty values so the generic users aren't created
-    LDAP_PASSWORDS      = "" # need empty values so the generic users aren't created
-    BITNAMI_DEBUG       = "true"
+    LDAP_SKIP_DEFAULT_TREE = "yes"
   }
 }
 
