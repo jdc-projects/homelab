@@ -7,7 +7,7 @@ resource "null_resource" "get_custom_ldif" {
     command = <<-EOF
         mkdir ./ldifs
         cd ./ldifs
-        curl https://raw.githubusercontent.com/jtyr/rfc2307bis/master/rfc2307bis.schema -o rfc2307bis.ldif
+        curl https://raw.githubusercontent.com/jtyr/rfc2307bis/master/rfc2307bis.schema -o rfc2307bis.schema
       EOF
   }
 }
