@@ -11,6 +11,7 @@ resource "kubernetes_config_map" "openldap_env" {
     LDAP_SKIP_DEFAULT_TREE = "yes"
     LDAP_ADD_SCHEMAS       = "yes"
     LDAP_EXTRA_SCHEMAS     = "nis"
+    LDAP_ALLOW_ANON_BINDING = "no"
   }
 }
 
