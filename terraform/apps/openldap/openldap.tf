@@ -68,7 +68,7 @@ resource "kubernetes_deployment" "openldap" {
           }
 
           volume_mount {
-            mount_path = "/etc/openldap/schema/rfc2307bis.schema"
+            mount_path = "/schemas"
             sub_path   = "rfc2307bis.schema"
             name       = "custom-ldifs"
           }
