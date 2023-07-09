@@ -9,7 +9,8 @@ resource "kubernetes_config_map" "openldap_env" {
     LDAP_ROOT              = "dc=idm,dc=${var.server_base_domain}"
     LDAP_ADMIN_USERNAME    = random_password.openldap_admin_username.result
     LDAP_SKIP_DEFAULT_TREE = "yes"
-    LDAP_ADD_SCHEMAS       = "no"
+    LDAP_ADD_SCHEMAS       = "yes"
+    LDAP_EXTRA_SCHEMAS     = "nis"
   }
 }
 
