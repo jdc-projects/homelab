@@ -68,7 +68,7 @@ resource "kubernetes_deployment" "openldap" {
           }
 
           volume_mount {
-            mount_path = "/ldifs"
+            mount_path = "/schemas"
             name       = "custom-ldifs"
 
           }
