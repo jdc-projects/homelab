@@ -67,6 +67,7 @@ resource "kubernetes_deployment" "openldap" {
           volume_mount {
             mount_path = "/ldifs"
             name       = "custom-ldifs"
+
           }
 
           #   volume_mount {
@@ -80,6 +81,7 @@ resource "kubernetes_deployment" "openldap" {
 
           config_map {
             name = kubernetes_config_map.openldap_custom_ldifs.metadata[0].name
+            default_mode = "0444"
           }
         }
 
