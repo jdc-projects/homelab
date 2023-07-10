@@ -1,7 +1,7 @@
-dn: ou=people,{{SERVER_BASE_DOMAIN}}
+dn: ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: organizationalUnit
 ou: people
 
-dn: ou=groups,{{SERVER_BASE_DOMAIN}}
+dn: ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: organizationalUnit
 ou: groups
