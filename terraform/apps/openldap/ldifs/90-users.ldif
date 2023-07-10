@@ -1,0 +1,9 @@
+# create admin user
+dn: uid={{OPENLDAP_ADMIN_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
+objectClass: inetOrgPerson
+objectClass: posixAccount
+uid: {{OPENLDAP_ADMIN_USERNAME}}
+displayName: Administrator
+uidNumber: 10000
+gidNumber: 5000
+userPassword: {{OPENLDAP_ADMIN_PASSWORD}}

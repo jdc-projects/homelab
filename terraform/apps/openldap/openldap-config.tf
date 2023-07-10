@@ -21,6 +21,8 @@ resource "null_resource" "populate_custom_ldifs" {
   provisioner "local-exec" {
     command = <<-EOF
       find ./ldifs -type f -exec sed -i'' -e "s#{{SERVER_BASE_DOMAIN}}#${var.server_base_domain}#g" {} \;
+      find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_ADMIN_USERNAME}}#${var.server_base_domain}#g" {} \;
+      find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_ADMIN_PASSWORD}}#${var.server_base_domain}#g" {} \;
       rm -rf ./config/*-e*
     EOF
   }
@@ -38,6 +40,12 @@ data "local_file" "groups" {
   depends_on = [null_resource.populate_custom_ldifs]
 }
 
+data "local_sensitive_file" "users" {
+  filename = "./ldifs/90-users.ldif"
+
+  depends_on = [null_resource.populate_custom_ldifs]
+}
+
 resource "kubernetes_config_map" "openldap_custom_ldifs" {
   metadata {
     name      = "openldap-custom-ldifs"
@@ -47,5 +55,6 @@ resource "kubernetes_config_map" "openldap_custom_ldifs" {
   data = {
     "00-base.ldif"   = data.local_file.base.content
     "80-groups.ldif" = data.local_file.groups.content
+    "90-users.ldif"  = data.local_sensitive_file.users.content
   }
 }
