@@ -1,9 +1,31 @@
-dn: ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
+# Create OUs
+dn: ou=People,dc=xmansion,dc=local
 objectClass: organizationalUnit
-objectclass: top
-ou: people
+ou: People
 
-dn: ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
+dn: ou=Groups,dc=xmansion,dc=local
 objectClass: organizationalUnit
-objectclass: top
-ou: groups
+ou: Groups
+
+# Create Groups
+dn: cn=admins,ou=Groups,dc=xmansion,dc=local
+objectClass: posixGroup
+cn: admins
+gidNumber: 5000
+
+# Create Users
+dn: uid=bill,ou=People,dc=xmansion,dc=local
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: bill
+sn: smith
+givenName: Bill
+cn: Bill Smith
+displayName: Bill Smith
+uidNumber: 10000
+gidNumber: 5000
+userPassword: password
+gecos: Bill Smith
+loginShell: /bin/bash
+homeDirectory: /home/bsmith
