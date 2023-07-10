@@ -112,8 +112,7 @@ resource "kubernetes_deployment" "openldap" {
       kubernetes_config_map.openldap_env,
       kubernetes_secret.openldap_env,
       kubernetes_config_map.openldap_custom_ldifs,
-      kubernetes_config_map.openldap_custom_schemas,
-      null_resource.populate_custom_ldifs
+      kubernetes_config_map.openldap_custom_schemas
     ]
   }
 }
