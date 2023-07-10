@@ -4,9 +4,9 @@ objectClass: person
 objectClass: inetOrgPerson
 objectClass: posixAccount
 uid: {{OPENLDAP_ADMIN_USERNAME}}
-sn: admin
 cn: admin
-displayName: Administrator
+givenName: System
+sn: Administrator
 uidNumber: 5000
 gidNumber: 5000
 homeDirectory: /home/{{OPENLDAP_ADMIN_USERNAME}}
@@ -18,9 +18,9 @@ objectClass: person
 objectClass: inetOrgPerson
 objectClass: posixAccount
 uid: {{OPENLDAP_TEST_ADMIN_USERNAME}}
-sn: test-admin
 cn: test-admin
-displayName: Test Admin
+givenName: Test
+sn: Admin
 uidNumber: 6000
 gidNumber: 6000
 homeDirectory: /home/{{OPENLDAP_TEST_ADMIN_USERNAME}}
@@ -32,9 +32,9 @@ objectClass: person
 objectClass: inetOrgPerson
 objectClass: posixAccount
 uid: {{OPENLDAP_TEST_USER_USERNAME}}
-sn: test-user
 cn: test-user
-displayName: Test User
+givenName: Test
+sn: User
 uidNumber: 6100
 gidNumber: 6100
 homeDirectory: /home/{{OPENLDAP_TEST_USER_USERNAME}}
@@ -46,9 +46,9 @@ objectClass: person
 objectClass: inetOrgPerson
 objectClass: posixAccount
 uid: {{OPENLDAP_TEST_GUEST_USERNAME}}
-sn: test-guest
 cn: test-guest
-displayName: Test Guest
+givenName: Test
+sn: Guest
 uidNumber: 6200
 gidNumber: 6200
 homeDirectory: /home/{{OPENLDAP_TEST_GUEST_USERNAME}}
@@ -60,9 +60,9 @@ objectClass: person
 objectClass: inetOrgPerson
 objectClass: posixAccount
 uid: {{OPENLDAP_TEST_DISABLED_USERNAME}}
-sn: test-disabled
 cn: test-disabled
-displayName: Test Guest
+givenName: Test
+sn: Disabled
 uidNumber: 6300
 gidNumber: 6300
 homeDirectory: /home/{{OPENLDAP_TEST_DISABLED_USERNAME}}
