@@ -9,3 +9,8 @@ ou: idm
 dn: ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: organizationalUnit
 ou: people
+
+## Build the groups ou.
+dn: ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
+objectClass: organizationalUnit
+ou: groups
