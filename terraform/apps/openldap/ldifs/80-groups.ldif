@@ -1,6 +1,6 @@
 # create LDAP admins group
 dn: cn=ldap_admins,ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
-objectClass: groupOfUniqueMembers
+objectClass: groupOfUniqueNames
 cn: ldap_admins
 gidNumber: 5000
 uniqueMember: {{OPENLDAP_ADMIN_USERNAME}}
