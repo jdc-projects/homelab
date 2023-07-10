@@ -11,6 +11,7 @@ resource "kubernetes_config_map" "openldap_env" {
     LDAP_SKIP_DEFAULT_TREE = "yes"
     LDAP_EXTRA_SCHEMAS     = "cosine,inetorgperson,nis"
     BITNAMI_DEBUG          = "true"
+    LDAP_LOGLEVEL          = "256"
   }
 }
 
