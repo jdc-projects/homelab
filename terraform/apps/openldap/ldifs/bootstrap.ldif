@@ -1,31 +1,9 @@
-# Create OUs
-dn: ou=People,dc=idm,dc={{SERVER_BASE_DOMAIN}}
+## Build the root node.
+dn: dc=idm,dc={{SERVER_BASE_DOMAIN}}
+objectClass: dcObject
+dc: idm
+
+## Build the people ou.
+dn: ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: organizationalUnit
-ou: People
-
-dn: ou=Groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
-objectClass: organizationalUnit
-ou: Groups
-
-# Create Groups
-dn: cn=admins,ou=Groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
-objectClass: posixGroup
-cn: admins
-gidNumber: 5000
-
-# Create Users
-dn: uid=bill,ou=People,dc=idm,dc={{SERVER_BASE_DOMAIN}}
-objectClass: inetOrgPerson
-objectClass: posixAccount
-objectClass: shadowAccount
-uid: bill
-sn: smith
-givenName: Bill
-cn: Bill Smith
-displayName: Bill Smith
-uidNumber: 10000
-gidNumber: 5000
-userPassword: password
-gecos: Bill Smith
-loginShell: /bin/bash
-homeDirectory: /home/bsmith
+ou: people
