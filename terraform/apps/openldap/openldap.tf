@@ -49,7 +49,7 @@ resource "kubernetes_deployment" "openldap" {
 
       spec {
         container {
-          image = "bitnami/openldap:2.6.3"
+          image = "bitnami/openldap:2.6.4"
           name  = "openldap"
 
           env_from {
