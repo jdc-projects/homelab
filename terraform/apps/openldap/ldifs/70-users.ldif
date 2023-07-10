@@ -6,3 +6,30 @@ sn: admin
 cn: admin
 displayName: Administrator
 userPassword: {{OPENLDAP_ADMIN_PASSWORD}}
+
+# create app test admin user
+dn: uid={{OPENLDAP_TEST_ADMIN_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
+objectClass: inetOrgPerson
+uid: {{OPENLDAP_TEST_ADMIN_USERNAME}}
+sn: test-admin
+cn: test-admin
+displayName: Test Admin
+userPassword: {{OPENLDAP_TEST_ADMIN_PASSWORD}}
+
+# create app test user
+dn: uid={{OPENLDAP_TEST_USER_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
+objectClass: inetOrgPerson
+uid: {{OPENLDAP_TEST_USER_USERNAME}}
+sn: test-user
+cn: test-user
+displayName: Test User
+userPassword: {{OPENLDAP_TEST_USER_PASSWORD}}
+
+# create app test guest user
+dn: uid={{OPENLDAP_TEST_GUEST_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
+objectClass: inetOrgPerson
+uid: {{OPENLDAP_TEST_GUEST_USERNAME}}
+sn: test-guest
+cn: test-guest
+displayName: Test Guest
+userPassword: {{OPENLDAP_TEST_GUEST_PASSWORD}}
