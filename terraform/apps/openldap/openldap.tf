@@ -8,11 +8,7 @@ resource "kubernetes_config_map" "openldap_env" {
     LDAP_PORT_NUMBER           = "1389"
     LDAP_ROOT                  = "dc=idm,dc=${var.server_base_domain}"
     LDAP_ADMIN_USERNAME        = random_password.openldap_admin_username.result
-    LDAP_CONFIG_ADMIN_ENABLED  = "yes"
-    LDAP_CONFIG_ADMIN_USERNAME = random_password.openldap_config_admin_username.result
-    LDAP_CONFIG_ADMIN_PASSWORD = random_password.openldap_config_admin_password.result
     LDAP_SKIP_DEFAULT_TREE     = "yes"
-    LDAP_ADD_SCHEMAS           = "yes"
     LDAP_EXTRA_SCHEMAS         = "cosine,inetorgperson,nis"
     BITNAMI_DEBUG              = "true"
   }
@@ -89,7 +85,6 @@ resource "kubernetes_deployment" "openldap" {
 
           config_map {
             name         = kubernetes_config_map.openldap_custom_ldifs.metadata[0].name
-            default_mode = "0444"
           }
         }
 
@@ -98,7 +93,6 @@ resource "kubernetes_deployment" "openldap" {
 
           config_map {
             name         = kubernetes_config_map.openldap_custom_schemas.metadata[0].name
-            default_mode = "0444"
           }
         }
 
