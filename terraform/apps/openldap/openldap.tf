@@ -5,12 +5,12 @@ resource "kubernetes_config_map" "openldap_env" {
   }
 
   data = {
-    LDAP_PORT_NUMBER           = "1389"
-    LDAP_ROOT                  = "dc=idm,dc=${var.server_base_domain}"
-    LDAP_ADMIN_USERNAME        = random_password.openldap_admin_username.result
-    LDAP_SKIP_DEFAULT_TREE     = "yes"
-    LDAP_EXTRA_SCHEMAS         = "cosine,inetorgperson,nis"
-    BITNAMI_DEBUG              = "true"
+    LDAP_PORT_NUMBER       = "1389"
+    LDAP_ROOT              = "dc=idm,dc=${var.server_base_domain}"
+    LDAP_ADMIN_USERNAME    = random_password.openldap_admin_username.result
+    LDAP_SKIP_DEFAULT_TREE = "yes"
+    LDAP_EXTRA_SCHEMAS     = "cosine,inetorgperson,nis"
+    BITNAMI_DEBUG          = "true"
   }
 }
 
@@ -84,7 +84,7 @@ resource "kubernetes_deployment" "openldap" {
           name = "custom-ldifs"
 
           config_map {
-            name         = kubernetes_config_map.openldap_custom_ldifs.metadata[0].name
+            name = kubernetes_config_map.openldap_custom_ldifs.metadata[0].name
           }
         }
 
@@ -92,7 +92,7 @@ resource "kubernetes_deployment" "openldap" {
           name = "custom-schemas"
 
           config_map {
-            name         = kubernetes_config_map.openldap_custom_schemas.metadata[0].name
+            name = kubernetes_config_map.openldap_custom_schemas.metadata[0].name
           }
         }
 
