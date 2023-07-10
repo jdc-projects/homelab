@@ -10,7 +10,7 @@ objectClass: olcMemberOf
 objectClass: olcOverlayConfig
 olcOverlay: memberof
 olcMemberOfRefInt: TRUE
-olcMemberOfGroupOC: groupOfUniqueNames
+olcMemberOfGroupOC: groupOfMembers
 olcMemberOfMemberAD: uniqueMember
 olcMemberOfMemberOfAD: memberOf
 
