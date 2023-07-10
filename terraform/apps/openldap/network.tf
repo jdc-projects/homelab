@@ -17,6 +17,8 @@ resource "kubernetes_service" "openldap" {
 }
 
 resource "kubernetes_service" "phpldapadmin" {
+  count = var.enable_phpldapadmin ? 1 : 0
+
   metadata {
     name      = "phpldapadmin"
     namespace = kubernetes_namespace.openldap.metadata[0].name
@@ -81,6 +83,8 @@ resource "kubernetes_manifest" "openldap_ingress" {
 }
 
 resource "kubernetes_manifest" "phpldapadmin_ingress" {
+  count = var.enable_phpldapadmin ? 1 : 0
+
   manifest = {
     apiVersion = "traefik.containo.us/v1alpha1"
     kind       = "IngressRoute"

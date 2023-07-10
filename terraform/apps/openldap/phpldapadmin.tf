@@ -1,4 +1,6 @@
 resource "kubernetes_config_map" "phpldapadmin_env" {
+  count = var.enable_phpldapadmin ? 1 : 0
+
   metadata {
     name      = "phpldapadmin-env"
     namespace = kubernetes_namespace.openldap.metadata[0].name
@@ -18,6 +20,8 @@ resource "kubernetes_config_map" "phpldapadmin_env" {
 }
 
 resource "kubernetes_deployment" "phpldapadmin" {
+  count = var.enable_phpldapadmin ? 1 : 0
+
   metadata {
     name      = "phpldapadmin"
     namespace = kubernetes_namespace.openldap.metadata[0].name

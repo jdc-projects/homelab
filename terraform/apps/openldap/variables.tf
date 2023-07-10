@@ -29,3 +29,9 @@ variable "smtp_password" {
   sensitive   = true
   description = "Password for the SMTP server."
 }
+
+variable "enable_phpldapadmin" {
+  type        = bool
+  description = "Whether to enable the phpLDAPadmin portal (true = enabled)."
+  default     = false
+}
