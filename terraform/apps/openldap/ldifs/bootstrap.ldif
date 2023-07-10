@@ -1,7 +1,9 @@
 ## Build the root node.
 dn: dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: dcObject
+objectClass: organizationalUnit
 dc: idm
+ou: idm
 
 ## Build the people ou.
 dn: ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
