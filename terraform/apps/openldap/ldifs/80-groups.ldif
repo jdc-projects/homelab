@@ -3,3 +3,4 @@ dn: cn=ldap_admins,ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: posixGroup
 cn: ldap_admins
 gidNumber: 5000
+memberUid: {{OPENLDAP_ADMIN_USERNAME}}
