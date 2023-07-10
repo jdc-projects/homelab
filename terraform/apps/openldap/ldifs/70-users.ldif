@@ -6,6 +6,7 @@ uid: {{OPENLDAP_ADMIN_USERNAME}}
 cn: admin
 givenName: System
 sn: Administrator
+mail: admin@{{SERVER_BASE_DOMAIN}}
 userPassword: {{OPENLDAP_ADMIN_PASSWORD}}
 
 # create app test admin user
@@ -16,6 +17,7 @@ uid: {{OPENLDAP_TEST_ADMIN_USERNAME}}
 cn: test-admin
 givenName: Test
 sn: Admin
+mail: testadmin@{{SERVER_BASE_DOMAIN}}
 userPassword: {{OPENLDAP_TEST_ADMIN_PASSWORD}}
 
 # create app test user
@@ -26,6 +28,7 @@ uid: {{OPENLDAP_TEST_USER_USERNAME}}
 cn: test-user
 givenName: Test
 sn: User
+mail: testuser@{{SERVER_BASE_DOMAIN}}
 userPassword: {{OPENLDAP_TEST_USER_PASSWORD}}
 
 # create app test guest user
@@ -36,6 +39,7 @@ uid: {{OPENLDAP_TEST_GUEST_USERNAME}}
 cn: test-guest
 givenName: Test
 sn: Guest
+mail: testguest@{{SERVER_BASE_DOMAIN}}
 userPassword: {{OPENLDAP_TEST_GUEST_PASSWORD}}
 
 # create app test disabled user
@@ -46,4 +50,5 @@ uid: {{OPENLDAP_TEST_DISABLED_USERNAME}}
 cn: test-disabled
 givenName: Test
 sn: Disabled
+mail: testdisabled@{{SERVER_BASE_DOMAIN}}
 userPassword: {{OPENLDAP_TEST_DISABLED_PASSWORD}}
