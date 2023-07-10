@@ -3,4 +3,4 @@ dn: cn=ldap_admins,ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: groupOfUniqueNames
 cn: ldap_admins
 gidNumber: 5000
-uniqueMember: {{OPENLDAP_ADMIN_USERNAME}}
+uniqueMember: uid={{OPENLDAP_ADMIN_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
