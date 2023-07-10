@@ -1,0 +1,7 @@
+dn: ou=people,{{SERVER_BASE_DOMAIN}}
+objectClass: organizationalUnit
+ou: people
+
+dn: ou=groups,{{SERVER_BASE_DOMAIN}}
+objectClass: organizationalUnit
+ou: groups
