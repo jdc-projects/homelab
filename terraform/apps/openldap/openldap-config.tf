@@ -14,7 +14,7 @@ resource "kubernetes_config_map" "openldap_custom_schemas" {
 }
 
 resource "null_resource" "populate_custom_ldifs" {
-  trigger = {
+  triggers = {
     always_run = timestamp()
   }
 
