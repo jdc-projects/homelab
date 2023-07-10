@@ -1,5 +1,20 @@
-# create LDAP admins group
-dn: cn=ldap_admins,ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
+# create system admins group
+dn: cn=system_admins,ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: groupOfUniqueNames
-cn: ldap_admins
+cn: system_admins
 uniqueMember: uid={{OPENLDAP_ADMIN_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
+
+# create app admins group
+dn: cn=app_admins,ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
+objectClass: groupOfUniqueNames
+cn: app_admins
+
+# create app users group
+dn: cn=app_users,ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
+objectClass: groupOfUniqueNames
+cn: app_users
+
+# create app guests group
+dn: cn=app_guests,ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
+objectClass: groupOfUniqueNames
+cn: app_guests
