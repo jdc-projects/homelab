@@ -1,20 +1,20 @@
 # Create OUs
-dn: ou=People,dc=xmansion,dc=local
+dn: ou=People,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: organizationalUnit
 ou: People
 
-dn: ou=Groups,dc=xmansion,dc=local
+dn: ou=Groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: organizationalUnit
 ou: Groups
 
 # Create Groups
-dn: cn=admins,ou=Groups,dc=xmansion,dc=local
+dn: cn=admins,ou=Groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: posixGroup
 cn: admins
 gidNumber: 5000
 
 # Create Users
-dn: uid=bill,ou=People,dc=xmansion,dc=local
+dn: uid=bill,ou=People,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
