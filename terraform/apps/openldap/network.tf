@@ -99,11 +99,11 @@ resource "kubernetes_manifest" "phpldapadmin_ingress" {
 
       routes = [{
         kind  = "Rule"
-        match = "Host(`idm2.${var.server_base_domain}`)"
+        match = "Host(`phpldapadmin.${var.server_base_domain}`)"
         services = [{
-          name      = kubernetes_service.phpldapadmin.metadata[0].name
+          name      = kubernetes_service.phpldapadmin[0].metadata[0].name
           namespace = kubernetes_namespace.openldap.metadata[0].name
-          port      = kubernetes_service.phpldapadmin.spec[0].port[0].port
+          port      = kubernetes_service.phpldapadmin[0].spec[0].port[0].port
         }]
       }]
     }

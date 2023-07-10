@@ -69,7 +69,7 @@ resource "kubernetes_deployment" "phpldapadmin" {
           name = "custom-env"
 
           config_map {
-            name = kubernetes_config_map.phpldapadmin_env.metadata[0].name
+            name = kubernetes_config_map.phpldapadmin_env[0].metadata[0].name
           }
         }
 
