@@ -47,7 +47,7 @@ resource "kubernetes_service" "ldap_user_manager" {
 
     port {
       port        = "80"
-      target_port = kubernetes_config_map.ldap_user_manager_env.data.LDAP_PORT_NUMBER
+      target_port = kubernetes_config_map.ldap_user_manager_env.data.SERVER_PORT
     }
   }
 }
