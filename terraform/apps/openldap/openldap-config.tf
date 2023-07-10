@@ -45,7 +45,7 @@ resource "kubernetes_config_map" "openldap_custom_ldifs" {
   }
 
   data = {
-    "00-base.ldif" = data.local_file.base.content
+    "00-base.ldif"   = data.local_file.base.content
     "80-groups.ldif" = data.local_file.groups.content
   }
 }
