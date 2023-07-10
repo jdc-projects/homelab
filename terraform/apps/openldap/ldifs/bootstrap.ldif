@@ -1,9 +1,4 @@
-dn: ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
+dn: ou=People,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: organizationalUnit
 objectclass: top
-ou: people
-
-dn: ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
-objectClass: organizationalUnit
-objectclass: top
-ou: groups
+ou: People
