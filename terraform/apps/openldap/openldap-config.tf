@@ -26,8 +26,8 @@ resource "null_resource" "populate_custom_ldifs" {
   }
 }
 
-data "local_file" "bootstrap" {
-  filename = "./ldifs/bootstrap.ldif"
+data "local_file" "base" {
+  filename = "./ldifs/00-base.ldif"
 
   depends_on = [null_resource.populate_custom_ldifs]
 }
@@ -39,6 +39,6 @@ resource "kubernetes_config_map" "openldap_custom_ldifs" {
   }
 
   data = {
-    "bootstrap.ldif" = data.local_file.bootstrap.content
+    "00-base.ldif" = data.local_file.base.content
   }
 }
