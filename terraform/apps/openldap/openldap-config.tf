@@ -22,6 +22,9 @@ resource "null_resource" "populate_custom_ldifs" {
     command = <<-EOF
       find ./ldifs -type f -exec sed -i'' -e "s#{{SERVER_BASE_DOMAIN}}#${var.server_base_domain}#g" {} \;
       find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_ADMIN_USERNAME}}#${random_password.openldap_admin_username.result}#g" {} \;
+      find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_TEST_ADMIN_USERNAME}}#${random_password.openldap_test_admin_password.result}#g" {} \;
+      find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_TEST_USER_USERNAME}}#${random_password.openldap_test_user_password.result}#g" {} \;
+      find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_TEST_GUEST_USERNAME}}#${random_password.openldap_test_guest_password.result}#g" {} \;
       find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_ADMIN_PASSWORD}}#${random_password.openldap_admin_password.result}#g" {} \;
       find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_TEST_ADMIN_PASSWORD}}#${random_password.openldap_test_admin_password.result}#g" {} \;
       find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_TEST_USER_PASSWORD}}#${random_password.openldap_test_user_password.result}#g" {} \;
