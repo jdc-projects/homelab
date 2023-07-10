@@ -1,7 +1,5 @@
 data "local_file" "memberof" {
   filename = "./schemas/memberof.ldif"
-
-  depends_on = [null_resource.get_custom_schemas]
 }
 
 resource "kubernetes_config_map" "openldap_custom_schemas" {
