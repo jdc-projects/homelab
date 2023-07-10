@@ -32,6 +32,12 @@ data "local_file" "base" {
   depends_on = [null_resource.populate_custom_ldifs]
 }
 
+data "local_file" "groups" {
+  filename = "./ldifs/80-groups.ldif"
+
+  depends_on = [null_resource.populate_custom_ldifs]
+}
+
 resource "kubernetes_config_map" "openldap_custom_ldifs" {
   metadata {
     name      = "openldap-custom-ldifs"
@@ -40,5 +46,6 @@ resource "kubernetes_config_map" "openldap_custom_ldifs" {
 
   data = {
     "00-base.ldif" = data.local_file.base.content
+    "80-groups.ldif" = data.local_file.groups.content
   }
 }
