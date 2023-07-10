@@ -2,6 +2,10 @@ data "local_file" "memberof" {
   filename = "./schemas/memberof.ldif"
 }
 
+data "local_file" "rfc2307bis" {
+  filename = "./schemas/rfc2307bis.ldif"
+}
+
 resource "kubernetes_config_map" "openldap_custom_schemas" {
   metadata {
     name      = "openldap-custom-schemas"
@@ -10,6 +14,7 @@ resource "kubernetes_config_map" "openldap_custom_schemas" {
 
   data = {
     "memberof.ldif" = data.local_file.memberof.content
+    "rfc2307bis.ldif" = data.local_file.rfc2307bis.content
   }
 }
 
