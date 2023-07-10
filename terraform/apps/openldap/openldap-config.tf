@@ -21,8 +21,8 @@ resource "null_resource" "populate_custom_ldifs" {
   provisioner "local-exec" {
     command = <<-EOF
       find ./ldifs -type f -exec sed -i'' -e "s#{{SERVER_BASE_DOMAIN}}#${var.server_base_domain}#g" {} \;
-      find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_ADMIN_USERNAME}}#${var.server_base_domain}#g" {} \;
-      find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_ADMIN_PASSWORD}}#${var.server_base_domain}#g" {} \;
+      find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_ADMIN_USERNAME}}#${random_password.openldap_admin_username.result}#g" {} \;
+      find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_ADMIN_PASSWORD}}#${random_password.openldap_admin_password.result}#g" {} \;
       rm -rf ./config/*-e*
     EOF
   }
