@@ -60,8 +60,8 @@ objectClass: person
 objectClass: inetOrgPerson
 objectClass: posixAccount
 uid: {{OPENLDAP_TEST_DISABLED_USERNAME}}
-sn: test-guest
-cn: test-guest
+sn: test-disabled
+cn: test-disabled
 displayName: Test Guest
 uidNumber: 6300
 gidNumber: 6300

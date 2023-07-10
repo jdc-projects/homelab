@@ -23,7 +23,7 @@ cn: app_guests
 uniqueMember: uid={{OPENLDAP_TEST_GUEST_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 
 # create app disabled group
-dn: cn=app_guests,ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
+dn: cn=app_disabled,ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: groupOfUniqueNames
-cn: app_guests
+cn: app_disabled
 uniqueMember: uid={{OPENLDAP_TEST_DISABLED_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
