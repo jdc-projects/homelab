@@ -1,39 +1,29 @@
 # create system admins group
 dn: cn=system_admins,ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: groupOfUniqueNames
-objectClass: posixGroup
 cn: system_admins
-gidNumber: 5000
 uniqueMember: uid={{OPENLDAP_ADMIN_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 
 # create app admins group
 dn: cn=app_admins,ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: groupOfUniqueNames
-objectClass: posixGroup
 cn: app_admins
-gidNumber: 6000
 uniqueMember: uid={{OPENLDAP_TEST_ADMIN_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 
 # create app users group
 dn: cn=app_users,ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: groupOfUniqueNames
-objectClass: posixGroup
 cn: app_users
-gidNumber: 6100
 uniqueMember: uid={{OPENLDAP_TEST_USER_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 
 # create app guests group
 dn: cn=app_guests,ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: groupOfUniqueNames
-objectClass: posixGroup
 cn: app_guests
-gidNumber: 6200
 uniqueMember: uid={{OPENLDAP_TEST_GUEST_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 
 # create app disabled group
 dn: cn=app_guests,ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: groupOfUniqueNames
-objectClass: posixGroup
 cn: app_guests
-gidNumber: 6300
 uniqueMember: uid={{OPENLDAP_TEST_DISABLED_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
