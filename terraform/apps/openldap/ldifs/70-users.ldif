@@ -53,3 +53,17 @@ uidNumber: 6200
 gidNumber: 6200
 homeDirectory: /home/{{OPENLDAP_TEST_GUEST_USERNAME}}
 userPassword: {{OPENLDAP_TEST_GUEST_PASSWORD}}
+
+# create app test disabled user
+dn: uid={{OPENLDAP_TEST_DISABLED_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: posixAccount
+uid: {{OPENLDAP_TEST_DISABLED_USERNAME}}
+sn: test-guest
+cn: test-guest
+displayName: Test Guest
+uidNumber: 6300
+gidNumber: 6300
+homeDirectory: /home/{{OPENLDAP_TEST_DISABLED_USERNAME}}
+userPassword: {{OPENLDAP_TEST_DISABLED_PASSWORD}}

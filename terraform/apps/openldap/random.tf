@@ -53,3 +53,17 @@ resource "random_password" "openldap_test_guest_password" {
   special = false
   upper   = true
 }
+
+resource "random_password" "openldap_test_disabled_username" {
+  length  = 16
+  numeric = false
+  special = false
+  upper   = false
+}
+
+resource "random_password" "openldap_test_disabled_password" {
+  length  = 16
+  numeric = true
+  special = false
+  upper   = true
+}

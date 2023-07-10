@@ -25,10 +25,12 @@ resource "null_resource" "populate_custom_ldifs" {
       find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_TEST_ADMIN_USERNAME}}#${random_password.openldap_test_admin_username.result}#g" {} \;
       find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_TEST_USER_USERNAME}}#${random_password.openldap_test_user_username.result}#g" {} \;
       find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_TEST_GUEST_USERNAME}}#${random_password.openldap_test_guest_username.result}#g" {} \;
+      find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_TEST_DISABLED_USERNAME}}#${random_password.openldap_test_disabled_username.result}#g" {} \;
       find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_ADMIN_PASSWORD}}#${random_password.openldap_admin_password.result}#g" {} \;
       find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_TEST_ADMIN_PASSWORD}}#${random_password.openldap_test_admin_password.result}#g" {} \;
       find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_TEST_USER_PASSWORD}}#${random_password.openldap_test_user_password.result}#g" {} \;
       find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_TEST_GUEST_PASSWORD}}#${random_password.openldap_test_guest_password.result}#g" {} \;
+      find ./ldifs -type f -exec sed -i'' -e "s#{{OPENLDAP_TEST_DISABLED_PASSWORD}}#${random_password.openldap_test_disabled_password.result}#g" {} \;
       rm -rf ./config/*-e*
     EOF
   }

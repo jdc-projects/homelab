@@ -29,3 +29,11 @@ objectClass: posixGroup
 cn: app_guests
 gidNumber: 6200
 uniqueMember: uid={{OPENLDAP_TEST_GUEST_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
+
+# create app disabled group
+dn: cn=app_guests,ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}
+objectClass: groupOfUniqueNames
+objectClass: posixGroup
+cn: app_guests
+gidNumber: 6300
+uniqueMember: uid={{OPENLDAP_TEST_DISABLED_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
