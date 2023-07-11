@@ -17,7 +17,7 @@ resource "keycloak_openid_client" "ocis_desktop" {
   direct_access_grants_enabled = true
   implicit_flow_enabled        = false
 
-  full_scope_allowed = true
+  full_scope_allowed = false
 
   login_theme = "keycloak"
 }
