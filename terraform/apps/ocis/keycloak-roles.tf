@@ -91,10 +91,10 @@ resource "keycloak_role" "ocis_composite" {
   description = each.value["ocis_web"].description
 
   composite_roles = [
-    each.value[ocis_web].id,
-    each.value[ocis_desktop].id,
-    each.value[ocis_android].id,
-    each.value[ocis_ios].id,
+    each.value["ocis_web"].id,
+    each.value["ocis_desktop"].id,
+    each.value["ocis_android"].id,
+    each.value["ocis_ios"].id,
   ]
 }
 
