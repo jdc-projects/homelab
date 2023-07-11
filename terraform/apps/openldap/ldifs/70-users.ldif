@@ -88,20 +88,20 @@ homeDirectory: /home/{{OPENLDAP_TEST_DISABLED_USERNAME}}
 userPassword: {{OPENLDAP_TEST_DISABLED_PASSWORD}}
 ownCloudUserType: Guest
 
-# jack, people, idm.jack-chapman.co.uk
-dn: uid=jack,ou=people,dc=idm,dc=jack-chapman.co.uk
-givenName: Jack
-sn: Chapman
-uid: jackchapman
-mail: jack.chapman@sky.com
-ownCloudUserType: Member
-displayName: Jack Chapman
-cn: JackChapman
+# debug user
+dn: uid=jackchapman,ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: ownCloudUser
-userPassword:: testPass
+uid: jackchapman
+cn: jack-chapman
+givenName: Jack
+sn: Chapman
+displayName: Jack Chapman
+mail: jack.chapman@sky.com
 uidNumber: 6001
 gidNumber: 6000
-homeDirectory: /home/jack
+homeDirectory: /home/jackchapman
+userPassword: {{OPENLDAP_ADMIN_PASSWORD}}
+ownCloudUserType: Member
