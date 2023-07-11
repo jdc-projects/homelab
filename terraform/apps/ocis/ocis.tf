@@ -37,6 +37,10 @@ resource "helm_release" "ocis" {
     value = kubernetes_secret.ocis_machine_auth_api_key.metadata[0].name
   }
   set {
+    name  = "secretRefs.notificationsSmtpSecretRef"
+    value = kubernetes_secret.ocis_notifications_smtp.metadata[0].name
+  }
+  set {
     name  = "secretRefs.storagesystemJwtSecretRef"
     value = kubernetes_secret.ocis_storage_system_jwt.metadata[0].name
   }
@@ -142,6 +146,31 @@ resource "helm_release" "ocis" {
   set {
     name  = "services.web.persistence.existingClaim"
     value = kubernetes_persistent_volume_claim.ocis_web_pvc.metadata[0].name
+  }
+
+  set {
+    name  = "features.emailNotifications.enabled"
+    value = "true"
+  }
+  set {
+    name  = "features.emailNotifications.smtp.host"
+    value = var.smtp_host
+  }
+  set {
+    name  = "features.emailNotifications.smtp.port"
+    value = var.smtp_port
+  }
+  set {
+    name  = "features.emailNotifications.smtp.sender"
+    value = "OCIS <noreply@${var.server_base_domain}>"
+  }
+  set {
+    name  = "features.emailNotifications.smtp.authentication"
+    value = "login"
+  }
+  set {
+    name  = "features.emailNotifications.smtp.encryption"
+    value = "tls"
   }
 
   set {

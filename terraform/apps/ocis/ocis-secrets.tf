@@ -75,3 +75,15 @@ resource "kubernetes_secret" "ocis_thumbnails_transfer" {
     thumbnails-transfer-secret = random_password.thumbnails_transfer_secret.result
   }
 }
+
+resource "kubernetes_secret" "ocis_notifications_smtp" {
+  metadata {
+    name      = "ocis-thumbnails-transfer"
+    namespace = kubernetes_namespace.ocis.metadata[0].name
+  }
+
+  data = {
+    smtp-username = var.smtp_username
+    smtp-password = var.smtp_password
+  }
+}
