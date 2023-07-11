@@ -90,17 +90,17 @@ resource "keycloak_group_roles" "ocis_guest" {
 
 resource "keycloak_openid_user_client_role_protocol_mapper" "ocis_claim_mapper" {
   for_each = toset([
-    [keycloak_openid_client.ocis_web.id, keycloak_openid_client.ocis_web.client_id],
-    [keycloak_openid_client.ocis_desktop.id, keycloak_openid_client.ocis_desktop.client_id],
-    [keycloak_openid_client.ocis_android.id, keycloak_openid_client.ocis_android.client_id],
-    [keycloak_openid_client.ocis_ios.id, keycloak_openid_client.ocis_ios.client_id]
+    keycloak_openid_client.ocis_web,
+    keycloak_openid_client.ocis_desktop,
+    keycloak_openid_client.ocis_android,
+    keycloak_openid_client.ocis_ios
   ])
 
   realm_id                    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  client_id                   = each.value[0]
+  client_id                   = each.value.id
   name                        = "role-mapper"
   claim_name                  = "roles"
-  client_id_for_role_mappings = each.value[1]
+  client_id_for_role_mappings = each.value.client_id
 
   multivalued = "true"
 
