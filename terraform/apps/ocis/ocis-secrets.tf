@@ -75,14 +75,3 @@ resource "kubernetes_secret" "ocis_thumbnails_transfer" {
     thumbnails-transfer-secret = random_password.thumbnails_transfer_secret.result
   }
 }
-
-resource "kubernetes_config_map" "ocis_storage_users" {
-  metadata {
-    name      = "ocis-storage-users"
-    namespace = kubernetes_namespace.ocis.metadata[0].name
-  }
-
-  data = {
-    storage-uuid = random_uuid.storage_users_storage_uuid.result
-  }
-}

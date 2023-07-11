@@ -28,6 +28,30 @@ resource "helm_release" "ocis" {
     name  = "secretRefs.jwtSecretRef"
     value = kubernetes_secret.ocis_jwt.metadata[0].name
   }
+  set {
+    name  = "secretRefs.ldapSecretRef"
+    value = kubernetes_secret.ocis_external_user_management.metadata[0].name
+  }
+  set {
+    name  = "secretRefs.machineAuthApiKeySecretRef"
+    value = kubernetes_secret.ocis_machine_auth_api_key.metadata[0].name
+  }
+  set {
+    name  = "secretRefs.storagesystemJwtSecretRef"
+    value = kubernetes_secret.ocis_storage_system_jwt.metadata[0].name
+  }
+  set {
+    name  = "secretRefs.storagesystemSecretRef"
+    value = kubernetes_secret.ocis_storage_system.metadata[0].name
+  }
+  set {
+    name  = "secretRefs.thumbnailsSecretRef"
+    value = kubernetes_secret.ocis_thumbnails_transfer.metadata[0].name
+  }
+  set {
+    name  = "secretRefs.transferSecretSecretRef"
+    value = kubernetes_secret.ocis_transfer.metadata[0].name
+  }
 
   set {
     name  = "services.nats.persistence.enabled"
@@ -164,10 +188,6 @@ resource "helm_release" "ocis" {
   set {
     name  = "features.externalUserManagement.ldap.bindDN"
     value = "uid=${data.terraform_remote_state.openldap.outputs.admin_username}\\,ou=people\\,dc=idm\\,dc=${var.server_base_domain}"
-  }
-  set {
-    name  = "secretRefs.ldapSecretRef"
-    value = kubernetes_secret.ocis_external_user_management.metadata[0].name
   }
   set {
     name  = "features.externalUserManagement.ldap.useServerUUID"

@@ -42,6 +42,3 @@ resource "random_password" "thumbnails_transfer_secret" {
   special = false
   upper   = true
 }
-
-resource "random_uuid" "storage_users_storage_uuid" {
-}
