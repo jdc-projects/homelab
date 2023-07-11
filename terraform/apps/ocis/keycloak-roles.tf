@@ -98,15 +98,15 @@ resource "keycloak_group_roles" "ocis" {
   for_each = tomap({
     ocis_admin = tomap({
       role_id  = keycloak_role.ocis_composite["ocis_admin"].id
-      group_id = data.keycloak_group.app_group["admins"]
+      group_id = data.keycloak_group.app_group["admins"].id
     })
     ocis_user = tomap({
       role_id  = keycloak_role.ocis_composite["ocis_user"].id
-      group_id = data.keycloak_group.app_group["users"]
+      group_id = data.keycloak_group.app_group["users"].id
     })
     ocis_guest = tomap({
       role_id  = keycloak_role.ocis_composite["ocis_guest"].id
-      group_id = data.keycloak_group.app_group["guests"]
+      group_id = data.keycloak_group.app_group["guests"].id
     })
   })
 
