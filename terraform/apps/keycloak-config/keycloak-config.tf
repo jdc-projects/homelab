@@ -41,7 +41,7 @@ resource "keycloak_ldap_group_mapper" "openldap_group_mapper" {
   group_object_classes = [
     "groupOfUniqueNames"
   ]
-  membership_ldap_attribute      = "member"
+  membership_ldap_attribute      = "uniqueMember"
   membership_user_ldap_attribute = "cn"
 
   mode = "READ_ONLY"
