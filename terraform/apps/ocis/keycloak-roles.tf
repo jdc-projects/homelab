@@ -89,7 +89,6 @@ resource "keycloak_group_roles" "ocis_guest" {
 }
 
 resource "keycloak_openid_user_client_role_protocol_mapper" "ocis_claim_mapper" {
-  # using nonsensitive should be safe here, since we aren't using a client secret
   for_each = tomap({
     ocis_web = tomap({
       id        = keycloak_openid_client.ocis_web.id
