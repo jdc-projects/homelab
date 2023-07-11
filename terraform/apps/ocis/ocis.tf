@@ -1,25 +1,3 @@
-resource "kubernetes_secret" "ocis_ldap_password_secret" {
-  metadata {
-    name      = "ocis-ldap-password"
-    namespace = kubernetes_namespace.ocis.metadata[0].name
-  }
-
-  data = {
-    reva-ldap-bind-password = data.terraform_remote_state.openldap.outputs.admin_password
-  }
-}
-
-resource "kubernetes_secret" "ocis_jwt_secret" {
-  metadata {
-    name      = "ocis-jwt-secret"
-    namespace = kubernetes_namespace.ocis.metadata[0].name
-  }
-
-  data = {
-    jwt-secret = random_password.jwt_secret.result
-  }
-}
-
 resource "helm_release" "ocis" {
   name  = "ocis"
   chart = "./ocis-charts/charts/ocis"
@@ -48,7 +26,7 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "secretRefs.jwtSecretRef"
-    value = kubernetes_secret.ocis_jwt_secret.metadata[0].name
+    value = kubernetes_secret.ocis_jwt.metadata[0].name
   }
 
   set {
@@ -189,7 +167,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "secretRefs.ldapSecretRef"
-    value = kubernetes_secret.ocis_ldap_password_secret.metadata[0].name
+    value = kubernetes_secret.ocis_external_user_management.metadata[0].name
   }
   set {
     name  = "features.externalUserManagement.ldap.useServerUUID"
