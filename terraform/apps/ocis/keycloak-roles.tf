@@ -1,20 +1,20 @@
 resource "keycloak_role" "ocis_admin" {
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  client_id   = keycloak_openid_client.ocis_web
+  client_id   = keycloak_openid_client.ocis_web.client_id
   name        = "ocisAdmin"
   description = "OCIS Admin"
 }
 
 resource "keycloak_role" "ocis_user" {
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  client_id   = keycloak_openid_client.ocis_web
+  client_id   = keycloak_openid_client.ocis_web.client_id
   name        = "ocisUser"
   description = "OCIS User"
 }
 
 resource "keycloak_role" "ocis_guest" {
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  client_id   = keycloak_openid_client.ocis_web
+  client_id   = keycloak_openid_client.ocis_web.client_id
   name        = "ocisGuest"
   description = "OCIS Guest"
 }
