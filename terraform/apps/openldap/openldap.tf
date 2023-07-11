@@ -59,10 +59,10 @@ resource "kubernetes_deployment" "openldap" {
             run_as_user = 0
           }
 
-          volume_mount {
-            mount_path = "/bitnami/openldap"
-            name       = "openldap-data"
-          }
+          # volume_mount {
+          #   mount_path = "/bitnami/openldap"
+          #   name       = "openldap-data"
+          # }
         }
 
         container {
