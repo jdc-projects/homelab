@@ -75,10 +75,10 @@ resource "kubernetes_deployment" "openldap" {
             name       = "custom-schemas"
           }
 
-          #   volume_mount {
-          #     mount_path = "/data"
-          #     name       = "openldap-data"
-          #   }
+          volume_mount {
+            mount_path = "/bitnami/openldap"
+            name       = "openldap-data"
+          }
         }
 
         volume {
@@ -97,13 +97,13 @@ resource "kubernetes_deployment" "openldap" {
           }
         }
 
-        # volume {
-        #   name = "vaultwarden-data"
+        volume {
+          name = "openldap-data"
 
-        #   host_path {
-        #     path = truenas_dataset.vaultwarden_dataset.mount_point
-        #   }
-        # }
+          host_path {
+            path = truenas_dataset.openldap.mount_point
+          }
+        }
       }
     }
   }
