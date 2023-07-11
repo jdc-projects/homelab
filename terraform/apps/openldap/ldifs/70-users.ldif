@@ -3,6 +3,7 @@ dn: uid={{OPENLDAP_ADMIN_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: posixAccount
+objectClass: ownCloudUser
 uid: {{OPENLDAP_ADMIN_USERNAME}}
 cn: admin
 givenName: System
@@ -19,6 +20,7 @@ dn: uid={{OPENLDAP_TEST_ADMIN_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAI
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: posixAccount
+objectClass: ownCloudUser
 uid: {{OPENLDAP_TEST_ADMIN_USERNAME}}
 cn: test-admin
 givenName: Test
@@ -35,6 +37,7 @@ dn: uid={{OPENLDAP_TEST_USER_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: posixAccount
+objectClass: ownCloudUser
 uid: {{OPENLDAP_TEST_USER_USERNAME}}
 cn: test-user
 givenName: Test
@@ -51,6 +54,7 @@ dn: uid={{OPENLDAP_TEST_GUEST_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAI
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: posixAccount
+objectClass: ownCloudUser
 uid: {{OPENLDAP_TEST_GUEST_USERNAME}}
 cn: test-guest
 givenName: Test
@@ -67,6 +71,7 @@ dn: uid={{OPENLDAP_TEST_DISABLED_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DO
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: posixAccount
+objectClass: ownCloudUser
 uid: {{OPENLDAP_TEST_DISABLED_USERNAME}}
 cn: test-disabled
 givenName: Test

@@ -6,6 +6,10 @@ data "local_file" "rfc2307bis" {
   filename = "./schemas/10-rfc2307bis.ldif"
 }
 
+data "local_file" "owncloud" {
+  filename = "./schemas/20-owncloud.ldif"
+}
+
 resource "kubernetes_config_map" "openldap_custom_schemas" {
   metadata {
     name      = "openldap-custom-schemas"
@@ -15,6 +19,7 @@ resource "kubernetes_config_map" "openldap_custom_schemas" {
   data = {
     "00-memberof.ldif"   = data.local_file.memberof.content
     "10-rfc2307bis.ldif" = data.local_file.rfc2307bis.content
+    "20-owncloud.ldif"   = data.local_file.owncloud.content
   }
 }
 

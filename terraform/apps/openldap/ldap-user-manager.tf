@@ -5,27 +5,28 @@ resource "kubernetes_config_map" "ldap_user_manager_env" {
   }
 
   data = {
-    LDAP_URI                           = "ldaps://idm.${var.server_base_domain}:637"
-    LDAP_BASE_DN                       = "dc=idm,dc=${var.server_base_domain}"
-    LDAP_ADMIN_BIND_DN                 = "cn=${random_password.openldap_admin_username.result},dc=idm,dc=${var.server_base_domain}"
-    LDAP_ADMINS_GROUP                  = "system_admins"
-    SERVER_HOSTNAME                    = "idm3.${var.server_base_domain}"
-    SERVER_PORT                        = "80"
-    NO_HTTPS                           = "TRUE"
-    ORGANISATION_NAME                  = var.server_base_domain
-    SITE_NAME                          = "${var.server_base_domain} Account Management"
-    LDAP_REQUIRE_STARTTLS              = "FALSE"
-    FORCE_RFC2307BIS                   = "TRUE"
-    DEFAULT_USER_GROUP                 = "app_guests"
-    USERNAME_FORMAT                    = "{first_name}"
-    SMTP_HOSTNAME                      = var.smtp_host
-    SMTP_HOST_PORT                     = var.smtp_port
-    SMTP_USERNAME                      = var.smtp_username
-    SMTP_PASSWORD                      = var.smtp_password
-    SMTP_USE_TLS                       = "TRUE"
-    EMAIL_FROM_ADDRESS                 = "noreply@${var.server_base_domain}"
-    EMAIL_FROM_NAME                    = "LDAP User Manager ${var.server_base_domain}"
-    LDAP_ACCOUNT_ADDITIONAL_ATTRIBUTES = "ownCloudUserType:OCIS User Type:Guest"
+    LDAP_URI                              = "ldaps://idm.${var.server_base_domain}:637"
+    LDAP_BASE_DN                          = "dc=idm,dc=${var.server_base_domain}"
+    LDAP_ADMIN_BIND_DN                    = "cn=${random_password.openldap_admin_username.result},dc=idm,dc=${var.server_base_domain}"
+    LDAP_ADMINS_GROUP                     = "system_admins"
+    SERVER_HOSTNAME                       = "idm3.${var.server_base_domain}"
+    SERVER_PORT                           = "80"
+    NO_HTTPS                              = "TRUE"
+    ORGANISATION_NAME                     = var.server_base_domain
+    SITE_NAME                             = "${var.server_base_domain} Account Management"
+    LDAP_REQUIRE_STARTTLS                 = "FALSE"
+    FORCE_RFC2307BIS                      = "TRUE"
+    DEFAULT_USER_GROUP                    = "app_guests"
+    USERNAME_FORMAT                       = "{first_name}"
+    SMTP_HOSTNAME                         = var.smtp_host
+    SMTP_HOST_PORT                        = var.smtp_port
+    SMTP_USERNAME                         = var.smtp_username
+    SMTP_PASSWORD                         = var.smtp_password
+    SMTP_USE_TLS                          = "TRUE"
+    EMAIL_FROM_ADDRESS                    = "noreply@${var.server_base_domain}"
+    EMAIL_FROM_NAME                       = "LDAP User Manager ${var.server_base_domain}"
+    LDAP_ACCOUNT_ADDITIONAL_OBJECTCLASSES = "ownCloudUser"
+    LDAP_ACCOUNT_ADDITIONAL_ATTRIBUTES    = "ownCloudUserType:OCIS User Type:Guest"
   }
 }
 
