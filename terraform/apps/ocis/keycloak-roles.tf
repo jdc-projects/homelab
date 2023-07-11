@@ -90,7 +90,7 @@ resource "keycloak_group_roles" "ocis_guest" {
 
 resource "keycloak_openid_user_client_role_protocol_mapper" "ocis_claim_mapper" {
   for_each = tomap({
-    id = toset([
+    id        = toset([
       keycloak_openid_client.ocis_web.id,
       keycloak_openid_client.ocis_desktop.id,
       keycloak_openid_client.ocis_android.id,
