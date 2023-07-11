@@ -218,7 +218,7 @@ resource "helm_release" "ocis" {
   set {
     name  = "features.externalUserManagement.ldap.group.objectClass"
     value = "groupOfUniqueNames"
-  # }
+  }
   # set {
   #   name  = "features.externalUserManagement.ldap.disableUsers.disableMechanism"
   #   value = "group"
