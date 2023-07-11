@@ -1,16 +1,12 @@
-data "keycloak_group" "app_admins" {
-  realm_id = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  name     = "app_admins"
-}
+data "keycloak_group" "app_group" {
+  for_each = tomap({
+    admins = "app_admins"
+    users  = "app_users"
+    guests = "app_guests"
+  })
 
-data "keycloak_group" "app_users" {
   realm_id = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  name     = "app_users"
-}
-
-data "keycloak_group" "app_guests" {
-  realm_id = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  name     = "app_guests"
+  name     = each.value
 }
 
 resource "keycloak_role" "ocis_admin" {
@@ -102,15 +98,15 @@ resource "keycloak_group_roles" "ocis" {
   for_each = tomap({
     ocis_admin = tomap({
       role_id  = keycloak_role.ocis_composite["ocis_admin"].id
-      group_id = data.keycloak_group.app_admins.id
+      group_id = data.keycloak_group.app_group["admins"]
     })
     ocis_user = tomap({
       role_id  = keycloak_role.ocis_composite["ocis_user"].id
-      group_id = data.keycloak_group.app_users.id
+      group_id = data.keycloak_group.app_group["users"]
     })
     ocis_guest = tomap({
       role_id  = keycloak_role.ocis_composite["ocis_guest"].id
-      group_id = data.keycloak_group.app_guests.id
+      group_id = data.keycloak_group.app_group["guests"]
     })
   })
 
