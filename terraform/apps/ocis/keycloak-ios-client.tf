@@ -1,4 +1,4 @@
-resource "keycloak_openid_client" "ocis_ios_client" {
+resource "keycloak_openid_client" "ocis_ios" {
   realm_id  = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
   client_id = "mxd5OQDk6es5LzOzRvidJNfXLUZS2oN3oUFeXPP8LpPrhx3UroJFduGEYIBOxkY1"
 

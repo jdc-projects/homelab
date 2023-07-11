@@ -53,24 +53,3 @@ resource "keycloak_ldap_group_mapper" "openldap_group_mapper" {
     command = "sleep ${keycloak_ldap_user_federation.openldap_user_federation.full_sync_period}"
   }
 }
-
-data "keycloak_openid_client_scope" "keycloak_roles_scope" {
-  realm_id = keycloak_realm.jack_chapman_co_uk_realm.id
-  name     = "roles"
-}
-
-resource "keycloak_openid_user_realm_role_protocol_mapper" "user_realm_role_mapper" {
-  realm_id = keycloak_realm.jack_chapman_co_uk_realm.id
-  name     = "user-info-role-mapper"
-
-  client_scope_id = data.keycloak_openid_client_scope.keycloak_roles_scope.id
-
-  claim_name       = "roles"
-  claim_value_type = "String"
-
-  multivalued = true
-
-  add_to_id_token     = false
-  add_to_access_token = false
-  add_to_userinfo     = true
-}
