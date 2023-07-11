@@ -40,7 +40,7 @@ jobs:
     secrets: inherit
 
   deploy-vaultwarden:
-    needs: deploy-lldap
+    needs: deploy-openldap
 
     uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
     with:
@@ -56,7 +56,7 @@ jobs:
     secrets: inherit
 
   deploy-keycloak-config:
-    needs: [deploy-lldap, deploy-keycloak]
+    needs: [deploy-openldap, deploy-keycloak]
 
     uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
     with:
