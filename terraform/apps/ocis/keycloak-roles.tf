@@ -14,12 +14,12 @@ data "keycloak_group" "app_guests" {
 }
 
 resource "keycloak_role" "ocis_admin" {
-  for_each = toset([
-    keycloak_openid_client.ocis_web.id,
-    keycloak_openid_client.ocis_desktop.id,
-    keycloak_openid_client.ocis_android.id,
-    keycloak_openid_client.ocis_ios.id
-  ])
+  for_each = tomap({
+    ocis_web_id     = keycloak_openid_client.ocis_web.id
+    ocis_desktop_id = keycloak_openid_client.ocis_desktop.id
+    ocis_android_id = keycloak_openid_client.ocis_android.id
+    ocis_ios_id     = keycloak_openid_client.ocis_ios.id
+  })
 
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
   client_id   = each.value
@@ -28,12 +28,12 @@ resource "keycloak_role" "ocis_admin" {
 }
 
 resource "keycloak_role" "ocis_user" {
-  for_each = toset([
-    keycloak_openid_client.ocis_web.id,
-    keycloak_openid_client.ocis_desktop.id,
-    keycloak_openid_client.ocis_android.id,
-    keycloak_openid_client.ocis_ios.id
-  ])
+  for_each = tomap({
+    ocis_web_id     = keycloak_openid_client.ocis_web.id
+    ocis_desktop_id = keycloak_openid_client.ocis_desktop.id
+    ocis_android_id = keycloak_openid_client.ocis_android.id
+    ocis_ios_id     = keycloak_openid_client.ocis_ios.id
+  })
 
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
   client_id   = each.value
@@ -42,12 +42,12 @@ resource "keycloak_role" "ocis_user" {
 }
 
 resource "keycloak_role" "ocis_guest" {
-  for_each = toset([
-    keycloak_openid_client.ocis_web.id,
-    keycloak_openid_client.ocis_desktop.id,
-    keycloak_openid_client.ocis_android.id,
-    keycloak_openid_client.ocis_ios.id
-  ])
+  for_each = tomap({
+    ocis_web_id     = keycloak_openid_client.ocis_web.id
+    ocis_desktop_id = keycloak_openid_client.ocis_desktop.id
+    ocis_android_id = keycloak_openid_client.ocis_android.id
+    ocis_ios_id     = keycloak_openid_client.ocis_ios.id
+  })
 
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
   client_id   = each.value
