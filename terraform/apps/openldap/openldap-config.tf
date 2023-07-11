@@ -13,7 +13,7 @@ resource "kubernetes_config_map" "openldap_custom_schemas" {
   }
 
   data = {
-    "memberof.ldif" = data.local_file.memberof.content
+    "memberof.ldif"   = data.local_file.memberof.content
     "rfc2307bis.ldif" = data.local_file.rfc2307bis.content
   }
 }
