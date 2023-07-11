@@ -31,7 +31,7 @@ resource "keycloak_openid_user_client_role_protocol_mapper" "ocis_web" {
   client_id                   = keycloak_openid_client.ocis_web.id
   name                        = "role-mapper"
   claim_name                  = "roles"
-  client_id_for_role_mappings = keycloak_openid_client.ocis_web.id
+  client_id_for_role_mappings = keycloak_openid_client.ocis_web.client_id
 
   multivalued = "true"
 
