@@ -33,7 +33,7 @@ resource "keycloak_ldap_user_federation" "openldap_user_federation" {
 
 resource "keycloak_ldap_group_mapper" "openldap_group_mapper" {
   realm_id                = keycloak_realm.jack_chapman_co_uk_realm.id
-  ldap_user_federation_id = keycloak_ldap_user_federation.lldap_user_federation.id
+  ldap_user_federation_id = keycloak_ldap_user_federation.openldap_user_federation.id
   name                    = "openldap-group-mapper"
 
   ldap_groups_dn            = "ou=groups,dc=idm,dc=${var.server_base_domain}"
@@ -50,7 +50,7 @@ resource "keycloak_ldap_group_mapper" "openldap_group_mapper" {
 
   provisioner "local-exec" {
     # wait for a sync so that groups have a change to sync
-    command = "sleep ${keycloak_ldap_user_federation.lldap_user_federation.full_sync_period}"
+    command = "sleep ${keycloak_ldap_user_federation.openldap_user_federation.full_sync_period}"
   }
 }
 
