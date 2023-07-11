@@ -28,7 +28,6 @@ resource "kubernetes_config_map" "ldap_user_manager_env" {
     LDAP_GROUP_MEMBERSHIP_ATTRIBUTE       = "member"
     LDAP_ACCOUNT_ADDITIONAL_OBJECTCLASSES = "ownCloudUser"
     LDAP_ACCOUNT_ADDITIONAL_ATTRIBUTES    = "ownCloudUserType:OCIS User Type:Guest,displayName:Display Name"
-    PASSWORD_HASH                         = "CLEAR"
   }
 }
 
