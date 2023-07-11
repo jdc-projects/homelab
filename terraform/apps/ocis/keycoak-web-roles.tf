@@ -5,6 +5,10 @@ resource "keycloak_group_roles" "ocis_admin_web" {
   role_ids = [
     keycloak_role.ocis_admin["ocis_web"].id
   ]
+
+  provisioner "local-exec" {
+    command = "sleep 1"
+  }
 }
 
 resource "keycloak_group_roles" "ocis_user_web" {
@@ -14,6 +18,12 @@ resource "keycloak_group_roles" "ocis_user_web" {
   role_ids = [
     keycloak_role.ocis_user["ocis_web"].id
   ]
+
+  provisioner "local-exec" {
+    command = "sleep 1"
+  }
+
+  depends_on = [ keycload_group_roles.ocis_admin_android ]
 }
 
 resource "keycloak_group_roles" "ocis_guest_web" {
@@ -23,4 +33,10 @@ resource "keycloak_group_roles" "ocis_guest_web" {
   role_ids = [
     keycloak_role.ocis_guest["ocis_web"].id
   ]
+
+  provisioner "local-exec" {
+    command = "sleep 1"
+  }
+
+  depends_on = [ keycload_group_roles.ocis_user_android ]
 }
