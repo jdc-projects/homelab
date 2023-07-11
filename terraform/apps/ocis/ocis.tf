@@ -192,10 +192,6 @@ resource "helm_release" "ocis" {
     value = kubernetes_secret.ocis_ldap_password_secret.metadata[0].name
   }
   set {
-    name  = "features.externalUserManagement.ldap.passwordModifyExOpEnabled"
-    value = "true"
-  }
-  set {
     name  = "features.externalUserManagement.ldap.useServerUUID"
     value = "true"
   }
@@ -208,16 +204,24 @@ resource "helm_release" "ocis" {
     value = "ou=people\\,dc=idm\\,dc=${var.server_base_domain}"
   }
   set {
-    name  = "features.externalUserManagement.ldap.user.objectClass"
-    value = "person"
-  }
-  set {
     name  = "features.externalUserManagement.ldap.group.schema.id"
-    value = "uid"
+    value = "cn"
   }
   set {
     name  = "features.externalUserManagement.ldap.group.baseDN"
     value = "ou=groups\\,dc=idm\\,dc=${var.server_base_domain}"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.group.objectClass"
+    value = "groupOfUniqueNames"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.disableUsers.disableMechanism"
+    value = "group"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.disableUsers.disabledUsersGroupDN"
+    value = "cn=app_disabled\\,ou=groups\\,dc=idm\\,dc=${var.server_base_domain}"
   }
 
   set {
