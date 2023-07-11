@@ -10,7 +10,7 @@ resource "keycloak_group_roles" "ocis_admin_ios" {
     command = "sleep 1"
   }
 
-  depends_on = [keycloak_group_roles.ocis_admin_web]
+  depends_on = [keycloak_group_roles.keycloak_group_roles.ocis_admin_web]
 }
 
 resource "keycloak_group_roles" "ocis_user_ios" {
@@ -25,7 +25,7 @@ resource "keycloak_group_roles" "ocis_user_ios" {
     command = "sleep 1"
   }
 
-  depends_on = [keycloak_group_roles.ocis_user_web]
+  depends_on = [keycloak_group_roles.keycloak_group_roles.ocis_user_web]
 }
 
 resource "keycloak_group_roles" "ocis_guest_ios" {
@@ -40,5 +40,5 @@ resource "keycloak_group_roles" "ocis_guest_ios" {
     command = "sleep 1"
   }
 
-  depends_on = [keycloak_group_roles.ocis_guest_web]
+  depends_on = [keycloak_group_roles.keycloak_group_roles.ocis_guest_web]
 }
