@@ -7,7 +7,7 @@ resource "keycloak_group_roles" "ocis_admin_android" {
   ]
 }
 
-resource "keycloak_group_roles" "ocis_user_ios" {
+resource "keycloak_group_roles" "ocis_user_android" {
   realm_id = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
   group_id = data.keycloak_group.app_users.id
 
