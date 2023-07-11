@@ -23,14 +23,6 @@ jobs:
       terraform-dir: ./terraform/apps/services
     secrets: inherit
 
-  deploy-lldap:
-    needs: deploy-foundational-services
-
-    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
-    with:
-      terraform-dir: ./terraform/apps/lldap
-    secrets: inherit
-
   deploy-openldap:
     needs: deploy-foundational-services
 
