@@ -112,12 +112,6 @@ resource "keycloak_group_roles" "ocis_admin" {
   role_ids = [
     each.value.id
   ]
-
-  depends_on = [
-    keycloak_role.ocis_admin,
-    keycloak_role.ocis_user,
-    keycloak_role.ocis_guest
-  ]
 }
 
 resource "keycloak_group_roles" "ocis_user" {
@@ -129,12 +123,6 @@ resource "keycloak_group_roles" "ocis_user" {
   role_ids = [
     each.value.id
   ]
-
-  depends_on = [
-    keycloak_role.ocis_admin,
-    keycloak_role.ocis_user,
-    keycloak_role.ocis_guest
-  ]
 }
 
 resource "keycloak_group_roles" "ocis_guest" {
@@ -145,12 +133,6 @@ resource "keycloak_group_roles" "ocis_guest" {
 
   role_ids = [
     each.value.id
-  ]
-
-  depends_on = [
-    keycloak_role.ocis_admin,
-    keycloak_role.ocis_user,
-    keycloak_role.ocis_guest
   ]
 }
 
