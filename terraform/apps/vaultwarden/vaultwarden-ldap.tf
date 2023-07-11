@@ -8,7 +8,7 @@ resource "kubernetes_config_map" "vaultwarden_ldap_configmap" {
     APP_VAULTWARDEN_URL            = "https://vault.${var.server_base_domain}"
     APP_LDAP_HOST                  = "idm.${var.server_base_domain}"
     APP_LDAP_SSL                   = "true"
-    APP_LDAP_BIND_DN               = "uid=${data.terraform_remote_state.openldap.outputs.openldap_username},ou=people,dc=idm,dc=${var.server_base_domain}"
+    APP_LDAP_BIND_DN               = "uid=${data.terraform_remote_state.openldap.outputs.admin_username},ou=people,dc=idm,dc=${var.server_base_domain}"
     APP_LDAP_SEARCH_BASE_DN        = "dc=idm,dc=${var.server_base_domain}"
     APP_LDAP_SEARCH_FILTER         = "(&(objectClass=inetOrgPerson)(|(memberOf=uid=app_users,ou=groups,dc=idm,dc=${var.server_base_domain})(memberOf=uid=app_admins,ou=groups,dc=idm,dc=${var.server_base_domain})))"
     APP_LDAP_SYNC_INTERVAL_SECONDS = "60"
@@ -23,7 +23,7 @@ resource "kubernetes_secret" "vaultwarden_ldap_secret" {
 
   data = {
     APP_VAULTWARDEN_ADMIN_TOKEN = random_password.vaultwarden_admin_token.result
-    APP_LDAP_BIND_PASSWORD      = data.terraform_remote_state.openldap.outputs.openldap_password
+    APP_LDAP_BIND_PASSWORD      = data.terraform_remote_state.openldap.outputs.admin_password
   }
 }
 
