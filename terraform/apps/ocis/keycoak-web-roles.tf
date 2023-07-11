@@ -23,7 +23,7 @@ resource "keycloak_group_roles" "ocis_user_web" {
     command = "sleep 1"
   }
 
-  depends_on = [ keycload_group_roles.ocis_admin_android ]
+  depends_on = [keycload_group_roles.ocis_admin_android]
 }
 
 resource "keycloak_group_roles" "ocis_guest_web" {
@@ -38,5 +38,5 @@ resource "keycloak_group_roles" "ocis_guest_web" {
     command = "sleep 1"
   }
 
-  depends_on = [ keycload_group_roles.ocis_user_android ]
+  depends_on = [keycload_group_roles.ocis_user_android]
 }
