@@ -101,24 +101,24 @@ resource "keycloak_role" "ocis_composite" {
 resource "keycloak_group_roles" "ocis" {
   for_each = tomap({
     ocis_admin = tomap({
-      role  = keycloak_role.ocis_composite["ocis_admin"]
-      group = data.keycloak_group.app_admins
+      role_id  = keycloak_role.ocis_composite["ocis_admin"].id
+      group_id = data.keycloak_group.app_admins.id
     })
     ocis_user = tomap({
-      role  = keycloak_role.ocis_composite["ocis_user"]
-      group = data.keycloak_group.app_users
+      role_id  = keycloak_role.ocis_composite["ocis_user"].id
+      group_id = data.keycloak_group.app_users.id
     })
     ocis_guest = tomap({
-      role  = keycloak_role.ocis_composite["ocis_guest"]
-      group = data.keycloak_group.app_guests
+      role_id  = keycloak_role.ocis_composite["ocis_guest"].id
+      group_id = data.keycloak_group.app_guests.id
     })
   })
 
   realm_id = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  group_id = each.value.group.id
+  group_id = each.value.group_id
 
   role_ids = [
-    each.value.role.id
+    each.value.role_id
   ]
 }
 
