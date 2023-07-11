@@ -13,7 +13,6 @@ objectClass: posixGroup
 cn: app_admins
 gidNumber: 6000
 member: uid={{OPENLDAP_TEST_ADMIN_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
-member: uid=jackchapman,ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 
 # create app users group
 dn: cn=app_users,ou=groups,dc=idm,dc={{SERVER_BASE_DOMAIN}}

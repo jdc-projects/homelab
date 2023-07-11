@@ -87,21 +87,3 @@ gidNumber: 6300
 homeDirectory: /home/{{OPENLDAP_TEST_DISABLED_USERNAME}}
 userPassword: {{OPENLDAP_TEST_DISABLED_PASSWORD}}
 ownCloudUserType: Guest
-
-# debug user
-dn: uid=jackchapman,ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
-objectClass: person
-objectClass: inetOrgPerson
-objectClass: posixAccount
-objectClass: ownCloudUser
-uid: jackchapman
-cn: jack-chapman
-givenName: Jack
-sn: Chapman
-displayName: Jack Chapman
-mail: jack.chapman@sky.com
-uidNumber: 6001
-gidNumber: 6000
-homeDirectory: /home/jackchapman
-userPassword: {{OPENLDAP_ADMIN_PASSWORD}}
-ownCloudUserType: Member

@@ -17,7 +17,7 @@ resource "kubernetes_config_map" "ldap_user_manager_env" {
     LDAP_REQUIRE_STARTTLS                 = "FALSE"
     FORCE_RFC2307BIS                      = "TRUE"
     DEFAULT_USER_GROUP                    = "app_guests"
-    USERNAME_FORMAT                       = "{first_name}"
+    USERNAME_FORMAT                       = "{first_name}.{last_name}"
     SMTP_HOSTNAME                         = var.smtp_host
     SMTP_HOST_PORT                        = var.smtp_port
     SMTP_USERNAME                         = var.smtp_username
