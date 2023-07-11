@@ -5,7 +5,7 @@ resource "truenas_dataset" "ocis_base_dataset" {
   inherit_encryption = true
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
 
@@ -18,7 +18,7 @@ resource "truenas_dataset" "ocis_nats_dataset" {
   depends_on = [truenas_dataset.ocis_base_dataset]
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
 
@@ -31,7 +31,7 @@ resource "truenas_dataset" "ocis_search_dataset" {
   depends_on = [truenas_dataset.ocis_base_dataset]
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
 
@@ -44,7 +44,7 @@ resource "truenas_dataset" "ocis_storagesystem_dataset" {
   depends_on = [truenas_dataset.ocis_base_dataset]
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
 
@@ -57,7 +57,7 @@ resource "truenas_dataset" "ocis_storageusers_dataset" {
   depends_on = [truenas_dataset.ocis_base_dataset]
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
 
@@ -70,7 +70,7 @@ resource "truenas_dataset" "ocis_store_dataset" {
   depends_on = [truenas_dataset.ocis_base_dataset]
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
 
@@ -83,7 +83,7 @@ resource "truenas_dataset" "ocis_thumbnails_dataset" {
   depends_on = [truenas_dataset.ocis_base_dataset]
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
 
@@ -96,6 +96,6 @@ resource "truenas_dataset" "ocis_web_dataset" {
   depends_on = [truenas_dataset.ocis_base_dataset]
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
