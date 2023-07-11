@@ -26,7 +26,7 @@ resource "kubernetes_config_map" "ldap_user_manager_env" {
     EMAIL_FROM_ADDRESS                    = "noreply@${var.server_base_domain}"
     EMAIL_FROM_NAME                       = "LDAP User Manager ${var.server_base_domain}"
     LDAP_ACCOUNT_ADDITIONAL_OBJECTCLASSES = "ownCloudUser"
-    LDAP_ACCOUNT_ADDITIONAL_ATTRIBUTES    = "ownCloudUserType:OCIS User Type:Guest"
+    LDAP_ACCOUNT_ADDITIONAL_ATTRIBUTES    = "ownCloudUserType:OCIS User Type:Guest,displayName:Display Name:{first_name} {last_name}"
   }
 }
 
