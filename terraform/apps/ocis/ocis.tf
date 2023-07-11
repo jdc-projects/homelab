@@ -5,7 +5,7 @@ resource "kubernetes_secret" "ocis_ldap_password_secret" {
   }
 
   data = {
-    reva-ldap-bind-password = data.terraform_remote_state.lldap.outputs.lldap_admin_password
+    reva-ldap-bind-password = data.terraform_remote_state.openldap.outputs.openldap_password
   }
 }
 
@@ -185,7 +185,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.ldap.bindDN"
-    value = "uid=admin\\,ou=people\\,dc=idm\\,dc=${var.server_base_domain}"
+    value = "uid=${data.terraform_remote_state.openldap.outputs.openldap_username}\\,ou=people\\,dc=idm\\,dc=${var.server_base_domain}"
   }
   set {
     name  = "secretRefs.ldapSecretRef"

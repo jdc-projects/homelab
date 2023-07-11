@@ -65,7 +65,7 @@ resource "kubernetes_manifest" "openldap_ingress" {
     }
 
     spec = {
-      entryPoints = ["ldaps2"]
+      entryPoints = ["ldaps"]
 
       routes = [{
         match = "HostSNI(`*`)"
@@ -125,7 +125,7 @@ resource "kubernetes_manifest" "ldap_user_manager_ingress" {
 
       routes = [{
         kind  = "Rule"
-        match = "Host(`idm3.${var.server_base_domain}`)"
+        match = "Host(`idm.${var.server_base_domain}`)"
         services = [{
           name      = kubernetes_service.ldap_user_manager.metadata[0].name
           namespace = kubernetes_namespace.openldap.metadata[0].name

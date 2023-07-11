@@ -45,7 +45,7 @@ resource "kubernetes_manifest" "lldap_ldaps_ingress" {
     }
 
     spec = {
-      entryPoints = ["ldaps"]
+      entryPoints = ["ldaps2"]
 
       routes = [{
         match = "HostSNI(`*`)"
@@ -77,7 +77,7 @@ resource "kubernetes_manifest" "lldap_http_ingress" {
 
       routes = [{
         kind  = "Rule"
-        match = "Host(`idm.${var.server_base_domain}`)"
+        match = "Host(`idm2.${var.server_base_domain}`)"
         services = [{
           name      = kubernetes_service.lldap_http_service.metadata[0].name
           namespace = kubernetes_namespace.lldap.metadata[0].name

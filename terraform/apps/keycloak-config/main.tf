@@ -23,11 +23,11 @@ data "terraform_remote_state" "keycloak" {
   }
 }
 
-data "terraform_remote_state" "lldap" {
+data "terraform_remote_state" "openldap" {
   backend = "kubernetes"
 
   config = {
-    secret_suffix = "apps-lldap"
+    secret_suffix = "apps-openldap"
     config_path   = "../../cluster.yml"
     namespace     = "terraform-state"
   }
