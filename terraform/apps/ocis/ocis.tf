@@ -177,7 +177,7 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "features.externalUserManagement.ldap.writeable"
-    value = "false"
+    value = "true"
   }
   set {
     name  = "features.externalUserManagement.ldap.uri"
