@@ -91,17 +91,29 @@ resource "keycloak_group_roles" "ocis_guest" {
 resource "keycloak_openid_user_client_role_protocol_mapper" "ocis_claim_mapper" {
   # using nonsensitive should be safe here, since we aren't using a client secret
   for_each = tomap({
-    ocis_web     = [keycloak_openid_client.ocis_web.id, keycloak_openid_client.ocis_web.client_id]
-    ocis_desktop = [keycloak_openid_client.ocis_desktop, keycloak_openid_client.ocis_desktop.client_id]
-    ocis_android = [keycloak_openid_client.ocis_android, keycloak_openid_client.ocis_android.client_id]
-    ocis_ios     = [keycloak_openid_client.ocis_ios, keycloak_openid_client.ocis_ios.client_id]
+    ocis_web = tomap({
+      id        = keycloak_openid_client.ocis_web.id
+      client_id = keycloak_openid_client.ocis_web.client_id
+    })
+    ocis_desktop = tomap({
+      id        = keycloak_openid_client.ocis_desktop
+      client_id = keycloak_openid_client.ocis_desktop.client_id
+    })
+    ocis_android = tomap({
+      id        = keycloak_openid_client.ocis_android
+      client_id = keycloak_openid_client.ocis_android.client_id
+    })
+    ocis_ios = tomap({
+      id        = keycloak_openid_client.ocis_ios
+      client_id = keycloak_openid_client.ocis_ios.client_id
+    })
   })
 
   realm_id                    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  client_id                   = each.value[0]
+  client_id                   = each.value.id
   name                        = "role-mapper"
   claim_name                  = "roles"
-  client_id_for_role_mappings = each.value[1]
+  client_id_for_role_mappings = each.value.client_id
 
   multivalued = "true"
 
