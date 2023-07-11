@@ -5,12 +5,6 @@ resource "keycloak_group_roles" "ocis_admin_desktop" {
   role_ids = [
     keycloak_role.ocis_admin["ocis_desktop"].id
   ]
-
-  provisioner "local-exec" {
-    command = "sleep 1"
-  }
-
-  depends_on = [ keycloak_group_roles.keycloak_group_roles.ocis_admin_ios ]
 }
 
 resource "keycloak_group_roles" "ocis_user_desktop" {
@@ -20,12 +14,6 @@ resource "keycloak_group_roles" "ocis_user_desktop" {
   role_ids = [
     keycloak_role.ocis_user["ocis_desktop"].id
   ]
-
-  provisioner "local-exec" {
-    command = "sleep 1"
-  }
-
-  depends_on = [ keycloak_group_roles.keycloak_group_roles.ocis_user_ios ]
 }
 
 resource "keycloak_group_roles" "ocis_guest_desktop" {
@@ -35,10 +23,4 @@ resource "keycloak_group_roles" "ocis_guest_desktop" {
   role_ids = [
     keycloak_role.ocis_guest["ocis_desktop"].id
   ]
-
-  provisioner "local-exec" {
-    command = "sleep 1"
-  }
-
-  depends_on = [ keycloak_group_roles.keycloak_group_roles.ocis_guest_ios ]
 }

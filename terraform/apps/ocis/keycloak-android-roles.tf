@@ -5,12 +5,6 @@ resource "keycloak_group_roles" "ocis_admin_android" {
   role_ids = [
     keycloak_role.ocis_admin["ocis_android"].id
   ]
-
-  provisioner "local-exec" {
-    command = "sleep 1"
-  }
-
-  depends_on = [ keycloak_group_roles.keycloak_group_roles.ocis_admin_desktop ]
 }
 
 resource "keycloak_group_roles" "ocis_user_android" {
@@ -20,12 +14,6 @@ resource "keycloak_group_roles" "ocis_user_android" {
   role_ids = [
     keycloak_role.ocis_user["ocis_android"].id
   ]
-
-  provisioner "local-exec" {
-    command = "sleep 1"
-  }
-
-  depends_on = [ keycloak_group_roles.keycloak_group_roles.ocis_user_desktop ]
 }
 
 resource "keycloak_group_roles" "ocis_guest_android" {
@@ -35,10 +23,4 @@ resource "keycloak_group_roles" "ocis_guest_android" {
   role_ids = [
     keycloak_role.ocis_guest["ocis_android"].id
   ]
-
-  provisioner "local-exec" {
-    command = "sleep 1"
-  }
-
-  depends_on = [ keycloak_group_roles.keycloak_group_roles.ocis_guest_desktop ]
 }
