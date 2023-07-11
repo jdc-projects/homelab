@@ -92,7 +92,7 @@ ownCloudUserType: Guest
 dn: uid=jack,ou=people,dc=idm,dc=jack-chapman.co.uk
 givenName: Jack
 sn: Chapman
-uid: jack
+uid: jackchapman
 mail: jack.chapman@sky.com
 ownCloudUserType: Member
 displayName: Jack Chapman
