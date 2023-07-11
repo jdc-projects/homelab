@@ -67,7 +67,7 @@ resource "keycloak_group_roles" "ocis_admin" {
 }
 
 resource "keycloak_group_roles" "ocis_user" {
-  for_each = keycloak_role.ocis_admin
+  for_each = keycloak_role.ocis_user
 
   realm_id = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
   group_id = data.keycloak_group.app_users.id
@@ -78,7 +78,7 @@ resource "keycloak_group_roles" "ocis_user" {
 }
 
 resource "keycloak_group_roles" "ocis_guest" {
-  for_each = keycloak_role.ocis_admin
+  for_each = keycloak_role.ocis_guest
 
   realm_id = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
   group_id = data.keycloak_group.app_guests.id
