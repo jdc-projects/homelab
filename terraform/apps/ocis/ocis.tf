@@ -208,6 +208,10 @@ resource "helm_release" "ocis" {
     value = "cn"
   }
   set {
+    name  = "features.externalUserManagement.ldap.group.schema.member"
+    value = "uniqueMember"
+  }
+  set {
     name  = "features.externalUserManagement.ldap.group.baseDN"
     value = "ou=groups\\,dc=idm\\,dc=${var.server_base_domain}"
   }
