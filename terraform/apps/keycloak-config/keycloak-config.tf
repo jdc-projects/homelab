@@ -44,7 +44,7 @@ resource "keycloak_ldap_group_mapper" "openldap_group_mapper" {
   membership_ldap_attribute      = "memberOf"
   membership_user_ldap_attribute = "cn"
 
-  mode = "WRITABLE"
+  mode = "READ_ONLY"
 
   drop_non_existing_groups_during_sync = true
 
