@@ -25,6 +25,10 @@ resource "keycloak_role" "ocis_admin" {
   client_id   = each.value
   name        = "ocisAdmin"
   description = "OCIS Admin"
+
+  provisioner "local-exec" {
+    command = "sleep 1"
+  }
 }
 
 resource "keycloak_role" "ocis_user" {
@@ -39,6 +43,10 @@ resource "keycloak_role" "ocis_user" {
   client_id   = each.value
   name        = "ocisUser"
   description = "OCIS User"
+
+  provisioner "local-exec" {
+    command = "sleep 1"
+  }
 }
 
 resource "keycloak_role" "ocis_guest" {
@@ -53,6 +61,10 @@ resource "keycloak_role" "ocis_guest" {
   client_id   = each.value
   name        = "ocisGuest"
   description = "OCIS Guest"
+
+  provisioner "local-exec" {
+    command = "sleep 1"
+  }
 }
 
 resource "keycloak_group_roles" "ocis_admin" {
