@@ -21,15 +21,15 @@ resource "keycloak_role" "ocis_admin" {
     })
     ocis_desktop = tomap({
       id   = keycloak_openid_client.ocis_desktop.id
-      wait = "3"
+      wait = "2"
     })
     ocis_android = tomap({
       id   = keycloak_openid_client.ocis_android.id
-      wait = "5"
+      wait = "3"
     })
     ocis_ios = tomap({
       id   = keycloak_openid_client.ocis_ios.id
-      wait = "7"
+      wait = "4"
     })
   })
 
@@ -47,11 +47,11 @@ resource "keycloak_role" "ocis_user" {
   for_each = tomap({
     ocis_web = tomap({
       id   = keycloak_openid_client.ocis_web.id
-      wait = "9"
+      wait = "11"
     })
     ocis_desktop = tomap({
       id   = keycloak_openid_client.ocis_desktop.id
-      wait = "11"
+      wait = "12"
     })
     ocis_android = tomap({
       id   = keycloak_openid_client.ocis_android.id
@@ -59,7 +59,7 @@ resource "keycloak_role" "ocis_user" {
     })
     ocis_ios = tomap({
       id   = keycloak_openid_client.ocis_ios.id
-      wait = "15"
+      wait = "14"
     })
   })
 
@@ -77,19 +77,19 @@ resource "keycloak_role" "ocis_guest" {
   for_each = tomap({
     ocis_web = tomap({
       id   = keycloak_openid_client.ocis_web.id
-      wait = "17"
+      wait = "21"
     })
     ocis_desktop = tomap({
       id   = keycloak_openid_client.ocis_desktop.id
-      wait = "19"
+      wait = "22"
     })
     ocis_android = tomap({
       id   = keycloak_openid_client.ocis_android.id
-      wait = "21"
+      wait = "23"
     })
     ocis_ios = tomap({
       id   = keycloak_openid_client.ocis_ios.id
-      wait = "23"
+      wait = "24"
     })
   })
 
