@@ -49,6 +49,22 @@ resource "kubernetes_deployment" "openldap" {
       }
 
       spec {
+        init_container {
+          image = "alpine:3.18.2"
+          name  = "openldap-chown"
+
+          command = ["sh", "-c", "chown -R 1001 /bitnami/openldap "]
+
+          security_context {
+            run_as_user = 0
+          }
+
+          volume_mount {
+            mount_path = "/bitnami/openldap"
+            name       = "openldap-data"
+          }
+        }
+
         container {
           image = "bitnami/openldap:2.6.4"
           name  = "openldap"
