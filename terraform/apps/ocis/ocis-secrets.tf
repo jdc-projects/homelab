@@ -78,7 +78,7 @@ resource "kubernetes_secret" "ocis_thumbnails_transfer" {
 
 resource "kubernetes_secret" "ocis_notifications_smtp" {
   metadata {
-    name      = "ocis-thumbnails-transfer"
+    name      = "ocis-notifications-smtp"
     namespace = kubernetes_namespace.ocis.metadata[0].name
   }
 
