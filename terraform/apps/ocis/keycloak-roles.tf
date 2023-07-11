@@ -14,13 +14,27 @@ data "keycloak_group" "app_guests" {
 }
 
 resource "keycloak_role" "ocis_admin" {
+  for_each = toset([
+    keycloak_openid_client.ocis_web.id,
+    keycloak_openid_client.ocis_desktop.id,
+    keycloak_openid_client.ocis_android.id,
+    keycloak_openid_client.ocis_ios.id
+  ])
+
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
-  client_id   = keycloak_openid_client.ocis_web.id
+  client_id   = each.key
   name        = "ocisAdmin"
   description = "OCIS Admin"
 }
 
 resource "keycloak_role" "ocis_user" {
+  for_each = toset([
+    keycloak_openid_client.ocis_web.id,
+    keycloak_openid_client.ocis_desktop.id,
+    keycloak_openid_client.ocis_android.id,
+    keycloak_openid_client.ocis_ios.id
+  ])
+
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
   client_id   = keycloak_openid_client.ocis_web.id
   name        = "ocisUser"
@@ -28,6 +42,13 @@ resource "keycloak_role" "ocis_user" {
 }
 
 resource "keycloak_role" "ocis_guest" {
+  for_each = toset([
+    keycloak_openid_client.ocis_web.id,
+    keycloak_openid_client.ocis_desktop.id,
+    keycloak_openid_client.ocis_android.id,
+    keycloak_openid_client.ocis_ios.id
+  ])
+
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
   client_id   = keycloak_openid_client.ocis_web.id
   name        = "ocisGuest"
@@ -35,11 +56,13 @@ resource "keycloak_role" "ocis_guest" {
 }
 
 resource "keycloak_group_roles" "ocis_admin" {
+  for_each = keycloak_role.ocis_admin
+
   realm_id = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
   group_id = data.keycloak_group.app_admins.id
 
   role_ids = [
-    keycloak_role.ocis_admin.id
+    each.id
   ]
 }
 
@@ -48,7 +71,7 @@ resource "keycloak_group_roles" "ocis_user" {
   group_id = data.keycloak_group.app_users.id
 
   role_ids = [
-    keycloak_role.ocis_user.id
+    each.id
   ]
 }
 
@@ -57,6 +80,6 @@ resource "keycloak_group_roles" "ocis_guest" {
   group_id = data.keycloak_group.app_guests.id
 
   role_ids = [
-    keycloak_role.ocis_guest.id
+    each.id
   ]
 }
