@@ -7,7 +7,8 @@ objectClass: ownCloudUser
 uid: {{OPENLDAP_ADMIN_USERNAME}}
 cn: admin
 givenName: System
-sn: Administrator
+sn: Admin
+displayName: System Admin
 mail: admin@{{SERVER_BASE_DOMAIN}}
 uidNumber: 5000
 gidNumber: 5000
@@ -25,6 +26,7 @@ uid: {{OPENLDAP_TEST_ADMIN_USERNAME}}
 cn: test-admin
 givenName: Test
 sn: Admin
+displayName: Test Admin
 mail: testadmin@{{SERVER_BASE_DOMAIN}}
 uidNumber: 6000
 gidNumber: 6000
@@ -42,6 +44,7 @@ uid: {{OPENLDAP_TEST_USER_USERNAME}}
 cn: test-user
 givenName: Test
 sn: User
+displayName: Test User
 mail: testuser@{{SERVER_BASE_DOMAIN}}
 uidNumber: 6100
 gidNumber: 6100
@@ -59,6 +62,7 @@ uid: {{OPENLDAP_TEST_GUEST_USERNAME}}
 cn: test-guest
 givenName: Test
 sn: Guest
+displayName: Test Guest
 mail: testguest@{{SERVER_BASE_DOMAIN}}
 uidNumber: 6200
 gidNumber: 6200
@@ -76,6 +80,7 @@ uid: {{OPENLDAP_TEST_DISABLED_USERNAME}}
 cn: test-disabled
 givenName: Test
 sn: Disabled
+displayName: Test Disabled
 mail: testdisabled@{{SERVER_BASE_DOMAIN}}
 uidNumber: 6300
 gidNumber: 6300
