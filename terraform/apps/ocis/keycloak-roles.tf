@@ -65,10 +65,6 @@ resource "keycloak_group_roles" "ocis_admin" {
     each.value.id
   ]
 
-  provisioner "local-exec" {
-    command = "sleep 1"
-  }
-
   depends_on = [
     keycloak_role.ocis_admin,
     keycloak_role.ocis_user,
@@ -86,10 +82,6 @@ resource "keycloak_group_roles" "ocis_user" {
     each.value.id
   ]
 
-  provisioner "local-exec" {
-    command = "sleep 1"
-  }
-
   depends_on = [
     keycloak_role.ocis_admin,
     keycloak_role.ocis_user,
@@ -106,10 +98,6 @@ resource "keycloak_group_roles" "ocis_guest" {
   role_ids = [
     each.value.id
   ]
-
-  provisioner "local-exec" {
-    command = "sleep 1"
-  }
 
   depends_on = [
     keycloak_role.ocis_admin,
