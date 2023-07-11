@@ -5,7 +5,7 @@ resource "kubernetes_config_map" "ldap_user_manager_env" {
   }
 
   data = {
-    LDAP_URI                              = "ldaps://idm.${var.server_base_domain}:637"
+    LDAP_URI                              = "ldaps://idm.${var.server_base_domain}"
     LDAP_BASE_DN                          = "dc=idm,dc=${var.server_base_domain}"
     LDAP_ADMIN_BIND_DN                    = "cn=${random_password.openldap_admin_username.result},dc=idm,dc=${var.server_base_domain}"
     LDAP_ADMINS_GROUP                     = "system_admins"
