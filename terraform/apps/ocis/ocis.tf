@@ -209,7 +209,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.ldap.group.schema.member"
-    value = "uniqueMember"
+    value = "member"
   }
   set {
     name  = "features.externalUserManagement.ldap.group.baseDN"
@@ -217,7 +217,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.ldap.group.objectClass"
-    value = "groupOfUniqueNames"
+    value = "groupOfNames"
   }
   # set {
   #   name  = "features.externalUserManagement.ldap.disableUsers.disableMechanism"

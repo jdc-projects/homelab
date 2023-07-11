@@ -39,9 +39,9 @@ resource "keycloak_ldap_group_mapper" "openldap_group_mapper" {
   ldap_groups_dn            = "ou=groups,dc=idm,dc=${var.server_base_domain}"
   group_name_ldap_attribute = "cn"
   group_object_classes = [
-    "groupOfUniqueNames"
+    "groupOfNames"
   ]
-  membership_ldap_attribute      = "uniqueMember"
+  membership_ldap_attribute      = "member"
   membership_user_ldap_attribute = "cn"
 
   mode = "READ_ONLY"

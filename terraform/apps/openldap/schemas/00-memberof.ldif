@@ -10,8 +10,8 @@ objectClass: olcMemberOf
 objectClass: olcOverlayConfig
 olcOverlay: memberof
 olcMemberOfRefInt: TRUE
-olcMemberOfGroupOC: groupOfUniqueNames
-olcMemberOfMemberAD: uniqueMember
+olcMemberOfGroupOC: groupOfNames
+olcMemberOfMemberAD: member
 olcMemberOfMemberOfAD: memberOf
 
 dn: olcOverlay=refint,olcDatabase={2}mdb,cn=config
@@ -20,4 +20,4 @@ objectClass: olcOverlayConfig
 objectClass: olcRefintConfig
 objectClass: top
 olcOverlay: refint
-olcRefintAttribute: memberof uniqueMember manager owner
+olcRefintAttribute: memberof member manager owner
