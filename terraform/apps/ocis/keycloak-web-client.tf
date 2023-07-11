@@ -26,7 +26,7 @@ resource "keycloak_openid_client" "ocis_web" {
   login_theme = "keycloak"
 }
 
-resource "keycloak_openid_user_client_role_protocol_mapper" "user_client_role_mapper" {
+resource "keycloak_openid_user_client_role_protocol_mapper" "ocis_web" {
   realm_id                    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
   client_id                   = keycloak_openid_client.ocis_web.id
   name                        = "role-mapper"
