@@ -17,19 +17,15 @@ resource "keycloak_role" "ocis_admin" {
   for_each = tomap({
     ocis_web = tomap({
       id   = keycloak_openid_client.ocis_web.id
-      wait = "1"
     })
     ocis_desktop = tomap({
       id   = keycloak_openid_client.ocis_desktop.id
-      wait = "2"
     })
     ocis_android = tomap({
       id   = keycloak_openid_client.ocis_android.id
-      wait = "3"
     })
     ocis_ios = tomap({
       id   = keycloak_openid_client.ocis_ios.id
-      wait = "4"
     })
   })
 
@@ -37,29 +33,21 @@ resource "keycloak_role" "ocis_admin" {
   client_id   = each.value.id
   name        = "ocisAdmin"
   description = "OCIS Admin"
-
-  provisioner "local-exec" {
-    command = "sleep ${each.value.wait}"
-  }
 }
 
 resource "keycloak_role" "ocis_user" {
   for_each = tomap({
     ocis_web = tomap({
       id   = keycloak_openid_client.ocis_web.id
-      wait = "11"
     })
     ocis_desktop = tomap({
       id   = keycloak_openid_client.ocis_desktop.id
-      wait = "12"
     })
     ocis_android = tomap({
       id   = keycloak_openid_client.ocis_android.id
-      wait = "13"
     })
     ocis_ios = tomap({
       id   = keycloak_openid_client.ocis_ios.id
-      wait = "14"
     })
   })
 
@@ -67,29 +55,21 @@ resource "keycloak_role" "ocis_user" {
   client_id   = each.value.id
   name        = "ocisUser"
   description = "OCIS User"
-
-  provisioner "local-exec" {
-    command = "sleep ${each.value.wait}"
-  }
 }
 
 resource "keycloak_role" "ocis_guest" {
   for_each = tomap({
     ocis_web = tomap({
       id   = keycloak_openid_client.ocis_web.id
-      wait = "21"
     })
     ocis_desktop = tomap({
       id   = keycloak_openid_client.ocis_desktop.id
-      wait = "22"
     })
     ocis_android = tomap({
       id   = keycloak_openid_client.ocis_android.id
-      wait = "23"
     })
     ocis_ios = tomap({
       id   = keycloak_openid_client.ocis_ios.id
-      wait = "24"
     })
   })
 
@@ -97,10 +77,6 @@ resource "keycloak_role" "ocis_guest" {
   client_id   = each.value.id
   name        = "ocisGuest"
   description = "OCIS Guest"
-
-  provisioner "local-exec" {
-    command = "sleep ${each.value.wait}"
-  }
 }
 
 resource "keycloak_group_roles" "ocis_admin" {
