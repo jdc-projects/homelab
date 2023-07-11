@@ -96,15 +96,15 @@ resource "keycloak_openid_user_client_role_protocol_mapper" "ocis_claim_mapper" 
       client_id = keycloak_openid_client.ocis_web.client_id
     })
     ocis_desktop = tomap({
-      id        = keycloak_openid_client.ocis_desktop
+      id        = keycloak_openid_client.ocis_desktop.id
       client_id = keycloak_openid_client.ocis_desktop.client_id
     })
     ocis_android = tomap({
-      id        = keycloak_openid_client.ocis_android
+      id        = keycloak_openid_client.ocis_android.id
       client_id = keycloak_openid_client.ocis_android.client_id
     })
     ocis_ios = tomap({
-      id        = keycloak_openid_client.ocis_ios
+      id        = keycloak_openid_client.ocis_ios.id
       client_id = keycloak_openid_client.ocis_ios.client_id
     })
   })
