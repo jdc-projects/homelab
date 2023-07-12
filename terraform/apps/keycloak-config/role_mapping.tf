@@ -15,6 +15,6 @@ resource "keycloak_group_roles" "system_admins_admin" {
   group_id = data.keycloak_group.system_admins.id
 
   role_ids = [
-    data.keycloak_role.admin
+    data.keycloak_role.admin.id
   ]
 }
