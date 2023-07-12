@@ -110,6 +110,11 @@ resource "helm_release" "keycloak" {
     value = random_password.keycloak_db_password.result
   }
 
+  set {
+    name  = "logging.level"
+    value = "DEBUG"
+  }
+
   lifecycle {
     replace_triggered_by = [kubernetes_config_map.keycloak_custom_scripts]
   }
