@@ -34,15 +34,19 @@ resource "keycloak_ldap_user_federation" "openldap" {
 resource "keycloak_ldap_group_mapper" "openldap" {
   for_each = tomap({
     server_base_domain = tomap({
-      id = keycloak_realm.server_base_domain.id
+      realm_id                    = keycloak_realm.server_base_domain.id
+      ldap_federation_id          = keycloak_ldap_user_federation["server_base_domain"].id
+      ldap_federation_sync_period = keycloak_ldap_user_federation["server_base_domain"].full_sync_period
     })
     master = tomap({
-      id = data.keycloak_realm.master.id
+      id                          = data.keycloak_realm.master.id
+      ldap_federation_id          = keycloak_ldap_user_federation["master"].id
+      ldap_federation_sync_period = keycloak_ldap_user_federation["master"].full_sync_period
     })
   })
 
-  realm_id                = each.value.id
-  ldap_user_federation_id = keycloak_ldap_user_federation.openldap_user_federation.id
+  realm_id                = each.value.realm_id
+  ldap_user_federation_id = each.value.ldap_federation_id
   name                    = "group mapper"
 
   ldap_groups_dn            = "ou=groups,dc=idm,dc=${var.server_base_domain}"
