@@ -112,7 +112,7 @@ resource "helm_release" "keycloak" {
 
   set {
     name  = "logging.level"
-    value = "DEBUG"
+    value = "INFO"
   }
 
   lifecycle {
