@@ -29,6 +29,8 @@ resource "keycloak_ldap_user_federation" "openldap" {
   pagination = false
 
   full_sync_period = 60
+
+  delete_default_mappers = "true"
 }
 
 resource "keycloak_ldap_group_mapper" "openldap" {
