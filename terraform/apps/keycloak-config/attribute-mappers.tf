@@ -12,7 +12,7 @@ locals {
     })
     first_name = tomap({
       mapper_name        = "first name"
-      keycloak_attribute = "first_name"
+      keycloak_attribute = "firstName"
       ldap_attribute     = "givenName"
     })
     last_name = tomap({
