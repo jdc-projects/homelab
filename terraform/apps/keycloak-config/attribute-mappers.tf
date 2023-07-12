@@ -36,7 +36,7 @@ locals {
 resource "keycloak_ldap_user_attribute_mapper" "master" {
   for_each = local.attribute_mapper_settings
 
-  realm_id                = keycloak_realm.server_base_domain.id
+  realm_id                = data.keycloak_realm.master.id
   ldap_user_federation_id = keycloak_ldap_user_federation.openldap["master"].id
   name                    = each.value.mapper_name
 
