@@ -34,7 +34,7 @@ locals {
 }
 
 resource "keycloak_ldap_user_attribute_mapper" "master" {
-  for_each = locals.attribute_mapper_settings
+  for_each = local.attribute_mapper_settings
 
   realm_id                = keycloak_realm.server_base_domain.id
   ldap_user_federation_id = keycloak_ldap_user_federation.openldap["master"].id
@@ -48,7 +48,7 @@ resource "keycloak_ldap_user_attribute_mapper" "master" {
 }
 
 resource "keycloak_ldap_user_attribute_mapper" "server_base_domain" {
-  for_each = locals.attribute_mapper_settings
+  for_each = local.attribute_mapper_settings
 
   realm_id                = keycloak_realm.server_base_domain.id
   ldap_user_federation_id = keycloak_ldap_user_federation.openldap["server_base_domain"].id

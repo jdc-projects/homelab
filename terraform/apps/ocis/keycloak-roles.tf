@@ -27,7 +27,7 @@ locals {
 }
 
 resource "keycloak_role" "ocis_admin" {
-  for_each = locals.role_settings
+  for_each = local.role_settings
 
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   client_id   = each.value.id
@@ -36,7 +36,7 @@ resource "keycloak_role" "ocis_admin" {
 }
 
 resource "keycloak_role" "ocis_user" {
-  for_each = locals.role_settings
+  for_each = local.role_settings
 
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   client_id   = each.value.id
@@ -45,7 +45,7 @@ resource "keycloak_role" "ocis_user" {
 }
 
 resource "keycloak_role" "ocis_guest" {
-  for_each = locals.role_settings
+  for_each = local.role_settings
 
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   client_id   = each.value.id
