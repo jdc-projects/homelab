@@ -39,7 +39,7 @@ resource "keycloak_ldap_group_mapper" "openldap" {
       ldap_federation_sync_period = keycloak_ldap_user_federation.openldap["server_base_domain"].full_sync_period
     })
     master = tomap({
-      id                          = data.keycloak_realm.master.id
+      realm_id                    = data.keycloak_realm.master.id
       ldap_federation_id          = keycloak_ldap_user_federation.openldap["master"].id
       ldap_federation_sync_period = keycloak_ldap_user_federation.openldap["master"].full_sync_period
     })
