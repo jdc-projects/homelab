@@ -3,7 +3,6 @@ dn: uid={{OPENLDAP_ADMIN_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: posixAccount
-objectClass: ownCloudUser
 uid: {{OPENLDAP_ADMIN_USERNAME}}
 cn: admin
 givenName: System
@@ -14,14 +13,12 @@ uidNumber: 5000
 gidNumber: 5000
 homeDirectory: /home/{{OPENLDAP_ADMIN_USERNAME}}
 userPassword: {{OPENLDAP_ADMIN_PASSWORD}}
-ownCloudUserType: Guest
 
 # create app test admin user
 dn: uid={{OPENLDAP_TEST_ADMIN_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: posixAccount
-objectClass: ownCloudUser
 uid: {{OPENLDAP_TEST_ADMIN_USERNAME}}
 cn: test-admin
 givenName: Test
@@ -32,14 +29,12 @@ uidNumber: 6000
 gidNumber: 6000
 homeDirectory: /home/{{OPENLDAP_TEST_ADMIN_USERNAME}}
 userPassword: {{OPENLDAP_TEST_ADMIN_PASSWORD}}
-ownCloudUserType: Member
 
 # create app test user
 dn: uid={{OPENLDAP_TEST_USER_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: posixAccount
-objectClass: ownCloudUser
 uid: {{OPENLDAP_TEST_USER_USERNAME}}
 cn: test-user
 givenName: Test
@@ -50,14 +45,12 @@ uidNumber: 6100
 gidNumber: 6100
 homeDirectory: /home/{{OPENLDAP_TEST_USER_USERNAME}}
 userPassword: {{OPENLDAP_TEST_USER_PASSWORD}}
-ownCloudUserType: Member
 
 # create app test guest user
 dn: uid={{OPENLDAP_TEST_GUEST_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: posixAccount
-objectClass: ownCloudUser
 uid: {{OPENLDAP_TEST_GUEST_USERNAME}}
 cn: test-guest
 givenName: Test
@@ -68,14 +61,12 @@ uidNumber: 6200
 gidNumber: 6200
 homeDirectory: /home/{{OPENLDAP_TEST_GUEST_USERNAME}}
 userPassword: {{OPENLDAP_TEST_GUEST_PASSWORD}}
-ownCloudUserType: Guest
 
 # create app test disabled user
 dn: uid={{OPENLDAP_TEST_DISABLED_USERNAME}},ou=people,dc=idm,dc={{SERVER_BASE_DOMAIN}}
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: posixAccount
-objectClass: ownCloudUser
 uid: {{OPENLDAP_TEST_DISABLED_USERNAME}}
 cn: test-disabled
 givenName: Test
@@ -86,4 +77,3 @@ uidNumber: 6300
 gidNumber: 6300
 homeDirectory: /home/{{OPENLDAP_TEST_DISABLED_USERNAME}}
 userPassword: {{OPENLDAP_TEST_DISABLED_PASSWORD}}
-ownCloudUserType: Guest
