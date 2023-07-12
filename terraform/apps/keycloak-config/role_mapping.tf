@@ -1,6 +1,8 @@
 data "keycloak_group" "system_admins" {
   realm_id = data.keycloak_realm.master.id
   name     = "system_admins"
+
+  depends_on = [keycloak_ldap_group_mapper.openldap]
 }
 
 data "keycloak_role" "admin" {
