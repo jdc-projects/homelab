@@ -8,7 +8,7 @@ data "keycloak_role" "admin" {
   name     = "admin"
 }
 
-resource "keycloak_group_role" "system_admins_admin" {
+resource "keycloak_group_roles" "system_admins_admin" {
   realm_id = keycloak_realm.server_base_domain.id
   group_id = data.keycloak_group.system_admins.id
 
