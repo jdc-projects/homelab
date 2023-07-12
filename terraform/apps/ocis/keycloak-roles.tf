@@ -9,8 +9,8 @@ data "keycloak_group" "app_group" {
   name     = each.value
 }
 
-resource "keycloak_role" "ocis_admin" {
-  for_each = tomap({
+locals {
+  role_settings = tomap({
     ocis_web = tomap({
       id = keycloak_openid_client.ocis_web.id
     })
@@ -24,6 +24,10 @@ resource "keycloak_role" "ocis_admin" {
       id = keycloak_openid_client.ocis_ios.id
     })
   })
+}
+
+resource "keycloak_role" "ocis_admin" {
+  for_each = locals.role_settings
 
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   client_id   = each.value.id
@@ -32,20 +36,7 @@ resource "keycloak_role" "ocis_admin" {
 }
 
 resource "keycloak_role" "ocis_user" {
-  for_each = tomap({
-    ocis_web = tomap({
-      id = keycloak_openid_client.ocis_web.id
-    })
-    ocis_desktop = tomap({
-      id = keycloak_openid_client.ocis_desktop.id
-    })
-    ocis_android = tomap({
-      id = keycloak_openid_client.ocis_android.id
-    })
-    ocis_ios = tomap({
-      id = keycloak_openid_client.ocis_ios.id
-    })
-  })
+  for_each = locals.role_settings
 
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   client_id   = each.value.id
@@ -54,20 +45,7 @@ resource "keycloak_role" "ocis_user" {
 }
 
 resource "keycloak_role" "ocis_guest" {
-  for_each = tomap({
-    ocis_web = tomap({
-      id = keycloak_openid_client.ocis_web.id
-    })
-    ocis_desktop = tomap({
-      id = keycloak_openid_client.ocis_desktop.id
-    })
-    ocis_android = tomap({
-      id = keycloak_openid_client.ocis_android.id
-    })
-    ocis_ios = tomap({
-      id = keycloak_openid_client.ocis_ios.id
-    })
-  })
+  for_each = locals.role_settings
 
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   client_id   = each.value.id
