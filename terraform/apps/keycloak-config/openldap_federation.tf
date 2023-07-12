@@ -63,6 +63,6 @@ resource "keycloak_ldap_group_mapper" "openldap" {
 
   provisioner "local-exec" {
     # wait for a sync so that groups have a change to sync
-    command = "sleep ${keycloak_ldap_user_federation.openldap_user_federation.full_sync_period}"
+    command = "sleep ${each.value.ldap_federation_sync_period}"
   }
 }
