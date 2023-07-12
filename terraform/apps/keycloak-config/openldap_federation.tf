@@ -1,17 +1,17 @@
-resource "keycloak_realm" "jack_chapman_co_uk_realm" {
-  realm   = "jack-chapman.co.uk"
-  enabled = true
+resource "keycloak_ldap_user_federation" "openldap" {
+  for_each = tomap({
+    server_base_domain = tomap({
+      id = keycloak_realm.server_base_domain.id
+    })
+    master = tomap({
+      id = data.keycloak_realm.master.id
+    })
+  })
 
-  registration_email_as_username = false
-  login_with_email_allowed       = false
-  duplicate_emails_allowed       = true
-}
-
-resource "keycloak_ldap_user_federation" "openldap_user_federation" {
   name      = "openldap"
-  realm_id  = keycloak_realm.jack_chapman_co_uk_realm.id
+  realm_id  = each.value.id
   enabled   = true
-  edit_mode = "WRITABLE"
+  edit_mode = "READ_ONLY"
 
   username_ldap_attribute = "uid"
   rdn_ldap_attribute      = "uid"
@@ -31,10 +31,19 @@ resource "keycloak_ldap_user_federation" "openldap_user_federation" {
   full_sync_period = 60
 }
 
-resource "keycloak_ldap_group_mapper" "openldap_group_mapper" {
-  realm_id                = keycloak_realm.jack_chapman_co_uk_realm.id
+resource "keycloak_ldap_group_mapper" "openldap" {
+  for_each = tomap({
+    server_base_domain = tomap({
+      id = keycloak_realm.server_base_domain.id
+    })
+    master = tomap({
+      id = data.keycloak_realm.master.id
+    })
+  })
+
+  realm_id                = each.value.id
   ldap_user_federation_id = keycloak_ldap_user_federation.openldap_user_federation.id
-  name                    = "openldap-group-mapper"
+  name                    = "group mapper"
 
   ldap_groups_dn            = "ou=groups,dc=idm,dc=${var.server_base_domain}"
   group_name_ldap_attribute = "cn"

@@ -5,7 +5,7 @@ data "keycloak_group" "app_group" {
     guests = "app_guests"
   })
 
-  realm_id = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
+  realm_id = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   name     = each.value
 }
 
@@ -25,7 +25,7 @@ resource "keycloak_role" "ocis_admin" {
     })
   })
 
-  realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
+  realm_id    = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   client_id   = each.value.id
   name        = "ocisAdmin"
   description = "OCIS Admin"
@@ -47,7 +47,7 @@ resource "keycloak_role" "ocis_user" {
     })
   })
 
-  realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
+  realm_id    = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   client_id   = each.value.id
   name        = "ocisUser"
   description = "OCIS User"
@@ -69,7 +69,7 @@ resource "keycloak_role" "ocis_guest" {
     })
   })
 
-  realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
+  realm_id    = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   client_id   = each.value.id
   name        = "ocisGuest"
   description = "OCIS Guest"
@@ -82,7 +82,7 @@ resource "keycloak_role" "ocis_composite" {
     ocis_guest = keycloak_role.ocis_guest
   })
 
-  realm_id    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
+  realm_id    = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   name        = each.value["ocis_web"].name
   description = each.value["ocis_web"].description
 
@@ -110,7 +110,7 @@ resource "keycloak_group_roles" "ocis" {
     })
   })
 
-  realm_id = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
+  realm_id = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   group_id = each.value.group_id
 
   role_ids = [
@@ -138,7 +138,7 @@ resource "keycloak_openid_user_client_role_protocol_mapper" "ocis_claim_mapper" 
     })
   })
 
-  realm_id                    = data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id
+  realm_id                    = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   client_id                   = each.value.id
   name                        = "role-mapper"
   claim_name                  = "roles"
