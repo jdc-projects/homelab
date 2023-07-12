@@ -49,21 +49,21 @@ resource "kubernetes_deployment" "openldap" {
       }
 
       spec {
-        init_container {
-          image = "alpine:3.18.2"
-          name  = "openldap-chown"
+        # init_container {
+        #   image = "alpine:3.18.2"
+        #   name  = "openldap-chown"
 
-          command = ["sh", "-c", "chown -R 1001 /bitnami/openldap "]
+        #   command = ["sh", "-c", "chown -R 1001 /bitnami/openldap "]
 
-          security_context {
-            run_as_user = 0
-          }
+        #   security_context {
+        #     run_as_user = 0
+        #   }
 
-          volume_mount {
-            mount_path = "/bitnami/openldap"
-            name       = "openldap-data"
-          }
-        }
+        #   volume_mount {
+        #     mount_path = "/bitnami/openldap"
+        #     name       = "openldap-data"
+        #   }
+        # }
 
         container {
           image = "bitnami/openldap:2.6.4"
@@ -91,10 +91,10 @@ resource "kubernetes_deployment" "openldap" {
             name       = "custom-schemas"
           }
 
-          volume_mount {
-            mount_path = "/bitnami/openldap"
-            name       = "openldap-data"
-          }
+          # volume_mount {
+          #   mount_path = "/bitnami/openldap"
+          #   name       = "openldap-data"
+          # }
         }
 
         volume {
@@ -113,13 +113,13 @@ resource "kubernetes_deployment" "openldap" {
           }
         }
 
-        volume {
-          name = "openldap-data"
+        # volume {
+        #   name = "openldap-data"
 
-          host_path {
-            path = truenas_dataset.openldap.mount_point
-          }
-        }
+        #   host_path {
+        #     path = truenas_dataset.openldap.mount_point
+        #   }
+        # }
       }
     }
   }
