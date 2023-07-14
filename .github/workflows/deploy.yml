@@ -1,14 +1,17 @@
 name: Deploy
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - 'trunk'
+    first-run:
+      type: boolean
+      description: Is this being run on a clean environment?
 
 jobs:
   deploy-terraform-state-namespace:
     uses: ./.github/workflows/terraform-state-namespace-deploy.yml
     secrets: inherit
+
+    with:
+      runner-type: ${{ first-run && "ubuntu-latest" || "self-hosted" }}
 
   deploy-github-org-runner-1:
     needs: [
@@ -19,6 +22,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/github-org-runners-1
+      runner-type: ${{ first-run && "ubuntu-latest" || "self-hosted" }}
 
   deploy-github-org-runner-2:
     needs: deploy-github-org-runner-1
@@ -27,6 +31,18 @@ jobs:
 
     with:
       terraform-dir: ./terraform/github-org-runners-2
+      runner-type: ${{ first-run && "ubuntu-latest" || "self-hosted" }}
+
+  deploy-traefik:
+    needs: [
+      deploy-terraform-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/traefik
+      runner-type: ${{ first-run && "ubuntu-latest" || "self-hosted" }}
 
   # deploy-velero:
   #   needs: [
@@ -38,18 +54,9 @@ jobs:
   #   with:
   #     terraform-dir: ./terraform/velero
 
-  deploy-traefik:
-    needs: [
-      deploy-terraform-state-namespace,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/traefik
-
   deploy-services:
     needs: [
+      deploy-github-org-runner-2,
       deploy-traefik,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
@@ -60,7 +67,7 @@ jobs:
 
   deploy-openldap:
     needs: [
-      # deploy-velero,
+      deploy-github-org-runner-2,
       deploy-traefik,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
@@ -71,7 +78,7 @@ jobs:
 
   deploy-keycloak:
     needs: [
-      # deploy-velero,
+      deploy-github-org-runner-2,
       deploy-traefik,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
