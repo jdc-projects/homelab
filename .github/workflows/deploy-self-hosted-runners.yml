@@ -4,7 +4,7 @@ on:
 
 jobs:
   deploy-terraform-state-namespace:
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/terraform-state-namespace-deploy.yml
     secrets: inherit
 
     with:
