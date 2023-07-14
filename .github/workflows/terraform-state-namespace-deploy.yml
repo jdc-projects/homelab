@@ -2,7 +2,7 @@ on:
   workflow_call:
     inputs:
       runner-type:
-        required: true
+        required: false
         type: string
         default: self-hosted
 
