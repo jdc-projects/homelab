@@ -6,13 +6,16 @@ on:
         type: boolean
         description: Clean environment
 
+env:
+  foundation-runner-type: ${{ github.event.inputs.first-run && 'ubuntu-latest' || 'self-hosted' }}
+
 jobs:
   deploy-terraform-state-namespace:
     uses: ./.github/workflows/terraform-state-namespace-deploy.yml
     secrets: inherit
 
     with:
-      runner-type: ${{ github.event.inputs.first-run && 'ubuntu-latest' || 'self-hosted' }}
+      runner-type: ${{ env.foundation-runner-type }}
 
   deploy-github-org-runner-1:
     needs: [
@@ -23,7 +26,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/github-org-runners-1
-      runner-type: ${{ github.event.inputs.first-run && 'ubuntu-latest' || 'self-hosted' }}
+      runner-type: ${{ env.foundation-runner-type }}
 
   deploy-github-org-runner-2:
     needs: [
@@ -34,7 +37,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/github-org-runners-2
-      runner-type: ${{ github.event.inputs.first-run && 'ubuntu-latest' || 'self-hosted' }}
+      runner-type: ${{ env.foundation-runner-type }}
 
   deploy-traefik:
     needs: [
@@ -45,7 +48,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/traefik
-      runner-type: ${{ github.event.inputs.first-run && 'ubuntu-latest' || 'self-hosted' }}
+      runner-type: ${{ env.foundation-runner-type }}
 
   # deploy-velero:
   #   needs: [
