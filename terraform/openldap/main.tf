@@ -1,7 +1,7 @@
 terraform {
   backend "kubernetes" {
     secret_suffix = "apps-openldap"
-    config_path   = "../../cluster.yml"
+    config_path   = "../cluster.yml"
     namespace     = "terraform-state"
   }
 
@@ -39,7 +39,7 @@ provider "truenas" {
 }
 
 provider "kubernetes" {
-  config_path = "../../cluster.yml"
+  config_path = "../cluster.yml"
 }
 
 provider "null" {

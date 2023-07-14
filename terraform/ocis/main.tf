@@ -1,7 +1,7 @@
 terraform {
   backend "kubernetes" {
     secret_suffix = "apps-ocis"
-    config_path   = "../../cluster.yml"
+    config_path   = "../cluster.yml"
     namespace     = "terraform-state"
   }
 
@@ -45,12 +45,12 @@ provider "truenas" {
 
 provider "helm" {
   kubernetes {
-    config_path = "../../cluster.yml"
+    config_path = "../cluster.yml"
   }
 }
 
 provider "kubernetes" {
-  config_path = "../../cluster.yml"
+  config_path = "../cluster.yml"
 }
 
 provider "null" {
@@ -72,7 +72,7 @@ data "terraform_remote_state" "keycloak_config" {
 
   config = {
     secret_suffix = "apps-keycloak-config"
-    config_path   = "../../cluster.yml"
+    config_path   = "../cluster.yml"
     namespace     = "terraform-state"
   }
 }
@@ -82,7 +82,7 @@ data "terraform_remote_state" "openldap" {
 
   config = {
     secret_suffix = "apps-openldap"
-    config_path   = "../../cluster.yml"
+    config_path   = "../cluster.yml"
     namespace     = "terraform-state"
   }
 }

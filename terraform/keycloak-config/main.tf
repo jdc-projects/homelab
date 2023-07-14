@@ -1,7 +1,7 @@
 terraform {
   backend "kubernetes" {
     secret_suffix = "apps-keycloak-config"
-    config_path   = "../../cluster.yml"
+    config_path   = "../cluster.yml"
     namespace     = "terraform-state"
   }
 
@@ -18,7 +18,7 @@ data "terraform_remote_state" "keycloak" {
 
   config = {
     secret_suffix = "apps-keycloak"
-    config_path   = "../../cluster.yml"
+    config_path   = "../cluster.yml"
     namespace     = "terraform-state"
   }
 }
@@ -28,7 +28,7 @@ data "terraform_remote_state" "openldap" {
 
   config = {
     secret_suffix = "apps-openldap"
-    config_path   = "../../cluster.yml"
+    config_path   = "../cluster.yml"
     namespace     = "terraform-state"
   }
 }

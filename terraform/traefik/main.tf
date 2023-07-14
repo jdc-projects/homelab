@@ -1,7 +1,7 @@
 terraform {
   backend "kubernetes" {
     secret_suffix = "traefik"
-    config_path   = "../../cluster.yml"
+    config_path   = "../cluster.yml"
     namespace     = "terraform-state"
   }
 
@@ -25,12 +25,12 @@ terraform {
 
 provider "helm" {
   kubernetes {
-    config_path = "../../cluster.yml"
+    config_path = "../cluster.yml"
   }
 }
 
 provider "kubernetes" {
-  config_path = "../../cluster.yml"
+  config_path = "../cluster.yml"
 }
 
 provider "null" {

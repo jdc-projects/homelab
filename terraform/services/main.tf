@@ -1,7 +1,7 @@
 terraform {
   backend "kubernetes" {
     secret_suffix = "services"
-    config_path   = "../../cluster.yml"
+    config_path   = "../cluster.yml"
     namespace     = "terraform-state"
   }
 
@@ -14,5 +14,5 @@ terraform {
 }
 
 provider "kubernetes" {
-  config_path = "../../cluster.yml"
+  config_path = "../cluster.yml"
 }
