@@ -8,15 +8,15 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "logging.level"
-    value = "trace"
+    value = "info"
   }
   set {
     name  = "logging.color"
-    value = "true"
+    value = "false"
   }
   set {
     name  = "logging.pretty"
-    value = "true"
+    value = "false"
   }
 
   set {
