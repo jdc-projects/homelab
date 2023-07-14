@@ -20,49 +20,6 @@ resource "helm_release" "traefik" {
     value = "INFO"
   }
 
-  # hack for acme.json permissions problem
-  # set {
-  #   name  = "deployment.initContainers[0].name"
-  #   value = "volume-permissions"
-  # }
-  # set {
-  #   name  = "deployment.initContainers[0].image"
-  #   value = "busybox:1.36.1"
-  # }
-  # set {
-  #   name  = "deployment.initContainers[0].command[0]"
-  #   value = "sh"
-  # }
-  # set {
-  #   name  = "deployment.initContainers[0].command[1]"
-  #   value = "-c"
-  # }
-  # set {
-  #   name  = "deployment.initContainers[0].command[2]"
-  #   value = "chmod -Rv 600 /data/*"
-  # }
-  # set {
-  #   name  = "deployment.initContainers[0].securityContext.runAsNonRoot"
-  #   value = "true"
-  # }
-  # set {
-  #   name  = "deployment.initContainers[0].securityContext.runAsGroup"
-  #   value = "65532"
-  # }
-  # set {
-  #   name  = "deployment.initContainers[0].securityContext.runAsUser"
-  #   value = "65532"
-  # }
-  # set {
-  #   name  = "deployment.initContainers[0].volumeMounts[0].name"
-  #   value = "data"
-  # }
-  # set {
-  #   name  = "deployment.initContainers[0].volumeMounts[0].mountPath"
-  #   value = "/data"
-  # }
-  # end of hack
-
   set {
     name  = "additionalArguments[0]"
     value = "--providers.kubernetesingress.allowexternalnameservices"
