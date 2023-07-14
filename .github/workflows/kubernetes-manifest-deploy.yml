@@ -1,0 +1,40 @@
+on:
+  workflow_call:
+    inputs:
+      runner-type:
+        required: false
+        type: string
+        default: self-hosted
+      manifest-file:
+        required: true
+        type: string
+
+env:
+  CLIENT_CERT_DATA: ${{ secrets.KUBE_CLIENT_CERT_DATA }}
+  CLIENT_KEY_DATA: ${{ secrets.KUBE_CLIENT_KEY_DATA }}
+  CLUSTER_CA_CERT_DATA: ${{ secrets.KUBE_CLUSTER_CA_CERT_DATA }}
+  SERVER_KUBE_PORT: ${{ vars.SERVER_KUBE_PORT }}
+  TF_VAR_server_base_domain: ${{ vars.TF_VARS_server_base_domain }}
+
+jobs:
+  deploy-kubernetes-terraform:
+    runs-on: ${{ inputs.runner-type }}
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v3
+      - name: "Setup node"
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+      - name: "Generate kubeconfig"
+        working-directory: ./terraform
+        run: "./cluster-config-write.sh"
+      - name: "Add cluster CA certificate"
+        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.25.3'
+      - name: "Create terraform-state namespace"
+        run: "kubectl --kubeconfig ./terraform/cluster.yml apply -f ${{ inputs.manifest-file }}"
