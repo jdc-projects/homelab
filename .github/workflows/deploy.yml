@@ -15,7 +15,7 @@ jobs:
     secrets: inherit
 
     with:
-      runner-type: $RUNNER_TYPE
+      runner-type: ${{ true == github.event.inputs.use-github-runners && 'test-val-1' || 'test-val-2' }}
 
   deploy-github-org-runner-1:
     needs: [
