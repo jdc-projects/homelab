@@ -4,7 +4,7 @@ on:
     inputs:
       first-run:
         type: boolean
-        description: Is this being run on a clean environment?
+        description: Clean environment
 
 jobs:
   deploy-terraform-state-namespace:
