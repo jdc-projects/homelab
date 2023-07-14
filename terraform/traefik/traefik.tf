@@ -39,7 +39,7 @@ resource "helm_release" "traefik_ingress" {
   }
   set {
     name  = "deployment.initContainers[0].command[2]"
-    value = "touch /data/acme.json; chmod -v 600 /data/acme.json"
+    value = "chown -R 65532:65532 /data; touch /data/acme.json; chmod -v 600 /data/acme.json"
   }
   set {
     name  = "deployment.initContainers[0].securityContext.runAsNonRoot"
