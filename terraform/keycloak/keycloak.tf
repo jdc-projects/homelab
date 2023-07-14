@@ -101,11 +101,11 @@ resource "helm_release" "keycloak" {
     value = "traefik.ingress.kubernetes.io/router.entrypoints: websecure"
   }
 
-  set {
+  set_sensitive {
     name  = "postgresql.auth.password"
     value = random_password.keycloak_db_password.result
   }
-  set {
+  set_sensitive {
     name  = "externalDatabase.password"
     value = random_password.keycloak_db_password.result
   }
