@@ -12,7 +12,7 @@ jobs:
     secrets: inherit
 
     with:
-      runner-type: ${{ first-run && "ubuntu-latest" || "self-hosted" }}
+      runner-type: ${{ github.event.inputs.first-run && "ubuntu-latest" || "self-hosted" }}
 
   deploy-github-org-runner-1:
     needs: [
@@ -23,7 +23,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/github-org-runners-1
-      runner-type: ${{ first-run && "ubuntu-latest" || "self-hosted" }}
+      runner-type: ${{ github.event.inputs.first-run && "ubuntu-latest" || "self-hosted" }}
 
   deploy-github-org-runner-2:
     needs: deploy-github-org-runner-1
@@ -32,7 +32,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/github-org-runners-2
-      runner-type: ${{ first-run && "ubuntu-latest" || "self-hosted" }}
+      runner-type: ${{ github.event.inputs.first-run && "ubuntu-latest" || "self-hosted" }}
 
   deploy-traefik:
     needs: [
@@ -43,7 +43,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/traefik
-      runner-type: ${{ first-run && "ubuntu-latest" || "self-hosted" }}
+      runner-type: ${{ github.event.inputs.first-run && "ubuntu-latest" || "self-hosted" }}
 
   # deploy-velero:
   #   needs: [
