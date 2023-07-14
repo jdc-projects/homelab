@@ -4,7 +4,7 @@ resource "null_resource" "traefik_version" {
   }
 }
 
-resource "helm_release" "traefik_ingress" {
+resource "helm_release" "traefik" {
   name = "traefik"
 
   repository = "https://traefik.github.io/charts"
@@ -221,5 +221,5 @@ resource "null_resource" "traefik_cert_check" {
     command = "timeout 300 bash -c 'while ! curl -sI https://${var.server_base_domain}; do echo \"Waiting for valid HTTPS cert\" && sleep 1; done'"
   }
 
-  depends_on = [helm_release.traefik_ingress]
+  depends_on = [helm_release.traefik]
 }
