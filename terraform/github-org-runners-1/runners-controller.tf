@@ -1,17 +1,11 @@
-resource "kubernetes_namespace" "jdc_projects_runners_namespace" {
-  metadata {
-    name = "jdc-projects-runners"
-  }
-}
-
-resource "helm_release" "jdc_projects_runners_controller" {
-  name = "jdc-projects-runners-controller"
+resource "helm_release" "githib_org_runners_controller" {
+  name = "github-org-runners-controller"
 
   repository = "https://actions-runner-controller.github.io/actions-runner-controller"
   chart      = "actions-runner-controller"
   version    = "v0.23.3"
 
-  namespace = kubernetes_namespace.jdc_projects_runners_namespace.metadata[0].name
+  namespace = kubernetes_namespace.github_org_runners.metadata[0].name
 
   timeout = 300
 
@@ -43,7 +37,7 @@ resource "helm_release" "jdc_projects_runners_controller" {
   }
   set {
     name  = "scope.watchNamespace"
-    value = kubernetes_namespace.jdc_projects_runners_namespace.metadata[0].name
+    value = kubernetes_namespace.github_org_runners.metadata[0].name
   }
 
   set {

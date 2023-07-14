@@ -1,11 +1,11 @@
-resource "kubernetes_manifest" "jdc_projects_runners_deployment" {
+resource "kubernetes_manifest" "github_org_runners_deployment" {
   manifest = {
     apiVersion = "actions.summerwind.dev/v1alpha1"
     kind       = "RunnerDeployment"
 
     metadata = {
       name      = "jdc-projects-runners-deployment"
-      namespace = data.terraform_remote_state.foundation_part1.outputs.jdc_projects_runners_namespace_name
+      namespace = data.terraform_remote_state.github_org_runners_1.outputs.github_org_runners_namespace_name
     }
 
     spec = {
@@ -20,14 +20,14 @@ resource "kubernetes_manifest" "jdc_projects_runners_deployment" {
   }
 }
 
-resource "kubernetes_manifest" "jdc_projects_runners_autoscaler" {
+resource "kubernetes_manifest" "github_org_runners_autoscaler" {
   manifest = {
     apiVersion = "actions.summerwind.dev/v1alpha1"
     kind       = "HorizontalRunnerAutoscaler"
 
     metadata = {
       name      = "jdc-projects-runners-autoscaler"
-      namespace = data.terraform_remote_state.foundation_part1.outputs.jdc_projects_runners_namespace_name
+      namespace = data.terraform_remote_state.github_org_runners_1.outputs.github_org_runners_namespace_name
     }
 
     spec = {
@@ -36,7 +36,7 @@ resource "kubernetes_manifest" "jdc_projects_runners_autoscaler" {
 
       scaleTargetRef = {
         kind = "RunnerDeployment"
-        name = kubernetes_manifest.jdc_projects_runners_deployment.manifest.metadata.name
+        name = kubernetes_manifest.github_org_runners_deployment.manifest.metadata.name
       }
 
       scaleUpTriggers = [{

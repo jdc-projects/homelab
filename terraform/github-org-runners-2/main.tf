@@ -1,6 +1,6 @@
 terraform {
   backend "kubernetes" {
-    secret_suffix = "foundation-part2"
+    secret_suffix = "github-org-runners-2"
     config_path   = "../../cluster.yml"
     namespace     = "terraform-state"
   }
@@ -13,11 +13,11 @@ terraform {
   }
 }
 
-data "terraform_remote_state" "foundation_part1" {
+data "terraform_remote_state" "github_org_runners_1" {
   backend = "kubernetes"
 
   config = {
-    secret_suffix = "foundation-part1"
+    secret_suffix = "github-org-runners-1"
     config_path   = "../../cluster.yml"
     namespace     = "terraform-state"
   }

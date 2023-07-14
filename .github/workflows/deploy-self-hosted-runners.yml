@@ -1,0 +1,33 @@
+name: Deploy Self-Hosted Runners
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-terraform-state-namespace:
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      runner-type: ubuntu-latest
+
+  deploy-github-org-runner-1:
+    needs: [
+      deploy-terraform-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      runner-type: ubuntu-latest
+      terraform-dir: ./terraform/github-org-runners-1
+
+  deploy-github-org-runner-2:
+    needs: [
+      deploy-github-org-runner-1,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      runner-type: ubuntu-latest
+      terraform-dir: ./terraform/github-org-runners-2

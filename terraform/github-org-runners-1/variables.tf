@@ -18,9 +18,3 @@ variable "jdc_projects_runners_app_private_key" {
   sensitive   = true
   description = ""
 }
-
-variable "cloudflare_acme_token" {
-  type        = string
-  sensitive   = true
-  description = ""
-}

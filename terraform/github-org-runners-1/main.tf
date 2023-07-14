@@ -1,6 +1,6 @@
 terraform {
   backend "kubernetes" {
-    secret_suffix = "foundation-part1"
+    secret_suffix = "github-org-runners-1"
     config_path   = "../../cluster.yml"
     namespace     = "terraform-state"
   }
@@ -15,11 +15,6 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "2.21.1"
     }
-
-    null = {
-      source  = "hashicorp/null"
-      version = "3.2.1"
-    }
   }
 }
 
@@ -33,6 +28,8 @@ provider "kubernetes" {
   config_path = "../../cluster.yml"
 }
 
-provider "null" {
-  # Configuration options
+resource "kubernetes_namespace" "github_org_runners" {
+  metadata {
+    name = "github-org-runners"
+  }
 }

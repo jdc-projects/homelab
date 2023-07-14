@@ -1,64 +1,112 @@
 name: Deploy
 on:
   workflow_dispatch:
-  repository_dispatch:
-    type: [deployment]
-  push:
-    branches:
-      - 'trunk'
+  # push:
+  #   branches:
+  #     - 'trunk'
 
 jobs:
-  deploy-foundational-services:
-    uses: ./.github/workflows/deploy-foundational-services.yml
+  deploy-terraform-state-namespace:
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+  deploy-github-org-runner-1:
+    needs: [
+      deploy-terraform-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
 
     with:
-      runner-type: self-hosted
+      terraform-dir: ./terraform/github-org-runners-1
+
+  deploy-github-org-runner-2:
+    needs: deploy-github-org-runner-1
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/github-org-runners-2
+
+  # deploy-velero:
+  #   needs: [
+  #     deploy-terraform-state-namespace,
+  #   ]
+  #   uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+  #   secrets: inherit
+
+  #   with:
+  #     terraform-dir: ./terraform/velero
+
+  deploy-traefik:
+    needs: [
+      deploy-terraform-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/traefik
 
   deploy-services:
-    needs: deploy-foundational-services
-
-    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
-    with:
-      terraform-dir: ./terraform/apps/services
+    needs: [
+      deploy-traefik,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/services
 
   deploy-openldap:
-    needs: deploy-foundational-services
-
-    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
-    with:
-      terraform-dir: ./terraform/apps/openldap
+    needs: [
+      # deploy-velero,
+      deploy-traefik,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
 
-  deploy-vaultwarden:
-    needs: deploy-openldap
-
-    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
     with:
-      terraform-dir: ./terraform/apps/vaultwarden
-    secrets: inherit
+      terraform-dir: ./terraform/openldap
 
   deploy-keycloak:
-    needs: deploy-foundational-services
-
-    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
-    with:
-      terraform-dir: ./terraform/apps/keycloak
+    needs: [
+      # deploy-velero,
+      deploy-traefik,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/keycloak
 
   deploy-keycloak-config:
-    needs: [deploy-openldap, deploy-keycloak]
-
-    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
-    with:
-      terraform-dir: ./terraform/apps/keycloak-config
+    needs: [
+      deploy-openldap,
+      deploy-keycloak,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/keycloak-config
+
+  deploy-vaultwarden:
+    needs: [
+      deploy-openldap,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/vaultwarden
 
   deploy-ocis:
-    needs: deploy-keycloak-config
-
-    uses: ./.github/workflows/kubernetes-terraform-deploy-self-hosted-runner.yml
-    with:
-      terraform-dir: ./terraform/apps/ocis
+    needs: [
+      deploy-keycloak-config,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/ocis
