@@ -25,11 +25,11 @@ resource "helm_release" "keycloak" {
 
   timeout = 300
 
-  set {
+  set_sensitive {
     name  = "auth.adminUser"
     value = random_password.keycloak_admin_username.result
   }
-  set {
+  set_sensitive {
     name  = "auth.adminPassword"
     value = random_password.keycloak_admin_password.result
   }

@@ -29,7 +29,7 @@ resource "helm_release" "velero" {
     name  = "configuration.backupStorageLocation[0].credential.name"
     value = ""
   }
-  set {
+  set_sensitive {
     name  = "configuration.backupStorageLocation[0].credential.key"
     value = ""
   }
