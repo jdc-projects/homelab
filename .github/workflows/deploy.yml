@@ -5,7 +5,7 @@ on:
       runner-type:
         description: 'Runners to use'
         required: true
-        default: 'self-hosted'
+        default: self-hosted
         type: choice
         options:
           - self-hosted
@@ -13,10 +13,11 @@ on:
 
 jobs:
   deploy-terraform-state-namespace:
-    uses: ./.github/workflows/terraform-state-namespace-deploy.yml
+    uses: ./.github/workflows/kubernetes-manifest-deploy.yml
     secrets: inherit
 
     with:
+      manifest-file: ./terraform/terraform-state-namespace.yml
       runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-github-org-runner-1:
