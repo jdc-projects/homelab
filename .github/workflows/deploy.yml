@@ -26,7 +26,9 @@ jobs:
       runner-type: ${{ github.event.inputs.first-run && 'ubuntu-latest' || 'self-hosted' }}
 
   deploy-github-org-runner-2:
-    needs: deploy-github-org-runner-1
+    needs: [
+      deploy-github-org-runner-1,
+    ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
 
