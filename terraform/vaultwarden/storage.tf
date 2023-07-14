@@ -13,4 +13,8 @@ resource "kubernetes_persistent_volume_claim" "vaultwarden" {
       }
     }
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }

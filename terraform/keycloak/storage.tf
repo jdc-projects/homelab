@@ -13,4 +13,8 @@ resource "kubernetes_persistent_volume_claim" "keycloak_db" {
       }
     }
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }

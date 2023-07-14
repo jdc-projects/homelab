@@ -37,12 +37,15 @@ resource "kubernetes_persistent_volume_claim" "ocis" {
 
   spec {
     access_modes = ["ReadWriteMany"]
-    # ***** retentioin policy *****
 
     resources {
       requests = {
         storage = each.value.storage
       }
     }
+  }
+
+  lifecycle {
+    prevent_destroy = true
   }
 }
