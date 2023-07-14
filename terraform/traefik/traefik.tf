@@ -173,7 +173,7 @@ resource "helm_release" "traefik" {
     value = "jack.chapman@sky.com"
   }
   set {
-    name  = "certResolvers.letsencrypt.caServer"
+    name = "certResolvers.letsencrypt.caServer"
     # value = "https://acme-v02.api.letsencrypt.org/directory"
     value = "https://acme-staging-v02.api.letsencrypt.org/directory"
   }
