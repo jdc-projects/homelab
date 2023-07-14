@@ -7,7 +7,7 @@ on:
         description: Use Github Runners
 
 env:
-  runner-type: ${{ true == github.event.inputs.use-github-runners && 'test-val-1' || 'test-val-2' }}
+  RUNNER_TYPE: ${{ true == github.event.inputs.use-github-runners && 'test-val-1' || 'test-val-2' }}
 
 jobs:
   deploy-terraform-state-namespace:
@@ -15,7 +15,7 @@ jobs:
     secrets: inherit
 
     with:
-      runner-type: ${{ env.runner-type }}
+      runner-type: $RUNNER_TYPE
 
   deploy-github-org-runner-1:
     needs: [
@@ -26,7 +26,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/github-org-runners-1
-      runner-type: ${{ env.runner-type }}
+      runner-type: ${{ env.RUNNER_TYPE }}
 
   deploy-github-org-runner-2:
     needs: [
@@ -37,7 +37,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/github-org-runners-2
-      runner-type: ${{ env.runner-type }}
+      runner-type: ${{ env.RUNNER_TYPE}}
 
   deploy-traefik:
     needs: [
@@ -48,7 +48,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/traefik
-      runner-type: ${{ env.runner-type }}
+      runner-type: ${{ env.RUNNER_TYPE }}
 
   # deploy-velero:
   #   needs: [
