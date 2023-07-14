@@ -7,14 +7,14 @@ on:
 
 jobs:
   deploy-terraform-state-namespace:
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/reusable/kubernetes-terraform-deploy.yml
     secrets: inherit
 
   deploy-github-org-runner-1:
     needs: [
       deploy-terraform-state-namespace,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/reusable/kubernetes-terraform-deploy.yml
     secrets: inherit
 
     with:
@@ -22,7 +22,7 @@ jobs:
 
   deploy-github-org-runner-2:
     needs: deploy-github-org-runner-1
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/reusable/kubernetes-terraform-deploy.yml
     secrets: inherit
 
     with:
@@ -32,7 +32,7 @@ jobs:
   #   needs: [
   #     deploy-terraform-state-namespace,
   #   ]
-  #   uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+  #   uses: ./.github/workflows/reusable/kubernetes-terraform-deploy.yml
   #   secrets: inherit
 
   #   with:
@@ -42,7 +42,7 @@ jobs:
     needs: [
       deploy-terraform-state-namespace,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/reusable/kubernetes-terraform-deploy.yml
     secrets: inherit
 
     with:
@@ -52,7 +52,7 @@ jobs:
     needs: [
       deploy-traefik,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/reusable/kubernetes-terraform-deploy.yml
     secrets: inherit
 
     with:
@@ -63,7 +63,7 @@ jobs:
       # deploy-velero,
       deploy-traefik,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/reusable/kubernetes-terraform-deploy.yml
     secrets: inherit
 
     with:
@@ -74,7 +74,7 @@ jobs:
       # deploy-velero,
       deploy-traefik,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/reusable/kubernetes-terraform-deploy.yml
     secrets: inherit
 
     with:
@@ -85,7 +85,7 @@ jobs:
       deploy-openldap,
       deploy-keycloak,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/reusable/kubernetes-terraform-deploy.yml
     secrets: inherit
 
     with:
@@ -95,7 +95,7 @@ jobs:
     needs: [
       deploy-openldap,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/reusable/kubernetes-terraform-deploy.yml
     secrets: inherit
 
     with:
@@ -105,7 +105,7 @@ jobs:
     needs: [
       deploy-keycloak-config,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/reusable/kubernetes-terraform-deploy.yml
     secrets: inherit
 
     with:
