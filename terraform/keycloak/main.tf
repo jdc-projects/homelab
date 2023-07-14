@@ -54,7 +54,7 @@ provider "archive" {
   # Configuration options
 }
 
-resource "kubernetes_namespace" "keycloak_namespace" {
+resource "kubernetes_namespace" "keycloak" {
   metadata {
     name = "keycloak"
   }

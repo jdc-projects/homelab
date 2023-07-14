@@ -4,10 +4,10 @@ resource "random_password" "vaultwarden_admin_token" {
   override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 
-resource "kubernetes_config_map" "vaultwarden_configmap" {
+resource "kubernetes_config_map" "vaultwarden_env" {
   metadata {
     name      = "vaultwarden"
-    namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
+    namespace = kubernetes_namespace.vaultwarden.metadata[0].name
   }
 
   data = {
@@ -28,10 +28,10 @@ resource "kubernetes_config_map" "vaultwarden_configmap" {
   }
 }
 
-resource "kubernetes_secret" "vaultwarden_secret" {
+resource "kubernetes_secret" "vaultwarden_env" {
   metadata {
     name      = "vaultwarden"
-    namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
+    namespace = kubernetes_namespace.vaultwarden.metadata[0].name
   }
 
   data = {
@@ -43,7 +43,7 @@ resource "kubernetes_secret" "vaultwarden_secret" {
 resource "kubernetes_deployment" "vaultwarden_deployment" {
   metadata {
     name      = "vaultwarden"
-    namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
+    namespace = kubernetes_namespace.vaultwarden.metadata[0].name
   }
 
   spec {
@@ -69,13 +69,13 @@ resource "kubernetes_deployment" "vaultwarden_deployment" {
 
           env_from {
             config_map_ref {
-              name = kubernetes_config_map.vaultwarden_configmap.metadata[0].name
+              name = kubernetes_config_map.vaultwarden_env.metadata[0].name
             }
           }
 
           env_from {
             secret_ref {
-              name = kubernetes_secret.vaultwarden_secret.metadata[0].name
+              name = kubernetes_secret.vaultwarden_env.metadata[0].name
             }
           }
 
@@ -88,8 +88,8 @@ resource "kubernetes_deployment" "vaultwarden_deployment" {
         volume {
           name = "vaultwarden-data"
 
-          host_path {
-            path = truenas_dataset.vaultwarden_dataset.mount_point
+          persistent_volume_claim {
+            claim_name = kubernetes_persistent_volume_claim.vaultwarden.metadata[0].name
           }
         }
       }
@@ -98,7 +98,8 @@ resource "kubernetes_deployment" "vaultwarden_deployment" {
 
   lifecycle {
     replace_triggered_by = [
-      kubernetes_config_map.vaultwarden_configmap
+      kubernetes_config_map.vaultwarden_env,
+      kubernetes_secret.vaultwarden_env
     ]
   }
 }

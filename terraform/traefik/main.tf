@@ -36,3 +36,9 @@ provider "kubernetes" {
 provider "null" {
   # Configuration options
 }
+
+resource "kubernetes_namespace" "traefik" {
+  metadata {
+    name = "traefik"
+  }
+}

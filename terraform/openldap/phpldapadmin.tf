@@ -58,11 +58,6 @@ resource "kubernetes_deployment" "phpldapadmin" {
             sub_path   = "env.yaml"
             mount_path = "/container/environment/01-custom/env.yaml"
           }
-
-          #   volume_mount {
-          #     mount_path = "/data"
-          #     name       = "phpldapadmin-data"
-          #   }
         }
 
         volume {
@@ -72,14 +67,6 @@ resource "kubernetes_deployment" "phpldapadmin" {
             name = kubernetes_config_map.phpldapadmin_env[0].metadata[0].name
           }
         }
-
-        # volume {
-        #   name = "vaultwarden-data"
-
-        #   host_path {
-        #     path = truenas_dataset.vaultwarden_dataset.mount_point
-        #   }
-        # }
       }
     }
   }

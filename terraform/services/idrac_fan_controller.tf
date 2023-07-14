@@ -1,4 +1,4 @@
-resource "kubernetes_namespace" "idrac_fan_controller_namespace" {
+resource "kubernetes_namespace" "idrac_fan_controller" {
   metadata {
     name = "idrac-fan-controller"
   }
@@ -6,7 +6,7 @@ resource "kubernetes_namespace" "idrac_fan_controller_namespace" {
 resource "kubernetes_secret" "idrac_fan_controller_access_secret" {
   metadata {
     name      = "idrac-fan-controller-access"
-    namespace = kubernetes_namespace.idrac_fan_controller_namespace.metadata[0].name
+    namespace = kubernetes_namespace.idrac_fan_controller.metadata[0].name
   }
 
   data = {
@@ -18,7 +18,7 @@ resource "kubernetes_secret" "idrac_fan_controller_access_secret" {
 resource "kubernetes_deployment" "idrac_fan_controller_deployment" {
   metadata {
     name      = "idrac-fan-controller"
-    namespace = kubernetes_namespace.idrac_fan_controller_namespace.metadata[0].name
+    namespace = kubernetes_namespace.idrac_fan_controller.metadata[0].name
   }
 
   spec {

@@ -1,9 +1,3 @@
-resource "kubernetes_namespace" "traefik_namespace" {
-  metadata {
-    name = "traefik"
-  }
-}
-
 resource "null_resource" "traefik_version" {
   triggers = {
     traefik_version = "21.2.0"
@@ -17,7 +11,7 @@ resource "helm_release" "traefik_ingress" {
   chart      = "traefik"
   version    = null_resource.traefik_version.triggers.traefik_version
 
-  namespace = kubernetes_namespace.traefik_namespace.metadata[0].name
+  namespace = kubernetes_namespace.traefik.metadata[0].name
 
   timeout = 300
 
@@ -168,6 +162,10 @@ resource "helm_release" "traefik_ingress" {
   set {
     name  = "persistence.enabled"
     value = "true"
+  }
+  set {
+    name  = "persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.traefik.metadata[0].name
   }
 
   set {

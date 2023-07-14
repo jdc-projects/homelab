@@ -1,7 +1,7 @@
-resource "kubernetes_config_map" "vaultwarden_ldap_configmap" {
+resource "kubernetes_config_map" "vaultwarden_ldap_env" {
   metadata {
     name      = "vaultwarden-ldap"
-    namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
+    namespace = kubernetes_namespace.vaultwarden.metadata[0].name
   }
 
   data = {
@@ -15,10 +15,10 @@ resource "kubernetes_config_map" "vaultwarden_ldap_configmap" {
   }
 }
 
-resource "kubernetes_secret" "vaultwarden_ldap_secret" {
+resource "kubernetes_secret" "vaultwarden_ldap_env" {
   metadata {
     name      = "vaultwarden-ldap"
-    namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
+    namespace = kubernetes_namespace.vaultwarden.metadata[0].name
   }
 
   data = {
@@ -30,7 +30,7 @@ resource "kubernetes_secret" "vaultwarden_ldap_secret" {
 resource "kubernetes_deployment" "vaultwarden_ldap_deployment" {
   metadata {
     name      = "vaultwarden-ldap"
-    namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
+    namespace = kubernetes_namespace.vaultwarden.metadata[0].name
   }
 
   spec {
@@ -56,13 +56,13 @@ resource "kubernetes_deployment" "vaultwarden_ldap_deployment" {
 
           env_from {
             config_map_ref {
-              name = kubernetes_config_map.vaultwarden_ldap_configmap.metadata[0].name
+              name = kubernetes_config_map.vaultwarden_ldap_env.metadata[0].name
             }
           }
 
           env_from {
             secret_ref {
-              name = kubernetes_secret.vaultwarden_ldap_secret.metadata[0].name
+              name = kubernetes_secret.vaultwarden_ldap_env.metadata[0].name
             }
           }
         }
@@ -72,7 +72,8 @@ resource "kubernetes_deployment" "vaultwarden_ldap_deployment" {
 
   lifecycle {
     replace_triggered_by = [
-      kubernetes_config_map.vaultwarden_ldap_configmap
+      kubernetes_config_map.vaultwarden_ldap_env,
+      kubernetes_secret.vaultwarden_ldap_env
     ]
   }
 }

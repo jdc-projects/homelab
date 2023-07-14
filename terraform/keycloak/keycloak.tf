@@ -7,7 +7,7 @@ resource "null_resource" "keycloak_domain" {
 resource "kubernetes_config_map" "keycloak_extra_env_vars" {
   metadata {
     name      = "keycloak-extra-env-vars"
-    namespace = kubernetes_namespace.keycloak_namespace.metadata[0].name
+    namespace = kubernetes_namespace.keycloak.metadata[0].name
   }
 
   data = {
@@ -17,7 +17,7 @@ resource "kubernetes_config_map" "keycloak_extra_env_vars" {
 
 resource "helm_release" "keycloak" {
   name      = "keycloak"
-  namespace = kubernetes_namespace.keycloak_namespace.metadata[0].name
+  namespace = kubernetes_namespace.keycloak.metadata[0].name
 
   repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "keycloak"

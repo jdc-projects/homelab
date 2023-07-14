@@ -8,7 +8,7 @@ data "archive_file" "keycloak_scripts_jar" {
 resource "kubernetes_config_map" "keycloak_custom_scripts" {
   metadata {
     name      = "keycloak-custom-scripts"
-    namespace = kubernetes_namespace.keycloak_namespace.metadata[0].name
+    namespace = kubernetes_namespace.keycloak.metadata[0].name
   }
 
   binary_data = {

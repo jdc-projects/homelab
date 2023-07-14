@@ -45,7 +45,7 @@ data "terraform_remote_state" "openldap" {
   }
 }
 
-resource "kubernetes_namespace" "vaultwarden_namespace" {
+resource "kubernetes_namespace" "vaultwarden" {
   metadata {
     name = "vaultwarden"
   }

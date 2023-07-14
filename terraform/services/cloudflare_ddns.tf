@@ -1,4 +1,4 @@
-resource "kubernetes_namespace" "cloudflare_ddns_namespace" {
+resource "kubernetes_namespace" "cloudflare_ddns" {
   metadata {
     name = "cloudflare-ddns"
   }
@@ -8,7 +8,7 @@ resource "kubernetes_namespace" "cloudflare_ddns_namespace" {
 resource "kubernetes_secret" "cloudflare_ddns_token_secret" {
   metadata {
     name      = "cloudflare-ddns-token"
-    namespace = kubernetes_namespace.cloudflare_ddns_namespace.metadata[0].name
+    namespace = kubernetes_namespace.cloudflare_ddns.metadata[0].name
   }
 
   data = {
@@ -19,7 +19,7 @@ resource "kubernetes_secret" "cloudflare_ddns_token_secret" {
 resource "kubernetes_deployment" "cloudflare_ddns_deployment" {
   metadata {
     name      = "cloudflare-ddns"
-    namespace = kubernetes_namespace.cloudflare_ddns_namespace.metadata[0].name
+    namespace = kubernetes_namespace.cloudflare_ddns.metadata[0].name
   }
 
   spec {

@@ -6,11 +6,6 @@ terraform {
   }
 
   required_providers {
-    truenas = {
-      source  = "dariusbakunas/truenas"
-      version = "0.11.1"
-    }
-
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = "2.21.1"
@@ -31,11 +26,6 @@ terraform {
       version = "2.4.0"
     }
   }
-}
-
-provider "truenas" {
-  api_key  = var.truenas_api_key
-  base_url = "https://nas.${var.server_base_domain}/api/v2.0"
 }
 
 provider "kubernetes" {

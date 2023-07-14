@@ -1,10 +1,16 @@
-resource "truenas_dataset" "vaultwarden_dataset" {
-  pool               = "vault"
-  parent             = "apps"
-  name               = "vaultwarden"
-  inherit_encryption = true
+resource "kubernetes_persistent_volume_claim" "vaultwarden" {
+  metadata {
+    name      = "vaultwarden"
+    namespace = kubernetes_namespace.vaultwarden.metadata[0].name
+  }
 
-  lifecycle {
-    prevent_destroy = true
+  spec {
+    access_modes = ["ReadWriteMany"]
+
+    resources {
+      requests = {
+        storage = "1Gi"
+      }
+    }
   }
 }

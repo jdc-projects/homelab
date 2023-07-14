@@ -1,7 +1,7 @@
-resource "kubernetes_service" "vaultwarden_webvault_service" {
+resource "kubernetes_service" "vaultwarden_webvault" {
   metadata {
     name      = "vaultwarden-webvault"
-    namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
+    namespace = kubernetes_namespace.vaultwarden.metadata[0].name
   }
 
   spec {
@@ -10,16 +10,16 @@ resource "kubernetes_service" "vaultwarden_webvault_service" {
     }
 
     port {
-      port        = kubernetes_config_map.vaultwarden_configmap.data.ROCKET_PORT
-      target_port = kubernetes_config_map.vaultwarden_configmap.data.ROCKET_PORT
+      port        = kubernetes_config_map.vaultwarden_env.data.ROCKET_PORT
+      target_port = kubernetes_config_map.vaultwarden_env.data.ROCKET_PORT
     }
   }
 }
 
-resource "kubernetes_service" "vaultwarden_websocket_service" {
+resource "kubernetes_service" "vaultwarden_websocket" {
   metadata {
     name      = "vaultwarden-websocket"
-    namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
+    namespace = kubernetes_namespace.vaultwarden.metadata[0].name
   }
 
   spec {
@@ -28,8 +28,8 @@ resource "kubernetes_service" "vaultwarden_websocket_service" {
     }
 
     port {
-      port        = kubernetes_config_map.vaultwarden_configmap.data.WEBSOCKET_PORT
-      target_port = kubernetes_config_map.vaultwarden_configmap.data.WEBSOCKET_PORT
+      port        = kubernetes_config_map.vaultwarden_env.data.WEBSOCKET_PORT
+      target_port = kubernetes_config_map.vaultwarden_env.data.WEBSOCKET_PORT
     }
   }
 }
@@ -41,7 +41,7 @@ resource "kubernetes_manifest" "vaultwarden_webvault_ingress" {
 
     metadata = {
       name      = "vaultwarden-webvault"
-      namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
+      namespace = kubernetes_namespace.vaultwarden.metadata[0].name
     }
 
     spec = {
@@ -51,9 +51,9 @@ resource "kubernetes_manifest" "vaultwarden_webvault_ingress" {
         kind  = "Rule"
         match = "Host(`vault.${var.server_base_domain}`)"
         services = [{
-          name      = kubernetes_service.vaultwarden_webvault_service.metadata[0].name
-          namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
-          port      = kubernetes_service.vaultwarden_webvault_service.spec[0].port[0].port
+          name      = kubernetes_service.vaultwarden_webvault.metadata[0].name
+          namespace = kubernetes_namespace.vaultwarden.metadata[0].name
+          port      = kubernetes_service.vaultwarden_webvault.spec[0].port[0].port
         }]
       }]
     }
@@ -67,7 +67,7 @@ resource "kubernetes_manifest" "vaultwarden_webvault_negotiate_ingress" {
 
     metadata = {
       name      = "vaultwarden-webvault-negotiate"
-      namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
+      namespace = kubernetes_namespace.vaultwarden.metadata[0].name
     }
 
     spec = {
@@ -78,9 +78,9 @@ resource "kubernetes_manifest" "vaultwarden_webvault_negotiate_ingress" {
         priority = "20"
         match    = "Host(`vault.${var.server_base_domain}`) && Path(`/notifications/hub/negotiate`)"
         services = [{
-          name      = kubernetes_service.vaultwarden_webvault_service.metadata[0].name
-          namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
-          port      = kubernetes_service.vaultwarden_webvault_service.spec[0].port[0].port
+          name      = kubernetes_service.vaultwarden_webvault.metadata[0].name
+          namespace = kubernetes_namespace.vaultwarden.metadata[0].name
+          port      = kubernetes_service.vaultwarden_webvault.spec[0].port[0].port
         }]
       }]
     }
@@ -94,7 +94,7 @@ resource "kubernetes_manifest" "vaultwarden_websocket_ingress" {
 
     metadata = {
       name      = "vaultwarden-websocket"
-      namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
+      namespace = kubernetes_namespace.vaultwarden.metadata[0].name
     }
 
     spec = {
@@ -105,9 +105,9 @@ resource "kubernetes_manifest" "vaultwarden_websocket_ingress" {
         priority = "10"
         match    = "Host(`vault.${var.server_base_domain}`) && Path(`/notifications/hub`)"
         services = [{
-          name      = kubernetes_service.vaultwarden_websocket_service.metadata[0].name
-          namespace = kubernetes_namespace.vaultwarden_namespace.metadata[0].name
-          port      = kubernetes_service.vaultwarden_websocket_service.spec[0].port[0].port
+          name      = kubernetes_service.vaultwarden_websocket.metadata[0].name
+          namespace = kubernetes_namespace.vaultwarden.metadata[0].name
+          port      = kubernetes_service.vaultwarden_websocket.spec[0].port[0].port
         }]
       }]
     }

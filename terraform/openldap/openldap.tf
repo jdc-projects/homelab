@@ -116,8 +116,8 @@ resource "kubernetes_deployment" "openldap" {
         volume {
           name = "openldap-data"
 
-          host_path {
-            path = truenas_dataset.openldap.mount_point
+          persistent_volume_claim {
+            claim_name = kubernetes_persistent_volume_claim.openldap.metadata[0].name
           }
         }
       }

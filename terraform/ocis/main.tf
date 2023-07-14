@@ -6,11 +6,6 @@ terraform {
   }
 
   required_providers {
-    truenas = {
-      source  = "dariusbakunas/truenas"
-      version = "0.11.1"
-    }
-
     helm = {
       source  = "hashicorp/helm"
       version = "2.10.1"
@@ -36,11 +31,6 @@ terraform {
       version = "3.5.1"
     }
   }
-}
-
-provider "truenas" {
-  api_key  = var.truenas_api_key
-  base_url = "https://nas.${var.server_base_domain}/api/v2.0"
 }
 
 provider "helm" {

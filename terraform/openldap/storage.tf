@@ -1,10 +1,16 @@
-resource "truenas_dataset" "openldap" {
-  pool               = "vault"
-  parent             = "apps"
-  name               = "openldap"
-  inherit_encryption = true
+resource "kubernetes_persistent_volume_claim" "openldap" {
+  metadata {
+    name      = "openldap"
+    namespace = kubernetes_namespace.openldap.metadata[0].name
+  }
 
-  lifecycle {
-    prevent_destroy = true
+  spec {
+    access_modes = ["ReadWriteMany"]
+
+    resources {
+      requests = {
+        storage = "1Gi"
+      }
+    }
   }
 }
