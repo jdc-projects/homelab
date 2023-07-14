@@ -1,9 +1,10 @@
 name: Deploy
 on:
   workflow_dispatch:
-    first-run:
-      type: boolean
-      description: Is this being run on a clean environment?
+    inputs:
+      first-run:
+        type: boolean
+        description: Is this being run on a clean environment?
 
 jobs:
   deploy-terraform-state-namespace:
