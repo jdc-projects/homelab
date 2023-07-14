@@ -15,7 +15,7 @@ jobs:
     secrets: inherit
 
     with:
-      runner-type: ${{ github.event.inputs.use-github-runners }}
+      runner-type: ${{ fromJSON('{"true":"test-val-1,"false":"test-val-2"}')[github.event.inputs.use-github-runners] }}
 
   deploy-github-org-runner-1:
     needs: [
