@@ -31,3 +31,14 @@ jobs:
     with:
       runner-type: ubuntu-latest
       terraform-dir: ./terraform/github-org-runners-2
+
+  deploy-traefik:
+    needs: [
+      deploy-terraform-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      runner-type: ubuntu-latest
+      terraform-dir: ./terraform/traefik
