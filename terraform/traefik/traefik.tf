@@ -39,7 +39,7 @@ resource "helm_release" "traefik" {
   }
   set {
     name  = "deployment.initContainers[0].command[2]"
-    value = "chown -R 65532:65532 /data; touch /data/acme.json; chmod -v 600 /data/acme.json"
+    value = "touch /data/acme.json; chmod -v 600 /data/acme.json; chown -R 65532:65532 /data"
   }
   set {
     name  = "deployment.initContainers[0].securityContext.runAsNonRoot"
