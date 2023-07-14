@@ -2,12 +2,14 @@ name: Deploy
 on:
   workflow_dispatch:
     inputs:
-      use-github-runners:
-        type: boolean
-        description: Use Github Runners
-
-env:
-  RUNNER_TYPE: ${{ true == github.event.inputs.use-github-runners && 'test-val-1' || 'test-val-2' }}
+      runner-type:
+        description: 'Runners to use'
+        required: true
+        default: 'self-hosted'
+        type: choice
+        options:
+          - self-hosted
+          - ubuntu-latest
 
 jobs:
   deploy-terraform-state-namespace:
@@ -15,7 +17,7 @@ jobs:
     secrets: inherit
 
     with:
-      runner-type: ${{ fromJSON('{"true":"test-val-1","false":"test-val-2"}')[github.event.inputs.use-github-runners] }}
+      runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-github-org-runner-1:
     needs: [
@@ -26,7 +28,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/github-org-runners-1
-      runner-type: $RUNNER_TYPE
+      runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-github-org-runner-2:
     needs: [
@@ -37,7 +39,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/github-org-runners-2
-      runner-type: $RUNNER_TYPE
+      runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-traefik:
     needs: [
@@ -48,7 +50,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/traefik
-      runner-type: $RUNNER_TYPE
+      runner-type: ${{ github.event.inputs.runner-type }}
 
   # deploy-velero:
   #   needs: [
