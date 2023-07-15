@@ -53,15 +53,15 @@ jobs:
       terraform-dir: ./terraform/traefik
       runner-type: ${{ github.event.inputs.runner-type }}
 
-  # deploy-velero:
-  #   needs: [
-  #     deploy-terraform-state-namespace,
-  #   ]
-  #   uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-  #   secrets: inherit
+  deploy-velero:
+    needs: [
+      deploy-github-org-runner-2,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
 
-  #   with:
-  #     terraform-dir: ./terraform/velero
+    with:
+      terraform-dir: ./terraform/velero
 
   deploy-services:
     needs: [
