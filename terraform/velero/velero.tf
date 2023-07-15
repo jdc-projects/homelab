@@ -12,8 +12,8 @@ resource "kubernetes_secret" "velero" {
 resource "helm_release" "velero" {
   name = "velero"
 
-  repository = "https://traefik.github.io/charts"
-  chart      = "traefik"
+  repository = "https://vmware-tanzu.github.io/helm-charts"
+  chart      = "velero"
   version    = "4.1.3"
 
   namespace = kubernetes_namespace.velero.metadata[0].name
