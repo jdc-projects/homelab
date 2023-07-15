@@ -1,6 +1,6 @@
 terraform {
   backend "kubernetes" {
-    secret_suffix = "foundation-part1"
+    secret_suffix = "velero"
     config_path   = "../cluster.yml"
     namespace     = "terraform-state"
   }
