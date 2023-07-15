@@ -1,3 +1,14 @@
+resource "kubernetes_secret" "velero" {
+  metadata {
+    name = "velero"
+    namespace = kubernetes_namespace.velero.metadata[0].name
+  }
+
+  data = {
+    S3_SECRET_ACCESS_KEY = var.velero_s3_secret_access_key
+  }
+}
+
 resource "helm_release" "velero" {
   name = "velero"
 
@@ -11,15 +22,15 @@ resource "helm_release" "velero" {
 
   set {
     name  = "configuration.backupStorageLocation[0].name"
-    value = ""
+    value = "backblaze-b2"
   }
   set {
     name  = "configuration.backupStorageLocation[0].provider"
-    value = ""
+    value = "aws"
   }
   set {
     name  = "configuration.backupStorageLocation[0].bucket"
-    value = ""
+    value = var.velero_s3_bucket_name
   }
   set {
     name  = "configuration.backupStorageLocation[0].default"
@@ -27,28 +38,19 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "configuration.backupStorageLocation[0].credential.name"
-    value = ""
+    value = kubernetes_secret.velero.metadata[0].name
   }
-  set_sensitive {
+  set {
     name  = "configuration.backupStorageLocation[0].credential.key"
-    value = ""
+    value = "S3_SECRET_ACCESS_KEY"
   }
   set {
-    name  = "configuration.backupStorageLocation[0].config.*****"
-    value = ""
-  }
-
-  set {
-    name  = "configuration.volumeSnapshotLocation[0].name"
-    value = ""
+    name  = "configuration.backupStorageLocation[0].config.s3ForcePathStyle"
+    value = "true"
   }
   set {
-    name  = "configuration.volumeSnapshotLocation[0].provider"
-    value = ""
-  }
-  set {
-    name  = "configuration.volumeSnapshotLocation[0].config.*****"
-    value = ""
+    name  = "configuration.backupStorageLocation[0].config.s3Url"
+    value = var.velero_s3_url
   }
 
   set {
@@ -57,23 +59,20 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "configuration.defaultBackupStorageLocation"
-    value = ""
-  }
-  set {
-    name  = "configuration.defaultBackupStorageLocation"
-    value = ""
+    value = "backblaze-b2"
   }
   set {
     name  = "configuration.logLevel"
     value = "info"
   }
   set {
-    name  = "configuration.features"
-    value = "EnableCSI"
-  }
-  set {
     name  = "configuration.namespace"
-    value = ""
+    value = kubernetes_namespace.velero.metadata[0].name
+  }
+
+  set {
+    name  = "snapshotsEnabled"
+    value = "false"
   }
 
   set {
@@ -82,12 +81,11 @@ resource "helm_release" "velero" {
   }
 
   set {
-    name  = "credentials.*****"
-    value = ""
+    name  = "schedules.nightly.disabled"
+    value = "false"
   }
-
   set {
-    name  = "schedules.*****"
-    value = ""
+    name  = "schedules.nightly.schedule"
+    value = "0 4 * * *"
   }
 }
