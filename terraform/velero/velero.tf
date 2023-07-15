@@ -1,6 +1,6 @@
 resource "kubernetes_secret" "velero" {
   metadata {
-    name = "velero"
+    name      = "velero"
     namespace = kubernetes_namespace.velero.metadata[0].name
   }
 
