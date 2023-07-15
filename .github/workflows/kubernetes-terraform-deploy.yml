@@ -31,6 +31,10 @@ env:
   TF_VAR_smtp_port: ${{ vars.SMTP_PORT }}
   TF_VAR_smtp_username: ${{ vars.SMTP_USERNAME }}
   TF_VAR_smtp_password: ${{ secrets.SMTP_PASSWORD }}
+  TF_VAR_velero_s3_access_key_id: ${{ vars.VELERO_S3_ACCESS_KEY_ID }}
+  TF_VAR_velero_s3_bucket_name: ${{ vars.VELERO_S3_BUCKET_NAME }}
+  TF_VAR_velero_s3_url: ${{ vars.VELERO_S3_URL }}
+  TF_VAR_velero_s3_secret_access_key: ${{ secrets.VELERO_S3_SECRET_ACCESS_KEY }}
 
 jobs:
   deploy-kubernetes-terraform:
