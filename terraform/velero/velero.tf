@@ -22,7 +22,7 @@ resource "helm_release" "velero" {
 
   set {
     name  = "configuration.backupStorageLocation[0].name"
-    value = "backblaze-b2"
+    value = "backblaze"
   }
   set {
     name  = "configuration.backupStorageLocation[0].provider"
@@ -87,5 +87,25 @@ resource "helm_release" "velero" {
   set {
     name  = "schedules.nightly.schedule"
     value = "0 4 * * *"
+  }
+  set {
+    name  = "schedules.nightly.useOwnerReferencesInBackup"
+    value = "false"
+  }
+  set {
+    name  = "schedules.nightly.template.includeClusterResources"
+    value = "false"
+  }
+  set {
+    name  = "schedules.nightly.template.snapshotVolumes"
+    value = "false"
+  }
+  set {
+    name  = "schedules.nightly.template.storageLocation"
+    value = "backblaze"
+  }
+  set {
+    name  = "schedules.nightly.template.defaultVolumesToFsBackup"
+    value = "false"
   }
 }
