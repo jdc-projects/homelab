@@ -1,6 +1,6 @@
-resource "kubernetes_secret" "velero" {
+resource "kubernetes_secret" "velero_s3_secret" {
   metadata {
-    name      = "velero"
+    name      = "velero-s3-secret"
     namespace = kubernetes_namespace.velero.metadata[0].name
   }
 
@@ -38,7 +38,7 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "configuration.backupStorageLocation[0].credential.name"
-    value = kubernetes_secret.velero.metadata[0].name
+    value = kubernetes_secret.velero_s3_secret.metadata[0].name
   }
   set {
     name  = "configuration.backupStorageLocation[0].credential.key"
