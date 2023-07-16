@@ -7,11 +7,9 @@ resource "keycloak_openid_client" "ocis_web" {
 
   access_type = "PUBLIC"
   valid_redirect_uris = [
-    "https://ocis.${var.server_base_domain}/*",
     "https://files.${var.server_base_domain}/*"
   ]
   web_origins = [
-    "https://ocis.${var.server_base_domain}",
     "https://files.${var.server_base_domain}"
   ]
 

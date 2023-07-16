@@ -21,7 +21,7 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "externalDomain"
-    value = "ocis.${var.server_base_domain}"
+    value = "files.${var.server_base_domain}"
   }
 
   set {
