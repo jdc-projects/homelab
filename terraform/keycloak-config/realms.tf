@@ -10,6 +10,6 @@ resource "keycloak_realm" "server_base_domain" {
   login_with_email_allowed       = false
   duplicate_emails_allowed       = true
 
-  sso_session_idle_timeout  = "24h"
-  sso_sessions_max_lifespan = "24h"
+  sso_session_idle_timeout = "24h"
+  sso_session_max_lifespan = "24h"
 }
