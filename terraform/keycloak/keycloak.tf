@@ -106,7 +106,7 @@ resource "helm_release" "keycloak" {
     value = random_password.keycloak_db_password.result
   }
   set {
-    name  = "postgresql.persistence.existingClaim"
+    name  = "postgresql.primary.persistence.existingClaim"
     value = kubernetes_persistent_volume_claim.keycloak_db.metadata[0].name
   }
 
