@@ -69,6 +69,10 @@ resource "helm_release" "velero" {
     name  = "configuration.namespace"
     value = kubernetes_namespace.velero.metadata[0].name
   }
+  set {
+    name  = "configuration.defaultVolumesToFsBackup"
+    value = "true"
+  }
 
   set {
     name  = "snapshotsEnabled"
@@ -106,6 +110,6 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "schedules.nightly.template.defaultVolumesToFsBackup"
-    value = "false"
+    value = "true"
   }
 }
