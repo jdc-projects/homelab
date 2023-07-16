@@ -109,6 +109,10 @@ resource "helm_release" "keycloak" {
     name  = "postgresql.primary.persistence.existingClaim"
     value = kubernetes_persistent_volume_claim.keycloak_db.metadata[0].name
   }
+  set {
+    name  = "postgresql.volumePermissions.enabled"
+    value = "true"
+  }
 
   set {
     name  = "logging.level"
