@@ -34,7 +34,7 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "initContainers[0].volumeMounts[0].mountPath"
-    value = "/plugins"
+    value = "/target"
   }
   set {
     name  = "initContainers[0].volumeMounts[0].name"
