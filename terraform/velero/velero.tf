@@ -22,7 +22,7 @@ resource "helm_release" "velero" {
 
   set {
     name  = "initContainers[0].name"
-    value = "aws-plugin"
+    value = "velero-plugin-for-aws"
   }
   set {
     name  = "initContainers[0].image"
