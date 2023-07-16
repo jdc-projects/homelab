@@ -21,6 +21,27 @@ resource "helm_release" "velero" {
   timeout = 300
 
   set {
+    name  = "initContainers[0].name"
+    value = "aws-plugin"
+  }
+  set {
+    name  = "initContainers[0].image"
+    value = "velero/velero-plugin-for-aws:v1.7.0"
+  }
+  set {
+    name  = "initContainers[0].imagePullPolicy"
+    value = "IfNotPresent"
+  }
+  set {
+    name  = "initContainers[0].volumeMounts[0].mountPath"
+    value = "/plugins"
+  }
+  set {
+    name  = "initContainers[0].volumeMounts[0].name"
+    value = "plugins"
+  }
+
+  set {
     name  = "configuration.backupStorageLocation[0].name"
     value = "backblaze"
   }
@@ -64,6 +85,10 @@ resource "helm_release" "velero" {
   set {
     name  = "configuration.logLevel"
     value = "info"
+  }
+  set {
+    name  = "configuration.pluginDir"
+    value = "/plugins"
   }
   set {
     name  = "configuration.namespace"
