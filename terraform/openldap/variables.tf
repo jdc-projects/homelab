@@ -3,12 +3,6 @@ variable "server_base_domain" {
   description = "Domain of the Truenas Scale instance."
 }
 
-variable "truenas_api_key" {
-  type        = string
-  sensitive   = true
-  description = "API key for the Truenas server instance."
-}
-
 variable "smtp_host" {
   type        = string
   description = "Hostname of the SMTP server."
