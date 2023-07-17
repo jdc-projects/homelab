@@ -3,17 +3,17 @@ variable "server_base_domain" {
   description = "Domain of the Truenas Scale instance."
 }
 
-variable "jdc_projects_runners_app_id" {
+variable "github_org_runners_app_id" {
   type        = string
   description = ""
 }
 
-variable "jdc_projects_runners_app_installation_id" {
+variable "github_org_runners_app_installation_id" {
   type        = string
   description = ""
 }
 
-variable "jdc_projects_runners_app_private_key" {
+variable "github_org_runners_app_private_key" {
   type        = string
   sensitive   = true
   description = ""

@@ -4,7 +4,7 @@ resource "kubernetes_manifest" "github_org_runners_deployment" {
     kind       = "RunnerDeployment"
 
     metadata = {
-      name      = "jdc-projects-runners-deployment"
+      name      = "github-org-runners-deployment"
       namespace = data.terraform_remote_state.github_org_runners_1.outputs.github_org_runners_namespace_name
     }
 
@@ -13,7 +13,7 @@ resource "kubernetes_manifest" "github_org_runners_deployment" {
         spec = {
           image = "summerwind/actions-runner:v2.305.0-ubuntu-22.04"
 
-          organization = "jdc-projects"
+          organization = var.github_org_name
         }
       }
     }
@@ -26,7 +26,7 @@ resource "kubernetes_manifest" "github_org_runners_autoscaler" {
     kind       = "HorizontalRunnerAutoscaler"
 
     metadata = {
-      name      = "jdc-projects-runners-autoscaler"
+      name      = "github-org-runners-autoscaler"
       namespace = data.terraform_remote_state.github_org_runners_1.outputs.github_org_runners_namespace_name
     }
 

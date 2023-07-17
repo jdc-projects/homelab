@@ -15,15 +15,15 @@ resource "helm_release" "githib_org_runners_controller" {
   }
   set {
     name  = "authSecret.github_app_id"
-    value = var.jdc_projects_runners_app_id
+    value = var.github_org_runners_app_id
   }
   set {
     name  = "authSecret.github_app_installation_id"
-    value = var.jdc_projects_runners_app_installation_id
+    value = var.github_org_runners_app_installation_id
   }
   set_sensitive {
     name  = "authSecret.github_app_private_key"
-    value = var.jdc_projects_runners_app_private_key
+    value = var.github_org_runners_app_private_key
   }
 
   set {
@@ -59,15 +59,15 @@ resource "helm_release" "githib_org_runners_controller" {
   }
   set {
     name  = "githubWebhookServer.secret.github_app_id"
-    value = var.jdc_projects_runners_app_id
+    value = var.github_org_runners_app_id
   }
   set {
     name  = "githubWebhookServer.secret.github_app_installation_id"
-    value = var.jdc_projects_runners_app_installation_id
+    value = var.github_org_runners_app_installation_id
   }
   set_sensitive {
     name  = "githubWebhookServer.secret.github_app_private_key"
-    value = var.jdc_projects_runners_app_private_key
+    value = var.github_org_runners_app_private_key
   }
 
   set {
@@ -80,7 +80,7 @@ resource "helm_release" "githib_org_runners_controller" {
   }
   set {
     name  = "githubWebhookServer.ingress.hosts[0].host"
-    value = "github-jdc-projects-runners-webhook.${var.server_base_domain}"
+    value = "github-org-runners-webhook.${var.server_base_domain}"
   }
   set {
     name  = "githubWebhookServer.ingress.hosts[0].paths[0].path"
