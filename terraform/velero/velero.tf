@@ -6,7 +6,7 @@ resource "kubernetes_secret" "velero_s3_secret" {
 
   data = {
     cloud = <<-EOF
-      [backblaze]
+      [default]
       aws_access_key_id=${var.velero_s3_access_key_id}
       aws_secret_access_key=${var.velero_s3_secret_access_key}
     EOF
