@@ -70,6 +70,10 @@ resource "helm_release" "velero" {
     value = "cloud"
   }
   set {
+    name  = "configuration.backupStorageLocation[0].config.region"
+    value = var.velero_s3_region
+  }
+  set {
     name  = "configuration.backupStorageLocation[0].config.s3ForcePathStyle"
     value = "true"
   }

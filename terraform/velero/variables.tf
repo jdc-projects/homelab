@@ -8,6 +8,11 @@ variable "velero_s3_bucket_name" {
   description = ""
 }
 
+variable "velero_s3_region" {
+  type        = string
+  description = ""
+}
+
 variable "velero_s3_url" {
   type        = string
   description = ""
