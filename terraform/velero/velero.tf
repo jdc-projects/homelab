@@ -5,7 +5,11 @@ resource "kubernetes_secret" "velero_s3_secret" {
   }
 
   data = {
-    S3_SECRET_ACCESS_KEY = var.velero_s3_secret_access_key
+    cloud = <<-EOF
+      [backblaze]
+      aws_access_key_id=${vars.velero_s3_access_key_id}
+      aws_secret_access_key=${vars.velero_s3_secret_access_key}
+    EOF
   }
 }
 
@@ -63,7 +67,7 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "configuration.backupStorageLocation[0].credential.key"
-    value = "S3_SECRET_ACCESS_KEY"
+    value = "cloud"
   }
   set {
     name  = "configuration.backupStorageLocation[0].config.s3ForcePathStyle"
@@ -97,6 +101,11 @@ resource "helm_release" "velero" {
   set {
     name  = "configuration.defaultVolumesToFsBackup"
     value = "true"
+  }
+
+  set {
+    name  = "credentials.existingSecret"
+    value = kubernetes_secret.velero_s3_secret.metadata[0].name
   }
 
   set {
