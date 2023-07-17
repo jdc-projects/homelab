@@ -1,4 +1,4 @@
-resource "helm_release" "githib_org_runners_controller" {
+resource "helm_release" "github_org_runners_controller" {
   name = "github-org-runners-controller"
 
   repository = "https://actions-runner-controller.github.io/actions-runner-controller"
