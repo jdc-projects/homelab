@@ -8,16 +8,6 @@ resource "kubernetes_secret" "ocis_config" {
     GATEWAY_STORAGE_USERS_MOUNT_ID                         = "3081f183-2e58-4f6f-8bb1-900a4152058a" # *****
     OCIS_TRANSFER_SECRET                                   = random_password.transfer_secret.result
     OCIS_LDAP_SERVER_WRITE_ENABLED                         = "false"
-    FRONTEND_READONLY_USER_ATTRIBUTES                      = ""
-    FRONTEND_APP_HANDLER_INSECURE                          = "false"
-    FRONTEND_ARCHIVER_INSECURE                             = "false"
-    FRONTEND_OCS_PUBLIC_WRITEABLE_SHARE_MUST_HAVE_PASSWORD = "false"
-    FRONTEND_SEARCH_MIN_LENGTH                             = "3"
-    FRONTEND_ENABLE_RESHARING                              = "true"
-    FRONTEND_ARCHIVER_MAX_SIZE                             = "1.073741824e+09"
-    FRONTEND_ARCHIVER_MAX_NUM_FILES                        = "10000"
-    FRONTEND_OCS_STAT_CACHE_STORE                          = "noop"
-    OCIS_EDITION                                           = "Community"
     FRONTEND_MACHINE_AUTH_API_KEY                          = random_password.machine_auth_api_key.result
     OCIS_TRANSFER_SECRET                                   = random_password.transfer_secret.result
     USERS_LDAP_INSECURE                                    = "false"
@@ -50,11 +40,11 @@ resource "kubernetes_secret" "ocis_config" {
     USERS_LDAP_BIND_DN                                     = "uid=${data.terraform_remote_state.openldap.outputs.admin_username},ou=people,dc=idm,dc=${var.server_base_domain}"
     USERS_LDAP_BIND_PASSWORD                               = data.terraform_remote_state.openldap.outputs.admin_password
     USERS_IDP_URL                                          = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
-    OCIS_SYSTEM_USER_API_KEY                               = random_uuid.storage_system_user_id.result
-    OCIS_SYSTEM_USER_ID                                    = random_password.storage_system_api_key.result
+    OCIS_SYSTEM_USER_API_KEY                               = random_password.storage_system_api_key.result
+    OCIS_SYSTEM_USER_ID                                    = random_uuid.storage_system_user_id.result
     STORAGE_SYSTEM_JWT_SECRET                              = random_password.storage_system_jwt_secret.result
-    OCIS_SYSTEM_USER_API_KEY                               = random_uuid.storage_system_user_id.result
-    OCIS_SYSTEM_USER_ID                                    = random_password.storage_system_api_key.result
+    OCIS_SYSTEM_USER_API_KEY                               = random_password.storage_system_api_key.result
+    OCIS_SYSTEM_USER_ID                                    = random_uuid.storage_system_user_id.result
     AUTH_MACHINE_API_KEY                                   = random_password.machine_auth_api_key.result
     GROUPS_LDAP_INSECURE                                   = "false"
     GROUPS_LDAP_USER_BASE_DN                               = "ou=people,dc=idm,dc=${var.server_base_domain}"
@@ -85,9 +75,9 @@ resource "kubernetes_secret" "ocis_config" {
     WEB_OIDC_AUTHORITY                                     = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
     WEB_OIDC_CLIENT_ID                                     = "ocis-web"
     WEB_OPTION_CONTEXTHELPERS_READ_MORE                    = "true"
-    SHARING_USER_JSONCS3_SYSTEM_USER_API_KEY               = random_uuid.storage_system_user_id.result
-    SHARING_USER_JSONCS3_SYSTEM_USER_ID                    = random_password.storage_system_api_key.result
-    SHARING_PUBLIC_JSONCS3_SYSTEM_USER_API_KEY             = random_uuid.storage_system_user_id.result
+    SHARING_USER_JSONCS3_SYSTEM_USER_API_KEY               = random_password.storage_system_api_key.result
+    SHARING_USER_JSONCS3_SYSTEM_USER_ID                    = random_uuid.storage_system_user_id.result
+    SHARING_PUBLIC_JSONCS3_SYSTEM_USER_API_KEY             = random_password.storage_system_api_key.result
     OCS_IDM_ADDRESS                                        = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
     OCS_MACHINE_AUTH_API_KEY                               = random_password.machine_auth_api_key.result
     USERLOG_MACHINE_AUTH_API_KEY                           = random_password.machine_auth_api_key.result
