@@ -176,6 +176,6 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "schedules.nightly.template.defaultVolumesToFsBackup"
-    value = "true"
+    value = "false"
   }
 }
