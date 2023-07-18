@@ -491,8 +491,8 @@ resource "kubernetes_secret" "ocis_config" {
     # NOTIFICATIONS_LOG_PRETTY                               = "false"
     # NOTIFICATIONS_DEBUG_PPROF                              = "false"
     # NOTIFICATIONS_DEBUG_ADDR                               = "0.0.0.0:9174"
-    NOTIFICATIONS_SMTP_HOST                                = "testy"
-    NOTIFICATIONS_SMTP_PORT                                = "testy"
+    NOTIFICATIONS_SMTP_HOST                                = var.smtp_host
+    NOTIFICATIONS_SMTP_PORT                                = var.smtp_port
     NOTIFICATIONS_SMTP_SENDER                              = "OCIS <noreply@${var.server_base_domain}>"
     NOTIFICATIONS_SMTP_AUTHENTICATION                      = "login"
     NOTIFICATIONS_SMTP_ENCRYPTION                          = "tls"
