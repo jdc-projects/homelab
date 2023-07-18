@@ -57,7 +57,7 @@ resource "kubernetes_deployment" "openldap" {
           image = "alpine:3.18.2"
           name  = "openldap-chown"
 
-          command = ["sh", "-c", "chown -R 1001 /bitnami/openldap "]
+          command = ["sh", "-c", "chown -R 1001 /bitnami/openldap"]
 
           security_context {
             run_as_user = 0
