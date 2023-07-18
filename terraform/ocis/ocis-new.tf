@@ -17,7 +17,7 @@ resource "kubernetes_secret" "ocis_config" {
     # GATEWAY_GRPC_ADDR                                      = "0.0.0.0:9142"
     # GATEWAY_DEBUG_ADDR                                     = "0.0.0.0:9143"
     # OCIS_REVA_GATEWAY                                      = "127.0.0.1:9142"
-    GATEWAY_FRONTEND_PUBLIC_URL                            = "https://ocis.${var.server_base_domain}"
+    # GATEWAY_FRONTEND_PUBLIC_URL                            = "https://ocis.${var.server_base_domain}"
     # GATEWAY_USERS_ENDPOINT                                 = "users:9144"
     # GATEWAY_GROUPS_ENDPOINT                                = "groups:9160"
     # GATEWAY_AUTH_BASIC_ENDPOINT                            = "authbasic:9146"
@@ -52,7 +52,7 @@ resource "kubernetes_secret" "ocis_config" {
     # FRONTEND_DEBUG_PPROF                                   = "false"
     # FRONTEND_HTTP_ADDR                                     = "0.0.0.0:9140"
     # FRONTEND_DEBUG_ADDR                                    = "0.0.0.0:9141"
-    FRONTEND_PUBLIC_URL                                    = "https://ocis.${var.server_base_domain}"
+    # FRONTEND_PUBLIC_URL                                    = "https://ocis.${var.server_base_domain}"
     # OCIS_REVA_GATEWAY                                      = "gateway:9142"
     OCIS_LDAP_SERVER_WRITE_ENABLED                         = "false"
     FRONTEND_READONLY_USER_ATTRIBUTES                      = ""
@@ -133,7 +133,7 @@ resource "kubernetes_secret" "ocis_config" {
     # WEBDAV_DEBUG_PPROF                                     = "false"
     # WEBDAV_HTTP_ADDR                                       = "0.0.0.0:9115"
     # WEBDAV_DEBUG_ADDR                                      = "0.0.0.0:9119"
-    OCIS_PUBLIC_URL                                        = "https://ocis.${var.server_base_domain}"
+    # OCIS_PUBLIC_URL                                        = "https://ocis.${var.server_base_domain}"
     # OCIS_REVA_GATEWAY                                      = "gateway:9142"
     # SETTINGS_LOG_COLOR                                     = "false"
     # SETTINGS_LOG_LEVEL                                     = "info"
@@ -240,10 +240,10 @@ resource "kubernetes_secret" "ocis_config" {
     # WEB_DEBUG_ADDR                                         = "0.0.0.0:9104"
     WEB_OIDC_AUTHORITY                                     = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
     WEB_OIDC_CLIENT_ID                                     = "ocis-web"
-    WEB_UI_THEME_SERVER                                    = "https://ocis.${var.server_base_domain}"
-    WEB_UI_CONFIG_SERVER                                   = "https://ocis.${var.server_base_domain}"
+    # WEB_UI_THEME_SERVER                                    = "https://ocis.${var.server_base_domain}"
+    # WEB_UI_CONFIG_SERVER                                   = "https://ocis.${var.server_base_domain}"
     WEB_OPTION_CONTEXTHELPERS_READ_MORE                    = "true"
-    WEB_GATEWAY_GRPC_ADDR                                  = "gateway:9142"
+    # WEB_GATEWAY_GRPC_ADDR                                  = "gateway:9142"
     # WEB_JWT_SECRET                                         = random_password.jwt_secret.result
     # APP_REGISTRY_LOG_COLOR                                 = "false"
     # APP_REGISTRY_LOG_LEVEL                                 = "info"
@@ -423,7 +423,7 @@ resource "kubernetes_secret" "ocis_config" {
     # OCDAV_DEBUG_PPROF                                      = "false"
     # OCDAV_HTTP_ADDR                                        = "0.0.0.0=8080"
     # OCDAV_DEBUG_ADDR                                       = "0.0.0.0:9163"
-    OCDAV_PUBLIC_URL                                       = "https://ocis.${var.server_base_domain}"
+    # OCDAV_PUBLIC_URL                                       = "https://ocis.${var.server_base_domain}"
     OCIS_EDITION                                           = "Community"
     # OCIS_REVA_GATEWAY                                      = "gateway:9142"
     # OCDAV_INSECURE                                         = "false"
@@ -439,7 +439,7 @@ resource "kubernetes_secret" "ocis_config" {
     # GRAPH_DEBUG_PPROF                                      = "false"
     # GRAPH_HTTP_ADDR                                        = "0.0.0.0:9120"
     # GRAPH_DEBUG_ADDR                                       = "0.0.0.0:9124"
-    GRAPH_SPACES_WEBDAV_BASE                               = "https://ocis.${var.server_base_domain}"
+    # GRAPH_SPACES_WEBDAV_BASE                               = "https://ocis.${var.server_base_domain}"
     GRAPH_LDAP_URI                                         = "ldaps://idm.${var.server_base_domain}"
     GRAPH_LDAP_BIND_DN                                     = "uid=${data.terraform_remote_state.openldap.outputs.admin_username},ou=people,dc=idm,dc=${var.server_base_domain}"
     GRAPH_LDAP_BIND_PASSWORD                               = data.terraform_remote_state.openldap.outputs.admin_password
@@ -498,16 +498,17 @@ resource "kubernetes_secret" "ocis_config" {
     NOTIFICATIONS_SMTP_ENCRYPTION                          = "tls"
     NOTIFICATIONS_SMTP_USERNAME                            = var.smtp_username
     NOTIFICATIONS_SMTP_PASSWORD                            = var.smtp_password
-    OCIS_URL                                               = "https://ocis.${var.server_base_domain}"
-    NOTIFICATIONS_WEB_UI_URL                               = "https://ocis.${var.server_base_domain}"
+    # OCIS_URL                                               = "https://ocis.${var.server_base_domain}"
+    # NOTIFICATIONS_WEB_UI_URL                               = "https://ocis.${var.server_base_domain}"
     # OCIS_REVA_GATEWAY                                      = "gateway:9142"
     # NOTIFICATIONS_EVENTS_ENDPOINT                          = "nats:9233"
     NOTIFICATIONS_MACHINE_AUTH_API_KEY                     = random_password.machine_auth_api_key.result
 
     OCIS_JWT_SECRET = random_password.jwt_secret.result
     OCIS_EXCLUDE_RUN_SERVICES = "idm,idp,auth-basic"
-    PROXY_ROLE_ASSIGNMENT_DRIVER      = "oidc"
+    PROXY_ROLE_ASSIGNMENT_DRIVER = "oidc"
     PROXY_ROLE_ASSIGNMENT_OIDC_CLAIM = "roles"
+    OCIS_URL = "https://ocis.${var.server_base_domain}"
   }
 }
 
