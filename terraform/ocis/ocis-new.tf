@@ -28,16 +28,21 @@ resource "kubernetes_secret" "ocis_config" {
     PROXY_USER_OIDC_CLAIM             = "preferred_username"
     PROXY_USER_CS3_CLAIM              = "userid"
     PROXY_ENABLE_BASIC_AUTH           = "false"
-    # OCIS_JWT_SECRET                   = random_password.jwt_secret.result
-    # OCIS_TRANSFER_SECRET              = random_password.transfer_secret.result
-    # OCIS_MACHINE_AUTH_API_KEY         = random_password.machine_auth_api_key.result
-    # OCIS_SYSTEM_USER_API_KEY          = random_password.system_user_api_key.result
-    # OCIS_SYSTEM_USER_ID               = random_uuid.system_user_id.result
+    OCIS_JWT_SECRET                   = random_password.jwt_secret.result
+    OCIS_MACHINE_AUTH_API_KEY         = random_password.machine_auth_api_key.result
+    OCIS_SYSTEM_USER_ID               = random_uuid.storage_system_user_id.result
+    OCIS_SYSTEM_USER_API_KEY          = random_password.storage_system_api_key.result
+    # STORAGE_SYSTEM_JWT_SECRET = random_password.storage_system_jwt_secret.result # shouldn't be needed
+    OCIS_TRANSFER_SECRET      = random_password.transfer_secret.result
+    THUMBNAILS_TRANSFER_TOKEN = random_password.thumbnails_transfer_secret.result
     # STORAGE_USERS_MOUNT_ID            = random_uuid.storage_users_mount_id.result
-    # IDM_SVC_PASSWORD                  = random_password.idm_svc_password.result
-    # IDM_REVASVC_PASSWORD              = random_password.idm_revasvc_password.result
-    # IDM_IDPSVC_PASSWORD               = random_password.idm_idpsvc_password.result
-    # OCIS_EXCLUDE_RUN_SERVICES         = "idp"
+    OCIS_EXCLUDE_RUN_SERVICES = "idm,idp,auth-basic"
+    OCIS_ADMIN_USER_ID = "PLACEHOLDER_VALUE"
+    STORAGE_USERS_MOUNT_ID = "REPLACE_ME"
+    LDAP_BIND_PASSWORD = "WHY_DO_I_NEED_THIS"
+    GRAPH_APPLICATION_ID = "REPLACE_ME"
+    GATEWAY_STORAGE_USERS_MOUNT_ID = "REPLACE_ME"
+    OCIS_GRPC_CLIENT_TLS_MODE = "off"
   }
 }
 
@@ -68,7 +73,7 @@ resource "kubernetes_deployment" "ocis" {
           image = "owncloud/ocis:3.0.0"
           name  = "ocis"
 
-          command = ["sh", "-c", "ocis init || true; ocis server"]
+          command = ["sh", "-c", "ocis server"]
 
           env_from {
             secret_ref {
