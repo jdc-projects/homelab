@@ -21,11 +21,11 @@ resource "helm_release" "traefik" {
   }
 
   set {
-    name  = "deployment.podAnnontations.backup\\.velero\\.io\\/backup-volumes[0]"
+    name  = "deployment.podAnnontations.backup\\.velero\\.io\\/backup-volumes"
     value = "data"
   }
   set {
-    name  = "deployment.podAnnontations.testKey[0]"
+    name  = "deployment.podAnnontations.testKey"
     value = "testVal"
   }
 
