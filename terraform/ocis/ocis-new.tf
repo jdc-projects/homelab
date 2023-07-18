@@ -5,7 +5,7 @@ resource "kubernetes_secret" "ocis_config" {
   }
 
   data = {
-    MICRO_REGISTRY                                         = "kubernetes"
+    # MICRO_REGISTRY                                         = "kubernetes"
     # GATEWAY_LOG_COLOR                                      = "false"
     # GATEWAY_LOG_LEVEL                                      = "info"
     # GATEWAY_LOG_PRETTY                                     = "false"
@@ -16,7 +16,7 @@ resource "kubernetes_secret" "ocis_config" {
     # GATEWAY_DEBUG_PPROF                                    = "false"
     # GATEWAY_GRPC_ADDR                                      = "0.0.0.0:9142"
     # GATEWAY_DEBUG_ADDR                                     = "0.0.0.0:9143"
-    # OCIS_REVA_GATEWAY                                      = "127.0.0.1:9142"
+    OCIS_REVA_GATEWAY                                      = "127.0.0.1:9142"
     GATEWAY_FRONTEND_PUBLIC_URL                            = "https://ocis.${var.server_base_domain}"
     # GATEWAY_USERS_ENDPOINT                                 = "users:9144"
     # GATEWAY_GROUPS_ENDPOINT                                = "groups:9160"
@@ -53,7 +53,7 @@ resource "kubernetes_secret" "ocis_config" {
     # FRONTEND_HTTP_ADDR                                     = "0.0.0.0:9140"
     # FRONTEND_DEBUG_ADDR                                    = "0.0.0.0:9141"
     FRONTEND_PUBLIC_URL                                    = "https://ocis.${var.server_base_domain}"
-    OCIS_REVA_GATEWAY                                      = "gateway:9142"
+    # OCIS_REVA_GATEWAY                                      = "gateway:9142"
     OCIS_LDAP_SERVER_WRITE_ENABLED                         = "false"
     FRONTEND_READONLY_USER_ATTRIBUTES                      = ""
     FRONTEND_JWT_SECRET                                    = random_password.jwt_secret.result
@@ -108,7 +108,7 @@ resource "kubernetes_secret" "ocis_config" {
     USERS_LDAP_BIND_DN                                     = "uid=${data.terraform_remote_state.openldap.outputs.admin_username},ou=people,dc=idm,dc=${var.server_base_domain}"
     USERS_LDAP_BIND_PASSWORD                               = data.terraform_remote_state.openldap.outputs.admin_password
     USERS_IDP_URL                                          = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
-    OCIS_REVA_GATEWAY                                      = "gateway:9142"
+    # OCIS_REVA_GATEWAY                                      = "gateway:9142"
     USERS_JWT_SECRET                                       = random_password.jwt_secret.result
     # STORAGE_SHARES_LOG_COLOR                               = "false"
     # STORAGE_SHARES_LOG_LEVEL                               = "info"
@@ -169,7 +169,7 @@ resource "kubernetes_secret" "ocis_config" {
     # STORAGE_SYSTEM_GRPC_ADDR                               = "0.0.0.0:9215"
     # STORAGE_SYSTEM_DEBUG_ADDR                              = "0.0.0.0:9217"
     # STORAGE_SYSTEM_HTTP_ADDR                               = "0.0.0.0:9216"
-    STORAGE_SYSTEM_DATA_SERVER_URL                         = "http://storagesystem:9216/data"
+    # STORAGE_SYSTEM_DATA_SERVER_URL                         = "http://storagesystem:9216/data"
     # OCIS_REVA_GATEWAY                                      = "gateway:9142"
     # STORAGE_SYSTEM_DRIVER                                  = "ocis"
     # STORAGE_SYSTEM_OCIS_METADATA_BACKEND                   = "messagepack"
@@ -226,7 +226,7 @@ resource "kubernetes_secret" "ocis_config" {
     GROUPS_LDAP_BIND_DN                                    = "uid=${data.terraform_remote_state.openldap.outputs.admin_username},ou=people,dc=idm,dc=${var.server_base_domain}"
     GROUPS_LDAP_BIND_PASSWORD                              = data.terraform_remote_state.openldap.outputs.admin_password
     GROUPS_IDP_URL                                         = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
-    OCIS_REVA_GATEWAY                                      = "gateway:9142"
+    # OCIS_REVA_GATEWAY                                      = "gateway:9142"
     GROUPS_JWT_SECRET                                      = random_password.jwt_secret.result
     # WEB_LOG_COLOR                                          = "false"
     # WEB_LOG_LEVEL                                          = "info"
@@ -341,7 +341,7 @@ resource "kubernetes_secret" "ocis_config" {
     PROXY_OIDC_ACCESS_TOKEN_VERIFY_METHOD                  = "jwt"
     PROXY_OIDC_SKIP_CLIENT_ID_CHECK                        = "true"
     PROXY_TLS                                              = "false"
-    OCIS_REVA_GATEWAY                                      = "gateway:9142"
+    # OCIS_REVA_GATEWAY                                      = "gateway:9142"
     PROXY_OIDC_INSECURE                                    = "false"
     PROXY_OIDC_USERINFO_CACHE_STORE                        = "noop"
     PROXY_JWT_SECRET                                       = random_password.jwt_secret.result
