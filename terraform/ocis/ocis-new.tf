@@ -8,13 +8,13 @@ resource "kubernetes_secret" "ocis_config" {
     OCIS_LOG_LEVEL        = "debug"
     OCIS_LOG_PRETTY       = "true"
     OCIS_LOG_COLOR        = "true"
-    OCIS_URL              = "https://files.${var.server_base_domain}"
+    OCIS_URL              = "https://ocis.${var.server_base_domain}"
     IDM_CREATE_DEMO_USERS = "true"
     PROXY_TLS             = "false"
     # OCIS_OIDC_ISSUER                  = data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url
     # WEB_OIDC_METADATA_URL             = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.keycloak_jack_chapman_co_uk_realm_id}/.well-known/openid-configuration"
     # OCIS_OIDC_CLIENT_ID               = keycloak_openid_client.ocis_web_client.client_id
-    # WEB_OIDC_POST_LOGOUT_REDIRECT_URI = "https://files.${var.server_base_domain}"
+    # WEB_OIDC_POST_LOGOUT_REDIRECT_URI = "https://ocis.${var.server_base_domain}"
     # OCIS_LDAP_SERVER_WRITE_ENABLED    = "false"
     # OCIS_LDAP_URI                     = "ldaps://idm.${var.server_base_domain}"
     # OCIS_LDAP_BIND_DN                 = "uid=admin,ou=people,dc=idm,dc=${var.server_base_domain}"

@@ -31,7 +31,7 @@ resource "kubernetes_manifest" "ocis_ingress" {
 
       routes = [{
         kind  = "Rule"
-        match = "Host(`files.${var.server_base_domain}`)"
+        match = "Host(`ocis.${var.server_base_domain}`)"
         services = [{
           name      = kubernetes_service.ocis.metadata[0].name
           namespace = kubernetes_namespace.ocis.metadata[0].name
