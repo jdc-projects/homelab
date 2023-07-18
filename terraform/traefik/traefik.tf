@@ -21,8 +21,8 @@ resource "helm_release" "traefik" {
   }
 
   set {
-    name  = "deployment.podAnnotations"
-    value = "backup.velero.io/backup-volumes: data"
+    name  = "deployment.podAnnotations.backup\\.velero\\.io\\/backup-volumes"
+    value = "data"
   }
   # set {
   #   name  = "deployment.annotations.testKey"
