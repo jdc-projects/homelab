@@ -6,7 +6,6 @@ resource "kubernetes_secret" "ocis_config" {
 
   data = {
     USERS_LDAP_USER_SUBSTRING_FILTER_TYPE                  = "any"
-    USERS_LDAP_USER_TYPE_ATTRIBUTE                         = "ownCloudUserType"
     USERS_LDAP_BIND_PASSWORD                               = data.terraform_remote_state.openldap.outputs.admin_password
     USERS_IDP_URL                                          = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
     STORAGE_SYSTEM_JWT_SECRET                              = random_password.storage_system_jwt_secret.result
