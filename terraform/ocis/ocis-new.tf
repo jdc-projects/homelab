@@ -6,18 +6,11 @@ resource "kubernetes_secret" "ocis_config" {
 
   data = {
     USERS_LDAP_USER_SUBSTRING_FILTER_TYPE                  = "any"
-    USERS_LDAP_BIND_PASSWORD                               = data.terraform_remote_state.openldap.outputs.admin_password
-    USERS_IDP_URL                                          = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
     STORAGE_SYSTEM_JWT_SECRET                              = random_password.storage_system_jwt_secret.result
     GROUPS_LDAP_USER_SUBSTRING_FILTER_TYPE                 = "any"
-    GROUPS_LDAP_BIND_PASSWORD                              = data.terraform_remote_state.openldap.outputs.admin_password
-    GROUPS_IDP_URL                                         = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
-    WEB_OIDC_AUTHORITY                                     = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
     WEB_OIDC_CLIENT_ID                                     = "ocis-web"
     WEB_OPTION_CONTEXTHELPERS_READ_MORE                    = "true"
-    OCS_IDM_ADDRESS                                        = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
     PROXY_ENABLE_BASIC_AUTH                                = "false"
-    PROXY_OIDC_ISSUER                                      = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
     PROXY_OIDC_REWRITE_WELLKNOWN                           = "true"
     PROXY_USER_OIDC_CLAIM                                  = "preferred_username"
     PROXY_USER_CS3_CLAIM                                   = "userid"
@@ -27,7 +20,6 @@ resource "kubernetes_secret" "ocis_config" {
     PROXY_OIDC_INSECURE                                    = "false"
     PROXY_OIDC_USERINFO_CACHE_STORE                        = "noop"
     THUMBNAILS_TRANSFER_TOKEN                              = random_password.thumbnails_transfer_secret.result
-    GRAPH_LDAP_BIND_PASSWORD                               = data.terraform_remote_state.openldap.outputs.admin_password
     GRAPH_LDAP_SERVER_UUID                                 = "true"
     GRAPH_LDAP_SERVER_USE_PASSWORD_MODIFY_EXOP             = "false"
     GRAPH_LDAP_REFINT_ENABLED                              = "false"
@@ -81,6 +73,9 @@ resource "kubernetes_secret" "ocis_config" {
     OCIS_LDAP_USER_SCHEMA_USERNAME = "uid"
     # OCIS_LDAP_USER_SCHEMA_USER_TYPE = ""
     OCIS_LDAP_USER_SCOPE = "sub"
+    LDAP_BIND_PASSWORD = data.terraform_remote_state.openldap.outputs.admin_password
+
+    OCIS_OIDC_ISSUER = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
   }
 }
 
