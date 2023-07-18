@@ -9,7 +9,7 @@ resource "kubernetes_secret" "ocis_config" {
     OCIS_LOG_PRETTY                   = "true"
     OCIS_LOG_COLOR                    = "true"
     OCIS_URL                          = "https://ocis.${var.server_base_domain}"
-    IDM_CREATE_DEMO_USERS             = "true"
+    IDM_CREATE_DEMO_USERS             = "false"
     PROXY_TLS                         = "false"
     OCIS_OIDC_ISSUER                  = data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url
     WEB_OIDC_METADATA_URL             = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id}/.well-known/openid-configuration"
@@ -43,6 +43,10 @@ resource "kubernetes_secret" "ocis_config" {
     GRAPH_APPLICATION_ID = "REPLACE_ME"
     GATEWAY_STORAGE_USERS_MOUNT_ID = "REPLACE_ME"
     OCIS_GRPC_CLIENT_TLS_MODE = "off"
+    OCIS_INSECURE = "true"
+    OCIS_HTTP_TLS_ENABLED = "false"
+    OCIS_LDAP_INSECURE = "false"
+    LDAP_INSECURE = "false"
   }
 }
 
