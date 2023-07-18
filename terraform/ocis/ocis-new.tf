@@ -5,18 +5,11 @@ resource "kubernetes_secret" "ocis_config" {
   }
 
   data = {
-    USERS_LDAP_USER_SUBSTRING_FILTER_TYPE      = "any"
     STORAGE_SYSTEM_JWT_SECRET                  = random_password.storage_system_jwt_secret.result
-    GROUPS_LDAP_USER_SUBSTRING_FILTER_TYPE     = "any"
-    WEB_OIDC_CLIENT_ID                         = "ocis-web"
     WEB_OPTION_CONTEXTHELPERS_READ_MORE        = "true"
     PROXY_ENABLE_BASIC_AUTH                    = "false"
     PROXY_OIDC_REWRITE_WELLKNOWN               = "true"
-    PROXY_USER_OIDC_CLAIM                      = "preferred_username"
-    PROXY_USER_CS3_CLAIM                       = "userid"
-    PROXY_OIDC_ACCESS_TOKEN_VERIFY_METHOD      = "jwt"
     PROXY_OIDC_SKIP_CLIENT_ID_CHECK            = "true"
-    PROXY_TLS                                  = "false"
     PROXY_OIDC_INSECURE                        = "false"
     PROXY_OIDC_USERINFO_CACHE_STORE            = "noop"
     THUMBNAILS_TRANSFER_TOKEN                  = random_password.thumbnails_transfer_secret.result
@@ -33,6 +26,7 @@ resource "kubernetes_secret" "ocis_config" {
     NOTIFICATIONS_SMTP_USERNAME       = var.smtp_username
     NOTIFICATIONS_SMTP_PASSWORD       = var.smtp_password
 
+    PROXY_TLS                        = "false"
     OCIS_JWT_SECRET                  = random_password.jwt_secret.result
     OCIS_EXCLUDE_RUN_SERVICES        = "idm,idp,auth-basic"
     PROXY_ROLE_ASSIGNMENT_DRIVER     = "oidc"
@@ -47,6 +41,7 @@ resource "kubernetes_secret" "ocis_config" {
     GRAPH_APPLICATION_ID             = random_uuid.graph_application_id.result
 
     OCIS_LDAP_BIND_DN                        = "uid=${data.terraform_remote_state.openldap.outputs.admin_username},ou=people,dc=idm,dc=${var.server_base_domain}"
+    LDAP_BIND_PASSWORD                       = data.terraform_remote_state.openldap.outputs.admin_password
     OCIS_LDAP_CACERT                         = ""
     OCIS_LDAP_DISABLED_USERS_GROUP_DN        = "cn=app_disabled,ou=groups,dc=idm,dc=${var.server_base_domain}"
     OCIS_LDAP_DISABLE_USER_MECHANISM         = "group"
@@ -73,10 +68,15 @@ resource "kubernetes_secret" "ocis_config" {
     OCIS_LDAP_USER_SCHEMA_MAIL               = "mail"
     OCIS_LDAP_USER_SCHEMA_USERNAME           = "uid"
     # OCIS_LDAP_USER_SCHEMA_USER_TYPE = ""
-    OCIS_LDAP_USER_SCOPE = "sub"
-    LDAP_BIND_PASSWORD   = data.terraform_remote_state.openldap.outputs.admin_password
+    OCIS_LDAP_USER_SCOPE                   = "sub"
+    USERS_LDAP_USER_SUBSTRING_FILTER_TYPE  = "any"
+    GROUPS_LDAP_USER_SUBSTRING_FILTER_TYPE = "any"
 
-    OCIS_OIDC_ISSUER = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
+    OCIS_OIDC_ISSUER                      = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
+    WEB_OIDC_CLIENT_ID                    = keycloak_openid_client.ocis_web.client_id
+    PROXY_OIDC_ACCESS_TOKEN_VERIFY_METHOD = "jwt"
+    PROXY_USER_OIDC_CLAIM                 = "preferred_username"
+    PROXY_USER_CS3_CLAIM                  = "userid"
   }
 }
 
