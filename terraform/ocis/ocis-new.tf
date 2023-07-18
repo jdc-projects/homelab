@@ -16,7 +16,7 @@ resource "kubernetes_secret" "ocis_config" {
     # GATEWAY_DEBUG_PPROF                                    = "false"
     # GATEWAY_GRPC_ADDR                                      = "0.0.0.0:9142"
     # GATEWAY_DEBUG_ADDR                                     = "0.0.0.0:9143"
-    OCIS_REVA_GATEWAY                                      = "127.0.0.1:9142"
+    # OCIS_REVA_GATEWAY                                      = "127.0.0.1:9142"
     GATEWAY_FRONTEND_PUBLIC_URL                            = "https://ocis.${var.server_base_domain}"
     # GATEWAY_USERS_ENDPOINT                                 = "users:9144"
     # GATEWAY_GROUPS_ENDPOINT                                = "groups:9160"
@@ -32,7 +32,7 @@ resource "kubernetes_secret" "ocis_config" {
     # GATEWAY_PROVIDER_CACHE_STORE                           = "noop"
     # GATEWAY_CREATE_HOME_CACHE_STORE                        = "memory"
     GATEWAY_STORAGE_USERS_MOUNT_ID                         = "3081f183-2e58-4f6f-8bb1-900a4152058a" # *****
-    GATEWAY_JWT_SECRET                                     = random_password.jwt_secret.result
+    # GATEWAY_JWT_SECRET                                     = random_password.jwt_secret.result
     OCIS_TRANSFER_SECRET                                   = random_password.transfer_secret.result
     # POSTPROCESSING_LOG_COLOR                               = "false"
     # POSTPROCESSING_LOG_LEVEL                               = "info"
@@ -56,7 +56,7 @@ resource "kubernetes_secret" "ocis_config" {
     # OCIS_REVA_GATEWAY                                      = "gateway:9142"
     OCIS_LDAP_SERVER_WRITE_ENABLED                         = "false"
     FRONTEND_READONLY_USER_ATTRIBUTES                      = ""
-    FRONTEND_JWT_SECRET                                    = random_password.jwt_secret.result
+    # FRONTEND_JWT_SECRET                                    = random_password.jwt_secret.result
     FRONTEND_APP_HANDLER_INSECURE                          = "false"
     FRONTEND_ARCHIVER_INSECURE                             = "false"
     FRONTEND_OCS_PUBLIC_WRITEABLE_SHARE_MUST_HAVE_PASSWORD = "false"
@@ -109,7 +109,7 @@ resource "kubernetes_secret" "ocis_config" {
     USERS_LDAP_BIND_PASSWORD                               = data.terraform_remote_state.openldap.outputs.admin_password
     USERS_IDP_URL                                          = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
     # OCIS_REVA_GATEWAY                                      = "gateway:9142"
-    USERS_JWT_SECRET                                       = random_password.jwt_secret.result
+    # USERS_JWT_SECRET                                       = random_password.jwt_secret.result
     # STORAGE_SHARES_LOG_COLOR                               = "false"
     # STORAGE_SHARES_LOG_LEVEL                               = "info"
     # STORAGE_SHARES_LOG_PRETTY                              = "false"
@@ -122,7 +122,7 @@ resource "kubernetes_secret" "ocis_config" {
     # STORAGE_SHARES_DEBUG_ADDR                              = "0.0.0.0:9156"
     # STORAGE_SHARES_USER_SHARE_PROVIDER_ENDPOINT            = "sharing:9150"
     # OCIS_REVA_GATEWAY                                      = "gateway:9142"
-    STORAGE_SHARES_JWT_SECRET                              = random_password.jwt_secret.result
+    # STORAGE_SHARES_JWT_SECRET                              = random_password.jwt_secret.result
     # WEBDAV_LOG_COLOR                                       = "false"
     # WEBDAV_LOG_LEVEL                                       = "info"
     # WEBDAV_LOG_PRETTY                                      = "false"
@@ -148,7 +148,7 @@ resource "kubernetes_secret" "ocis_config" {
     # SETTINGS_DEBUG_ADDR                                    = "0.0.0.0:9194"
     # STORAGE_GATEWAY_GRPC_ADDR                              = "storagesystem:9215"
     # STORAGE_GRPC_ADDR                                      = "storagesystem:9215"
-    SETTINGS_JWT_SECRET                                    = random_password.jwt_secret.result
+    # SETTINGS_JWT_SECRET                                    = random_password.jwt_secret.result
     OCIS_SYSTEM_USER_API_KEY                               = random_uuid.storage_system_user_id.result
     OCIS_SYSTEM_USER_ID                                    = random_password.storage_system_api_key.result
     # NATS_LOG_COLOR                                         = "false"
@@ -188,7 +188,7 @@ resource "kubernetes_secret" "ocis_config" {
     # AUTH_MACHINE_GRPC_ADDR                                 = "0.0.0.0:9166"
     # AUTH_MACHINE_DEBUG_ADDR                                = "0.0.0.0:9167"
     # OCIS_REVA_GATEWAY                                      = "gateway:9142"
-    AUTH_MACHINE_JWT_SECRET                                = random_password.jwt_secret.result
+    # AUTH_MACHINE_JWT_SECRET                                = random_password.jwt_secret.result
     AUTH_MACHINE_API_KEY                                   = random_password.machine_auth_api_key.result
     # GROUPS_LOG_COLOR                                       = "false"
     # GROUPS_LOG_LEVEL                                       = "info"
@@ -227,7 +227,7 @@ resource "kubernetes_secret" "ocis_config" {
     GROUPS_LDAP_BIND_PASSWORD                              = data.terraform_remote_state.openldap.outputs.admin_password
     GROUPS_IDP_URL                                         = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
     # OCIS_REVA_GATEWAY                                      = "gateway:9142"
-    GROUPS_JWT_SECRET                                      = random_password.jwt_secret.result
+    # GROUPS_JWT_SECRET                                      = random_password.jwt_secret.result
     # WEB_LOG_COLOR                                          = "false"
     # WEB_LOG_LEVEL                                          = "info"
     # WEB_LOG_PRETTY                                         = "false"
@@ -244,7 +244,7 @@ resource "kubernetes_secret" "ocis_config" {
     WEB_UI_CONFIG_SERVER                                   = "https://ocis.${var.server_base_domain}"
     WEB_OPTION_CONTEXTHELPERS_READ_MORE                    = "true"
     WEB_GATEWAY_GRPC_ADDR                                  = "gateway:9142"
-    WEB_JWT_SECRET                                         = random_password.jwt_secret.result
+    # WEB_JWT_SECRET                                         = random_password.jwt_secret.result
     # APP_REGISTRY_LOG_COLOR                                 = "false"
     # APP_REGISTRY_LOG_LEVEL                                 = "info"
     # APP_REGISTRY_LOG_PRETTY                                = "false"
@@ -256,7 +256,7 @@ resource "kubernetes_secret" "ocis_config" {
     # APP_REGISTRY_GRPC_ADDR                                 = "0.0.0.0:9242"
     # APP_REGISTRY_DEBUG_ADDR                                = "0.0.0.0:9243"
     # OCIS_REVA_GATEWAY                                      = "gateway:9142"
-    APP_REGISTRY_JWT_SECRET                                = random_password.jwt_secret.result
+    # APP_REGISTRY_JWT_SECRET                                = random_password.jwt_secret.result
     # SHARING_LOG_COLOR                                      = "false"
     # SHARING_LOG_LEVEL                                      = "info"
     # SHARING_LOG_PRETTY                                     = "false"
@@ -269,7 +269,7 @@ resource "kubernetes_secret" "ocis_config" {
     # SHARING_DEBUG_ADDR                                     = "0.0.0.0:9151"
     # OCIS_REVA_GATEWAY                                      = "gateway:9142"
     # SHARING_EVENTS_ENDPOINT                                = "nats:9233"
-    SHARING_JWT_SECRET                                     = random_password.jwt_secret.result
+    # SHARING_JWT_SECRET                                     = random_password.jwt_secret.result
     # SHARING_PUBLIC_WRITEABLE_SHARE_MUST_HAVE_PASSWORD      = "false"
     # SHARING_USER_DRIVER                                    = "jsoncs3"
     # SHARING_USER_JSONCS3_PROVIDER_ADDR                     = "storagesystem:9215"
@@ -297,7 +297,7 @@ resource "kubernetes_secret" "ocis_config" {
     # OCS_DEBUG_ADDR                                         = "0.0.0.0:9114"
     OCS_IDM_ADDRESS                                        = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
     # OCIS_REVA_GATEWAY                                      = "gateway:9142"
-    OCS_JWT_SECRET                                         = random_password.jwt_secret.result
+    # OCS_JWT_SECRET                                         = random_password.jwt_secret.result
     OCS_MACHINE_AUTH_API_KEY                               = random_password.machine_auth_api_key.result
     # USERLOG_LOG_COLOR                                      = "false"
     # USERLOG_LOG_LEVEL                                      = "info"
@@ -310,7 +310,7 @@ resource "kubernetes_secret" "ocis_config" {
     # USERLOG_EVENTS_ENDPOINT                                = "nats:9233"
     # OCIS_REVA_GATEWAY                                      = "gateway:9142"
     USERLOG_MACHINE_AUTH_API_KEY                           = random_password.machine_auth_api_key.result
-    USERLOG_JWT_SECRET                                     = random_password.jwt_secret.result
+    # USERLOG_JWT_SECRET                                     = random_password.jwt_secret.result
     # STORAGE_PUBLICLINK_LOG_COLOR                           = "false"
     # STORAGE_PUBLICLINK_LOG_LEVEL                           = "info"
     # STORAGE_PUBLICLINK_LOG_PRETTY                          = "false"
@@ -322,7 +322,7 @@ resource "kubernetes_secret" "ocis_config" {
     # STORAGE_PUBLICLINK_GRPC_ADDR                           = "0.0.0.0:9178"
     # STORAGE_PUBLICLINK_DEBUG_ADDR                          = "0.0.0.0:9179"
     # OCIS_REVA_GATEWAY                                      = "gateway:9142"
-    STORAGE_PUBLICLINK_JWT_SECRET                          = random_password.jwt_secret.result
+    # STORAGE_PUBLICLINK_JWT_SECRET                          = random_password.jwt_secret.result
     # PROXY_LOG_COLOR                                        = "false"
     # PROXY_LOG_LEVEL                                        = "info"
     # PROXY_LOG_PRETTY                                       = "false"
@@ -344,7 +344,7 @@ resource "kubernetes_secret" "ocis_config" {
     # OCIS_REVA_GATEWAY                                      = "gateway:9142"
     PROXY_OIDC_INSECURE                                    = "false"
     PROXY_OIDC_USERINFO_CACHE_STORE                        = "noop"
-    PROXY_JWT_SECRET                                       = random_password.jwt_secret.result
+    # PROXY_JWT_SECRET                                       = random_password.jwt_secret.result
     PROXY_MACHINE_AUTH_API_KEY                             = random_password.machine_auth_api_key.result
     # EVENTHISTORY_LOG_COLOR                                 = "false"
     # EVENTHISTORY_LOG_LEVEL                                 = "info"
@@ -381,7 +381,7 @@ resource "kubernetes_secret" "ocis_config" {
     # STORAGE_USERS_ID_CACHE_STORE                           = "noop"
     # STORAGE_USERS_STAT_CACHE_STORE                         = "noop"
     STORAGE_USERS_MOUNT_ID                                 = "3081f183-2e58-4f6f-8bb1-900a4152058a" # *****
-    STORAGE_USERS_JWT_SECRET                               = random_password.jwt_secret.result
+    # STORAGE_USERS_JWT_SECRET                               = random_password.jwt_secret.result
     OCIS_TRANSFER_SECRET                                   = random_password.transfer_secret.result
     # OCIS_ASYNC_UPLOADS                                     = "true"
     # STORAGE_USERS_DATA_GATEWAY_URL                         = "http://frontend:9140/data/"
@@ -427,7 +427,7 @@ resource "kubernetes_secret" "ocis_config" {
     OCIS_EDITION                                           = "Community"
     # OCIS_REVA_GATEWAY                                      = "gateway:9142"
     # OCDAV_INSECURE                                         = "false"
-    OCDAV_JWT_SECRET                                       = random_password.jwt_secret.result
+    # OCDAV_JWT_SECRET                                       = random_password.jwt_secret.result
     OCDAV_MACHINE_AUTH_API_KEY                             = random_password.machine_auth_api_key.result
     # GRAPH_LOG_COLOR                                        = "false"
     # GRAPH_LOG_LEVEL                                        = "info"
@@ -474,7 +474,7 @@ resource "kubernetes_secret" "ocis_config" {
     # OCIS_REVA_GATEWAY                                      = "gateway:9142"
     # GRAPH_EVENTS_ENDPOINT                                  = "nats:9233"
     GRAPH_APPLICATION_ID                                   = "1a194158-7bfe-4375-a00f-4db4a903afa4" # *****
-    GRAPH_JWT_SECRET                                       = random_password.jwt_secret.result
+    # GRAPH_JWT_SECRET                                       = random_password.jwt_secret.result
     USERLOG_MACHINE_AUTH_API_KEY                           = random_password.machine_auth_api_key.result
     # STORE_LOG_COLOR                                        = "false"
     # STORE_LOG_LEVEL                                        = "info"
