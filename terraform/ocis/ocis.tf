@@ -9,7 +9,7 @@ resource "kubernetes_config_map" "ocis_env" {
     PROXY_ENABLE_BASIC_AUTH      = "false"
     OCIS_EXCLUDE_RUN_SERVICES    = "idm,idp,auth-basic"
     PROXY_ROLE_ASSIGNMENT_DRIVER = "oidc"
-    OCIS_URL                     = "https://ocis.${var.server_base_domain}"
+    OCIS_URL                     = "https://files.${var.server_base_domain}"
     GRAPH_LDAP_SERVER_UUID       = "true"
 
     OCIS_LDAP_CACERT                           = ""
