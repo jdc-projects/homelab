@@ -101,9 +101,28 @@ resource "kubernetes_deployment" "ocis" {
         labels = {
           app = "ocis"
         }
+
+        annotations = {
+          "backup.velero.io/backup-volumes" = "ocis-data"
+        }
       }
 
       spec {
+        init_container {
+          image = "alpine:3.18.2"
+          name  = "ocis-chown"
+
+          command = ["sh", "-c", "chown -R 1000:1000 /var/lib/ocis"]
+
+          security_context {
+            run_as_user = 0
+          }
+
+          volume_mount {
+            mount_path = "/var/lib/ocis/"
+            name       = "ocis-data"
+          }
+        }
         container {
           image = "owncloud/ocis:3.0.0"
           name  = "ocis"
@@ -122,10 +141,18 @@ resource "kubernetes_deployment" "ocis" {
             }
           }
 
-          #   volume_mount {
-          #     mount_path = "/var/lib/ocis/"
-          #     name       = "ocis-data"
-          #   }
+          volume_mount {
+            mount_path = "/var/lib/ocis/"
+            name       = "ocis-data"
+          }
+        }
+
+        volume {
+          name = "ocis-data"
+
+          persistent_volume_claim {
+            claim_name = kubernetes_persistent_volume_claim.ocis.metadata[0].name
+          }
         }
       }
     }
