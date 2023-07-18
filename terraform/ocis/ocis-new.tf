@@ -5,10 +5,7 @@ resource "kubernetes_secret" "ocis_config" {
   }
 
   data = {
-    GATEWAY_STORAGE_USERS_MOUNT_ID                         = "3081f183-2e58-4f6f-8bb1-900a4152058a" # *****
-    OCIS_TRANSFER_SECRET                                   = random_password.transfer_secret.result
     OCIS_LDAP_SERVER_WRITE_ENABLED                         = "false"
-    OCIS_TRANSFER_SECRET                                   = random_password.transfer_secret.result
     USERS_LDAP_INSECURE                                    = "false"
     USERS_LDAP_USER_BASE_DN                                = "ou=people,dc=idm,dc=${var.server_base_domain}"
     USERS_LDAP_GROUP_BASE_DN                               = "ou=groups,dc=idm,dc=${var.server_base_domain}"
@@ -80,14 +77,10 @@ resource "kubernetes_secret" "ocis_config" {
     PROXY_TLS                                              = "false"
     PROXY_OIDC_INSECURE                                    = "false"
     PROXY_OIDC_USERINFO_CACHE_STORE                        = "noop"
-    STORAGE_USERS_MOUNT_ID                                 = "3081f183-2e58-4f6f-8bb1-900a4152058a" # *****
-    OCIS_TRANSFER_SECRET                                   = random_password.transfer_secret.result
     THUMBNAILS_TRANSFER_TOKEN                              = random_password.thumbnails_transfer_secret.result
-    OCIS_EDITION                                           = "Community"
     GRAPH_LDAP_URI                                         = "ldaps://idm.${var.server_base_domain}"
     GRAPH_LDAP_BIND_DN                                     = "uid=${data.terraform_remote_state.openldap.outputs.admin_username},ou=people,dc=idm,dc=${var.server_base_domain}"
     GRAPH_LDAP_BIND_PASSWORD                               = data.terraform_remote_state.openldap.outputs.admin_password
-    GRAPH_LDAP_SERVER_WRITE_ENABLED                        = "false"
     GRAPH_LDAP_CACERT                                      = ""
     GRAPH_LDAP_INSECURE                                    = "false"
     GRAPH_LDAP_SERVER_UUID                                 = "true"
@@ -114,7 +107,6 @@ resource "kubernetes_secret" "ocis_config" {
     GRAPH_USER_ENABLED_ATTRIBUTE                           = "ownCloudUserEnabled"
     GRAPH_DISABLE_USER_MECHANISM                           = "group"
     GRAPH_DISABLED_USERS_GROUP_DN                          = "cn=app_disabled,ou=groups,dc=idm,dc=${var.server_base_domain}"
-    GRAPH_APPLICATION_ID                                   = "1a194158-7bfe-4375-a00f-4db4a903afa4" # *****
     NOTIFICATIONS_SMTP_HOST                                = var.smtp_host
     NOTIFICATIONS_SMTP_PORT                                = var.smtp_port
     NOTIFICATIONS_SMTP_SENDER                              = "OCIS <noreply@${var.server_base_domain}>"
@@ -131,6 +123,10 @@ resource "kubernetes_secret" "ocis_config" {
     OCIS_MACHINE_AUTH_API_KEY = random_password.machine_auth_api_key.result
     OCIS_SYSTEM_USER_ID = random_uuid.storage_system_user_id.result
     OCIS_SYSTEM_USER_API_KEY = random_password.storage_system_api_key.result
+    OCIS_TRANSFER_SECRET = random_password.transfer_secret.result
+    STORAGE_USERS_MOUNT_ID = random_uuid.storage_users_mount_id.result
+    GATEWAY_STORAGE_USERS_MOUNT_ID = random_uuid.storage_users_mount_id.result
+    GRAPH_APPLICATION_ID = random_uuid.graph_application_id.result
   }
 }
 

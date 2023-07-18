@@ -15,6 +15,12 @@ resource "random_password" "machine_auth_api_key" {
 resource "random_uuid" "storage_system_user_id" {
 }
 
+resource "random_uuid" "storage_users_mount_id" {
+}
+
+resource "random_uuid" "graph_application_id" {
+}
+
 resource "random_password" "storage_system_api_key" {
   length  = 50
   numeric = true
