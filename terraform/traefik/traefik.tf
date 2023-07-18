@@ -21,8 +21,8 @@ resource "helm_release" "traefik" {
   }
 
   set {
-    name  = "deployment.podAnnontations[0]"
-    value = "backup.velero.io/backup-volumes=data"
+    name  = "deployment.podAnnontations.\"backup.velero.io/backup-volumes\""
+    value = "data"
   }
 
   # hack for acme.json permissions problem
