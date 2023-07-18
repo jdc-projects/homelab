@@ -111,7 +111,7 @@ resource "helm_release" "keycloak" {
   }
   set {
     name  = "primary.podAnnotations"
-    value = "backup.velero.io/backup-volumes=data"
+    value = "backup.velero.io/backup-volumes: data"
   }
   set {
     name  = "postgresql.volumePermissions.enabled"
