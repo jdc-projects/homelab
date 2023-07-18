@@ -68,7 +68,7 @@ resource "kubernetes_deployment" "ocis" {
           image = "owncloud/ocis:3.0.0"
           name  = "ocis"
 
-          command = ["-c", "ocis init || true; ocis server"]
+          command = ["sh", "-c", "ocis init || true; ocis server"]
 
           env_from {
             secret_ref {
