@@ -139,15 +139,28 @@ resource "helm_release" "velero" {
     value = "'*'"
   }
   set {
-    name  = "schedules.nightly.template.excludedNamespaces"
-    value = <<-EOF
-      - default
-      - kube-system
-      - kube-public
-      - kube-node-lease
-      - openebs
-      - velero
-    EOF
+    name  = "schedules.nightly.template.excludedNamespaces[0]"
+    value = "default"
+  }
+  set {
+    name  = "schedules.nightly.template.excludedNamespaces[1]"
+    value = "kube-system"
+  }
+  set {
+    name  = "schedules.nightly.template.excludedNamespaces[2]"
+    value = "kube-public"
+  }
+  set {
+    name  = "schedules.nightly.template.excludedNamespaces[3]"
+    value = "kube-node-lease"
+  }
+  set {
+    name  = "schedules.nightly.template.excludedNamespaces[4]"
+    value = "openebs"
+  }
+  set {
+    name  = "schedules.nightly.template.excludedNamespaces[5]"
+    value = "velero"
   }
   set {
     name  = "schedules.nightly.template.includeClusterResources"
