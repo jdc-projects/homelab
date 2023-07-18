@@ -1,37 +1,17 @@
-resource "kubernetes_secret" "ocis_config" {
+resource "kubernetes_config_map" "ocis_env" {
   metadata {
-    name      = "ocis-config"
+    name      = "ocis-env"
     namespace = kubernetes_namespace.ocis.metadata[0].name
   }
 
   data = {
-    NOTIFICATIONS_SMTP_HOST           = var.smtp_host
-    NOTIFICATIONS_SMTP_PORT           = var.smtp_port
-    NOTIFICATIONS_SMTP_SENDER         = "OCIS <noreply@${var.server_base_domain}>"
-    NOTIFICATIONS_SMTP_AUTHENTICATION = "login"
-    NOTIFICATIONS_SMTP_ENCRYPTION     = "tls"
-    NOTIFICATIONS_SMTP_USERNAME       = var.smtp_username
-    NOTIFICATIONS_SMTP_PASSWORD       = var.smtp_password
+    PROXY_TLS                    = "false"
+    PROXY_ENABLE_BASIC_AUTH      = "false"
+    OCIS_EXCLUDE_RUN_SERVICES    = "idm,idp,auth-basic"
+    PROXY_ROLE_ASSIGNMENT_DRIVER = "oidc"
+    OCIS_URL                     = "https://ocis.${var.server_base_domain}"
+    GRAPH_LDAP_SERVER_UUID       = "true"
 
-    PROXY_TLS                      = "false"
-    PROXY_ENABLE_BASIC_AUTH        = "false"
-    OCIS_JWT_SECRET                = random_password.jwt_secret.result
-    OCIS_EXCLUDE_RUN_SERVICES      = "idm,idp,auth-basic"
-    PROXY_ROLE_ASSIGNMENT_DRIVER   = "oidc"
-    OCIS_URL                       = "https://ocis.${var.server_base_domain}"
-    OCIS_MACHINE_AUTH_API_KEY      = random_password.machine_auth_api_key.result
-    OCIS_SYSTEM_USER_ID            = random_uuid.storage_system_user_id.result
-    OCIS_SYSTEM_USER_API_KEY       = random_password.storage_system_api_key.result
-    OCIS_TRANSFER_SECRET           = random_password.transfer_secret.result
-    STORAGE_USERS_MOUNT_ID         = random_uuid.storage_users_mount_id.result
-    GATEWAY_STORAGE_USERS_MOUNT_ID = random_uuid.storage_users_mount_id.result
-    GRAPH_APPLICATION_ID           = random_uuid.graph_application_id.result
-    STORAGE_SYSTEM_JWT_SECRET      = random_password.storage_system_jwt_secret.result
-    THUMBNAILS_TRANSFER_TOKEN      = random_password.thumbnails_transfer_secret.result
-    GRAPH_LDAP_SERVER_UUID         = "true"
-
-    OCIS_LDAP_BIND_DN                          = "uid=${data.terraform_remote_state.openldap.outputs.admin_username},ou=people,dc=idm,dc=${var.server_base_domain}"
-    LDAP_BIND_PASSWORD                         = data.terraform_remote_state.openldap.outputs.admin_password
     OCIS_LDAP_CACERT                           = ""
     OCIS_LDAP_DISABLED_USERS_GROUP_DN          = "cn=app_disabled,ou=groups,dc=idm,dc=${var.server_base_domain}"
     OCIS_LDAP_DISABLE_USER_MECHANISM           = "group"
@@ -58,7 +38,7 @@ resource "kubernetes_secret" "ocis_config" {
     GRAPH_LDAP_SERVER_USE_PASSWORD_MODIFY_EXOP = "false"
     GRAPH_LDAP_REFINT_ENABLED                  = "false"
 
-    OCIS_OIDC_ISSUER                      = "https://idp.${var.server_base_domain}/realms/${var.server_base_domain}"
+    OCIS_OIDC_ISSUER                      = "https://idp.${var.server_base_domain}/realms/${data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id}"
     WEB_OIDC_CLIENT_ID                    = keycloak_openid_client.ocis_web.client_id
     PROXY_OIDC_INSECURE                   = "false"
     PROXY_OIDC_ACCESS_TOKEN_VERIFY_METHOD = "jwt"
@@ -66,6 +46,38 @@ resource "kubernetes_secret" "ocis_config" {
     PROXY_USER_CS3_CLAIM                  = "userid"
     PROXY_ROLE_ASSIGNMENT_OIDC_CLAIM      = "roles"
     PROXY_OIDC_REWRITE_WELLKNOWN          = "true"
+
+    NOTIFICATIONS_SMTP_HOST           = var.smtp_host
+    NOTIFICATIONS_SMTP_PORT           = var.smtp_port
+    NOTIFICATIONS_SMTP_SENDER         = "OCIS <noreply@${var.server_base_domain}>"
+    NOTIFICATIONS_SMTP_AUTHENTICATION = "login"
+    NOTIFICATIONS_SMTP_ENCRYPTION     = "tls"
+  }
+}
+
+resource "kubernetes_secret" "ocis_env" {
+  metadata {
+    name      = "ocis-env"
+    namespace = kubernetes_namespace.ocis.metadata[0].name
+  }
+
+  data = {
+    OCIS_JWT_SECRET                = random_password.jwt_secret.result
+    OCIS_MACHINE_AUTH_API_KEY      = random_password.machine_auth_api_key.result
+    OCIS_SYSTEM_USER_ID            = random_uuid.storage_system_user_id.result
+    OCIS_SYSTEM_USER_API_KEY       = random_password.storage_system_api_key.result
+    OCIS_TRANSFER_SECRET           = random_password.transfer_secret.result
+    STORAGE_USERS_MOUNT_ID         = random_uuid.storage_users_mount_id.result
+    GATEWAY_STORAGE_USERS_MOUNT_ID = random_uuid.storage_users_mount_id.result
+    GRAPH_APPLICATION_ID           = random_uuid.graph_application_id.result
+    STORAGE_SYSTEM_JWT_SECRET      = random_password.storage_system_jwt_secret.result
+    THUMBNAILS_TRANSFER_TOKEN      = random_password.thumbnails_transfer_secret.result
+
+    OCIS_LDAP_BIND_DN  = "uid=${data.terraform_remote_state.openldap.outputs.admin_username},ou=people,dc=idm,dc=${var.server_base_domain}"
+    LDAP_BIND_PASSWORD = data.terraform_remote_state.openldap.outputs.admin_password
+
+    NOTIFICATIONS_SMTP_USERNAME = var.smtp_username
+    NOTIFICATIONS_SMTP_PASSWORD = var.smtp_password
   }
 }
 
@@ -99,8 +111,14 @@ resource "kubernetes_deployment" "ocis" {
           command = ["sh", "-c", "ocis server"]
 
           env_from {
+            config_map_ref {
+              name = kubernetes_config_map.ocis_env.metadata[0].name
+            }
+          }
+
+          env_from {
             secret_ref {
-              name = kubernetes_secret.ocis_config.metadata[0].name
+              name = kubernetes_secret.ocis_env.metadata[0].name
             }
           }
 
@@ -121,7 +139,8 @@ resource "kubernetes_deployment" "ocis" {
 
   lifecycle {
     replace_triggered_by = [
-      kubernetes_secret.ocis_config
+      kubernetes_config_map.ocis_env,
+      kubernetes_secret.ocis_env
     ]
   }
 }
