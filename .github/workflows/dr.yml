@@ -47,7 +47,7 @@ jobs:
         uses: azure/setup-kubectl@v3
         with:
           version: 'v1.25.3'
-      - name: "Generate kubeconfig"
+      - name: "Generate and install kubeconfig"
         working-directory: ./terraform
         run: |
           ./cluster-config-write.sh
