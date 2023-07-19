@@ -2,6 +2,12 @@ name: Disaster Recover
 on:
   workflow_dispatch:
 
+env:
+  CLIENT_CERT_DATA: ${{ secrets.KUBE_CLIENT_CERT_DATA }}
+  CLIENT_KEY_DATA: ${{ secrets.KUBE_CLIENT_KEY_DATA }}
+  CLUSTER_CA_CERT_DATA: ${{ secrets.KUBE_CLUSTER_CA_CERT_DATA }}
+  SERVER_KUBE_PORT: ${{ vars.SERVER_KUBE_PORT }}
+
 jobs:
   # deploy-terraform-state-namespace:
   #   uses: ./.github/workflows/kubernetes-manifest-deploy.yml
