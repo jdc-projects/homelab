@@ -62,4 +62,4 @@ jobs:
           tar -xvf velero.tar.gz -C ./velero --strip-components=1
           cp ./velero/velero /usr/local/bin/velero
       - name: "Restore backup"
-        run: velero get backups
+        run: velero restore create --from-schedule nightly
