@@ -180,7 +180,7 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "schedules.nightly.template.ttl"
-    value = "7d"
+    value = "240h"
   }
   set {
     name  = "schedules.nightly.template.defaultVolumesToFsBackup"
