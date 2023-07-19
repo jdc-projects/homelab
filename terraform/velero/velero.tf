@@ -136,7 +136,7 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "schedules.nightly.template.includedNamespaces[0]"
-    value = "'*'"
+    value = "*"
   }
   set {
     name  = "schedules.nightly.template.excludedNamespaces[0]"
