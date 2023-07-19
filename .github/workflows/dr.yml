@@ -24,9 +24,9 @@ jobs:
   #     extra-variable: restore_mode=true
 
   restore:
-    needs: [
-      deploy-velero,
-    ]
+    # needs: [
+    #   deploy-velero,
+    # ]
     runs-on: ubuntu-latest
 
     steps:
