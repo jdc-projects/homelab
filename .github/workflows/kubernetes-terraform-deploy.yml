@@ -12,6 +12,10 @@ on:
         required: false
         type: string
         default: self-hosted
+      extra-variable:
+        required: false
+        type: string
+        default: ''
 
 env:
   CLIENT_CERT_DATA: ${{ secrets.KUBE_CLIENT_CERT_DATA }}
@@ -71,3 +75,6 @@ jobs:
       - name: "Terraform apply specific resource"
         if: "${{ '' != inputs.resource-name }}"
         run: "terraform apply -auto-approve -input=false -target=${{ inputs.resource-name }}"
+      - name: "Terraform apply extra variable"
+        if: "${{ '' != inputs.extra-variable }}"
+        run: "terraform apply -auto-approve -input=false -var=${{ inputs.extra-variable }}"

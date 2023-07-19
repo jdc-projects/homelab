@@ -1,0 +1,57 @@
+name: Disaster Recover
+on:
+  workflow_dispatch:
+
+jobs:
+  # deploy-terraform-state-namespace:
+  #   uses: ./.github/workflows/kubernetes-manifest-deploy.yml
+  #   secrets: inherit
+
+  #   with:
+  #     manifest-file: ./terraform/terraform-state-namespace.yml
+  #     runner-type: ubuntu-latest
+
+  # deploy-velero:
+  #   needs: [
+  #     deploy-terraform-state-namespace,
+  #   ]
+  #   uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+  #   secrets: inherit
+
+  #   with:
+  #     terraform-dir: ./terraform/velero
+  #     runner-type: ubuntu-latest
+  #     extra-variable: restore_mode=true
+
+  restore:
+    needs: [
+      deploy-velero,
+    ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v3
+      - name: "Setup node"
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.25.3'
+      - name: "Generate kubeconfig"
+        working-directory: ./terraform
+        run: "./cluster-config-write.sh"
+      - name: "Add cluster CA certificate"
+        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
+      - name: "Install Velero CLI"
+        run: |
+          mkdir velero
+          curl https://github.com/vmware-tanzu/velero/releases/download/v1.11.0/velero-v1.11.0-linux-amd64.tar.gz -Lo velero.tar.gz
+          tar -xvf velero.tar.gz -C ./velero --strip-components=1
+          cp ./velero/velero /usr/local/bin/velero
+      - name: "Kubectl test"
+        run: kubectl get nodes
+      - name: "Restore backup"
+        run: echo "PLACEHOLDER"
