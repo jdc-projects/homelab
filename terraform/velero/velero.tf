@@ -179,6 +179,10 @@ resource "helm_release" "velero" {
     value = "backblaze"
   }
   set {
+    name  = "schedules.nightly.template.ttl"
+    value = "7d"
+  }
+  set {
     name  = "schedules.nightly.template.defaultVolumesToFsBackup"
     value = "false"
   }
