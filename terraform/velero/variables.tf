@@ -1,3 +1,9 @@
+variable "restore_mode" {
+  type        = bool
+  default     = false
+  description = "Set to true if restoring in DR, otherwise false."
+}
+
 variable "velero_s3_access_key_id" {
   type        = string
   description = ""

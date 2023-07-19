@@ -62,6 +62,10 @@ resource "helm_release" "velero" {
     value = "true"
   }
   set {
+    name  = "configuration.backupStorageLocation[0].accessMode"
+    value = var.restore_mode ? "ReadOnly" : "ReadWrite"
+  }
+  set {
     name  = "configuration.backupStorageLocation[0].credential.name"
     value = kubernetes_secret.velero_s3_secret.metadata[0].name
   }
