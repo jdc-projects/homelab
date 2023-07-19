@@ -42,7 +42,9 @@ jobs:
           version: 'v1.25.3'
       - name: "Generate kubeconfig"
         working-directory: ./terraform
-        run: "./cluster-config-write.sh"
+        run: |
+          ./cluster-config-write.sh
+          cp cluster.yml ~/.kube/config
       - name: "Add cluster CA certificate"
         run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
       - name: "Install Velero CLI"
