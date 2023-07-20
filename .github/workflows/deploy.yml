@@ -53,6 +53,16 @@ jobs:
       terraform-dir: ./terraform/traefik
       runner-type: ${{ github.event.inputs.runner-type }}
 
+  deploy-traefik-forward-auth:
+    needs: [
+      deploy-github-org-runner-2,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/traefik-foward-auth
+
   deploy-velero:
     needs: [
       deploy-github-org-runner-2,
