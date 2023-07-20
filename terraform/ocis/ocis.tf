@@ -123,11 +123,10 @@ resource "kubernetes_deployment" "ocis" {
             name       = "ocis-data"
           }
         }
+
         container {
           image = "owncloud/ocis:3.0.0"
           name  = "ocis"
-
-          command = ["sh", "-c", "ocis server"]
 
           env_from {
             config_map_ref {
