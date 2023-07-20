@@ -91,6 +91,10 @@ resource "helm_release" "velero" {
     value = "kopia"
   }
   set {
+    name  = "configuration.fsBackupTimeout"
+    value = "23h"
+  }
+  set {
     name  = "configuration.defaultBackupStorageLocation"
     value = "backblaze-b2"
   }
