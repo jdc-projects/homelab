@@ -61,7 +61,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/traefik-foward-auth
+      terraform-dir: ./terraform/traefik-forward-auth
 
   deploy-velero:
     needs: [
