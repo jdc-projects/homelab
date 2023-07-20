@@ -107,6 +107,10 @@ resource "helm_release" "velero" {
     value = "/plugins"
   }
   set {
+    name  = "configuration.restoreOnlyMode"
+    value = var.restore_mode ? "true" : "false"
+  }
+  set {
     name  = "configuration.namespace"
     value = kubernetes_namespace.velero.metadata[0].name
   }
