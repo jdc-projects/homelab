@@ -5,13 +5,13 @@ resource "kubernetes_config_map" "traefik_forward_auth_env" {
   }
 
   data = {
-    LOG_LEVEL                 = "info"
-    DEFAULT_ACTION            = "auth"
-    DEFAULT_PROVIDER          = "oidc"
-    URL_PATH                  = "/oauth"
-    PORT                      = "80"
-    PROVIDERS_OIDC_ISSUER_URL = "https://idp.${var.server_base_domain}/realms/${data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id}"
-    PROVIDERS_OIDC_CLIENT_ID  = keycloak_openid_client.traefik_forward_auth.client_id
+    LOG_LEVEL        = "info"
+    DEFAULT_ACTION   = "auth"
+    DEFAULT_PROVIDER = "oidc"
+    URL_PATH         = "/oauth"
+    PORT             = "80"
+    PROVIDER_URI     = "https://idp.${var.server_base_domain}/realms/${data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id}"
+    CLIENT_ID        = keycloak_openid_client.traefik_forward_auth.client_id
   }
 }
 
@@ -22,8 +22,8 @@ resource "kubernetes_secret" "traefik_forward_auth_env" {
   }
 
   data = {
-    SECRET                       = random_password.traefik_forward_auth_secret.result
-    PROVIDERS_OIDC_CLIENT_SECRET = random_password.keycloak_client_secret.result
+    SECRET        = random_password.traefik_forward_auth_secret.result
+    CLIENT_SECRET = random_password.keycloak_client_secret.result
   }
 }
 
@@ -81,5 +81,25 @@ resource "kubernetes_deployment" "traefik-forward-auth" {
       kubernetes_config_map.traefik_forward_auth_env,
       kubernetes_secret.traefik_forward_auth_env
     ]
+  }
+}
+
+resource "kubernetes_manifest" "traefik_forward_auth_middleware" {
+  manifest = {
+    apiVersion = "traefik.containo.us/v1alpha1"
+    kind       = "Middleware"
+
+    metadata = {
+      name      = "traefik-forward-auth"
+      namespace = kubernetes_namespace.traefik_forward_auth.metadata[0].name
+    }
+
+    spec = {
+      forwardAuth = {
+        address             = "https://traefik-forward-auth.${var.server_base_domain}${kubernetes_config_map.traefik_forward_auth_env.data.URL_PATH}"
+        authResponseHeaders = ["X-Forwarded-User"]
+        trustForwardHeader  = "true"
+      }
+    }
   }
 }

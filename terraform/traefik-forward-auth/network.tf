@@ -41,23 +41,3 @@ resource "kubernetes_manifest" "traefik_forward_auth_ingress" {
     }
   }
 }
-
-resource "kubernetes_manifest" "traefik_forward_auth_middleware" {
-  manifest = {
-    apiVersion = "traefik.containo.us/v1alpha1"
-    kind       = "Middleware"
-
-    metadata = {
-      name      = "traefik-forward-auth"
-      namespace = kubernetes_namespace.traefik_forward_auth.metadata[0].name
-    }
-
-    spec = {
-      forwardAuth = {
-        address             = "https://traefik-forward-auth.${var.server_base_domain}${kubernetes_config_map.traefik_forward_auth_env.data.URL_PATH}"
-        authResponseHeaders = ["X-Forwarded-User"]
-        trustForwardHeader  = "true"
-      }
-    }
-  }
-}
