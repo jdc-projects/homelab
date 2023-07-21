@@ -140,7 +140,7 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "schedules.nightly.schedule"
-    value = "0 01 * * *"
+    value = "15 12 * * *"
   }
   set {
     name  = "schedules.nightly.useOwnerReferencesInBackup"
