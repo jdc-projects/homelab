@@ -133,6 +133,10 @@ resource "helm_release" "velero" {
     name  = "deployNodeAgent"
     value = "true"
   }
+  set {
+    name  = "nodeAgent.resources"
+    value = ""
+  }
 
   set {
     name  = "schedules.nightly.disabled"
@@ -140,7 +144,7 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "schedules.nightly.schedule"
-    value = "15 12 * * *"
+    value = "35 12 * * *"
   }
   set {
     name  = "schedules.nightly.useOwnerReferencesInBackup"
