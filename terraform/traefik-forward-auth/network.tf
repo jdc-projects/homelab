@@ -55,7 +55,7 @@ resource "kubernetes_manifest" "traefik_forward_auth_middleware" {
     spec = {
       forwardAuth = {
         address             = "https://traefik-forward-auth.${var.server_base_domain}${kubernetes_config_map.traefik_forward_auth_env.data.URL_PATH}"
-        authResponseHeaders = "X-Forwarded-User"
+        authResponseHeaders = ["X-Forwarded-User"]
         trustForwardHeader  = "true"
       }
     }
