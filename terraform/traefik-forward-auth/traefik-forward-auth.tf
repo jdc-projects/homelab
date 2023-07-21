@@ -27,7 +27,7 @@ resource "kubernetes_secret" "traefik_forward_auth_env" {
   }
 }
 
-resource "kubernetes_deployment" "traefik-forward-auth" {
+resource "kubernetes_deployment" "traefik_forward_auth" {
   metadata {
     name      = "traefik-forward-auth"
     namespace = kubernetes_namespace.traefik_forward_auth.metadata[0].name
