@@ -26,6 +26,8 @@ resource "keycloak_ldap_user_federation" "openldap" {
 
   use_password_modify_extended_op = false
 
+  trust_email = true
+
   pagination = false
 
   full_sync_period = 60
