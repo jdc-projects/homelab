@@ -7,10 +7,9 @@ resource "keycloak_openid_client" "traefik_forward_auth" {
 
   access_type = "CONFIDENTIAL"
   valid_redirect_uris = [
-    "https://treafik-forward-auth.${var.server_base_domain}/*"
+    "https://admin.${var.server_base_domain}/*"
   ]
   web_origins = [
-    "https://traefik-forward-auth.${var.server_base_domain}"
   ]
 
   client_authenticator_type = "client-secret"

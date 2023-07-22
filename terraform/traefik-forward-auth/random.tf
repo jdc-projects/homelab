@@ -11,3 +11,10 @@ resource "random_password" "traefik_forward_auth_secret" {
   special = false
   upper   = true
 }
+
+resource "random_password" "traefik_forward_auth_encryption_key" {
+  length  = 32
+  numeric = true
+  special = false
+  upper   = true
+}

@@ -5,13 +5,17 @@ resource "kubernetes_config_map" "traefik_forward_auth_env" {
   }
 
   data = {
-    LOG_LEVEL        = "info"
+    LOG_LEVEL        = "debug"
+    AUTH_HOST        = "traefik-forward-auth.traefik-forward-auth"
     DEFAULT_ACTION   = "auth"
     DEFAULT_PROVIDER = "oidc"
-    URL_PATH         = "/oauth"
-    PORT             = "80"
+    URL_PATH         = "/test/"
+    PORT             = "4181"
     PROVIDER_URI     = "https://idp.${var.server_base_domain}/realms/${data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id}"
     CLIENT_ID        = keycloak_openid_client.traefik_forward_auth.client_id
+    INSECURE_COOKIE  = "false"
+    COOKIE_DOMAIN    = var.server_base_domain
+    SCOPE            = "openid"
   }
 }
 
@@ -22,8 +26,9 @@ resource "kubernetes_secret" "traefik_forward_auth_env" {
   }
 
   data = {
-    SECRET        = random_password.traefik_forward_auth_secret.result
-    CLIENT_SECRET = random_password.keycloak_client_secret.result
+    SECRET         = random_password.traefik_forward_auth_secret.result
+    CLIENT_SECRET  = random_password.keycloak_client_secret.result
+    ENCRYPTION_KEY = random_password.traefik_forward_auth_encryption_key.result
   }
 }
 
@@ -96,7 +101,7 @@ resource "kubernetes_manifest" "traefik_forward_auth_middleware" {
 
     spec = {
       forwardAuth = {
-        address             = "https://traefik-forward-auth.${var.server_base_domain}${kubernetes_config_map.traefik_forward_auth_env.data.URL_PATH}"
+        address             = "http://traefik-forward-auth.traefik-forward-auth"
         authResponseHeaders = ["X-Forwarded-User"]
         trustForwardHeader  = "true"
       }
