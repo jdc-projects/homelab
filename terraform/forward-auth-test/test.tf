@@ -41,7 +41,7 @@ module "auth_ingress" {
 
   server_base_domain   = var.server_base_domain
   namespace            = kubernetes_namespace.forward_auth_test.metadata[0].name
-  path_prefix          = "test2"
+  path_prefix          = "test"
   service_port         = "80"
   service_selector_app = kubernetes_deployment.traefik_forward_auth_test.spec[0].template[0].metadata[0].labels["app"]
 }
