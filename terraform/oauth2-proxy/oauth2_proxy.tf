@@ -24,15 +24,6 @@ resource "helm_release" "oauth2_proxy" {
   timeout = 300
 
   set {
-    name  = "ingress.enabled"
-    value = "true"
-  }
-  set {
-    name  = "ingress.hostname"
-    value = "traefik-auth.${var.server_base_domain}"
-  }
-
-  set {
     name  = "configuration.clientID"
     value = keycloak_openid_client.oauth2_proxy.client_id
   }

@@ -69,13 +69,18 @@ resource "helm_release" "traefik" {
   # end of hack
 
   set {
-    name  = "additionalArguments[0]"
-    value = "--providers.kubernetesingress.allowexternalnameservices"
+    name  = "providers.kubernetesCRD.allowCrossNamespace"
+    value = "true"
   }
   set {
-    name  = "additionalArguments[1]"
-    value = "--providers.kubernetescrd.allowexternalnameservices"
+    name  = "providers.kubernetesCRD.allowExternalNameServices"
+    value = "true"
   }
+  set {
+    name  = "providers.kubernetesIngress.allowExternalNameServices"
+    value = "true"
+  }
+
   set {
     name  = "additionalArguments[2]"
     value = "--serverstransport.insecureskipverify=true"

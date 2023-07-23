@@ -40,8 +40,8 @@ resource "kubernetes_manifest" "forward_auth_ingress" {
           port      = kubernetes_service.forward_auth.spec[0].port[0].port
         }]
         middlewares = [{
-          name      = terraform_remote_state.oauth2_proxy.ouputs.redirect_middleware_name
-          namespace = terraform_remote_state.oauth2_proxy.ouputs.middleware_namespace
+          name      = data.terraform_remote_state.oauth2_proxy.outputs.redirect_middleware_name
+          namespace = data.terraform_remote_state.oauth2_proxy.outputs.middleware_namespace
         }]
       }]
     }
