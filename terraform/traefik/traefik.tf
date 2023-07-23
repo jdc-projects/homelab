@@ -82,7 +82,7 @@ resource "helm_release" "traefik" {
   }
 
   set {
-    name  = "additionalArguments[2]"
+    name  = "additionalArguments[0]"
     value = "--serverstransport.insecureskipverify=true"
   }
 
