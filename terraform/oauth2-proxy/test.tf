@@ -1,7 +1,7 @@
 resource "kubernetes_deployment" "traefik_forward_auth_test" {
   metadata {
     name      = "traefik-forward-auth-test"
-    namespace = kubernetes_namespace.traefik_forward_auth.metadata[0].name
+    namespace = kubernetes_namespace.oauth2_proxy.metadata[0].name
   }
 
   spec {
