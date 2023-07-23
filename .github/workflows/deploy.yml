@@ -53,16 +53,6 @@ jobs:
       terraform-dir: ./terraform/traefik
       runner-type: ${{ github.event.inputs.runner-type }}
 
-  deploy-oauth2-proxy:
-    needs: [
-      deploy-keycloak-config,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/oauth2-proxy
-
   deploy-velero:
     needs: [
       deploy-github-org-runner-2,
@@ -136,3 +126,13 @@ jobs:
 
     with:
       terraform-dir: ./terraform/ocis
+
+  deploy-oauth2-proxy:
+    needs: [
+      deploy-keycloak-config,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/oauth2-proxy
