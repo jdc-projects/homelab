@@ -25,7 +25,7 @@ resource "kubernetes_manifest" "forward_auth_ingress" {
 
     metadata = {
       name      = "forward-auth"
-        namespace = var.namespace
+      namespace = var.namespace
     }
 
     spec = {

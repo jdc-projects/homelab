@@ -39,8 +39,8 @@ resource "kubernetes_deployment" "traefik_forward_auth_test" {
 module "auth-ingress" {
   source = "../modules/auth-ingress"
 
-  server_base_domain = var.server_base_domain
-  namespace = kubernetes_namespace.forward_auth_test.metadata[0].name
-  path_prefix = "test2"
+  server_base_domain   = var.server_base_domain
+  namespace            = kubernetes_namespace.forward_auth_test.metadata[0].name
+  path_prefix          = "test2"
   service_selector_app = kubernetes_deployment.traefik_forward_auth_test.spec[0].template[0].metatdata[0].labels["app"]
 }

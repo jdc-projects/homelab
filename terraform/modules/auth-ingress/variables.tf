@@ -4,21 +4,21 @@ variable "server_base_domain" {
 }
 
 variable "namespace" {
-  type = string
+  type        = string
   description = "Namespace to put resources in."
 }
 
 variable "path_prefix" {
-  type = string
+  type        = string
   description = "Path prefix for the ingress."
 }
 
 variable "service_selector_app" {
-  type = string
+  type        = string
   description = "Selector 'app' name for service."
 }
 
 variable "service_port" {
-  type = string
+  type        = string
   description = "Target port for the service."
 }
