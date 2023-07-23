@@ -35,3 +35,12 @@ resource "kubernetes_deployment" "traefik_forward_auth_test" {
     delete = "1m"
   }
 }
+
+module "auth-ingress" {
+  source = ""
+
+  server_base_domain = var.server_base_domain
+  namespace = ""
+  path_prefix = "test2"
+  service_selector_app = kubernetes_deployment.traefik_forward_auth_test.spec[0].template[0].metatdata[0].labels["app"]
+}

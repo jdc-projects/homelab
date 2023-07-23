@@ -136,3 +136,13 @@ jobs:
 
     with:
       terraform-dir: ./terraform/oauth2-proxy
+
+  deploy-forward-auth-test:
+    needs: [
+      deploy-oauth2-proxy,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/forward-auth-test

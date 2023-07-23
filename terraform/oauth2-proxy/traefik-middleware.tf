@@ -31,7 +31,7 @@ resource "kubernetes_manifest" "oauth2_proxy_redirect_middleware" {
 
     metadata = {
       name      = "oauth2-proxy-redirect"
-      namespace = kubernetes_namespace.oauth2_proxy.metadata[0].name
+      namespace = kubernetes_manifest.oauth2_proxy_headers_middleware.manifest["metadata"].namespace
     }
 
     spec = {
@@ -54,7 +54,7 @@ resource "kubernetes_manifest" "oauth2_proxy_wo_redirect_middleware" {
 
     metadata = {
       name      = "oauth2-proxy-wo-redirect"
-      namespace = kubernetes_namespace.oauth2_proxy.metadata[0].name
+      namespace = kubernetes_manifest.oauth2_proxy_headers_middleware.manifest["metadata"].namespace
     }
 
     spec = {
