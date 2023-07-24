@@ -129,13 +129,15 @@ resource "helm_release" "keycloak" {
 }
 
 resource "null_resource" "keycloak_liveness_check" {
-  triggers = {
-    always_run = timestamp()
-  }
-
   provisioner "local-exec" {
     command = "timeout 300 bash -c 'while ! curl -sfI https://${null_resource.keycloak_domain.triggers.keycloak_domain}; do echo \"Waiting for Keycloak to be live.\" && sleep 1; done'"
   }
 
   depends_on = [helm_release.keycloak]
+
+  lifecycle {
+    replace_triggered_by = [
+      helm_release.keycloak
+    ]
+  }
 }
