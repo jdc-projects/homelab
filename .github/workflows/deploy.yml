@@ -63,6 +63,16 @@ jobs:
     with:
       terraform-dir: ./terraform/velero
 
+  deploy-loki:
+    needs: [
+      deploy-github-org-runner-2,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/loki
+
   deploy-services:
     needs: [
       deploy-github-org-runner-2,
