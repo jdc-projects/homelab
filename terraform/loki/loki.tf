@@ -1,4 +1,4 @@
-resource "helm_release" "oauth2_proxy" {
+resource "helm_release" "loki" {
   name = "loki"
 
   repository = "https://grafana.github.io/helm-charts"
@@ -8,6 +8,29 @@ resource "helm_release" "oauth2_proxy" {
   namespace = kubernetes_namespace.loki.metadata[0].name
 
   timeout = 300
+
+  set {
+    name  = "read.replicas"
+    value = "1"
+  }
+  set {
+    name  = "write.replicas"
+    value = "1"
+  }
+  set {
+    name  = "backend.replicas"
+    value = "1"
+  }
+
+  set {
+    name  = "monitoring.selfMonitoring.enabled"
+    value = "false"
+  }
+
+  set {
+    name  = "test.enabled"
+    value = "false"
+  }
 
   set {
     name  = "minio.enabled"
@@ -22,19 +45,7 @@ resource "helm_release" "oauth2_proxy" {
     value = random_password.minio_root_password.result
   }
   set {
-    name  = "minio.persistence.existingClaim"
-    value = "" # *****
-  }
-  set {
-    name  = "minio.persistence.volumeName"
-    value = "minio-data"
-  }
-  set {
     name  = "minio.persistence.size"
     value = "5Gi"
-  }
-  set {
-    name  = "minio.podAnnotations.backup\\.velero\\.io\\/backup-volumes"
-    value = "minio-data"
   }
 }
