@@ -16,11 +16,6 @@ terraform {
       version = "2.21.1"
     }
 
-    null = {
-      source  = "hashicorp/null"
-      version = "3.2.1"
-    }
-
     keycloak = {
       source  = "mrparkers/keycloak"
       version = "4.3.1"
@@ -43,10 +38,6 @@ provider "kubernetes" {
   config_path = "../cluster.yml"
 }
 
-provider "null" {
-  # Configuration options
-}
-
 provider "keycloak" {
   client_id = "admin-cli"
   username  = data.terraform_remote_state.keycloak_config.outputs.keycloak_admin_username
@@ -62,16 +53,6 @@ data "terraform_remote_state" "keycloak_config" {
 
   config = {
     secret_suffix = "apps-keycloak-config"
-    config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
-  }
-}
-
-data "terraform_remote_state" "openldap" {
-  backend = "kubernetes"
-
-  config = {
-    secret_suffix = "apps-openldap"
     config_path   = "../cluster.yml"
     namespace     = "terraform-state"
   }
