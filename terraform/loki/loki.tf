@@ -93,7 +93,19 @@ resource "helm_release" "loki" {
     value = random_password.minio_root_password.result
   }
   set {
+    name  = "minio.persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.loki_minio.metadata[0].name
+  }
+  set {
+    name  = "minio.persistence.volumeName"
+    value = "minio-data"
+  }
+  set {
     name  = "minio.persistence.size"
-    value = "5Gi"
+    value = kubernetes_persistent_volume_claim.loki_minio.spec[0].resources[0].requests.storage
+  }
+  set {
+    name  = "minio.podAnnotations.backup\\.velero\\.io\\/backup-volumes"
+    value = "minio-data"
   }
 }

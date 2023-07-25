@@ -44,6 +44,6 @@ resource "kubernetes_namespace" "loki" {
   # since the pvcs will be deleted if this is, but the promtail hostpath data will remain,
   # make this difficult to destroy as a safety mechanism and to force a sanity check.
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
