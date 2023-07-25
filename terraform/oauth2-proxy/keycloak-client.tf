@@ -18,7 +18,7 @@ resource "keycloak_openid_client" "oauth2_proxy" {
 
   standard_flow_enabled        = true
   direct_access_grants_enabled = true
-  implicit_flow_enabled        = true
+  implicit_flow_enabled        = false
 
   full_scope_allowed = false
 
