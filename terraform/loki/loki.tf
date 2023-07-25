@@ -54,6 +54,32 @@ resource "helm_release" "loki" {
     value = random_password.gateway_password.result
   }
 
+  # disable affinity, since it can break updates
+  set {
+    name  = "write.affinity"
+    value = ""
+  }
+  set {
+    name  = "table.affinity"
+    value = ""
+  }
+  set {
+    name  = "read.affinity"
+    value = ""
+  }
+  set {
+    name  = "backend.affinity"
+    value = ""
+  }
+  set {
+    name  = "singleBinary.affinity"
+    value = ""
+  }
+  set {
+    name  = "gateway.affinity"
+    value = ""
+  }
+
   set {
     name  = "minio.enabled"
     value = "true"
