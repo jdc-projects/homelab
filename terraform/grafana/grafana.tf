@@ -18,6 +18,24 @@ resource "helm_release" "grafana" {
     value = "grafana.${var.server_base_domain}"
   }
 
+  set {
+    name  = "persistence.enabled"
+    value = "true"
+  }
+  set {
+    name  = "persistence.size"
+    value = kubernetes_persistent_volume_claim.grafana.spec[0].resources[0].requests.storage
+  }
+  set {
+    name  = "persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.grafana.metadata[0].name
+  }
+
+  set {
+    name  = "podAnnotations.backup\\.velero\\.io\\/backup-volumes"
+    value = "storage"
+  }
+
   set_sensitive {
     name  = "adminUser"
     value = random_password.admin_username.result
@@ -26,7 +44,6 @@ resource "helm_release" "grafana" {
     name  = "adminPassword"
     value = random_password.admin_password.result
   }
-
   set {
     name  = "datasources.datasources\\.yaml.apiVersion"
     value = "1"
