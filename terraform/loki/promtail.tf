@@ -79,4 +79,16 @@ resource "helm_release" "promtail" {
     name  = "config.clients[0].url"
     value = "http://loki-gateway/loki/api/v1/push"
   }
+  set {
+    name  = "config.clients[0].basic_auth.username"
+    value = random_password.gateway_username.result
+  }
+  set {
+    name  = "config.clients[0].basic_auth.password"
+    value = random_password.gateway_password.result
+  }
+
+  depends_on = [
+    helm_release.loki
+  ]
 }

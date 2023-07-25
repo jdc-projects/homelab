@@ -36,10 +36,22 @@ resource "helm_release" "loki" {
     name  = "monitoring.selfMonitoring.enabled"
     value = "false"
   }
-
   set {
     name  = "test.enabled"
     value = "false"
+  }
+
+  set {
+    name  = "gateway.basicAuth.enabled"
+    value = "true"
+  }
+  set {
+    name  = "gateway.basicAuth.username"
+    value = random_password.gateway_username.result
+  }
+  set {
+    name  = "gateway.basicAuth.password"
+    value = random_password.gateway_password.result
   }
 
   set {
