@@ -45,11 +45,11 @@ resource "helm_release" "loki" {
     name  = "gateway.basicAuth.enabled"
     value = "true"
   }
-  set {
+  set_sensitive {
     name  = "gateway.basicAuth.username"
     value = random_password.gateway_username.result
   }
-  set {
+  set_sensitive {
     name  = "gateway.basicAuth.password"
     value = random_password.gateway_password.result
   }
@@ -84,11 +84,11 @@ resource "helm_release" "loki" {
     name  = "minio.enabled"
     value = "true"
   }
-  set {
+  set_sensitive {
     name  = "minio.rootUser"
     value = random_password.minio_root_username.result
   }
-  set {
+  set_sensitive {
     name  = "minio.rootPassword"
     value = random_password.minio_root_password.result
   }

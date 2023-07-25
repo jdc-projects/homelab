@@ -27,11 +27,11 @@ resource "helm_release" "oauth2_proxy" {
     name  = "configuration.clientID"
     value = keycloak_openid_client.oauth2_proxy.client_id
   }
-  set {
+  set_sensitive {
     name  = "configuration.clientSecret"
     value = random_password.keycloak_client_secret.result
   }
-  set {
+  set_sensitive {
     name  = "configuration.cookieSecret"
     value = random_password.oauth2_proxy_cookie_secret.result
   }
