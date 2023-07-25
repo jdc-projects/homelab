@@ -53,10 +53,75 @@ resource "helm_release" "grafana" {
   }
   set_sensitive {
     name  = "datasources.datasources\\.yaml.datasources[0].basicAuthUser"
-    value = "${data.terraform_remote_state.loki.outputs.gateway_username}"
+    value = data.terraform_remote_state.loki.outputs.gateway_username
   }
   set_sensitive {
     name  = "datasources.datasources\\.yaml.datasources[0].secureJsonData.basicAuthPassword"
-    value = "${data.terraform_remote_state.loki.outputs.gateway_password}"
+    value = data.terraform_remote_state.loki.outputs.gateway_password
+  }
+
+  set {
+    name  = "grafana\\.ini.server.root_url"
+    value = "https://grafana.${var.server_base_domain}"
+  }
+  set {
+    name  = "grafana\\.ini.auth\\.generic_oauth.enabled"
+    value = "true"
+  }
+  set {
+    name  = "grafana\\.ini.auth\\.generic_oauth.name"
+    value = "keycloak"
+  }
+  set {
+    name  = "grafana\\.ini.auth\\.generic_oauth.allow_sign_up"
+    value = "true"
+  }
+  set {
+    name  = "grafana\\.ini.auth\\.generic_oauth.client_id"
+    value = keycloak_openid_client.oauth2_proxy.client_id
+  }
+  set_sensitive {
+    name  = "grafana\\.ini.auth\\.generic_oauth.client_secret"
+    value = random_password.keycloak_client_secret.result
+  }
+  set {
+    name  = "grafana\\.ini.auth\\.generic_oauth.scopes"
+    value = "openid"
+  }
+  set {
+    name  = "grafana\\.ini.auth\\.generic_oauth.email_attribute_path"
+    value = "email"
+  }
+  set {
+    name  = "grafana\\.ini.auth\\.generic_oauth.login_attribute_path"
+    value = "preferred_username"
+  }
+  set {
+    name  = "grafana\\.ini.auth\\.generic_oauth.name_attribute_path"
+    value = "name"
+  }
+  set {
+    name  = "grafana\\.ini.auth\\.generic_oauth.auth_url"
+    value = "https://idp.${var.server_base_domain}/realms/${data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id}/protocol/openid-connect/auth"
+  }
+  set {
+    name  = "grafana\\.ini.auth\\.generic_oauth.token_url"
+    value = "https://idp.${var.server_base_domain}/realms/${data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id}/protocol/openid-connect/token"
+  }
+  set {
+    name  = "grafana\\.ini.auth\\.generic_oauth.api_url"
+    value = "https://idp.${var.server_base_domain}/realms/${data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id}/protocol/openid-connect/userinfo"
+  }
+  set {
+    name  = "grafana\\.ini.auth\\.generic_oauth.role_attribute_strict"
+    value = "true"
+  }
+  set {
+    name  = "grafana\\.ini.auth\\.generic_oauth.role_attribute_path"
+    value = "contains(roles[*]\\, 'systemAdmin') && 'GrafanaAdmin'"
+  }
+  set {
+    name  = "grafana\\.ini.auth\\.generic_oauth.auto_login"
+    value = "true"
   }
 }
