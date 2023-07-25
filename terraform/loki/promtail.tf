@@ -19,21 +19,62 @@ resource "helm_release" "promtail" {
   }
   set {
     name  = "defaultVolumes[1].name"
-    value = "containers"
-  }
-  set {
-    name  = "defaultVolumes[1].hostPath.path"
-    value = "/mnt/vault/ix-applications/docker/containers"
-  }
-  set {
-    name  = "defaultVolumes[2].name"
     value = "pods"
   }
   set {
+    name  = "defaultVolumes[1].hostPath.path"
+    value = "/var/log/pods"
+  }
+  set {
+    name  = "defaultVolumes[2].name"
+    value = "mnt"
+  }
+  set {
     name  = "defaultVolumes[2].hostPath.path"
-    value = "/var/lib/kubelet/pods"
+    value = "/mnt"
   }
 
+  set {
+    name  = "defaultVolumeMounts[0].name"
+    value = "run"
+  }
+  set {
+    name  = "defaultVolumeMounts[0].mountPath"
+    value = "/run/promtail"
+  }
+  set {
+    name  = "defaultVolumeMounts[1].name"
+    value = "pods"
+  }
+  set {
+    name  = "defaultVolumeMounts[1].mountPath"
+    value = "/var/log/pods"
+  }
+  set {
+    name  = "defaultVolumeMounts[1].readOnly"
+    value = "true"
+  }
+  set {
+    name  = "defaultVolumeMounts[2].name"
+    value = "mnt"
+  }
+  set {
+    name  = "defaultVolumeMounts[2].mountPath"
+    value = "/mnt"
+  }
+  set {
+    name  = "defaultVolumeMounts[2].readOnly"
+    value = "true"
+  }
+
+  set {
+    name  = "config.logLevel"
+    value = "info"
+  }
+  set {
+    name  = "config.logFormat"
+    value = "json"
+  }
   set {
     name  = "config.clients[0].url"
     value = "http://loki-gateway/loki/api/v1/push"

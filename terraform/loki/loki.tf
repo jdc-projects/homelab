@@ -10,6 +10,16 @@ resource "helm_release" "loki" {
   timeout = 300
 
   set {
+    name  = "loki.auth_enabled"
+    value = "false"
+  }
+
+  set {
+    name  = "loki.commonConfig.replication_factor"
+    value = "1"
+  }
+
+  set {
     name  = "read.replicas"
     value = "1"
   }
