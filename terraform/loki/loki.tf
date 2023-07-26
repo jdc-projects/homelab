@@ -41,6 +41,11 @@ resource "kubernetes_job" "loki-chown" {
   }
 
   wait_for_completion = true
+
+  timeouts {
+    create = "1m"
+    update = "1m"
+  }
 }
 
 resource "helm_release" "loki" {
