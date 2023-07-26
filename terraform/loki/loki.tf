@@ -1,3 +1,48 @@
+resource "kubernetes_job" "loki-chown" {
+  metadata {
+    name = "loki-chown"
+    namespace = kubernetes_namespace.loki.metadata[0].name
+  }
+
+  spec {
+    template {
+      metadata {}
+
+      spec {
+        container {
+          image = "alpine:3.18.2"
+          name  = "loki-chown"
+
+          command = ["sh", "-c", "chown -R 1000:1000 /export"]
+
+          security_context {
+            run_as_user = 0
+          }
+
+          volume_mount {
+            mount_path = "/export"
+            name       = "loki-data"
+          }
+        }
+
+        volume {
+          name = "loki-data"
+
+          persistent_volume_claim {
+            claim_name = kubernetes_persistent_volume_claim.loki_minio.metadata[0].name
+          }
+        }
+
+        restart_policy = "Never"
+      }
+    }
+
+    backoff_limit = 0
+  }
+
+  wait_for_completion = true
+}
+
 resource "helm_release" "loki" {
   name = "loki"
 
@@ -84,6 +129,18 @@ resource "helm_release" "loki" {
     name  = "minio.enabled"
     value = "true"
   }
+  set {
+    name  = "minio.mode"
+    value = "standalone"
+  }
+  set {
+    name  = "minio.replicas"
+    value = "1"
+  }
+  set {
+    name  = "minio.drivesPerNode"
+    value = "1"
+  }
   set_sensitive {
     name  = "minio.rootUser"
     value = random_password.minio_root_username.result
@@ -91,6 +148,10 @@ resource "helm_release" "loki" {
   set_sensitive {
     name  = "minio.rootPassword"
     value = random_password.minio_root_password.result
+  }
+  set {
+    name  = "minio.persistence.enabled"
+    value = "true"
   }
   set {
     name  = "minio.persistence.existingClaim"
@@ -108,4 +169,8 @@ resource "helm_release" "loki" {
     name  = "minio.podAnnotations.backup\\.velero\\.io\\/backup-volumes"
     value = "minio-data"
   }
+
+  depends_on = [
+    kubernetes_job.loki-chown
+  ]
 }
