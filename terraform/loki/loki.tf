@@ -163,16 +163,12 @@ resource "helm_release" "loki" {
     value = kubernetes_persistent_volume_claim.loki_minio.metadata[0].name
   }
   set {
-    name  = "minio.persistence.volumeName"
-    value = "minio-data"
-  }
-  set {
     name  = "minio.persistence.size"
     value = kubernetes_persistent_volume_claim.loki_minio.spec[0].resources[0].requests.storage
   }
   set {
     name  = "minio.podAnnotations.backup\\.velero\\.io\\/backup-volumes"
-    value = "minio-data"
+    value = "export"
   }
 
   depends_on = [
