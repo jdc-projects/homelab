@@ -50,7 +50,7 @@ resource "kubernetes_deployment" "phpldapadmin" {
 
           env {
             name  = "LOG_LEVEL"
-            value = "debug"
+            value = "info"
           }
 
           volume_mount {
