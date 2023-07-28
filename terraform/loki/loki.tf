@@ -1,4 +1,4 @@
-resource "kubernetes_job" "loki-chown" {
+resource "kubernetes_job" "loki_chown" {
   metadata {
     name      = "loki-chown"
     namespace = kubernetes_namespace.loki.metadata[0].name
