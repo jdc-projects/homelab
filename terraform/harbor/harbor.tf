@@ -187,38 +187,34 @@ resource "helm_release" "harbor" {
     value = "true"
   }
 
-  set_sensitive {
-    name  = "core.secret"
-    value = random_password.harbor_core_secret.result
-  }
-
   set {
     name  = "jobservice.backup\\.velero\\.io\\/backup-volumes"
     value = "job-logs"
+  }
+  set {
+    name  = "trivy.backup\\.velero\\.io\\/backup-volumes"
+    value = "data"
+  }
+  set {
+    name  = "database.backup\\.velero\\.io\\/backup-volumes"
+    value = "database-data"
+  }
+  set {
+    name  = "redis.backup\\.velero\\.io\\/backup-volumes"
+    value = "data"
+  }
+
+  set_sensitive {
+    name  = "core.secret"
+    value = random_password.harbor_core_secret.result
   }
   set_sensitive {
     name  = "jobservice.secret"
     value = random_password.harbor_jobservice_secret.result
   }
-
   set_sensitive {
     name  = "registry.secret"
     value = random_password.harbor_registry_secret.result
-  }
-
-  set {
-    name  = "trivy.backup\\.velero\\.io\\/backup-volumes"
-    value = "data"
-  }
-
-  set {
-    name  = "database.backup\\.velero\\.io\\/backup-volumes"
-    value = "database-data"
-  }
-
-  set {
-    name  = "redis.backup\\.velero\\.io\\/backup-volumes"
-    value = "data"
   }
 
   set_sensitive {
