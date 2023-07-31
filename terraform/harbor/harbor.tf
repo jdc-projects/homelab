@@ -187,7 +187,7 @@ resource "helm_release" "harbor" {
     value = "true"
   }
 
-  set {
+  set_sensitive {
     name  = "core.secret"
     value = random_password.harbor_core_secret.result
   }
@@ -196,12 +196,12 @@ resource "helm_release" "harbor" {
     name  = "jobservice.backup\\.velero\\.io\\/backup-volumes"
     value = "job-logs"
   }
-  set {
+  set_sensitive {
     name  = "jobservice.secret"
     value = random_password.harbor_jobservice_secret.result
   }
 
-  set {
+  set_sensitive {
     name  = "registry.secret"
     value = random_password.harbor_registry_secret.result
   }
