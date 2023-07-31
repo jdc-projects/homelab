@@ -31,8 +31,8 @@ resource "kubernetes_manifest" "github_org_runners_autoscaler" {
     }
 
     spec = {
-      minReplicas = "5"
-      maxReplicas = "20"
+      minReplicas = "10"
+      maxReplicas = "30"
 
       scaleTargetRef = {
         kind = "RunnerDeployment"
