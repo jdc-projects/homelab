@@ -106,6 +106,17 @@ jobs:
     with:
       terraform-dir: ./terraform/keycloak
 
+  deploy-harbor:
+    needs: [
+      deploy-github-org-runner-2,
+      deploy-traefik,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/harbor
+
   deploy-keycloak-config:
     needs: [
       deploy-openldap,
