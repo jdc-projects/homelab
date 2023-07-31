@@ -159,6 +159,17 @@ jobs:
     with:
       terraform-dir: ./terraform/grafana
 
+  deploy-harbor-config:
+    needs: [
+      deploy-harbor,
+      deploy-keycloak-config,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/harbor-config
+
   deploy-oauth2-proxy:
     needs: [
       deploy-keycloak-config,
