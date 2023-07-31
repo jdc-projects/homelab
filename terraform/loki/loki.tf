@@ -172,6 +172,6 @@ resource "helm_release" "loki" {
   }
 
   depends_on = [
-    kubernetes_job.loki-chown
+    kubernetes_job.loki_chown
   ]
 }
