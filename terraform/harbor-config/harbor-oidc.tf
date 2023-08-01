@@ -11,5 +11,5 @@ resource "harbor_config_auth" "oidc" {
   oidc_user_claim    = "preferred_username"
   oidc_groups_claim  = "roles"
   oidc_admin_group   = "systemAdmin"
-  oidc_group_filter  = ""
+  oidc_group_filter  = "matchnothing^"
 }
