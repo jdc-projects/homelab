@@ -1,6 +1,6 @@
 import {
-  to   = harbor_project.library
-  from = "/projects/1"
+  to = harbor_project.library
+  id = "/projects/1"
 }
 
 resource "harbor_project" "library" {
