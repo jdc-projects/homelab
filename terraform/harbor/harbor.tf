@@ -188,19 +188,19 @@ resource "helm_release" "harbor" {
   }
 
   set {
-    name  = "jobservice.backup\\.velero\\.io\\/backup-volumes"
+    name  = "jobservice.podAnnotations.backup\\.velero\\.io\\/backup-volumes"
     value = "job-logs"
   }
   set {
-    name  = "trivy.backup\\.velero\\.io\\/backup-volumes"
+    name  = "trivy.podAnnotations.backup\\.velero\\.io\\/backup-volumes"
     value = "data"
   }
   set {
-    name  = "database.backup\\.velero\\.io\\/backup-volumes"
+    name  = "database.podAnnotations.backup\\.velero\\.io\\/backup-volumes"
     value = "database-data"
   }
   set {
-    name  = "redis.backup\\.velero\\.io\\/backup-volumes"
+    name  = "redis.podAnnotations.backup\\.velero\\.io\\/backup-volumes"
     value = "data"
   }
 
