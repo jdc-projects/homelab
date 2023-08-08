@@ -1,4 +1,4 @@
-resource "keycloak_openid_client" "oauth2_proxy" {
+resource "keycloak_openid_client" "grafana" {
   realm_id  = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   client_id = "grafana"
 

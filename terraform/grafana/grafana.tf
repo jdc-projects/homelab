@@ -95,7 +95,7 @@ resource "helm_release" "grafana" {
   }
   set {
     name  = "grafana\\.ini.auth\\.generic_oauth.client_id"
-    value = keycloak_openid_client.oauth2_proxy.client_id
+    value = keycloak_openid_client.grafana.client_id
   }
   set_sensitive {
     name  = "grafana\\.ini.auth\\.generic_oauth.client_secret"
