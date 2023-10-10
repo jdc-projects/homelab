@@ -1,6 +1,6 @@
 resource "null_resource" "keycloak_version" {
   triggers = {
-    keycloak_version = "17.0.3.0"
+    keycloak_version = "17.0.3"
   }
 }
 
@@ -138,7 +138,7 @@ resource "helm_release" "keycloak" {
     create_before_destroy = false
   }
 
-  depends_on = [null_resource.keycloak_version]
+  depends_on = [kubernetes_job.postgres_upgrade]
 }
 
 resource "null_resource" "keycloak_liveness_check" {
