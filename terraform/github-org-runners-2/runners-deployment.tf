@@ -11,7 +11,7 @@ resource "kubernetes_manifest" "github_org_runners_deployment" {
     spec = {
       template = {
         spec = {
-          image = "summerwind/actions-runner:v2.306.0-ubuntu-22.04"
+          image = "summerwind/actions-runner:v2.309.0-ubuntu-22.04"
 
           organization = var.github_org_name
         }

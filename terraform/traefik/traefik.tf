@@ -1,6 +1,6 @@
 resource "null_resource" "traefik_version" {
   triggers = {
-    traefik_version = "23.1.0"
+    traefik_version = "24.0.0"
   }
 }
 

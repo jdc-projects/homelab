@@ -18,7 +18,7 @@ resource "helm_release" "velero" {
 
   repository = "https://vmware-tanzu.github.io/helm-charts"
   chart      = "velero"
-  version    = "4.1.3"
+  version    = "5.1.0"
 
   namespace = kubernetes_namespace.velero.metadata[0].name
 

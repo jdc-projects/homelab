@@ -54,7 +54,7 @@ resource "kubernetes_deployment" "openldap" {
 
       spec {
         init_container {
-          image = "alpine:3.18.2"
+          image = "alpine:3.18.4"
           name  = "openldap-chown"
 
           command = ["sh", "-c", "chown -R 1001 /bitnami/openldap"]
@@ -70,7 +70,7 @@ resource "kubernetes_deployment" "openldap" {
         }
 
         container {
-          image = "bitnami/openldap:2.6.4"
+          image = "bitnami/openldap:2.6.6"
           name  = "openldap"
 
           env_from {

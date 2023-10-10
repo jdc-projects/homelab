@@ -109,7 +109,7 @@ resource "kubernetes_deployment" "ocis" {
 
       spec {
         init_container {
-          image = "alpine:3.18.2"
+          image = "alpine:3.18.4"
           name  = "ocis-chown"
 
           command = ["sh", "-c", "chown -R 1000:1000 /var/lib/ocis"]
@@ -125,7 +125,7 @@ resource "kubernetes_deployment" "ocis" {
         }
 
         container {
-          image = "owncloud/ocis:3.0.0"
+          image = "owncloud/ocis:4.0.2"
           name  = "ocis"
 
           env_from {

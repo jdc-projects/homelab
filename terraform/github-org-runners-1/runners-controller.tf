@@ -3,7 +3,7 @@ resource "helm_release" "github_org_runners_controller" {
 
   repository = "https://actions-runner-controller.github.io/actions-runner-controller"
   chart      = "actions-runner-controller"
-  version    = "v0.23.3"
+  version    = "v0.23.5"
 
   namespace = kubernetes_namespace.github_org_runners.metadata[0].name
 
