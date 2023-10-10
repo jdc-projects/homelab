@@ -138,7 +138,7 @@ resource "helm_release" "keycloak" {
     create_before_destroy = false
   }
 
-  depends_on = [kubernetes_job.postgres_upgrade]
+  depends_on = [null_resource.keycloak_version]
 }
 
 resource "null_resource" "keycloak_liveness_check" {
