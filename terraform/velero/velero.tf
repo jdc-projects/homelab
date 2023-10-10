@@ -209,4 +209,9 @@ resource "helm_release" "velero" {
     replace_triggered_by  = [null_resource.velero_version]
     create_before_destroy = false
   }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "kubectl delete crds -l component=velero"
+  }
 }
