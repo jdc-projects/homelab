@@ -1,3 +1,9 @@
+resource "null_resource" "velero_version" {
+  triggers = {
+    velero_version = "5.1.0"
+  }
+}
+
 resource "kubernetes_secret" "velero_s3_secret" {
   metadata {
     name      = "velero-s3-secret"
@@ -18,7 +24,7 @@ resource "helm_release" "velero" {
 
   repository = "https://vmware-tanzu.github.io/helm-charts"
   chart      = "velero"
-  version    = "5.1.0"
+  version    = null_resource.velero_version.triggers.velero_version
 
   namespace = kubernetes_namespace.velero.metadata[0].name
 
@@ -197,5 +203,10 @@ resource "helm_release" "velero" {
   set {
     name  = "schedules.nightly.template.defaultVolumesToFsBackup"
     value = "false"
+  }
+
+  lifecycle {
+    replace_triggered_by  = [null_resource.velero_version]
+    create_before_destroy = false
   }
 }
