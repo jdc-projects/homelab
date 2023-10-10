@@ -1,3 +1,9 @@
+resource "null_resource" "keycloak_version" {
+  triggers = {
+    keycloak_version = "17.0.3"
+  }
+}
+
 resource "null_resource" "keycloak_domain" {
   triggers = {
     keycloak_domain = "idp.${var.server_base_domain}"
@@ -21,7 +27,7 @@ resource "helm_release" "keycloak" {
 
   repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "keycloak"
-  version    = "17.0.3"
+  version    = null_resource.keycloak_version.triggers.keycloak_version
 
   timeout = 300
 
@@ -124,8 +130,15 @@ resource "helm_release" "keycloak" {
   }
 
   lifecycle {
-    replace_triggered_by = [kubernetes_config_map.keycloak_custom_scripts]
+    replace_triggered_by = [
+      kubernetes_config_map.keycloak_custom_scripts,
+      null_resource.keycloak_version,
+    ]
+
+    create_before_destroy = false
   }
+
+  depends_on = [kubernetes_job.postgres_upgrade]
 }
 
 resource "null_resource" "keycloak_liveness_check" {
