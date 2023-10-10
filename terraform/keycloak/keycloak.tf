@@ -1,6 +1,6 @@
 resource "null_resource" "keycloak_version" {
   triggers = {
-    keycloak_version = "17.0.3"
+    keycloak_version = "15.1.6"
   }
 }
 
@@ -136,6 +136,11 @@ resource "helm_release" "keycloak" {
     ]
 
     create_before_destroy = false
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "kubectl delete crds -l component=velero"
   }
 
   depends_on = [null_resource.keycloak_version]
