@@ -158,9 +158,9 @@ resource "kubernetes_deployment" "ocis" {
   }
 
   timeouts {
-    create = "1m"
-    update = "1m"
-    delete = "1m"
+    create = "5m"
+    update = "5m"
+    delete = "5m"
   }
 
   lifecycle {
