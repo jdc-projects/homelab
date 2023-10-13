@@ -76,4 +76,6 @@ resource "kubernetes_deployment" "vaultwarden_ldap_deployment" {
       kubernetes_secret.vaultwarden_ldap_env
     ]
   }
+
+  depends_on = [kubernetes_deployment.vaultwarden_deployment]
 }
