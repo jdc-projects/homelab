@@ -13,9 +13,9 @@ resource "kubernetes_config_map" "ocis_env" {
     GRAPH_LDAP_SERVER_UUID       = "true"
 
     OCIS_LDAP_CACERT                           = ""
-    OCIS_LDAP_DISABLED_USERS_GROUP_DN          = "cn=app_disabled,ou=groups,dc=idm,dc=${var.server_base_domain}"
+    OCIS_LDAP_DISABLED_USERS_GROUP_DN          = "cn=app_disabled,ou=groups,dc=idm,dc=homelab"
     OCIS_LDAP_DISABLE_USER_MECHANISM           = "group"
-    OCIS_LDAP_GROUP_BASE_DN                    = "ou=groups,dc=idm,dc=${var.server_base_domain}"
+    OCIS_LDAP_GROUP_BASE_DN                    = "ou=groups,dc=idm,dc=homelab"
     OCIS_LDAP_GROUP_OBJECTCLASS                = "groupOfNames"
     OCIS_LDAP_GROUP_SCHEMA_DISPLAYNAME         = "cn"
     OCIS_LDAP_GROUP_SCHEMA_GROUPNAME           = "cn"
@@ -26,7 +26,7 @@ resource "kubernetes_config_map" "ocis_env" {
     OCIS_LDAP_INSECURE                         = "false"
     OCIS_LDAP_SERVER_WRITE_ENABLED             = "false"
     OCIS_LDAP_URI                              = "ldaps://idm.${var.server_base_domain}"
-    OCIS_LDAP_USER_BASE_DN                     = "ou=people,dc=idm,dc=${var.server_base_domain}"
+    OCIS_LDAP_USER_BASE_DN                     = "ou=people,dc=idm,dc=homelab"
     OCIS_LDAP_USER_OBJECTCLASS                 = "inetOrgPerson"
     OCIS_LDAP_USER_SCHEMA_DISPLAYNAME          = "displayname"
     OCIS_LDAP_USER_SCHEMA_ID                   = "uid"
@@ -73,7 +73,7 @@ resource "kubernetes_secret" "ocis_env" {
     STORAGE_SYSTEM_JWT_SECRET      = random_password.storage_system_jwt_secret.result
     THUMBNAILS_TRANSFER_TOKEN      = random_password.thumbnails_transfer_secret.result
 
-    OCIS_LDAP_BIND_DN  = "uid=${data.terraform_remote_state.openldap.outputs.admin_username},ou=people,dc=idm,dc=${var.server_base_domain}"
+    OCIS_LDAP_BIND_DN  = "uid=${data.terraform_remote_state.openldap.outputs.admin_username},ou=people,dc=idm,dc=homelab"
     LDAP_BIND_PASSWORD = data.terraform_remote_state.openldap.outputs.admin_password
 
     NOTIFICATIONS_SMTP_USERNAME = var.smtp_username

@@ -14,7 +14,7 @@ resource "kubernetes_config_map" "phpldapadmin_env" {
             - host: "openldap"
             - port: ${kubernetes_config_map.openldap_env.data.LDAP_PORT_NUMBER}
           - login:
-            - bind_id: "cn=${random_password.openldap_admin_username.result},dc=idm,dc=${var.server_base_domain}"
+            - bind_id: "cn=${random_password.openldap_admin_username.result},dc=idm,dc=homelab"
     EOF
   }
 }

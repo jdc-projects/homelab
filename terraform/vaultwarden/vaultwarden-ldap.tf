@@ -8,9 +8,9 @@ resource "kubernetes_config_map" "vaultwarden_ldap_env" {
     APP_VAULTWARDEN_URL            = "https://vault.${var.server_base_domain}"
     APP_LDAP_HOST                  = "idm.${var.server_base_domain}"
     APP_LDAP_SSL                   = "true"
-    APP_LDAP_BIND_DN               = "uid=${data.terraform_remote_state.openldap.outputs.admin_username},ou=people,dc=idm,dc=${var.server_base_domain}"
-    APP_LDAP_SEARCH_BASE_DN        = "dc=idm,dc=${var.server_base_domain}"
-    APP_LDAP_SEARCH_FILTER         = "(&(objectClass=inetOrgPerson)(|(memberOf=cn=app_users,ou=groups,dc=idm,dc=${var.server_base_domain})(memberOf=cn=app_admins,ou=groups,dc=idm,dc=${var.server_base_domain})))"
+    APP_LDAP_BIND_DN               = "uid=${data.terraform_remote_state.openldap.outputs.admin_username},ou=people,dc=idm,dc=homelab"
+    APP_LDAP_SEARCH_BASE_DN        = "dc=idm,dc=homelab"
+    APP_LDAP_SEARCH_FILTER         = "(&(objectClass=inetOrgPerson)(|(memberOf=cn=app_users,ou=groups,dc=idm,dc=homelab)(memberOf=cn=app_admins,ou=groups,dc=idm,dc=homelab)))"
     APP_LDAP_SYNC_INTERVAL_SECONDS = "60"
   }
 }

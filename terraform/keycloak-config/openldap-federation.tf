@@ -20,8 +20,8 @@ resource "keycloak_ldap_user_federation" "openldap" {
     "inetOrgPerson"
   ]
   connection_url  = "ldaps://idm.${var.server_base_domain}"
-  users_dn        = "ou=people,dc=idm,dc=${var.server_base_domain}"
-  bind_dn         = "uid=${data.terraform_remote_state.openldap.outputs.admin_username},ou=people,dc=idm,dc=${var.server_base_domain}"
+  users_dn        = "ou=people,dc=idm,dc=homelab"
+  bind_dn         = "uid=${data.terraform_remote_state.openldap.outputs.admin_username},ou=people,dc=idm,dc=homelab"
   bind_credential = data.terraform_remote_state.openldap.outputs.admin_password
 
   use_password_modify_extended_op = false
@@ -53,7 +53,7 @@ resource "keycloak_ldap_group_mapper" "openldap" {
   ldap_user_federation_id = each.value.ldap_federation_id
   name                    = "group mapper"
 
-  ldap_groups_dn            = "ou=groups,dc=idm,dc=${var.server_base_domain}"
+  ldap_groups_dn            = "ou=groups,dc=idm,dc=homelab"
   group_name_ldap_attribute = "cn"
   group_object_classes = [
     "groupOfNames"

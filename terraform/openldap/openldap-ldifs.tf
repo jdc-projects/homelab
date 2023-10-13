@@ -7,25 +7,25 @@ resource "kubernetes_config_map" "openldap_custom_ldifs" {
   data = {
     "00-base.ldif"   = <<-EOF
       ## Build the root node.
-      dn: dc=idm,dc=${var.server_base_domain}
+      dn: dc=idm,dc=homelab
       objectClass: dcObject
       objectClass: organizationalUnit
       dc: idm
       ou: idm
 
       ## Build the people ou.
-      dn: ou=people,dc=idm,dc=${var.server_base_domain}
+      dn: ou=people,dc=idm,dc=homelab
       objectClass: organizationalUnit
       ou: people
 
       ## Build the groups ou.
-      dn: ou=groups,dc=idm,dc=${var.server_base_domain}
+      dn: ou=groups,dc=idm,dc=homelab
       objectClass: organizationalUnit
       ou: groups
     EOF
     "70-users.ldif"  = <<-EOF
       # create admin user
-      dn: uid=${random_password.openldap_admin_username.result},ou=people,dc=idm,dc=${var.server_base_domain}
+      dn: uid=${random_password.openldap_admin_username.result},ou=people,dc=idm,dc=homelab
       objectClass: person
       objectClass: inetOrgPerson
       objectClass: posixAccount
@@ -41,7 +41,7 @@ resource "kubernetes_config_map" "openldap_custom_ldifs" {
       userPassword: ${random_password.openldap_admin_password.result}
 
       # create app test admin user
-      dn: uid=${random_password.openldap_test_admin_username.result},ou=people,dc=idm,dc=${var.server_base_domain}
+      dn: uid=${random_password.openldap_test_admin_username.result},ou=people,dc=idm,dc=homelab
       objectClass: person
       objectClass: inetOrgPerson
       objectClass: posixAccount
@@ -57,7 +57,7 @@ resource "kubernetes_config_map" "openldap_custom_ldifs" {
       userPassword: ${random_password.openldap_test_admin_password.result}
 
       # create app test user
-      dn: uid=${random_password.openldap_test_user_username.result},ou=people,dc=idm,dc=${var.server_base_domain}
+      dn: uid=${random_password.openldap_test_user_username.result},ou=people,dc=idm,dc=homelab
       objectClass: person
       objectClass: inetOrgPerson
       objectClass: posixAccount
@@ -73,7 +73,7 @@ resource "kubernetes_config_map" "openldap_custom_ldifs" {
       userPassword: ${random_password.openldap_test_user_password.result}
 
       # create app test guest user
-      dn: uid=${random_password.openldap_test_guest_username.result},ou=people,dc=idm,dc=${var.server_base_domain}
+      dn: uid=${random_password.openldap_test_guest_username.result},ou=people,dc=idm,dc=homelab
       objectClass: person
       objectClass: inetOrgPerson
       objectClass: posixAccount
@@ -89,7 +89,7 @@ resource "kubernetes_config_map" "openldap_custom_ldifs" {
       userPassword: ${random_password.openldap_test_guest_password.result}
 
       # create app test disabled user
-      dn: uid=${random_password.openldap_test_disabled_username.result},ou=people,dc=idm,dc=${var.server_base_domain}
+      dn: uid=${random_password.openldap_test_disabled_username.result},ou=people,dc=idm,dc=homelab
       objectClass: person
       objectClass: inetOrgPerson
       objectClass: posixAccount
@@ -106,44 +106,44 @@ resource "kubernetes_config_map" "openldap_custom_ldifs" {
     EOF
     "80-groups.ldif" = <<-EOF
       # create system admins group
-      dn: cn=system_admins,ou=groups,dc=idm,dc=${var.server_base_domain}
+      dn: cn=system_admins,ou=groups,dc=idm,dc=homelab
       objectClass: groupOfNames
       objectClass: posixGroup
       cn: system_admins
       gidNumber: 5000
-      member: uid=${random_password.openldap_admin_username.result},ou=people,dc=idm,dc=${var.server_base_domain}
+      member: uid=${random_password.openldap_admin_username.result},ou=people,dc=idm,dc=homelab
 
       # create app admins group
-      dn: cn=app_admins,ou=groups,dc=idm,dc=${var.server_base_domain}
+      dn: cn=app_admins,ou=groups,dc=idm,dc=homelab
       objectClass: groupOfNames
       objectClass: posixGroup
       cn: app_admins
       gidNumber: 6000
-      member: uid=${random_password.openldap_test_admin_username.result},ou=people,dc=idm,dc=${var.server_base_domain}
+      member: uid=${random_password.openldap_test_admin_username.result},ou=people,dc=idm,dc=homelab
 
       # create app users group
-      dn: cn=app_users,ou=groups,dc=idm,dc=${var.server_base_domain}
+      dn: cn=app_users,ou=groups,dc=idm,dc=homelab
       objectClass: groupOfNames
       objectClass: posixGroup
       cn: app_users
       gidNumber: 6100
-      member: uid=${random_password.openldap_test_user_username.result},ou=people,dc=idm,dc=${var.server_base_domain}
+      member: uid=${random_password.openldap_test_user_username.result},ou=people,dc=idm,dc=homelab
 
       # create app guests group
-      dn: cn=app_guests,ou=groups,dc=idm,dc=${var.server_base_domain}
+      dn: cn=app_guests,ou=groups,dc=idm,dc=homelab
       objectClass: groupOfNames
       objectClass: posixGroup
       cn: app_guests
       gidNumber: 6200
-      member: uid=${random_password.openldap_test_guest_username.result},ou=people,dc=idm,dc=${var.server_base_domain}
+      member: uid=${random_password.openldap_test_guest_username.result},ou=people,dc=idm,dc=homelab
 
       # create app disabled group
-      dn: cn=app_disabled,ou=groups,dc=idm,dc=${var.server_base_domain}
+      dn: cn=app_disabled,ou=groups,dc=idm,dc=homelab
       objectClass: groupOfNames
       objectClass: posixGroup
       cn: app_disabled
       gidNumber: 6300
-      member: uid=${random_password.openldap_test_disabled_username.result},ou=people,dc=idm,dc=${var.server_base_domain}
+      member: uid=${random_password.openldap_test_disabled_username.result},ou=people,dc=idm,dc=homelab
     EOF
   }
 }
