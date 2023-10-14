@@ -60,10 +60,6 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.0
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'v1.25.3'
       - name: "Generate kubeconfig"
         working-directory: ./terraform
         run: |

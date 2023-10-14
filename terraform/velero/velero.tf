@@ -52,6 +52,11 @@ resource "helm_release" "velero" {
   }
 
   set {
+    name  = "cleanUpCRDs"
+    value = "true"
+  }
+
+  set {
     name  = "configuration.backupStorageLocation[0].name"
     value = "backblaze"
   }
@@ -208,10 +213,5 @@ resource "helm_release" "velero" {
   lifecycle {
     replace_triggered_by  = [null_resource.velero_version]
     create_before_destroy = false
-  }
-
-  provisioner "local-exec" {
-    when    = destroy
-    command = "kubectl delete crds -l component=velero"
   }
 }
