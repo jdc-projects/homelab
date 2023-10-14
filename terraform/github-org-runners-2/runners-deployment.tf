@@ -1,3 +1,53 @@
+resource "kubernetes_job" "runners_cache_chown" {
+  metadata {
+    name      = "runners-cache-chown"
+    namespace = data.terraform_remote_state.github_org_runners_1.outputs.github_org_runners_namespace_name
+  }
+
+  spec {
+    template {
+      metadata {}
+
+      spec {
+        container {
+          image = "alpine:3.18.4"
+          name  = "runners-cache-chown"
+
+          command = ["sh", "-c", "chown -R 1000:1001 /export"]
+
+          security_context {
+            run_as_user = 0
+          }
+
+          volume_mount {
+            mount_path = "/export"
+            name       = "runners-cache"
+          }
+        }
+
+        volume {
+          name = "runners-cache"
+
+          persistent_volume_claim {
+            claim_name = kubernetes_persistent_volume_claim.runners_cache.metadata[0].name
+          }
+        }
+
+        restart_policy = "Never"
+      }
+    }
+
+    backoff_limit = 0
+  }
+
+  wait_for_completion = true
+
+  timeouts {
+    create = "1m"
+    update = "1m"
+  }
+}
+
 resource "kubernetes_manifest" "github_org_runners_set" {
   manifest = {
     apiVersion = "actions.summerwind.dev/v1alpha1"
@@ -45,6 +95,8 @@ resource "kubernetes_manifest" "github_org_runners_set" {
       }
     }
   }
+
+  depends_on = [kubernetes_job.runners_cache_chown]
 }
 
 resource "kubernetes_manifest" "github_org_runners_autoscaler" {
