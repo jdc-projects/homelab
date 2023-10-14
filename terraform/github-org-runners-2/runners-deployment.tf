@@ -81,7 +81,7 @@ resource "kubernetes_manifest" "github_org_runners_set" {
             name = "runner"
             volumeMounts = [{
               mountPath = "/opt/hostedtoolcache"
-              name = "tool-cache"
+              name      = "tool-cache"
             }]
           }]
 
