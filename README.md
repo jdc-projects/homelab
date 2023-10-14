@@ -13,6 +13,7 @@ sudo iptables -D INPUT -p tcp -m tcp --dport 6443 -m comment --comment "iX Custo
 
 * The Kubernetes management interface port must be exposed to the internet (through router port forwarding)
 * The domain jack-chapman.co.uk must point towards my public IP
+* Setup of the [Github Org app](https://github.com/actions/actions-runner-controller/blob/master/docs/using-arc-across-organizations.md)
 
 ## Environment variables required for build
 
