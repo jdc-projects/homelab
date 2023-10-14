@@ -25,6 +25,23 @@ resource "kubernetes_manifest" "github_org_runners_set" {
             app = "github-org-runners"
           }
         }
+
+        spec = {
+          containers = [{
+            name = "runner"
+            volumeMounts = [{
+              mountPath = "/opt/hostedtoolcache"
+              name = "tool-cache"
+            }]
+          }]
+
+          volumes = [{
+            name = "tool-cache"
+            persistentVolumeClaim = {
+              claimName = kubernetes_persistent_volume_claim.runners_cache.metadata[0].name
+            }
+          }]
+        }
       }
     }
   }
