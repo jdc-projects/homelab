@@ -1,19 +1,29 @@
-resource "kubernetes_manifest" "github_org_runners_deployment" {
+resource "kubernetes_manifest" "github_org_runners_set" {
   manifest = {
     apiVersion = "actions.summerwind.dev/v1alpha1"
-    kind       = "RunnerDeployment"
+    kind       = "RunnerSet"
 
     metadata = {
-      name      = "github-org-runners-deployment"
+      name      = "github-org-runners-set"
       namespace = data.terraform_remote_state.github_org_runners_1.outputs.github_org_runners_namespace_name
     }
 
     spec = {
-      template = {
-        spec = {
-          image = "summerwind/actions-runner:v2.309.0-ubuntu-22.04"
+      organization = var.github_org_name
 
-          organization = var.github_org_name
+      selector = {
+        matchLabels = {
+          app = "github-org-runners"
+        }
+      }
+
+      serviceName = "github-org-runners"
+
+      template = {
+        metadata = {
+          labels = {
+            app = "github-org-runners"
+          }
         }
       }
     }
@@ -35,8 +45,8 @@ resource "kubernetes_manifest" "github_org_runners_autoscaler" {
       maxReplicas = "30"
 
       scaleTargetRef = {
-        kind = "RunnerDeployment"
-        name = kubernetes_manifest.github_org_runners_deployment.manifest.metadata.name
+        kind = "RunnerSet"
+        name = kubernetes_manifest.github_org_runners_set.manifest.metadata.name
       }
 
       scaleUpTriggers = [{
