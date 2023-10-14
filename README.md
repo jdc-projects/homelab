@@ -37,3 +37,4 @@ sudo iptables -D INPUT -p tcp -m tcp --dport 6443 -m comment --comment "iX Custo
 * Create (and use) Terraform module for ingress
 * Add a proper, secure secrets manager
 * Setup Dependabot
+* [KubeVirt](https://kubevirt.io/user-guide/operations/installation/)?
