@@ -58,7 +58,7 @@ jobs:
       - name: "Install Velero CLI"
         run: |
           mkdir velero
-          curl https://github.com/vmware-tanzu/velero/releases/download/v1.11.0/velero-v1.11.0-linux-amd64.tar.gz -Lo velero.tar.gz
+          curl https://github.com/vmware-tanzu/velero/releases/download/v1.12.0/velero-v1.12.0-linux-amd64.tar.gz -Lo velero.tar.gz
           tar -xvf velero.tar.gz -C ./velero --strip-components=1
           cp ./velero/velero /usr/local/bin/velero
       - name: "Restore backup"
