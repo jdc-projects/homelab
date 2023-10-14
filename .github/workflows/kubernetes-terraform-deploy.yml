@@ -25,13 +25,13 @@ env:
   SERVER_BASE_DOMAIN: ${{ vars.SERVER_BASE_DOMAIN }}
   TF_VAR_server_base_domain: ${{ vars.SERVER_BASE_DOMAIN }}
   TF_VAR_github_org_name: ${{ vars.GH_ORG_NAME }}
-  TF_VAR_github_org_runners_app_id: ${{ vars.TF_VARS_jdc_projects_runners_app_id }}
-  TF_VAR_github_org_runners_app_installation_id: ${{ vars.TF_VARS_jdc_projects_runners_app_installation_id }}
-  TF_VAR_github_org_runners_app_private_key: ${{ secrets.TF_VARS_jdc_projects_runners_app_private_key }}
-  TF_VAR_cloudflare_acme_token: ${{ secrets.TF_VARS_cloudflare_acme_token }}
-  TF_VAR_cloudflare_ddns_token: ${{ secrets.TF_VAR_cloudflare_ddns_token }}
-  TF_VAR_idrac_username: ${{ secrets.TF_VAR_idrac_username }}
-  TF_VAR_idrac_password: ${{ secrets.TF_VAR_idrac_password }}
+  TF_VAR_github_org_runners_app_id: ${{ vars.GH_ORG_RUNNERS_APP_ID }}
+  TF_VAR_github_org_runners_app_installation_id: ${{ vars.GH_ORG_RUNNERS_APP_INSTALLATION_ID }}
+  TF_VAR_github_org_runners_app_private_key: ${{ secrets.GH_ORG_RUNNERS_APP_PRIVATE_KEY }}
+  TF_VAR_cloudflare_acme_token: ${{ secrets.CLOUDFLARE_ACME_TOKEN }}
+  TF_VAR_cloudflare_ddns_token: ${{ secrets.CLOUDFLARE_DDNS_TOKEN }}
+  TF_VAR_idrac_username: ${{ secrets.IDRAC_USERNAME }}
+  TF_VAR_idrac_password: ${{ secrets.IDRAC_PASSWORD }}
   TF_VAR_smtp_host: ${{ vars.SMTP_SERVER }}
   TF_VAR_smtp_port: ${{ vars.SMTP_PORT }}
   TF_VAR_smtp_username: ${{ vars.SMTP_USERNAME }}

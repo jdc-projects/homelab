@@ -16,18 +16,33 @@ sudo iptables -D INPUT -p tcp -m tcp --dport 6443 -m comment --comment "iX Custo
 
 ## Environment variables required for build
 
+### Secrets
+
+* CLOUDFLARE_ACME_TOKEN
+* CLOUDFLARE_DDNS_TOKEN
+* GH_ORG_RUNNERS_APP_PRIVATE_KEY
+* IDRAC_PASSWORD
+* IDRAC_USERNAME
 * KUBE_CLIENT_CERT_DATA
 * KUBE_CLIENT_KEY_DATA
 * KUBE_CLUSTER_CA_CERT_DATA
+* SMTP_PASSWORD
+* VELERO_S3_SECRET_ACCESS_KEY
+
+### Variables
+
+* GH_ORG_NAME
+* GH_ORG_RUNNERS_APP_ID
+* GH_ORG_RUNNERS_APP_INSTALLATION_ID
 * SERVER_BASE_DOMAIN
 * SERVER_KUBE_PORT
-
-## Terraform environment variables (needs fixing)
-
-* TF_VARS_jdc_projects_runners_app_id
-* TF_VARS_jdc_projects_runners_app_installation_id
-* TF_VARS_jdc_projects_runners_app_private_key
-* TF_VARS_cloudflare_acme_token
+* SMTP_PORT
+* SMTP_SERVER
+* SMTP_USERNAME
+* VELERO_S3_ACCESS_KEY_ID
+* VELERO_S3_BUCKET_NAME
+* VELERO_S3_REGION
+* VELERO_S3_URL
 
 ## Stuff to do
 
