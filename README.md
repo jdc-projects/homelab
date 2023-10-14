@@ -19,12 +19,11 @@ sudo iptables -D INPUT -p tcp -m tcp --dport 6443 -m comment --comment "iX Custo
 * KUBE_CLIENT_CERT_DATA
 * KUBE_CLIENT_KEY_DATA
 * KUBE_CLUSTER_CA_CERT_DATA
-* (TF_VARS_server_base_domain)
+* SERVER_BASE_DOMAIN
 * SERVER_KUBE_PORT
 
-## Terraform environment variables
+## Terraform environment variables (needs fixing)
 
-* TF_VARS_server_base_domain
 * TF_VARS_jdc_projects_runners_app_id
 * TF_VARS_jdc_projects_runners_app_installation_id
 * TF_VARS_jdc_projects_runners_app_private_key
