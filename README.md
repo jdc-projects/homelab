@@ -30,7 +30,10 @@ sudo iptables -D INPUT -p tcp -m tcp --dport 6443 -m comment --comment "iX Custo
 * TF_VARS_jdc_projects_runners_app_private_key
 * TF_VARS_cloudflare_acme_token
 
-## New stuff to add
+## Stuff to do
 
-* Nextcloud
-* Personal website
+* Migrate to [ARC scale sets](https://github.com/actions/actions-runner-controller/discussions/2775)
+* Add metrics into Grafana with Mimir
+* Create (and use) Terraform module for ingress
+* Add a proper, secure secrets manager
+* Setup Dependabot
