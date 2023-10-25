@@ -122,12 +122,20 @@ resource "helm_release" "velero" {
     value = var.restore_mode ? "true" : "false"
   }
   set {
+    name  = "configuration.storeValidationFrequency"
+    value = "10m"
+  }
+  set {
     name  = "configuration.namespace"
     value = kubernetes_namespace.velero.metadata[0].name
   }
   set {
     name  = "configuration.defaultVolumesToFsBackup"
-    value = "true"
+    value = "false"
+  }
+  set {
+    name  = "configuration.defaultRepoMaintainFrequency"
+    value = "24h"
   }
 
   set {
