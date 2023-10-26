@@ -19,8 +19,6 @@ sudo iptables -D INPUT -p tcp -m tcp --dport 6443 -m comment --comment "iX Custo
 
 ### Secrets
 
-* DOCKER_HUB_USERNAME
-* DOCKER_HUB_PASSWORD
 * CLOUDFLARE_ACME_TOKEN
 * CLOUDFLARE_DDNS_TOKEN
 * GH_ORG_RUNNERS_APP_PRIVATE_KEY
