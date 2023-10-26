@@ -27,8 +27,12 @@ resource "helm_release" "github_org_runners_controller" {
   }
 
   set {
+    name  = "image.actionsRunnerRepositoryAndTag"
+    value = "summerwind/actions-runner:v2.311.0-ubuntu-22.04"
+  }
+  set {
     name  = "image.dindSidecarRepositoryAndTag"
-    value = "docker:24.0.2-dind"
+    value = "docker:24.0.6-dind"
   }
 
   set {
