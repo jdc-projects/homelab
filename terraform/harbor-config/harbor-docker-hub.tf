@@ -29,7 +29,7 @@ resource "local_file" "k3s_registries_config" {
         endpoint:
           - "https://harbor.${var.server_base_domain}/${harbor_project.docker_hub.name}"
     configs:
-      "https://harbor.${var.server_base_domain}/${harbor_project.docker_hub.name}":
+      "harbor.${var.server_base_domain}/${harbor_project.docker_hub.name}":
         auth:
           username: ${harbor_user.docker_hub_reader.username}
           password: ${harbor_user.docker_hub_reader.password}
@@ -37,7 +37,7 @@ resource "local_file" "k3s_registries_config" {
   filename = "./registries.yaml"
 }
 
-# this will only take effect after a server restart (see https://docs.k3s.io/installation/private-registry)
+# this will only take effect after a server, or k3s, restart (see https://docs.k3s.io/installation/private-registry)
 resource "null_resource" "k3s_mirrors_config_copy" {
   provisioner "local-exec" {
     command = "apt update && apt install sshpass && sshpass -p '${var.truenas_password}' scp ${local_file.k3s_registries_config.filename} ${var.truenas_username}@${var.truenas_ip_address}:/etc/rancher/k3s/registries.yaml"
