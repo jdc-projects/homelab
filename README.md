@@ -47,6 +47,7 @@ sudo iptables -D INPUT -p tcp -m tcp --dport 6443 -m comment --comment "iX Custo
 
 ## Stuff to do
 
+* [Docker registry proxy](https://docs.docker.com/docker-hub/mirror/#run-a-registry-as-a-pull-through-cache)
 * Velero [CSI volume snapshots](https://velero.io/docs/v1.12/csi-snapshot-data-movement/#configure-a-backup-storage-location)
 * [Trivy](https://github.com/aquasecurity/Trivy) for vulnerability scanning
 * Migrate to [ARC scale sets](https://github.com/actions/actions-runner-controller/discussions/2775)
