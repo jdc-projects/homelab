@@ -10,16 +10,16 @@ resource "harbor_project" "docker_hub" {
 }
 
 resource "harbor_user" "docker_hub_reader" {
-  username = "docker-hub-reader"
-  password = random_password.docker_hub_reader_password
+  username  = "docker-hub-reader"
+  password  = random_password.docker_hub_reader_password
   full_name = "Docker Hub Reader"
-  email = "docker-hub-reader@${var.server_base_domain}"
+  email     = "docker-hub-reader@${var.server_base_domain}"
 }
 
 resource "harbor_project_member_user" "docker_hub_reader" {
-  project_id    = harbor_project.docker_hub.id
-  user_name     = harbor_user.docker_hub_reader.username
-  role          = "limitedguest"
+  project_id = harbor_project.docker_hub.id
+  user_name  = harbor_user.docker_hub_reader.username
+  role       = "limitedguest"
 }
 
 resource "local_file" "k3s_registries_config" {
