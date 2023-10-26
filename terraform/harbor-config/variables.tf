@@ -23,3 +23,21 @@ variable "smtp_password" {
   sensitive   = true
   description = "Password for the SMTP server."
 }
+
+variable "truenas_username" {
+  type        = string
+  sensitive   = true
+  description = "Username for the Truenas server."
+}
+
+variable "truenas_password" {
+  type        = string
+  sensitive   = true
+  description = "Password for the Truenas server."
+}
+
+variable "truenas_ip_address" {
+  type        = string
+  sensitive   = true
+  description = "IP address for the Truenas server."
+}

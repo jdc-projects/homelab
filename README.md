@@ -29,6 +29,9 @@ sudo iptables -D INPUT -p tcp -m tcp --dport 6443 -m comment --comment "iX Custo
 * KUBE_CLUSTER_CA_CERT_DATA
 * SMTP_PASSWORD
 * VELERO_S3_SECRET_ACCESS_KEY
+* TRUENAS_USERNAME
+* TRUENAS_PASSWORD
+* TRUENAS_IP_ADDRESS
 
 ### Variables
 
@@ -47,6 +50,7 @@ sudo iptables -D INPUT -p tcp -m tcp --dport 6443 -m comment --comment "iX Custo
 
 ## Stuff to do
 
+* Harbor [pull-through Docker Hub proxy]() with [K3s config]() using [scp]()
 * Velero [CSI volume snapshots](https://velero.io/docs/v1.12/csi-snapshot-data-movement/#configure-a-backup-storage-location)
 * [Trivy](https://github.com/aquasecurity/Trivy) for vulnerability scanning
 * Migrate to [ARC scale sets](https://github.com/actions/actions-runner-controller/discussions/2775)
