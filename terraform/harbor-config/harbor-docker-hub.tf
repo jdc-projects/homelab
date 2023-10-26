@@ -42,4 +42,10 @@ resource "null_resource" "k3s_mirrors_config_copy" {
   provisioner "local-exec" {
     command = "apt update && apt install sshpass && sshpass -p '${var.truenas_password}' scp ${local_file.k3s_registries_config.filename} ${var.truenas_username}@${var.truenas_ip_address}:/etc/rancher/k3s/registries.yaml"
   }
+
+  lifecycle {
+    replace_triggered_by = [
+      local_file.k3s_registries_config
+    ]
+  }
 }
