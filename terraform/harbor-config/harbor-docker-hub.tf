@@ -42,7 +42,7 @@ resource "ssh_sensitive_resource" "k3s_registries_config_copy" {
   user        = var.truenas_username
   private_key = var.truenas_ssh_private_key
 
-  file = {
+  file {
     source      = local_file.k3s_registries_config.filename
     destination = "/etc/rancher/k3s/registries.yaml"
   }
