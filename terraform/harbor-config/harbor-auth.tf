@@ -10,6 +10,6 @@ resource "harbor_config_auth" "oidc" {
   oidc_auto_onboard  = true
   oidc_user_claim    = "preferred_username"
   oidc_groups_claim  = "roles"
-  oidc_admin_group   = "systemAdmin"
+  oidc_admin_group   = keycloak_role.habor_admin.name
   oidc_group_filter  = "matchnothing^"
 }

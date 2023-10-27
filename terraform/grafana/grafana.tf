@@ -135,7 +135,7 @@ resource "helm_release" "grafana" {
   }
   set {
     name  = "grafana\\.ini.auth\\.generic_oauth.role_attribute_path"
-    value = "contains(roles[*]\\, 'systemAdmin') && 'GrafanaAdmin'"
+    value = "contains(roles[*]\\, '${keycloak_role.grafana_admin.name}') && 'GrafanaAdmin'"
   }
   set {
     name  = "grafana\\.ini.auth\\.generic_oauth.auto_login"

@@ -6,7 +6,7 @@ resource "kubernetes_config_map" "oauth2_proxy_env" {
 
   data = {
     OAUTH2_PROXY_PROVIDER     = "keycloak-oidc"
-    OAUTH2_PROXY_ALLOWED_ROLE = "systemAdmin"
+    OAUTH2_PROXY_ALLOWED_ROLE = keycloak_group_roles.oauth2_proxy_admin.name
 
     OAUTH2_PROXY_REVERSE_PROXY = "true"
   }

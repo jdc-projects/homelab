@@ -3,19 +3,19 @@ data "keycloak_group" "system_admins" {
   name     = "system_admins"
 }
 
-resource "keycloak_role" "system_admin" {
+resource "keycloak_role" "oauth2_proxy_admin" {
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   client_id   = keycloak_openid_client.oauth2_proxy.id
-  name        = "systemAdmin"
-  description = "System Admin"
+  name        = "oauth2ProxyAdmin"
+  description = "Oauth2 Proxy Admin"
 }
 
-resource "keycloak_group_roles" "system_admin" {
+resource "keycloak_group_roles" "oauth2_proxy_admin" {
   realm_id = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   group_id = data.keycloak_group.system_admins.id
 
   role_ids = [
-    keycloak_role.system_admin.id
+    keycloak_role.oauth2_proxy_admin.id
   ]
 }
 

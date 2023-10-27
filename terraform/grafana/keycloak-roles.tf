@@ -3,23 +3,23 @@ data "keycloak_group" "system_admins" {
   name     = "system_admins"
 }
 
-resource "keycloak_role" "system_admin" {
+resource "keycloak_role" "grafana_admin" {
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   client_id   = keycloak_openid_client.grafana.id
-  name        = "systemAdmin"
-  description = "System Admin"
+  name        = "grafanaAdmin"
+  description = "Grafana Admin"
 }
 
-resource "keycloak_group_roles" "system_admin" {
+resource "keycloak_group_roles" "grafana_admin" {
   realm_id = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   group_id = data.keycloak_group.system_admins.id
 
   role_ids = [
-    keycloak_role.system_admin.id
+    keycloak_role.grafana_admin.id
   ]
 }
 
-resource "keycloak_openid_user_client_role_protocol_mapper" "ocis_claim_mapper" {
+resource "keycloak_openid_user_client_role_protocol_mapper" "grafana_claim_mapper" {
   realm_id                    = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   client_id                   = keycloak_openid_client.grafana.id
   name                        = "role-mapper"
