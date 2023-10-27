@@ -14,7 +14,11 @@ resource "harbor_retention_policy" "docker_hub" {
   schedule = "Daily"
 
   rule {
+    disabled = false
+    repo_matching = "**"
     n_days_since_last_pull = 30
+    tag_matching = "**"
+    untagged_artifacts = true
   }
 }
 
