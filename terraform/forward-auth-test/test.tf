@@ -22,7 +22,7 @@ resource "kubernetes_deployment" "traefik_forward_auth_test" {
 
       spec {
         container {
-          image = "traefik/whoami:v1.10"
+          image = "node:20.9.0-bullseye"
           name  = "traefik-forward-auth-test"
         }
       }
@@ -30,9 +30,9 @@ resource "kubernetes_deployment" "traefik_forward_auth_test" {
   }
 
   timeouts {
-    create = "1m"
-    update = "1m"
-    delete = "1m"
+    create = "5m"
+    update = "5m"
+    delete = "5m"
   }
 }
 

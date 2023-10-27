@@ -51,12 +51,12 @@ resource "ssh_sensitive_resource" "k3s_registries_config_copy" {
           endpoint:
             - "https://harbor.${var.server_base_domain}"
           rewrite:
-            - ".*": "${harbor_project.docker_hub.name}/$1"
-        *:
+            ".*": "${harbor_project.docker_hub.name}/$1"
+        "*":
           endpoint:
             - "https://harbor.${var.server_base_domain}"
           rewrite:
-            - ".*": "${harbor_project.docker_hub.name}/$1"
+            ".*": "${harbor_project.docker_hub.name}/$1"
       configs:
         "harbor.${var.server_base_domain}":
           auth:
