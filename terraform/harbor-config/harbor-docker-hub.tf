@@ -9,17 +9,21 @@ resource "harbor_project" "docker_hub" {
   registry_id = harbor_registry.docker_hub.registry_id
 }
 
-resource "harbor_user" "docker_hub_reader" {
-  username  = "docker-hub-reader"
-  password  = random_password.docker_hub_reader_password.result
-  full_name = "Docker Hub Reader"
-  email     = "docker-hub-reader@${var.server_base_domain}"
-}
+resource "harbor_robot_account" "docker_hub_reader" {
+  name        = "docker-hub-reader"
+  description = "Docker Hub proxy reader"
+  level       = "project"
 
-resource "harbor_project_member_user" "docker_hub_reader" {
-  project_id = harbor_project.docker_hub.id
-  user_name  = harbor_user.docker_hub_reader.username
-  role       = "limitedguest"
+  permissions {
+    access {
+      action   = "pull"
+      resource = "repository"
+    }
+    kind      = "project"
+    namespace = harbor_project.docker_hub.name
+  }
+
+  secret = random_password.docker_hub_reader_secret.result
 }
 
 resource "local_file" "k3s_registries_config" {
@@ -31,8 +35,8 @@ resource "local_file" "k3s_registries_config" {
     configs:
       "harbor.${var.server_base_domain}/${harbor_project.docker_hub.name}":
         auth:
-          username: ${harbor_user.docker_hub_reader.username}
-          password: ${harbor_user.docker_hub_reader.password}
+          username: ${harbor_robot_account.docker_hub_reader.full_name}
+          password: ${harbor_robot_account.docker_hub_reader.secret}
   EOF
   filename = "./registries.yaml"
 }
