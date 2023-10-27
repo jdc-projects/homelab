@@ -37,11 +37,19 @@ resource "local_file" "k3s_registries_config" {
   filename = "./registries.yaml"
 }
 
-# this will only take effect after a server, or k3s, restart (see https://docs.k3s.io/installation/private-registry)
-resource "null_resource" "k3s_mirrors_config_copy" {
-  provisioner "local-exec" {
-    command = "apt update && apt install sshpass && sshpass -p '${var.truenas_password}' scp ${local_file.k3s_registries_config.filename} ${var.truenas_username}@${var.truenas_ip_address}:/etc/rancher/k3s/registries.yaml"
+resource "ssh_sensitive_resource" "k3s_registries_config_copy" {
+  host        = var.truenas_ip_address
+  user        = var.truenas_username
+  private_key = var.truenas_ssh_private_key
+
+  file = {
+    source      = local_file.k3s_registries_config.filename
+    destination = "/etc/rancher/k3s/registries.yaml"
   }
+
+  commands = [
+    "systemctl reload-or-restart k3s"
+  ]
 
   lifecycle {
     replace_triggered_by = [

@@ -20,6 +20,11 @@ terraform {
       source  = "hashicorp/random"
       version = "3.5.1"
     }
+
+    ssh = {
+      source  = "loafoe/ssh"
+      version = "2.6.0"
+    }
   }
 }
 
@@ -57,4 +62,7 @@ provider "harbor" {
 }
 
 provider "random" {
+}
+
+provider "ssh" {
 }

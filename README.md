@@ -30,7 +30,7 @@ sudo iptables -D INPUT -p tcp -m tcp --dport 6443 -m comment --comment "iX Custo
 * SMTP_PASSWORD
 * VELERO_S3_SECRET_ACCESS_KEY
 * TRUENAS_USERNAME
-* TRUENAS_PASSWORD
+* TRUENAS_SSH_PRIVATE_KEY
 * TRUENAS_IP_ADDRESS
 
 ### Variables

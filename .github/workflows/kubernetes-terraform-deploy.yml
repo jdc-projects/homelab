@@ -42,7 +42,7 @@ env:
   TF_VAR_velero_s3_url: ${{ vars.VELERO_S3_URL }}
   TF_VAR_velero_s3_secret_access_key: ${{ secrets.VELERO_S3_SECRET_ACCESS_KEY }}
   TF_VAR_truenas_username: ${{ secrets.TRUENAS_USERNAME }}
-  TF_VAR_truenas_password: ${{ secrets.TRUENAS_PASSWORD }}
+  TF_VAR_truenas_ssh_private_key: ${{ secrets.TRUENAS_SSH_PRIVATE_KEY }}
   TF_VAR_truenas_ip_address: ${{ secrets.TRUENAS_IP_ADDRESS }}
 
 jobs:

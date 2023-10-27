@@ -30,10 +30,10 @@ variable "truenas_username" {
   description = "Username for the Truenas server."
 }
 
-variable "truenas_password" {
+variable "truenas_ssh_private_key" {
   type        = string
   sensitive   = true
-  description = "Password for the Truenas server."
+  description = "SSH private key for the Truenas server."
 }
 
 variable "truenas_ip_address" {
