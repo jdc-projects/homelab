@@ -10,4 +10,9 @@ resource "harbor_project" "library" {
   enable_content_trust   = "false"
   force_destroy          = "false"
   cve_allowlist          = []
+
+  lifecycle {
+    # if this get's destroyed after import, it's a pain to recover
+    prevent_destroy = true
+  }
 }
