@@ -17,6 +17,8 @@ resource "keycloak_group_roles" "grafana_admin" {
   role_ids = [
     keycloak_role.grafana_admin.id
   ]
+
+  exhaustive = false
 }
 
 resource "keycloak_openid_user_client_role_protocol_mapper" "grafana_claim_mapper" {

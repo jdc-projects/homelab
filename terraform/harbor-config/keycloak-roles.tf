@@ -3,20 +3,22 @@ data "keycloak_group" "system_admins" {
   name     = "system_admins"
 }
 
-resource "keycloak_role" "habor_admin" {
+resource "keycloak_role" "harbor_admin" {
   realm_id    = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   client_id   = keycloak_openid_client.harbor.id
   name        = "harborAdmin"
   description = "Harbor Admin"
 }
 
-resource "keycloak_group_roles" "habor_admin" {
+resource "keycloak_group_roles" "harbor_admin" {
   realm_id = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
   group_id = data.keycloak_group.system_admins.id
 
   role_ids = [
-    keycloak_role.habor_admin.id
+    keycloak_role.harbor_admin.id
   ]
+
+  exhaustive = false
 }
 
 resource "keycloak_openid_user_client_role_protocol_mapper" "harbor_claim_mapper" {
