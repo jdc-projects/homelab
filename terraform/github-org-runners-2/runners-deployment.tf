@@ -13,7 +13,7 @@ resource "kubernetes_job" "runners_cache_chown" {
           image = "alpine:3.18.4"
           name  = "runners-cache-chown"
 
-          command = ["sh", "-c", "chown -R 1000:1001 /export"]
+          command = ["sh", "-c", "chown -R 1001:121 /export"]
 
           security_context {
             run_as_user = 0
