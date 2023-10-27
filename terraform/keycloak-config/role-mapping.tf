@@ -17,4 +17,6 @@ resource "keycloak_group_roles" "system_admins_admin" {
   role_ids = [
     data.keycloak_role.admin.id
   ]
+
+  exhaustive = false
 }

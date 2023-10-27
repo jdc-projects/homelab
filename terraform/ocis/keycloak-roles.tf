@@ -94,6 +94,8 @@ resource "keycloak_group_roles" "ocis" {
   role_ids = [
     each.value.role_id
   ]
+
+  exhaustive = false
 }
 
 resource "keycloak_openid_user_client_role_protocol_mapper" "ocis_claim_mapper" {
