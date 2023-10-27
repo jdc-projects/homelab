@@ -17,7 +17,7 @@ resource "helm_release" "oauth2_proxy" {
 
   repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "oauth2-proxy"
-  version    = "4.1.5"
+  version    = "4.1.6"
 
   namespace = kubernetes_namespace.oauth2_proxy.metadata[0].name
 

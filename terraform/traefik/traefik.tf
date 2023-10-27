@@ -1,6 +1,6 @@
 resource "null_resource" "traefik_version" {
   triggers = {
-    traefik_version = "24.0.0"
+    traefik_version = "25.0.0"
   }
 }
 
@@ -92,7 +92,7 @@ resource "helm_release" "traefik" {
   }
 
   set {
-    name  = "ports.web.redirectTo"
+    name  = "ports.web.redirectTo.port"
     value = "websecure"
   }
 
