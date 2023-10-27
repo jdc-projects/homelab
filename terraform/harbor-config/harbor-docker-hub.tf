@@ -11,7 +11,7 @@ resource "harbor_project" "docker_hub" {
 
 resource "harbor_user" "docker_hub_reader" {
   username  = "docker-hub-reader"
-  password  = random_password.docker_hub_reader_password
+  password  = random_password.docker_hub_reader_password.result
   full_name = "Docker Hub Reader"
   email     = "docker-hub-reader@${var.server_base_domain}"
 }
