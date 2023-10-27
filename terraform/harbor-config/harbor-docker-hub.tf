@@ -49,9 +49,16 @@ resource "ssh_sensitive_resource" "k3s_registries_config_copy" {
       mirrors:
         docker.io:
           endpoint:
-            - "https://harbor.${var.server_base_domain}/${harbor_project.docker_hub.name}"
+            - "https://harbor.${var.server_base_domain}"
+          rewrite:
+            - ".*": "${harbor_project.docker_hub.name}/$1"
+        *:
+          endpoint:
+            - "https://harbor.${var.server_base_domain}"
+          rewrite:
+            - ".*": "${harbor_project.docker_hub.name}/$1"
       configs:
-        "harbor.${var.server_base_domain}/${harbor_project.docker_hub.name}":
+        "harbor.${var.server_base_domain}":
           auth:
             username: ${harbor_robot_account.docker_hub_reader.full_name}
             password: ${harbor_robot_account.docker_hub_reader.secret}
