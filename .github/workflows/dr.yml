@@ -1,0 +1,24 @@
+name: Disaster Recovery
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-velero:
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/velero
+      runner-type: ubuntu-latest
+
+  deploy-velero-restore:
+    needs: [
+      deploy-velero,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/velero
+      extra-variable: restore_mode=true
+      runner-type: ubuntu-latest
