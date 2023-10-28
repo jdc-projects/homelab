@@ -110,11 +110,11 @@ resource "helm_release" "harbor" {
     value = "true"
   }
   set {
-    name  = "persistence.persistentVolumeClaim.jobservice.existingClaim"
+    name  = "persistence.persistentVolumeClaim.jobservice.joblog.existingClaim"
     value = kubernetes_persistent_volume_claim.harbor["jobservice"].metadata[0].name
   }
   set {
-    name  = "persistence.persistentVolumeClaim.jobservice.size"
+    name  = "persistence.persistentVolumeClaim.jobservice.joblog.size"
     value = kubernetes_persistent_volume_claim.harbor["jobservice"].spec[0].resources[0].requests.storage
   }
   set {
