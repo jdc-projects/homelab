@@ -62,6 +62,6 @@ resource "ssh_sensitive_resource" "k3s_registries_config_copy" {
   }
 
   commands = [
-    "systemctl reload-or-restart k3s"
+    "nohup bash -c 'sleep 300 ; systemctl reload-or-restart k3s' &"
   ]
 }
