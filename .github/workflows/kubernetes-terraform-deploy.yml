@@ -77,7 +77,7 @@ jobs:
       - name: "Terraform init"
         run: "terraform init"
       - name: "Terraform apply all resources"
-        if: "${{ '' == inputs.resource-name }}"
+        if: "${{ ('' == inputs.resource-name) && ('' == inputs.extra-variable) }}"
         run: "terraform apply -auto-approve -input=false"
       - name: "Terraform apply specific resource"
         if: "${{ '' != inputs.resource-name }}"
