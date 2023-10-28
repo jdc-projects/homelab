@@ -29,7 +29,7 @@ resource "helm_release" "keycloak" {
   chart      = "keycloak"
   version    = null_resource.keycloak_version.triggers.keycloak_version
 
-  timeout = 300
+  timeout = 600
 
   set_sensitive {
     name  = "auth.adminUser"
