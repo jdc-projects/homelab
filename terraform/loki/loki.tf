@@ -29,7 +29,7 @@ resource "kubernetes_job" "loki_chown" {
           name = "loki-data"
 
           persistent_volume_claim {
-            claim_name = kubernetes_persistent_volume_claim.loki_minio.metadata[0].name
+            claim_name = kubernetes_persistent_volume_claim.loki["minio"].metadata[0].name
           }
         }
 
