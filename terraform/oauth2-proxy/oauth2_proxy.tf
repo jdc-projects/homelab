@@ -56,6 +56,11 @@ resource "helm_release" "oauth2_proxy" {
     value = kubernetes_config_map.oauth2_proxy_env.metadata[0].name
   }
 
+  set {
+    name  = "redis.master.persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.oauth2_proxy.metadata[0].name
+  }
+
   lifecycle {
     replace_triggered_by = [
       kubernetes_config_map.oauth2_proxy_env

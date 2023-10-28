@@ -1,6 +1,21 @@
-resource "kubernetes_persistent_volume_claim" "loki_minio" {
+resource "kubernetes_persistent_volume_claim" "loki" {
+  for_each = tomap({
+    minio = tomap({
+      name    = "minio"
+      storage = "50Gi"
+    })
+    backend = tomap({
+      name    = "backend"
+      storage = "10Gi"
+    })
+    write = tomap({
+      name    = "write"
+      storage = "10Gi"
+    })
+  })
+
   metadata {
-    name      = "loki-minio"
+    name      = each.value.name
     namespace = kubernetes_namespace.loki.metadata[0].name
   }
 
@@ -9,7 +24,7 @@ resource "kubernetes_persistent_volume_claim" "loki_minio" {
 
     resources {
       requests = {
-        storage = "50Gi"
+        storage = each.value.storage
       }
     }
   }

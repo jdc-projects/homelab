@@ -30,6 +30,18 @@ jobs:
       runner-type: ubuntu-latest
       resource-name: kubernetes_persistent_volume_claim.traefik
 
+  deploy-github-org-runners-2-storage:
+    needs: [
+      deploy-terraform-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/github-org-runners-2
+      runner-type: ubuntu-latest
+      resource-name: kubernetes_persistent_volume_claim.runners_cache
+
   deploy-loki-storage:
     needs: [
       deploy-terraform-state-namespace,
@@ -40,7 +52,7 @@ jobs:
     with:
       terraform-dir: ./terraform/loki
       runner-type: ubuntu-latest
-      resource-name: kubernetes_persistent_volume_claim.loki_minio
+      resource-name: kubernetes_persistent_volume_claim.loki
 
   deploy-openldap-storage:
     needs: [
@@ -114,6 +126,18 @@ jobs:
       runner-type: ubuntu-latest
       resource-name: kubernetes_persistent_volume_claim.grafana
 
+  deploy-oauth2-proxy-storage:
+    needs: [
+      deploy-terraform-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/oauth2-proxy
+      runner-type: ubuntu-latest
+      resource-name: kubernetes_persistent_volume_claim.oauth2_proxy
+
   deploy-velero:
     needs: [
       deploy-terraform-state-namespace,
@@ -129,6 +153,7 @@ jobs:
   restore:
     needs: [
       deploy-traefik-storage,
+      deploy-github-org-runners-2-storage,
       deploy-loki-storage,
       deploy-openldap-storage,
       deploy-keycloak-storage,
@@ -136,6 +161,7 @@ jobs:
       deploy-vaultwarden-storage,
       deploy-ocis-storage,
       deploy-grafana-storage,
+      deploy-oauth2-proxy-storage,
       deploy-velero,
     ]
     runs-on: ubuntu-latest
