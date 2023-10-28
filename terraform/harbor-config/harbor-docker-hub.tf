@@ -32,6 +32,10 @@ resource "harbor_robot_account" "docker_hub_reader" {
       action   = "pull"
       resource = "repository"
     }
+    access {
+      action   = "read"
+      resource = "repository"
+    }
     kind      = "project"
     namespace = harbor_project.docker_hub.name
   }
@@ -49,9 +53,7 @@ resource "ssh_sensitive_resource" "k3s_registries_config_copy" {
       mirrors:
         docker.io:
           endpoint:
-            - "https://harbor.${var.server_base_domain}"
-          rewrite:
-            ".*": "${harbor_project.docker_hub.name}/$1"
+            - "https://harbor.${var.server_base_domain}/v2/${harbor_project.docker_hub.name}"
       configs:
         "harbor.${var.server_base_domain}":
           auth:
@@ -62,6 +64,10 @@ resource "ssh_sensitive_resource" "k3s_registries_config_copy" {
   }
 
   commands = [
-    "nohup bash -c 'sleep 300 ; systemctl reload-or-restart k3s' &"
+    "chmod +x /bin/apt*",
+    "chmod +x /usr/bin/dpkg",
+    "apt update",
+    "apt install -y at",
+    "systemctl reload-or-restart k3s | at now + 5 min",
   ]
 }
