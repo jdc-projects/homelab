@@ -4,6 +4,10 @@ resource "null_resource" "velero_version" {
   }
 }
 
+locals {
+  nightly_backup_name = "nightly"
+}
+
 resource "kubernetes_secret" "velero_s3_secret" {
   metadata {
     name      = "velero-s3-secret"
@@ -158,63 +162,63 @@ resource "helm_release" "velero" {
   }
 
   set {
-    name  = "schedules.nightly.disabled"
+    name  = "schedules.${locals.nightly_backup_name}.disabled"
     value = "false"
   }
   set {
-    name  = "schedules.nightly.schedule"
+    name  = "schedules.${locals.nightly_backup_name}.schedule"
     value = "0 0 * * *"
   }
   set {
-    name  = "schedules.nightly.useOwnerReferencesInBackup"
+    name  = "schedules.${locals.nightly_backup_name}.useOwnerReferencesInBackup"
     value = "false"
   }
   set {
-    name  = "schedules.nightly.template.includedNamespaces[0]"
+    name  = "schedules.${locals.nightly_backup_name}.template.includedNamespaces[0]"
     value = "*"
   }
   set {
-    name  = "schedules.nightly.template.excludedNamespaces[0]"
+    name  = "schedules.${locals.nightly_backup_name}.template.excludedNamespaces[0]"
     value = "default"
   }
   set {
-    name  = "schedules.nightly.template.excludedNamespaces[1]"
+    name  = "schedules.${locals.nightly_backup_name}.template.excludedNamespaces[1]"
     value = "kube-system"
   }
   set {
-    name  = "schedules.nightly.template.excludedNamespaces[2]"
+    name  = "schedules.${locals.nightly_backup_name}.template.excludedNamespaces[2]"
     value = "kube-public"
   }
   set {
-    name  = "schedules.nightly.template.excludedNamespaces[3]"
+    name  = "schedules.${locals.nightly_backup_name}.template.excludedNamespaces[3]"
     value = "kube-node-lease"
   }
   set {
-    name  = "schedules.nightly.template.excludedNamespaces[4]"
+    name  = "schedules.${locals.nightly_backup_name}.template.excludedNamespaces[4]"
     value = "openebs"
   }
   set {
-    name  = "schedules.nightly.template.excludedNamespaces[5]"
+    name  = "schedules.${locals.nightly_backup_name}.template.excludedNamespaces[5]"
     value = "velero"
   }
   set {
-    name  = "schedules.nightly.template.includeClusterResources"
+    name  = "schedules.${locals.nightly_backup_name}.template.includeClusterResources"
+    value = "true"
+  }
+  set {
+    name  = "schedules.${locals.nightly_backup_name}.template.snapshotVolumes"
     value = "false"
   }
   set {
-    name  = "schedules.nightly.template.snapshotVolumes"
-    value = "false"
-  }
-  set {
-    name  = "schedules.nightly.template.storageLocation"
+    name  = "schedules.${locals.nightly_backup_name}.template.storageLocation"
     value = "backblaze"
   }
   set {
-    name  = "schedules.nightly.template.ttl"
+    name  = "schedules.${locals.nightly_backup_name}.template.ttl"
     value = "720h"
   }
   set {
-    name  = "schedules.nightly.template.defaultVolumesToFsBackup"
+    name  = "schedules.${locals.nightly_backup_name}.template.defaultVolumesToFsBackup"
     value = "false"
   }
 

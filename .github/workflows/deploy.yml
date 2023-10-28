@@ -10,6 +10,11 @@ on:
         options:
           - self-hosted
           - ubuntu-latest
+      disaster-recovery:
+        description: 'Disaster recovery'
+        required: true
+        default: false
+        type: boolean
 
 jobs:
   deploy-terraform-state-namespace:
@@ -62,6 +67,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/velero
+      runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-loki:
     needs: [
@@ -72,6 +78,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/loki
+      runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-services:
     needs: [
@@ -83,6 +90,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/services
+      runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-openldap:
     needs: [
@@ -94,6 +102,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/openldap
+      runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-keycloak:
     needs: [
@@ -105,6 +114,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/keycloak
+      runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-harbor:
     needs: [
@@ -116,6 +126,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/harbor
+      runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-keycloak-config:
     needs: [
@@ -127,6 +138,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/keycloak-config
+      runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-vaultwarden:
     needs: [
@@ -137,6 +149,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/vaultwarden
+      runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-ocis:
     needs: [
@@ -147,6 +160,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/ocis
+      runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-grafana:
     needs: [
@@ -158,6 +172,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/grafana
+      runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-harbor-config:
     needs: [
@@ -169,6 +184,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/harbor-config
+      runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-oauth2-proxy:
     needs: [
@@ -179,6 +195,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/oauth2-proxy
+      runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-forward-auth-test:
     needs: [
@@ -189,3 +206,23 @@ jobs:
 
     with:
       terraform-dir: ./terraform/forward-auth-test
+      runner-type: ${{ github.event.inputs.runner-type }}
+
+  deploy-velero-restore:
+    needs: [
+      deploy-velero,
+      deploy-services,
+      deploy-vaultwarden,
+      deploy-ocis,
+      deploy-grafana,
+      deploy-harbor-config,
+      deploy-forward-auth-test,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+    if: true == inputs.disaster-recovery
+
+    with:
+      terraform-dir: ./terraform/velero
+      extra-variable: restore_mode=true
+      runner-type: ${{ github.event.inputs.runner-type }}
