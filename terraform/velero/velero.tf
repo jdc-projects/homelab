@@ -40,7 +40,7 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "initContainers[0].image"
-    value = "velero/velero-plugin-for-aws:v1.7.0"
+    value = "velero/velero-plugin-for-aws:v1.8.1"
   }
   set {
     name  = "initContainers[0].imagePullPolicy"
@@ -54,6 +54,27 @@ resource "helm_release" "velero" {
     name  = "initContainers[0].volumeMounts[0].name"
     value = "plugins"
   }
+  set {
+    name  = "initContainers[1].name"
+    value = "velero-plugin-for-openebs"
+  }
+  set {
+    name  = "initContainers[1].image"
+    value = "openebs/velero-plugin:3.5.0"
+  }
+  set {
+    name  = "initContainers[1].imagePullPolicy"
+    value = "IfNotPresent"
+  }
+  set {
+    name  = "initContainers[1].volumeMounts[0].mountPath"
+    value = "/target"
+  }
+  set {
+    name  = "initContainers[1].volumeMounts[0].name"
+    value = "plugins"
+  }
+  # ***** openebs setup openebs/velero-plugin:2.2.0
 
   set {
     name  = "cleanUpCRDs"
@@ -71,6 +92,10 @@ resource "helm_release" "velero" {
   set {
     name  = "configuration.backupStorageLocation[0].bucket"
     value = var.velero_s3_bucket_name
+  }
+  set {
+    name  = "configuration.backupStorageLocation[0].prefix"
+    value = "velero"
   }
   set {
     name  = "configuration.backupStorageLocation[0].default"
@@ -102,8 +127,53 @@ resource "helm_release" "velero" {
   }
 
   set {
-    name  = "configuration.uploaderType"
-    value = "kopia"
+    name  = "configuration.volumeSnapshotLocation[0].name"
+    value = "backblaze"
+  }
+  set {
+    name  = "configuration.volumeSnapshotLocation[0].provider"
+    value = "openebs.io/cstor-blockstore"
+  }
+  set {
+    name  = "configuration.volumeSnapshotLocation[0].credential.name"
+    value = kubernetes_secret.velero_s3_secret.metadata[0].name
+  }
+  set {
+    name  = "configuration.volumeSnapshotLocation[0].credential.key"
+    value = "cloud"
+  }
+  set {
+    name  = "configuration.volumeSnapshotLocation[0].config.bucket"
+    value = var.velero_s3_bucket_name
+  }
+  set {
+    name  = "configuration.volumeSnapshotLocation[0].config.prefix"
+    value = "snapshots"
+  }
+  set {
+    name  = "configuration.volumeSnapshotLocation[0].config.incrBackupCount"
+    value = "10"
+  }
+  set {
+    name  = "configuration.volumeSnapshotLocation[0].config.provider"
+    value = "aws"
+  }
+  set {
+    name  = "configuration.volumeSnapshotLocation[0].config.region"
+    value = var.velero_s3_region
+  }
+  set {
+    name  = "configuration.volumeSnapshotLocation[0].config.s3ForcePathStyle"
+    value = "true"
+  }
+  set {
+    name  = "configuration.volumeSnapshotLocation[0].config.s3Url"
+    value = var.velero_s3_url
+  }
+
+  set {
+    name  = "configuration.backupSyncPeriod"
+    value = "10m"
   }
   set {
     name  = "configuration.fsBackupTimeout"
@@ -111,7 +181,11 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "configuration.defaultBackupStorageLocation"
-    value = "backblaze-b2"
+    value = "backblaze"
+  }
+  set {
+    name  = "configuration.defaultVolumeSnapshotLocations"
+    value = "backblaze"
   }
   set {
     name  = "configuration.logLevel"
@@ -149,76 +223,80 @@ resource "helm_release" "velero" {
 
   set {
     name  = "snapshotsEnabled"
-    value = "false"
+    value = "true"
   }
 
   set {
     name  = "deployNodeAgent"
-    value = "true"
-  }
-  set {
-    name  = "nodeAgent.resources"
-    value = ""
+    value = "false"
   }
 
   set {
-    name  = "schedules.${locals.nightly_backup_name}.disabled"
+    name  = "schedules.${local.nightly_backup_name}.disabled"
     value = "false"
   }
   set {
-    name  = "schedules.${locals.nightly_backup_name}.schedule"
+    name  = "schedules.${local.nightly_backup_name}.schedule"
     value = "0 0 * * *"
   }
   set {
-    name  = "schedules.${locals.nightly_backup_name}.useOwnerReferencesInBackup"
+    name  = "schedules.${local.nightly_backup_name}.useOwnerReferencesInBackup"
     value = "false"
   }
   set {
-    name  = "schedules.${locals.nightly_backup_name}.template.includedNamespaces[0]"
+    name  = "schedules.${local.nightly_backup_name}.template.includedNamespaces[0]"
     value = "*"
   }
   set {
-    name  = "schedules.${locals.nightly_backup_name}.template.excludedNamespaces[0]"
+    name  = "schedules.${local.nightly_backup_name}.template.excludedNamespaces[0]"
     value = "default"
   }
   set {
-    name  = "schedules.${locals.nightly_backup_name}.template.excludedNamespaces[1]"
+    name  = "schedules.${local.nightly_backup_name}.template.excludedNamespaces[1]"
     value = "kube-system"
   }
   set {
-    name  = "schedules.${locals.nightly_backup_name}.template.excludedNamespaces[2]"
+    name  = "schedules.${local.nightly_backup_name}.template.excludedNamespaces[2]"
     value = "kube-public"
   }
   set {
-    name  = "schedules.${locals.nightly_backup_name}.template.excludedNamespaces[3]"
+    name  = "schedules.${local.nightly_backup_name}.template.excludedNamespaces[3]"
     value = "kube-node-lease"
   }
   set {
-    name  = "schedules.${locals.nightly_backup_name}.template.excludedNamespaces[4]"
+    name  = "schedules.${local.nightly_backup_name}.template.excludedNamespaces[4]"
     value = "openebs"
   }
   set {
-    name  = "schedules.${locals.nightly_backup_name}.template.excludedNamespaces[5]"
+    name  = "schedules.${local.nightly_backup_name}.template.excludedNamespaces[5]"
     value = "velero"
   }
   set {
-    name  = "schedules.${locals.nightly_backup_name}.template.includeClusterResources"
+    name  = "schedules.${local.nightly_backup_name}.template.includeClusterResources"
     value = "true"
   }
   set {
-    name  = "schedules.${locals.nightly_backup_name}.template.snapshotVolumes"
-    value = "false"
+    name  = "schedules.${local.nightly_backup_name}.template.snapshotVolumes"
+    value = "true"
   }
   set {
-    name  = "schedules.${locals.nightly_backup_name}.template.storageLocation"
+    name  = "schedules.${local.nightly_backup_name}.template.storageLocation"
     value = "backblaze"
   }
   set {
-    name  = "schedules.${locals.nightly_backup_name}.template.ttl"
+    name  = "schedules.${local.nightly_backup_name}.template.volumeSnapshotLocations[0]"
+    value = "backblaze"
+  }
+  set {
+    name  = "schedules.${local.nightly_backup_name}.template.snapshotMoveData"
+    value = "false"
+  }
+  set {
+    name  = "schedules.${local.nightly_backup_name}.template.ttl"
     value = "720h"
   }
   set {
-    name  = "schedules.${locals.nightly_backup_name}.template.defaultVolumesToFsBackup"
+    name  = "schedules.${local.nightly_backup_name}.template.defaultVolumesToFsBackup"
     value = "false"
   }
 

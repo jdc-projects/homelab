@@ -6,7 +6,7 @@ resource "kubernetes_manifest" "velero_restore" {
     kind       = "IngressRoute"
 
     metadata = {
-      name      = "${locals.nightly_backup_name}-backup-restore-${timestamp()}"
+      name      = "${local.nightly_backup_name}-backup-restore-${timestamp()}"
       namespace = kubernetes_namespace.velero.metadata[0].name
     }
 
@@ -14,7 +14,7 @@ resource "kubernetes_manifest" "velero_restore" {
       # The unique name of the Velero schedule
       # to restore from. If specified, and BackupName is empty, Velero will
       # restore from the most recent successful backup created from this schedule.
-      scheduleName = locals.nightly_backup_name
+      scheduleName = local.nightly_backup_name
 
       # Whether or not to include cluster-scoped resources. Valid values are true, false, and
       # null/unset. If true, all cluster-scoped resources are included (subject to included/excluded
@@ -29,7 +29,7 @@ resource "kubernetes_manifest" "velero_restore" {
 
       # restorePVs specifies whether to restore all included PVs
       # from snapshot. Optional
-      restorePVs = false
+      restorePVs = true
       # existingResourcePolicy specifies the restore behaviour
       # for the Kubernetes resource to be restored. Optional
       existingResourcePolicy = "update"
