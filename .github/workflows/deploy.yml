@@ -179,7 +179,6 @@ jobs:
   deploy-harbor-config:
     needs: [
       deploy-velero,
-      deploy-services,
       deploy-harbor,
       deploy-vaultwarden,
       deploy-ocis,
