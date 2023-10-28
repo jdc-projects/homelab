@@ -60,6 +60,10 @@ resource "helm_release" "oauth2_proxy" {
     name  = "redis.master.persistence.existingClaim"
     value = kubernetes_persistent_volume_claim.oauth2_proxy.metadata[0].name
   }
+  set {
+    name  = "redis.volumePermissions.enabled"
+    value = "true"
+  }
 
   lifecycle {
     replace_triggered_by = [
