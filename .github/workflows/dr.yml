@@ -18,6 +18,102 @@ jobs:
       manifest-file: ./terraform/terraform-state-namespace.yml
       runner-type: ubuntu-latest
 
+  deploy-traefik-storage:
+    needs: [
+      deploy-terraform-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/traefik
+      runner-type: ubuntu-latest
+      resource-name: kubernetes_persistent_volume_claim.traefik
+
+  deploy-loki-storage:
+    needs: [
+      deploy-terraform-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/loki
+      runner-type: ubuntu-latest
+      resource-name: kubernetes_persistent_volume_claim.loki_minio
+
+  deploy-openldap-storage:
+    needs: [
+      deploy-terraform-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/openldap
+      runner-type: ubuntu-latest
+      resource-name: kubernetes_persistent_volume_claim.openldap
+
+  deploy-keycloak-storage:
+    needs: [
+      deploy-terraform-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/keycloak
+      runner-type: ubuntu-latest
+      resource-name: kubernetes_persistent_volume_claim.keycloak_db
+
+  deploy-harbor-storage:
+    needs: [
+      deploy-terraform-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/harbor
+      runner-type: ubuntu-latest
+      resource-name: kubernetes_persistent_volume_claim.harbor
+
+  deploy-vaultwarden-storage:
+    needs: [
+      deploy-terraform-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/vaultwarden
+      runner-type: ubuntu-latest
+      resource-name: kubernetes_persistent_volume_claim.vaultwarden
+
+  deploy-ocis-storage:
+    needs: [
+      deploy-terraform-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/ocis
+      runner-type: ubuntu-latest
+      resource-name: kubernetes_persistent_volume_claim.ocis
+
+  deploy-grafana-storage:
+    needs: [
+      deploy-terraform-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/grafana
+      runner-type: ubuntu-latest
+      resource-name: kubernetes_persistent_volume_claim.grafana
+
   deploy-velero:
     needs: [
       deploy-terraform-state-namespace,
@@ -32,6 +128,14 @@ jobs:
 
   restore:
     needs: [
+      deploy-traefik-storage,
+      deploy-loki-storage,
+      deploy-openldap-storage,
+      deploy-keycloak-storage,
+      deploy-harbor-storage,
+      deploy-vaultwarden-storage,
+      deploy-ocis-storage,
+      deploy-grafana-storage,
       deploy-velero,
     ]
     runs-on: ubuntu-latest
