@@ -206,6 +206,10 @@ resource "helm_release" "velero" {
     value = "23h"
   }
   set {
+    name  = "schedules.${local.nightly_backup_name}.template.itemOperationTimeout"
+    value = "23h"
+  }
+  set {
     name  = "schedules.${local.nightly_backup_name}.template.includedNamespaces[0]"
     value = "*"
   }
