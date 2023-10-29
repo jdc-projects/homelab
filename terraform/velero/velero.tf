@@ -56,11 +56,11 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "initContainers[1].name"
-    value = "velero-plugin-for-openebs"
+    value = "velero-plugin-for-csi"
   }
   set {
     name  = "initContainers[1].image"
-    value = "openebs/velero-plugin:3.5.0"
+    value = "velero/velero-plugin-for-csi:v0.6.1"
   }
   set {
     name  = "initContainers[1].imagePullPolicy"
@@ -74,7 +74,6 @@ resource "helm_release" "velero" {
     name  = "initContainers[1].volumeMounts[0].name"
     value = "plugins"
   }
-  # ***** openebs setup openebs/velero-plugin:2.2.0
 
   set {
     name  = "cleanUpCRDs"
@@ -127,51 +126,6 @@ resource "helm_release" "velero" {
   }
 
   set {
-    name  = "configuration.volumeSnapshotLocation[0].name"
-    value = "backblaze"
-  }
-  set {
-    name  = "configuration.volumeSnapshotLocation[0].provider"
-    value = "openebs.io/cstor-blockstore"
-  }
-  set {
-    name  = "configuration.volumeSnapshotLocation[0].credential.name"
-    value = kubernetes_secret.velero_s3_secret.metadata[0].name
-  }
-  set {
-    name  = "configuration.volumeSnapshotLocation[0].credential.key"
-    value = "cloud"
-  }
-  set {
-    name  = "configuration.volumeSnapshotLocation[0].config.bucket"
-    value = var.velero_s3_bucket_name
-  }
-  set {
-    name  = "configuration.volumeSnapshotLocation[0].config.prefix"
-    value = "snapshots"
-  }
-  set {
-    name  = "configuration.volumeSnapshotLocation[0].config.incrBackupCount"
-    value = "10"
-  }
-  set {
-    name  = "configuration.volumeSnapshotLocation[0].config.provider"
-    value = "aws"
-  }
-  set {
-    name  = "configuration.volumeSnapshotLocation[0].config.region"
-    value = var.velero_s3_region
-  }
-  set {
-    name  = "configuration.volumeSnapshotLocation[0].config.s3ForcePathStyle"
-    value = "true"
-  }
-  set {
-    name  = "configuration.volumeSnapshotLocation[0].config.s3Url"
-    value = var.velero_s3_url
-  }
-
-  set {
     name  = "configuration.backupSyncPeriod"
     value = "10m"
   }
@@ -204,6 +158,10 @@ resource "helm_release" "velero" {
     value = "10m"
   }
   set {
+    name  = "configuration.features"
+    value = "EnableCSI"
+  }
+  set {
     name  = "configuration.namespace"
     value = kubernetes_namespace.velero.metadata[0].name
   }
@@ -228,7 +186,7 @@ resource "helm_release" "velero" {
 
   set {
     name  = "deployNodeAgent"
-    value = "false"
+    value = "true"
   }
 
   set {
@@ -242,6 +200,10 @@ resource "helm_release" "velero" {
   set {
     name  = "schedules.${local.nightly_backup_name}.useOwnerReferencesInBackup"
     value = "false"
+  }
+  set {
+    name  = "schedules.${local.nightly_backup_name}.template.csiSnapshotTimeout"
+    value = "23h"
   }
   set {
     name  = "schedules.${local.nightly_backup_name}.template.includedNamespaces[0]"
@@ -284,12 +246,8 @@ resource "helm_release" "velero" {
     value = "backblaze"
   }
   set {
-    name  = "schedules.${local.nightly_backup_name}.template.volumeSnapshotLocations[0]"
-    value = "backblaze"
-  }
-  set {
     name  = "schedules.${local.nightly_backup_name}.template.snapshotMoveData"
-    value = "false"
+    value = "true"
   }
   set {
     name  = "schedules.${local.nightly_backup_name}.template.ttl"
