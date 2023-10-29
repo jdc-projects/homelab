@@ -138,10 +138,6 @@ resource "helm_release" "velero" {
     value = "backblaze"
   }
   set {
-    name  = "configuration.defaultVolumeSnapshotLocations"
-    value = "openebs.io/cstor-blockstore:backblaze"
-  }
-  set {
     name  = "configuration.logLevel"
     value = "info"
   }
