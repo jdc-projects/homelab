@@ -168,7 +168,7 @@ resource "helm_release" "harbor" {
   }
   set {
     name  = "persistence.imageChartStorage.s3.regionendpoint"
-    value = "https://minio"
+    value = "http://${helm_release.minio.name}:9000"
   }
   set {
     name  = "persistence.imageChartStorage.s3.encrypt"
@@ -176,11 +176,11 @@ resource "helm_release" "harbor" {
   }
   set {
     name  = "persistence.imageChartStorage.s3.secure"
-    value = "true"
+    value = "false"
   }
   set {
     name  = "persistence.imageChartStorage.s3.skipverify"
-    value = "true"
+    value = "false"
   }
   set {
     name  = "persistence.imageChartStorage.s3.v4auth"
