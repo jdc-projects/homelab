@@ -1,6 +1,6 @@
 resource "null_resource" "velero_version" {
   triggers = {
-    velero_version = "5.1.0"
+    velero_version = "5.1.2"
   }
 }
 
@@ -177,7 +177,7 @@ resource "helm_release" "velero" {
 
   set {
     name  = "snapshotsEnabled"
-    value = "true"
+    value = "false"
   }
 
   set {
@@ -192,6 +192,10 @@ resource "helm_release" "velero" {
   set {
     name  = "schedules.${local.nightly_backup_name}.schedule"
     value = "0 0 * * *"
+  }
+  set {
+    name  = "schedules.${local.nightly_backup_name}.annotations.velero\\.io\\/csi-volumesnapshot-class_zfs\\.csi\\.openebs\\.io"
+    value = "zfspv-default-snapshot-class"
   }
   set {
     name  = "schedules.${local.nightly_backup_name}.useOwnerReferencesInBackup"
