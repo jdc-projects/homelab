@@ -68,6 +68,6 @@ resource "ssh_sensitive_resource" "k3s_registries_config_copy" {
     "chmod +x /usr/bin/dpkg",
     "apt update",
     "apt install -y at",
-    "systemctl reload-or-restart k3s | at now + 5 min",
+    "echo 'systemctl reload-or-restart k3s' | at now + 5 min",
   ]
 }
