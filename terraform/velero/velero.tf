@@ -233,7 +233,7 @@ resource "helm_release" "velero" {
 
   set {
     name  = "schedules.${local.nightly_backup_name}.disabled"
-    value = "true"
+    value = "false"
   }
   set {
     name  = "schedules.${local.nightly_backup_name}.schedule"
