@@ -4,14 +4,6 @@ resource "kubernetes_persistent_volume_claim" "loki" {
       name    = "minio"
       storage = "50Gi"
     })
-    backend = tomap({
-      name    = "backend"
-      storage = "10Gi"
-    })
-    write = tomap({
-      name    = "write"
-      storage = "10Gi"
-    })
   })
 
   metadata {

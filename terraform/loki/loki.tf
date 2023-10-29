@@ -78,24 +78,8 @@ resource "helm_release" "loki" {
     value = "1"
   }
   set {
-    name  = "write.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.loki["write"].metadata[0].name
-  }
-  set {
-    name  = "write.persistence.size"
-    value = kubernetes_persistent_volume_claim.loki["write"].spec[0].resources[0].requests.storage
-  }
-  set {
     name  = "backend.replicas"
     value = "1"
-  }
-  set {
-    name  = "backend.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.loki["backend"].metadata[0].name
-  }
-  set {
-    name  = "backend.persistence.size"
-    value = kubernetes_persistent_volume_claim.loki["backend"].spec[0].resources[0].requests.storage
   }
 
   set {
