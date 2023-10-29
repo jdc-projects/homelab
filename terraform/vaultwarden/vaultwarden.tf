@@ -60,10 +60,6 @@ resource "kubernetes_deployment" "vaultwarden_deployment" {
         labels = {
           app = "vaultwarden"
         }
-
-        annotations = {
-          "backup.velero.io/backup-volumes" = "vaultwarden-data"
-        }
       }
 
       spec {

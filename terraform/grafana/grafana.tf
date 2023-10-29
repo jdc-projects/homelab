@@ -31,11 +31,6 @@ resource "helm_release" "grafana" {
     value = kubernetes_persistent_volume_claim.grafana.metadata[0].name
   }
 
-  set {
-    name  = "podAnnotations.backup\\.velero\\.io\\/backup-volumes"
-    value = "storage"
-  }
-
   set_sensitive {
     name  = "adminUser"
     value = random_password.admin_username.result

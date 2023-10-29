@@ -46,10 +46,6 @@ resource "kubernetes_deployment" "openldap" {
         labels = {
           app = "openldap"
         }
-
-        annotations = {
-          "backup.velero.io/backup-volumes" = "openldap-data"
-        }
       }
 
       spec {

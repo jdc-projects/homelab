@@ -116,10 +116,6 @@ resource "helm_release" "keycloak" {
     value = kubernetes_persistent_volume_claim.keycloak_db.metadata[0].name
   }
   set {
-    name  = "postgresql.primary.podAnnotations"
-    value = "backup.velero.io/backup-volumes: data"
-  }
-  set {
     name  = "postgresql.volumePermissions.enabled"
     value = "true"
   }

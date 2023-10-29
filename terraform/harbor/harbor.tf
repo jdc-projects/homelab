@@ -187,23 +187,6 @@ resource "helm_release" "harbor" {
     value = "true"
   }
 
-  set {
-    name  = "jobservice.podAnnotations.backup\\.velero\\.io\\/backup-volumes"
-    value = "job-logs"
-  }
-  set {
-    name  = "trivy.podAnnotations.backup\\.velero\\.io\\/backup-volumes"
-    value = "data"
-  }
-  set {
-    name  = "database.podAnnotations.backup\\.velero\\.io\\/backup-volumes"
-    value = "database-data"
-  }
-  set {
-    name  = "redis.podAnnotations.backup\\.velero\\.io\\/backup-volumes"
-    value = "data"
-  }
-
   set_sensitive {
     name  = "core.secret"
     value = random_password.harbor_core_secret.result

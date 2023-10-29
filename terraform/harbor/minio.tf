@@ -94,10 +94,6 @@ resource "helm_release" "minio" {
     name  = "persistence.size"
     value = kubernetes_persistent_volume_claim.harbor["minio"].spec[0].resources[0].requests.storage
   }
-  set {
-    name  = "podAnnotations.backup\\.velero\\.io\\/backup-volumes"
-    value = "export"
-  }
 
   set_sensitive {
     name  = "users[0].accessKey"

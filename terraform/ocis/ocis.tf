@@ -101,10 +101,6 @@ resource "kubernetes_deployment" "ocis" {
         labels = {
           app = "ocis"
         }
-
-        annotations = {
-          "backup.velero.io/backup-volumes" = "ocis-data"
-        }
       }
 
       spec {
