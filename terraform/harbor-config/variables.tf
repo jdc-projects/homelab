@@ -1,22 +1,22 @@
 variable "server_base_domain" {
   type        = string
-  description = "Domain of the Truenas Scale instance."
+  description = "Domain for applications.."
 }
 
-variable "truenas_username" {
+variable "k3s_username" {
   type        = string
   sensitive   = true
-  description = "Username for the Truenas server."
+  description = "Username for the k3s server."
 }
 
-variable "truenas_ssh_private_key" {
+variable "k3s_ssh_private_key" {
   type        = string
   sensitive   = true
-  description = "SSH private key for the Truenas server."
+  description = "SSH private key for the k3s server."
 }
 
-variable "truenas_ip_address" {
+variable "k3s_ip_address" {
   type        = string
   sensitive   = true
-  description = "IP address for the Truenas server."
+  description = "IP address for the k3s server."
 }

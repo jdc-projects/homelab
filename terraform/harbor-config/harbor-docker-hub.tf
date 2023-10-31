@@ -44,9 +44,9 @@ resource "harbor_robot_account" "docker_hub_reader" {
 }
 
 resource "ssh_sensitive_resource" "k3s_registries_config_copy" {
-  host        = var.truenas_ip_address
-  user        = var.truenas_username
-  private_key = var.truenas_ssh_private_key
+  host        = var.k3s_ip_address
+  user        = var.k3s_username
+  private_key = var.k3s_ssh_private_key
 
   file {
     content     = <<-EOF
@@ -64,8 +64,6 @@ resource "ssh_sensitive_resource" "k3s_registries_config_copy" {
   }
 
   commands = [
-    "chmod +x /bin/apt*",
-    "chmod +x /usr/bin/dpkg",
     "apt update",
     "apt install -y at",
     "echo 'systemctl reload-or-restart k3s' | at now + 5 min",
