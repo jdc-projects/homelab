@@ -10,6 +10,7 @@ It would be nice to fully automate the provisioning of the K3s machine, but for 
         ```
         sudo useradd k3s &&
         sudo mkhomedir_helper k3s &&
+        sudo usermod -s /bin/bash k3s &&
         sudo echo -e "k3s ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
         ```
    4. Change to the k3s user:
