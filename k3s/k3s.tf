@@ -1,4 +1,4 @@
-resource "ssh_sensitive_resource" "k3s_registries_config_copy" {
+resource "ssh_resource" "k3s_provisioning" {
   host        = var.k3s_ip_address
   user        = var.k3s_username
   private_key = var.k3s_ssh_private_key
