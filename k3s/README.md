@@ -15,3 +15,4 @@ sudo cat /home/k3s/.ssh/ed25519.pub >> /home/k3s/.ssh/authorized_keys
 ```
 3. Create 'terraform.tfvars' in this directory, and populate with the required values
 4. Run the Terraform in this directory
+5. Get the kubeconfig values (at /etc/rancher/k3s/k3s.yaml)
