@@ -80,7 +80,7 @@ resource "helm_release" "harbor" {
 
   namespace = kubernetes_namespace.harbor.metadata[0].name
 
-  timeout = 300
+  timeout = 600
 
   set {
     name  = "expose.type"
