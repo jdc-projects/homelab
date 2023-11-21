@@ -103,10 +103,6 @@ resource "helm_release" "traefik" {
     name  = "ports.websecure.tls.domains[0].sans[0]"
     value = "*.${var.server_base_domain}"
   }
-  set {
-    name  = "ports.websecure.tls.domains[0].sans[0]"
-    value = "1.${var.server_base_domain}"
-  }
 
   set {
     name  = "ports.metrics.expose"
