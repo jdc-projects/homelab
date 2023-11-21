@@ -28,7 +28,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/deploy-csi-driver-nfs
+      terraform-dir: ./terraform/csi-driver-nfs
       runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-github-org-runner-1:
