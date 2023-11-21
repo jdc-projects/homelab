@@ -29,9 +29,10 @@ sudo iptables -D INPUT -p tcp -m tcp --dport 6443 -m comment --comment "iX Custo
 * KUBE_CLUSTER_CA_CERT_DATA
 * SMTP_PASSWORD
 * VELERO_S3_SECRET_ACCESS_KEY
-* K3S_USERNAME
 * K3S_SSH_PRIVATE_KEY
 * K3S_IP_ADDRESS
+* NFS_IP_ADDRESS
+* NFS_SHARE
 
 ### Variables
 

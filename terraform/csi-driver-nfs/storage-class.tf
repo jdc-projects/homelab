@@ -16,8 +16,8 @@ resource "kubernetes_storage_class" "nfs" {
   ]
 
   parameters = {
-    server = "192.168.1.250"
-    share  = "/mnt/vault/exclude/k3s"
+    server = var.nfs_ip_address
+    share  = var.nfs_share
   }
 
   depends_on = [ helm_release.csi_driver_nfs ]
