@@ -64,8 +64,8 @@ resource "ssh_sensitive_resource" "k3s_registries_config_copy" {
   }
 
   commands = [
-    "apt update",
-    "apt install -y at",
-    "echo 'systemctl reload-or-restart k3s' | at now + 5 min",
+    "sudo apt update",
+    "sudo apt install -y at",
+    "echo 'systemctl reload-or-restart k3s' | sudo at now + 5 min",
   ]
 }
