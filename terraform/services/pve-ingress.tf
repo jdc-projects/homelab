@@ -11,7 +11,7 @@ resource "kubernetes_service" "pve" {
   }
 
   spec {
-    external_name = "192.168.1.200"
+    external_name = "192.168.1.190"
     type          = "ExternalName"
   }
 }
