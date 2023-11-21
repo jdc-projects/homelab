@@ -181,6 +181,10 @@ resource "helm_release" "ocis" {
     value = kubernetes_secret.jwt_secret.metadata[0].name
   }
   set {
+    name  = "secretRefs.ldapSecretRef"
+    value = kubernetes_secret.ldap_bind_secrets.metadata[0].name
+  }
+  set {
     name  = "secretRefs.machineAuthApiKeySecretRef"
     value = kubernetes_secret.machine_auth_api_key.metadata[0].name
   }
