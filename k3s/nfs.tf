@@ -5,6 +5,6 @@ resource "ssh_resource" "nfs_provisioning" {
 
   commands = [
     "sudo apt update",
-    "sudo apt install nfs-common",
+    "sudo apt install -y nfs-common",
   ]
 }
