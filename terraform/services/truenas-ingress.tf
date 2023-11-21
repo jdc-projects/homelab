@@ -11,7 +11,7 @@ resource "kubernetes_service" "truenas" {
   }
 
   spec {
-    external_name = "192.168.1.190"
+    external_name = "192.168.1.250"
     type          = "ExternalName"
   }
 }
@@ -36,7 +36,7 @@ resource "kubernetes_manifest" "truenas_ingressroute" {
           name      = "truenas"
           namespace = kubernetes_namespace.truenas.metadata[0].name
           scheme    = "https"
-          port      = 444
+          port      = 443
         }]
       }]
     }
