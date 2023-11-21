@@ -15,7 +15,7 @@ resource "random_password" "machine_auth_api_key" {
 resource "random_uuid" "storage_system_user_id" {
 }
 
-resource "random_uuid" "storage_users_mount_id" {
+resource "random_uuid" "storage_users_storage_uuid" {
 }
 
 resource "random_uuid" "graph_application_id" {

@@ -1,168 +1,300 @@
-resource "kubernetes_config_map" "ocis_env" {
-  metadata {
-    name      = "ocis-env"
-    namespace = kubernetes_namespace.ocis.metadata[0].name
+resource "null_resource" "ocis_helm_repo_clone" {
+  triggers = {
+    always_run = timestamp()
   }
 
-  data = {
-    PROXY_TLS                    = "false"
-    PROXY_ENABLE_BASIC_AUTH      = "false"
-    OCIS_EXCLUDE_RUN_SERVICES    = "idm,idp,auth-basic"
-    PROXY_ROLE_ASSIGNMENT_DRIVER = "oidc"
-    OCIS_URL                     = "https://files.${var.server_base_domain}"
-    GRAPH_LDAP_SERVER_UUID       = "true"
-
-    OCIS_LDAP_CACERT                           = ""
-    OCIS_LDAP_DISABLED_USERS_GROUP_DN          = "cn=app_disabled,ou=groups,dc=idm,dc=homelab"
-    OCIS_LDAP_DISABLE_USER_MECHANISM           = "group"
-    OCIS_LDAP_GROUP_BASE_DN                    = "ou=groups,dc=idm,dc=homelab"
-    OCIS_LDAP_GROUP_OBJECTCLASS                = "groupOfNames"
-    OCIS_LDAP_GROUP_SCHEMA_DISPLAYNAME         = "cn"
-    OCIS_LDAP_GROUP_SCHEMA_GROUPNAME           = "cn"
-    OCIS_LDAP_GROUP_SCHEMA_ID                  = "cn"
-    OCIS_LDAP_GROUP_SCHEMA_MAIL                = "mail"
-    OCIS_LDAP_GROUP_SCHEMA_MEMBER              = "member"
-    OCIS_LDAP_GROUP_SCOPE                      = "sub"
-    OCIS_LDAP_INSECURE                         = "false"
-    OCIS_LDAP_SERVER_WRITE_ENABLED             = "false"
-    OCIS_LDAP_URI                              = "ldaps://idm.${var.server_base_domain}"
-    OCIS_LDAP_USER_BASE_DN                     = "ou=people,dc=idm,dc=homelab"
-    OCIS_LDAP_USER_OBJECTCLASS                 = "inetOrgPerson"
-    OCIS_LDAP_USER_SCHEMA_DISPLAYNAME          = "displayname"
-    OCIS_LDAP_USER_SCHEMA_ID                   = "uid"
-    OCIS_LDAP_USER_SCHEMA_MAIL                 = "mail"
-    OCIS_LDAP_USER_SCHEMA_USERNAME             = "uid"
-    OCIS_LDAP_USER_SCOPE                       = "sub"
-    USERS_LDAP_USER_SUBSTRING_FILTER_TYPE      = "any"
-    GROUPS_LDAP_USER_SUBSTRING_FILTER_TYPE     = "any"
-    GRAPH_LDAP_SERVER_USE_PASSWORD_MODIFY_EXOP = "false"
-    GRAPH_LDAP_REFINT_ENABLED                  = "false"
-
-    OCIS_OIDC_ISSUER                      = "https://idp.${var.server_base_domain}/realms/${data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id}"
-    WEB_OIDC_CLIENT_ID                    = keycloak_openid_client.ocis_web.client_id
-    PROXY_OIDC_INSECURE                   = "false"
-    PROXY_OIDC_ACCESS_TOKEN_VERIFY_METHOD = "jwt"
-    PROXY_USER_OIDC_CLAIM                 = "preferred_username"
-    PROXY_USER_CS3_CLAIM                  = "userid"
-    PROXY_ROLE_ASSIGNMENT_OIDC_CLAIM      = "roles"
-    PROXY_OIDC_REWRITE_WELLKNOWN          = "true"
-
-    NOTIFICATIONS_SMTP_HOST           = var.smtp_host
-    NOTIFICATIONS_SMTP_PORT           = var.smtp_port
-    NOTIFICATIONS_SMTP_SENDER         = "OCIS <noreply@${var.server_base_domain}>"
-    NOTIFICATIONS_SMTP_AUTHENTICATION = "login"
-    NOTIFICATIONS_SMTP_ENCRYPTION     = "tls"
+  provisioner "local-exec" {
+    command = "git clone --depth 1 -b v0.5.0 https://github.com/owncloud/ocis-charts.git"
   }
 }
 
-resource "kubernetes_secret" "ocis_env" {
-  metadata {
-    name      = "ocis-env"
-    namespace = kubernetes_namespace.ocis.metadata[0].name
+resource "helm_release" "ocis" {
+  name  = "ocis"
+  chart = "./ocis-charts/charts/ocis"
+
+  namespace = kubernetes_namespace.ocis.metadata[0].name
+
+  timeout = 600
+
+  set {
+    name  = "logging.level"
+    value = "info"
+  }
+  set {
+    name  = "logging.color"
+    value = "false"
+  }
+  set {
+    name  = "logging.pretty"
+    value = "false"
   }
 
-  data = {
-    OCIS_JWT_SECRET                = random_password.jwt_secret.result
-    OCIS_MACHINE_AUTH_API_KEY      = random_password.machine_auth_api_key.result
-    OCIS_SYSTEM_USER_ID            = random_uuid.storage_system_user_id.result
-    OCIS_SYSTEM_USER_API_KEY       = random_password.storage_system_api_key.result
-    OCIS_TRANSFER_SECRET           = random_password.transfer_secret.result
-    STORAGE_USERS_MOUNT_ID         = random_uuid.storage_users_mount_id.result
-    GATEWAY_STORAGE_USERS_MOUNT_ID = random_uuid.storage_users_mount_id.result
-    GRAPH_APPLICATION_ID           = random_uuid.graph_application_id.result
-    STORAGE_SYSTEM_JWT_SECRET      = random_password.storage_system_jwt_secret.result
-    THUMBNAILS_TRANSFER_TOKEN      = random_password.thumbnails_transfer_secret.result
-
-    OCIS_LDAP_BIND_DN  = "uid=${data.terraform_remote_state.openldap.outputs.admin_username},ou=people,dc=idm,dc=homelab"
-    LDAP_BIND_PASSWORD = data.terraform_remote_state.openldap.outputs.admin_password
-
-    NOTIFICATIONS_SMTP_USERNAME = var.smtp_username
-    NOTIFICATIONS_SMTP_PASSWORD = var.smtp_password
-  }
-}
-
-resource "kubernetes_deployment" "ocis" {
-  metadata {
-    name      = "ocis"
-    namespace = kubernetes_namespace.ocis.metadata[0].name
+  set {
+    name  = "externalDomain"
+    value = "files.${var.server_base_domain}"
   }
 
-  spec {
-    replicas = 1
-
-    selector {
-      match_labels = {
-        app = "ocis"
-      }
-    }
-
-    template {
-      metadata {
-        labels = {
-          app = "ocis"
-        }
-      }
-
-      spec {
-        init_container {
-          image = "alpine:3.18.4"
-          name  = "ocis-chown"
-
-          command = ["sh", "-c", "chown -R 1000:1000 /var/lib/ocis"]
-
-          security_context {
-            run_as_user = 0
-          }
-
-          volume_mount {
-            mount_path = "/var/lib/ocis/"
-            name       = "ocis-data"
-          }
-        }
-
-        container {
-          image = "owncloud/ocis:4.0.2"
-          name  = "ocis"
-
-          env_from {
-            config_map_ref {
-              name = kubernetes_config_map.ocis_env.metadata[0].name
-            }
-          }
-
-          env_from {
-            secret_ref {
-              name = kubernetes_secret.ocis_env.metadata[0].name
-            }
-          }
-
-          volume_mount {
-            mount_path = "/var/lib/ocis/"
-            name       = "ocis-data"
-          }
-        }
-
-        volume {
-          name = "ocis-data"
-
-          persistent_volume_claim {
-            claim_name = kubernetes_persistent_volume_claim.ocis.metadata[0].name
-          }
-        }
-      }
-    }
+  set {
+    name  = "features.emailNotifications.enabled"
+    value = "true"
+  }
+  set {
+    name  = "features.emailNotifications.smtp.host"
+    value = var.smtp_host
+  }
+  set {
+    name  = "features.emailNotifications.smtp.port"
+    value = var.smtp_port
+  }
+  set {
+    name  = "features.emailNotifications.smtp.sender"
+    value = "noreply@${var.server_base_domain}"
+  }
+  set {
+    name  = "features.emailNotifications.smtp.authentication"
+    value = "login"
+  }
+  set {
+    name  = "features.emailNotifications.smtp.encryption"
+    value = "tls"
   }
 
-  timeouts {
-    create = "5m"
-    update = "5m"
-    delete = "5m"
+  set {
+    name  = "features.sharing.users.resharing"
+    value = "false"
+  }
+  set {
+    name  = "features.sharing.publicLink.writeableShareMustHavePassword"
+    value = "true"
   }
 
-  lifecycle {
-    replace_triggered_by = [
-      kubernetes_config_map.ocis_env,
-      kubernetes_secret.ocis_env
-    ]
+  set {
+    name  = "features.externalUserManagement.enabled"
+    value = "true"
   }
+  set {
+    name  = "features.externalUserManagement.oidc.issuerURI"
+    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id}"
+  }
+  set {
+    name  = "features.externalUserManagement.sessionManagementLink"
+    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id}/account/"
+  }
+  set {
+    name  = "features.externalUserManagement.editAccountLink"
+    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id}/account/"
+  }
+  set {
+    name  = "features.externalUserManagement.oidc.webClientID"
+    value = keycloak_openid_client.ocis_web.client_id
+  }
+  set {
+    name  = "features.externalUserManagement.oidc.userIDClaim"
+    value = "preferred_username"
+  }
+  set {
+    name  = "features.externalUserManagement.oidc.userIDClaimAttributeMapping"
+    value = "userid"
+  }
+  set {
+    name  = "features.externalUserManagement.oidc.accessTokenVerifyMethod"
+    value = "jwt"
+  }
+  set {
+    name  = "features.externalUserManagement.oidc.roleAssignment.enabled"
+    value = "true"
+  }
+  set {
+    name  = "features.externalUserManagement.oidc.roleAssignment.claim"
+    value = "roles"
+  }
+
+  set {
+    name  = "features.externalUserManagement.ldap.writeable"
+    value = "false"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.uri"
+    value = "ldaps://idm.${var.server_base_domain}"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.bindDN"
+    value = "uid=${data.terraform_remote_state.openldap.outputs.admin_username}\\,ou=people\\,dc=idm\\,dc=homelab"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.useServerUUID"
+    value = "true"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.user.schema.id"
+    value = "uid"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.user.baseDN"
+    value = "ou=people\\,dc=idm\\,dc=homelab"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.group.schema.id"
+    value = "cn"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.group.schema.member"
+    value = "member"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.group.baseDN"
+    value = "ou=groups\\,dc=idm\\,dc=${var.server_base_domain}"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.group.objectClass"
+    value = "groupOfNames"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.disableUsers.disableMechanism"
+    value = "group"
+  }
+  set {
+    name  = "features.externalUserManagement.ldap.disableUsers.disabledUsersGroupDN"
+    value = "cn=app_disabled\\,ou=groups\\,dc=idm\\,dc=${var.server_base_domain}"
+  }
+
+  set {
+    name  = "ingress.enabled"
+    value = "true"
+  }
+  set {
+    name  = "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/router\\.entrypoints"
+    value = "websecure"
+  }
+
+  set {
+    name  = "configRefs.storageusersConfigRef"
+    value = kubernetes_config_map.storage_users.metadata[0].name
+  }
+  set {
+    name  = "configRefs.graphConfigRef"
+    value = kubernetes_config_map.graph.metadata[0].name
+  }
+
+  set {
+    name  = "secretRefs.jwtSecretRef"
+    value = kubernetes_secret.jwt_secret.metadata[0].name
+  }
+  set {
+    name  = "secretRefs.machineAuthApiKeySecretRef"
+    value = kubernetes_secret.machine_auth_api_key.metadata[0].name
+  }
+  set {
+    name  = "secretRefs.notificationsSmtpSecretRef"
+    value = kubernetes_secret.notifications_smtp_secret.metadata[0].name
+  }
+  set {
+    name  = "secretRefs.storagesystemJwtSecretRef"
+    value = kubernetes_secret.storage_system_jwt_secret.metadata[0].name
+  }
+  set {
+    name  = "secretRefs.storagesystemSecretRef"
+    value = kubernetes_secret.storage_system.metadata[0].name
+  }
+  set {
+    name  = "secretRefs.thumbnailsSecretRef"
+    value = kubernetes_secret.thumbnails_transfer_secret.metadata[0].name
+  }
+  set {
+    name  = "secretRefs.transferSecretSecretRef"
+    value = kubernetes_secret.transfer_secret.metadata[0].name
+  }
+
+  set {
+    name  = "services.nats.persistence.enabled"
+    value = "true"
+  }
+  set {
+    name  = "services.nats.persistence.chownInitContainer"
+    value = "true"
+  }
+  set {
+    name  = "services.nats.persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.ocis["nats"].metadata[0].name
+  }
+
+  set {
+    name  = "services.search.persistence.enabled"
+    value = "true"
+  }
+  set {
+    name  = "services.search.persistence.chownInitContainer"
+    value = "true"
+  }
+  set {
+    name  = "services.search.persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.ocis["search"].metadata[0].name
+  }
+
+  set {
+    name  = "services.storagesystem.persistence.enabled"
+    value = "true"
+  }
+  set {
+    name  = "services.storagesystem.persistence.chownInitContainer"
+    value = "true"
+  }
+  set {
+    name  = "services.storagesystem.persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.ocis["storagesystem"].metadata[0].name
+  }
+
+  set {
+    name  = "services.storageusers.persistence.enabled"
+    value = "true"
+  }
+  set {
+    name  = "services.storageusers.persistence.chownInitContainer"
+    value = "true"
+  }
+  set {
+    name  = "services.storageusers.persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.ocis["storageusers"].metadata[0].name
+  }
+
+  set {
+    name  = "services.store.persistence.enabled"
+    value = "true"
+  }
+  set {
+    name  = "services.store.persistence.chownInitContainer"
+    value = "true"
+  }
+  set {
+    name  = "services.store.persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.ocis["store"].metadata[0].name
+  }
+
+  set {
+    name  = "services.thumbnails.persistence.enabled"
+    value = "true"
+  }
+  set {
+    name  = "services.thumbnails.persistence.chownInitContainer"
+    value = "true"
+  }
+  set {
+    name  = "services.thumbnails.persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.ocis["thumbnails"].metadata[0].name
+  }
+
+  set {
+    name  = "services.web.persistence.enabled"
+    value = "true"
+  }
+  set {
+    name  = "services.web.persistence.chownInitContainer"
+    value = "true"
+  }
+  set {
+    name  = "services.web.persistence.existingClaim"
+    value = kubernetes_persistent_volume_claim.ocis["web"].metadata[0].name
+  }
+
+  depends_on = [null_resource.ocis_helm_repo_clone]
 }
