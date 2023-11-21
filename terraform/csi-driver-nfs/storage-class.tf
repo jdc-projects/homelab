@@ -8,7 +8,7 @@ resource "kubernetes_storage_class" "nfs" {
   }
 
   storage_provisioner = "nfs.csi.k8s.io"
-  reclaim_policy = "Delete"
+  reclaim_policy      = "Delete"
   volume_binding_mode = "Immediate"
 
   mount_options = [
@@ -20,7 +20,7 @@ resource "kubernetes_storage_class" "nfs" {
     share  = var.nfs_share
   }
 
-  depends_on = [ helm_release.csi_driver_nfs ]
+  depends_on = [helm_release.csi_driver_nfs]
 }
 
 resource "kubernetes_manifest" "nfs_volume_snapshot_class" {
@@ -29,7 +29,7 @@ resource "kubernetes_manifest" "nfs_volume_snapshot_class" {
     kind       = "VolumeSnapshotClass"
 
     metadata = {
-      name     = "csi-nfs"
+      name = "csi-nfs"
 
       labels = {
         "velero.io/csi-volumesnapshot-class" = "true"
