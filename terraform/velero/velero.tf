@@ -194,10 +194,6 @@ resource "helm_release" "velero" {
     value = "0 0 * * *"
   }
   set {
-    name  = "schedules.${local.nightly_backup_name}.annotations.velero\\.io\\/csi-volumesnapshot-class_zfs\\.csi\\.openebs\\.io"
-    value = "zfspv-default-snapshot-class"
-  }
-  set {
     name  = "schedules.${local.nightly_backup_name}.useOwnerReferencesInBackup"
     value = "false"
   }
