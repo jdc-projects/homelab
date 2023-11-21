@@ -15,6 +15,11 @@ resource "ssh_resource" "k3s_provisioning" {
     destination = "/etc/rancher/k3s/config.yaml"
   }
 
+  pre_commands = [
+    "sudo mkdir -p /etc/rancher/k3s",
+    "sudo chown -R k3s /etc/rancher",
+  ]
+
   commands = [
     "curl -sfL https://get.k3s.io | sh -",
   ]

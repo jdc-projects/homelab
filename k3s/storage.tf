@@ -4,7 +4,7 @@ resource "ssh_resource" "disk_expansion" {
   private_key = var.k3s_ssh_private_key
 
   commands = [
-    "sudo lvextend -l+100%FREE /dev/mapper/ubuntu--vg-ubuntu--lv",
+    "sudo lvextend -l +100%FREE /dev/mapper/ubuntu--vg-ubuntu--lv",
     "sudo resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv",
   ]
 }
