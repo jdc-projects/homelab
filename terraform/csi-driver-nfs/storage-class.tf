@@ -12,7 +12,7 @@ resource "kubernetes_storage_class" "nfs" {
   volume_binding_mode = "Immediate"
 
   mount_options = [
-    "nfsvers=4.1",
+    "nfsvers=4.2",
   ]
 
   parameters = {
