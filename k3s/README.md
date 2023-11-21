@@ -6,20 +6,17 @@ It would be nice to fully automate the provisioning of the K3s machine, but for 
 
 1. Create a VM and install Ubuntu Server
 2. Setup the SSH user (with the below commands), and take note of the private key (at /home/k3s/.ssh/ed25519)
-   1. Add k3s user:
+   1. Add k3s user and change into its shell:
         ```
         sudo useradd k3s &&
         sudo mkhomedir_helper k3s &&
         sudo usermod -s /bin/bash k3s &&
         sudo mkdir -p /etc/rancher/k3s &&
         sudo chown -R k3s /etc/rancher &&
-        sudo echo -e "k3s ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
-        ```
-   4. Change to the k3s user:
-        ```
+        sudo echo -e "k3s ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers &&
         sudo su - k3s
         ```
-   5. Setup k3s SSH keys:
+   2. Setup k3s SSH keys:
         ```
         mkdir -p /home/k3s/.ssh &&
         ssh-keygen -f /home/k3s/.ssh/ed25519 -N '' -t ed25519 &&
