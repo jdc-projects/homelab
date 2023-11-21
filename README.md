@@ -5,15 +5,11 @@ Infrastructure and code for deploying my Homelab. There are some dependencies.
 ## Prequisites
 
 This system requires that some setup is completed on the first:
-* The rule that restricts access to the Kubernetes managements interface must be removed:
 
-```sh
-sudo iptables -D INPUT -p tcp -m tcp --dport 6443 -m comment --comment "iX Custom Rule to drop connection requests to k8s cluster from external sources" -j DROP
-```
-
-* The Kubernetes management interface port must be exposed to the internet (through router port forwarding)
-* The domain jack-chapman.co.uk must point towards my public IP
+* The Kubernetes management interface port must be exposed to the internet (through router port forwarding), alongside HTTP and HTTPS
+* The root must point towards the public IP
 * Setup of the [Github Org app](https://github.com/actions/actions-runner-controller/blob/master/docs/using-arc-across-organizations.md)
+* Some form of NAS server setup with an NFS share. For Truenas, the share needs to have maproot user and group set to root.
 
 ## Environment variables required for build
 
@@ -49,7 +45,7 @@ sudo iptables -D INPUT -p tcp -m tcp --dport 6443 -m comment --comment "iX Custo
 * VELERO_S3_REGION
 * VELERO_S3_URL
 
-## Stuff to do
+## Stuff to do / ideas
 
 * [Trivy](https://github.com/aquasecurity/Trivy) for vulnerability scanning
 * Migrate to [ARC scale sets](https://github.com/actions/actions-runner-controller/discussions/2775)
