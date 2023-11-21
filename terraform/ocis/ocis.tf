@@ -143,7 +143,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.ldap.group.baseDN"
-    value = "ou=groups\\,dc=idm\\,dc=${var.server_base_domain}"
+    value = "ou=groups\\,dc=idm\\,dc=homelab"
   }
   set {
     name  = "features.externalUserManagement.ldap.group.objectClass"
@@ -155,7 +155,7 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.ldap.disableUsers.disabledUsersGroupDN"
-    value = "cn=app_disabled\\,ou=groups\\,dc=idm\\,dc=${var.server_base_domain}"
+    value = "cn=app_disabled\\,ou=groups\\,dc=idm\\,dc=homelab"
   }
 
   set {
