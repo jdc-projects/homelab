@@ -325,7 +325,7 @@ resource "helm_release" "ocis" {
   }
 }
 
-resource null_resource "ocis_helm_cleanup" {
+resource "null_resource" "ocis_helm_cleanup" {
   triggers = {
     always_run = timestamp()
   }
@@ -334,5 +334,5 @@ resource null_resource "ocis_helm_cleanup" {
     command = "rm -rf ./ocis-charts"
   }
 
-  depends_on = [ helm_release.ocis ]
+  depends_on = [helm_release.ocis]
 }
