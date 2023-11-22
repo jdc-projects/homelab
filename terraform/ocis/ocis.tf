@@ -1,10 +1,16 @@
+resource "null_resource" "ocis_helm_version" {
+  triggers = {
+    ocis_helm_version = "v0.5.0"
+  }
+}
+
 resource "null_resource" "ocis_helm_repo_clone" {
   triggers = {
     always_run = timestamp()
   }
 
   provisioner "local-exec" {
-    command = "git clone --depth 1 -b v0.5.0 https://github.com/owncloud/ocis-charts.git"
+    command = "git clone --depth 1 -b ${null_resource.ocis_helm_version.triggers.ocis_helm_version} https://github.com/owncloud/ocis-charts.git"
   }
 }
 
@@ -15,6 +21,13 @@ resource "helm_release" "ocis" {
   namespace = kubernetes_namespace.ocis.metadata[0].name
 
   timeout = 600
+
+  # the default image tag is 4.0.1 and seems to have a bug with OIDC that prevents login
+  # remove this when next upgrading
+  set {
+    name  = "image.tag"
+    value = "4.0.2"
+  }
 
   set {
     name  = "logging.level"
@@ -32,6 +45,11 @@ resource "helm_release" "ocis" {
   set {
     name  = "externalDomain"
     value = "files.${var.server_base_domain}"
+  }
+
+  set {
+    name  = "cache.type"
+    value = "noop"
   }
 
   set {
@@ -301,4 +319,20 @@ resource "helm_release" "ocis" {
   }
 
   depends_on = [null_resource.ocis_helm_repo_clone]
+
+  lifecycle {
+    replace_triggered_by = [null_resource.ocis_helm_version]
+  }
+}
+
+resource null_resource "ocis_helm_cleanup" {
+  triggers = {
+    always_run = timestamp()
+  }
+
+  provisioner "local-exec" {
+    command = "rm -rf ./ocis-charts"
+  }
+
+  depends_on = [ helm_release.ocis ]
 }
