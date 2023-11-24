@@ -1,6 +1,6 @@
 terraform {
   backend "kubernetes" {
-    secret_suffix = "apps-vaultwarden"
+    secret_suffix = "vaultwarden"
     config_path   = "../cluster.yml"
     namespace     = "terraform-state"
   }
@@ -39,7 +39,7 @@ data "terraform_remote_state" "openldap" {
   backend = "kubernetes"
 
   config = {
-    secret_suffix = "apps-openldap"
+    secret_suffix = "openldap"
     config_path   = "../cluster.yml"
     namespace     = "terraform-state"
   }
