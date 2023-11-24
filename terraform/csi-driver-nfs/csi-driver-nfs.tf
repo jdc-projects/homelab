@@ -10,7 +10,21 @@ resource "helm_release" "csi_driver_nfs" {
   timeout = 300
 
   set {
+    name  = "controller.logLevel"
+    value = "9"
+  }
+
+  set {
+    name  = "node.logLevel"
+    value = "9"
+  }
+
+  set {
     name  = "externalSnapshotter.enabled"
     value = "true"
+  }
+  set {
+    name  = "externalSnapshotter.controller.replicas"
+    value = "4"
   }
 }
