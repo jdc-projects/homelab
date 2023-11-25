@@ -1,16 +1,11 @@
-resource "null_resource" "ocis_helm_version" {
-  triggers = {
-    ocis_helm_version = "v0.5.0"
-  }
-}
-
 resource "null_resource" "ocis_helm_repo_clone" {
   triggers = {
     always_run = timestamp()
+    version = "v0.5.0"
   }
 
   provisioner "local-exec" {
-    command = "git clone --depth 1 -b ${null_resource.ocis_helm_version.triggers.ocis_helm_version} https://github.com/owncloud/ocis-charts.git"
+    command = "git clone --depth 1 -b ${self.triggers.version} https://github.com/owncloud/ocis-charts.git"
   }
 }
 
@@ -321,7 +316,7 @@ resource "helm_release" "ocis" {
   depends_on = [null_resource.ocis_helm_repo_clone]
 
   lifecycle {
-    replace_triggered_by = [null_resource.ocis_helm_version]
+    replace_triggered_by = [null_resource.ocis_helm_repo_clone]
   }
 }
 
