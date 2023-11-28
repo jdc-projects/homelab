@@ -16,7 +16,7 @@ resource "helm_release" "democratic_csi" {
 
   set {
     name  = "storageClasses[0].name"
-    value = "freenas-nfs-csi"
+    value = "truenas-nfs-csi"
   }
   set {
     name  = "storageClasses[0].defaultClass"
@@ -52,13 +52,8 @@ resource "helm_release" "democratic_csi" {
   }
 
   set {
-    name  = "volumeSnapshotClasses[0].name"
-    value = "freenas-nfs-csi"
-  }
-
-  set {
     name  = "driver.config.driver"
-    value = "freenas-api-nfs"
+    value = "truenas-nfs"
   }
   set {
     name  = "driver.config.instance_id"

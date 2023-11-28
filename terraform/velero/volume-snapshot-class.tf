@@ -17,6 +17,6 @@ resource "kubernetes_manifest" "nfs_volume_snapshot_class" {
 
     deletionPolicy = "Delete"
 
-    driver = "nfs.csi.k8s.io"
+    driver = "org.democratic-csi.nfs"
   }
 }
