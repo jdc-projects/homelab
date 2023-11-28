@@ -32,9 +32,6 @@ jobs:
       runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-github-org-runner-1:
-    needs: [
-      deploy-csi-driver-nfs,
-    ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
 
@@ -44,6 +41,7 @@ jobs:
 
   deploy-github-org-runner-2:
     needs: [
+      deploy-csi-driver-nfs,
       deploy-github-org-runner-1,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
