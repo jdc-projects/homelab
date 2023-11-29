@@ -4,12 +4,12 @@ variable "truenas_api_key" {
   description = "API key for the Truenas server."
 }
 
-variable "truenas_k8s_dataset" {
+variable "truenas_k3s_dataset" {
   type        = string
   description = "Parent dataset for PVs on the Truenas server."
 }
 
-variable "truenas_k8s_snapshot_dataset" {
+variable "truenas_k3s_snapshot_dataset" {
   type        = string
   description = "Parent dataset for snapshot PVs on the Truenas server."
 }

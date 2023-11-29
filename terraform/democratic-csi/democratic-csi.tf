@@ -81,11 +81,11 @@ resource "helm_release" "democratic_csi" {
   }
   set {
     name  = "driver.config.zfs.datasetParentName"
-    value = var.truenas_k8s_dataset
+    value = var.truenas_k3s_dataset
   }
   set {
     name  = "driver.config.zfs.detachedSnapshotsDatasetParentName"
-    value = var.truenas_k8s_snapshot_dataset
+    value = var.truenas_k3s_snapshot_dataset
   }
   set_sensitive {
     name  = "driver.config.nfs.shareHost"
