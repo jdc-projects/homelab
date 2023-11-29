@@ -104,6 +104,14 @@ resource "helm_release" "democratic_csi" {
     value = "192.168.1.0/24"
   }
   set {
+    name  = "driver.config.nfs.shareMaprootUser"
+    value = "root"
+  }
+  set {
+    name  = "driver.config.nfs.shareMaprootGroup"
+    value = "root"
+  }
+  set {
     name  = "driver.config.nfs.shareCommentTemplate"
     value = "\"{{ parameters.[csi.storage.k8s.io/pvc/namespace] }}/{{ parameters.[csi.storage.k8s.io/pvc/name] }}\""
   }
