@@ -80,12 +80,36 @@ resource "helm_release" "democratic_csi" {
     value = "true"
   }
   set {
+    name  = "driver.config.zfs.datasetProperties.org\\.freenas\\:description"
+    value = "\"{{ parameters.[csi.storage.k8s.io/pvc/namespace] }}/{{ parameters.[csi.storage.k8s.io/pvc/name] }}\""
+  }
+  set {
     name  = "driver.config.zfs.datasetParentName"
     value = var.truenas_k3s_dataset
   }
   set {
     name  = "driver.config.zfs.detachedSnapshotsDatasetParentName"
     value = var.truenas_k3s_snapshot_dataset
+  }
+  set {
+    name  = "driver.config.zfs.datasetEnableQuotas"
+    value = "true"
+  }
+  set {
+    name  = "driver.config.zfs.datasetEnableReservation"
+    value = "false"
+  }
+  set {
+    name  = "driver.config.zfs.datasetPermissionsMode"
+    value = "0777"
+  }
+  set {
+    name  = "driver.config.zfs.datasetPermissionsUser"
+    value = "0"
+  }
+  set {
+    name  = "driver.config.zfs.datasetPermissionsGroup"
+    value = "0"
   }
   set_sensitive {
     name  = "driver.config.nfs.shareHost"
