@@ -10,6 +10,11 @@ resource "ssh_resource" "k3s_provisioning" {
       disable:
         - "traefik"
         - "local-storage"
+      cluster-cidr: "10.42.0.0/16"
+      service-cidr: "10.43.0.0/16"
+      cluster-dns: "10.43.0.10"
+      cluster-domain: "cluster.local"
+      advertise-address: "${var.k3s_ip_address}"
       cluster-init: true
     EOF
     destination = "/etc/rancher/k3s/config.yaml"
