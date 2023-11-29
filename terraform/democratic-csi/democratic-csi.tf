@@ -100,7 +100,7 @@ resource "helm_release" "democratic_csi" {
     value = "10.43.0.0/16"
   }
   set {
-    name  = "driver.config.nfs.shareAllowedNetworks[3]"
+    name  = "driver.config.nfs.shareAllowedNetworks[2]"
     value = "192.168.1.0/8"
   }
   set {
