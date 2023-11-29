@@ -1,7 +1,7 @@
 resource "null_resource" "ocis_helm_repo_clone" {
   triggers = {
     always_run = timestamp()
-    version = "v0.5.0"
+    version    = "v0.5.0"
   }
 
   provisioner "local-exec" {

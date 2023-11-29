@@ -47,7 +47,7 @@ resource "helm_release" "csi_driver_nfs" {
   depends_on = [null_resource.csi_driver_nfs_repo_clone]
 
   lifecycle {
-    replace_triggered_by = [ null_resource.csi_driver_nfs_repo_clone ]
+    replace_triggered_by = [null_resource.csi_driver_nfs_repo_clone]
   }
 }
 
