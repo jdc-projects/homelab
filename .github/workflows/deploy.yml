@@ -20,7 +20,7 @@ jobs:
       manifest-file: ./terraform/terraform-state-namespace.yml
       runner-type: ${{ github.event.inputs.runner-type }}
 
-  deploy-csi-driver-nfs:
+  deploy-democratic-csi:
     needs: [
       deploy-terraform-state-namespace,
     ]
@@ -28,7 +28,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/csi-driver-nfs
+      terraform-dir: ./terraform/democratic-csi
       runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-github-org-runner-1:
@@ -41,7 +41,7 @@ jobs:
 
   deploy-github-org-runner-2:
     needs: [
-      deploy-csi-driver-nfs,
+      deploy-democratic-csi,
       deploy-github-org-runner-1,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
@@ -53,7 +53,7 @@ jobs:
 
   deploy-traefik:
     needs: [
-      deploy-csi-driver-nfs,
+      deploy-democratic-csi,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
