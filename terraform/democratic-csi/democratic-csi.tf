@@ -92,19 +92,19 @@ resource "helm_release" "democratic_csi" {
     value = var.truenas_ip_address
   }
   set {
-    name  = "driver.config.shareAllowedNetworks[0]"
+    name  = "driver.config.nfs.shareAllowedNetworks[0]"
     value = "10.42.0.0/16"
   }
   set {
-    name  = "driver.config.shareAllowedNetworks[1]"
+    name  = "driver.config.nfs.shareAllowedNetworks[1]"
     value = "10.43.0.0/16"
   }
   set {
-    name  = "driver.config.shareAllowedNetworks[3]"
+    name  = "driver.config.nfs.shareAllowedNetworks[3]"
     value = "192.168.1.0/8"
   }
   set {
-    name  = "driver.config.shareCommentTemplate"
+    name  = "driver.config.nfs.shareCommentTemplate"
     value = "\"{{ parameters.[csi.storage.k8s.io/pvc/namespace] }}-{{ parameters.[csi.storage.k8s.io/pvc/name] }}\""
   }
 }
