@@ -101,7 +101,7 @@ resource "helm_release" "democratic_csi" {
   }
   set {
     name  = "driver.config.nfs.shareAllowedNetworks[2]"
-    value = "192.168.1.0/8"
+    value = "192.168.1.0/24"
   }
   set {
     name  = "driver.config.nfs.shareCommentTemplate"
