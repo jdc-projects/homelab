@@ -226,10 +226,6 @@ resource "helm_release" "velero" {
     value = "kube-node-lease"
   }
   set {
-    name  = "schedules.${local.nightly_backup_name}.template.excludedNamespaces[4]"
-    value = "openebs"
-  }
-  set {
     name  = "schedules.${local.nightly_backup_name}.template.excludedNamespaces[5]"
     value = "velero"
   }
