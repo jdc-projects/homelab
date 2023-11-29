@@ -105,6 +105,6 @@ resource "helm_release" "democratic_csi" {
   }
   set {
     name  = "driver.config.nfs.shareCommentTemplate"
-    value = "\"{{ parameters.[csi.storage.k8s.io/pvc/namespace] }}-{{ parameters.[csi.storage.k8s.io/pvc/name] }}\""
+    value = "\"{{ parameters.[csi.storage.k8s.io/pvc/namespace] }}/{{ parameters.[csi.storage.k8s.io/pvc/name] }}\""
   }
 }
