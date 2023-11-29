@@ -27,8 +27,8 @@ This system requires that some setup is completed on the first:
 * VELERO_S3_SECRET_ACCESS_KEY
 * K3S_SSH_PRIVATE_KEY
 * K3S_IP_ADDRESS
-* NFS_IP_ADDRESS
-* NFS_SHARE
+* TRUENAS_API_KEY
+* TRUENAS_IP_ADDRESS
 
 ### Variables
 
@@ -44,6 +44,8 @@ This system requires that some setup is completed on the first:
 * VELERO_S3_BUCKET_NAME
 * VELERO_S3_REGION
 * VELERO_S3_URL
+* TRUENAS_K3S_DATASET
+* TRUENAS_K3S_SNAPSHOT_DATASET
 
 ## Stuff to do / ideas
 
