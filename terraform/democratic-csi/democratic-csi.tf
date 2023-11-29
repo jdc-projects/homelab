@@ -53,7 +53,7 @@ resource "helm_release" "democratic_csi" {
 
   set {
     name  = "driver.config.driver"
-    value = "truenas-nfs"
+    value = "truenas-api-nfs"
   }
   set {
     name  = "driver.config.instance_id"
