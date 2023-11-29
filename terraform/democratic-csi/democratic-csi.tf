@@ -46,18 +46,29 @@ resource "helm_release" "democratic_csi" {
     name  = "storageClasses[0].mountOptions[1]"
     value = "nfsvers=4.2"
   }
+
   set {
-    name  = "storageClasses[0].secrets.provisioner-secret"
-    value = ""
+    name  = "volumeSnapshotClasses[0].name"
+    value = "truenas-nfs-csi"
+  }
+  set {
+    name  = "volumeSnapshotClasses[0].annotations.snapshot\\.storage\\.kubernetes\\.io/is-default-class"
+    value = "true"
+    type  = "string"
+  }
+  set {
+    name  = "volumeSnapshotClasses[0].labels.velero\\.io/csi-volumesnapshot-class"
+    value = "true"
+    type  = "string"
+  }
+  set {
+    name  = "volumeSnapshotClasses[0].deletionPolicy"
+    value = "Delete"
   }
 
   set {
     name  = "driver.config.driver"
     value = "freenas-api-nfs" # this name is important, can't be changed to truenas
-  }
-  set {
-    name  = "driver.config.instance_id"
-    value = ""
   }
   set {
     name  = "driver.config.httpConnection.protocol"
