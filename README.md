@@ -9,7 +9,7 @@ This system requires that some setup is completed on the first:
 * The Kubernetes management interface port must be exposed to the internet (through router port forwarding), alongside HTTP and HTTPS
 * The root must point towards the public IP
 * Setup of the [Github Org app](https://github.com/actions/actions-runner-controller/blob/master/docs/using-arc-across-organizations.md)
-* Some form of NAS server setup with an NFS share. For Truenas, the share needs to have maproot user and group set to root.
+* Truenas setup as required for democratic-csi
 
 ## Environment variables required for build
 
