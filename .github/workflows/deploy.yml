@@ -32,6 +32,9 @@ jobs:
       runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-github-org-runner-1:
+    needs: [
+      deploy-terraform-state-namespace,
+    ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
 
