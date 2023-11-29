@@ -4,7 +4,7 @@ resource "kubernetes_manifest" "nfs_volume_snapshot_class" {
     kind       = "VolumeSnapshotClass"
 
     metadata = {
-      name = "csi-nfs"
+      name = "truenas-nfs-csi"
 
       labels = {
         "velero.io/csi-volumesnapshot-class" = "true"

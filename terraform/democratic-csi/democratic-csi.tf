@@ -53,7 +53,7 @@ resource "helm_release" "democratic_csi" {
 
   set {
     name  = "driver.config.driver"
-    value = "truenas-api-nfs"
+    value = "freenas-api-nfs" # this name is important, can't be changed to truenas
   }
   set {
     name  = "driver.config.instance_id"
