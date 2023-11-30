@@ -16,11 +16,6 @@ terraform {
       version = "3.10.4"
     }
 
-    random = {
-      source  = "hashicorp/random"
-      version = "3.5.1"
-    }
-
     ssh = {
       source  = "loafoe/ssh"
       version = "2.6.0"

@@ -8,22 +8,7 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "2.21.1"
-    }
-
-    null = {
-      source  = "hashicorp/null"
-      version = "3.2.1"
-    }
-
-    random = {
-      source  = "hashicorp/random"
-      version = "3.5.1"
-    }
-
-    local = {
-      source  = "hashicorp/local"
-      version = "2.4.0"
+      version = "2.24.0"
     }
   }
 }
@@ -33,14 +18,12 @@ provider "kubernetes" {
 }
 
 provider "null" {
-  # Configuration options
 }
 
 provider "random" {
 }
 
 provider "local" {
-  # Configuration options
 }
 
 resource "kubernetes_namespace" "openldap" {

@@ -8,22 +8,17 @@ terraform {
   required_providers {
     helm = {
       source  = "hashicorp/helm"
-      version = "2.10.1"
+      version = "2.12.0"
     }
 
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "2.21.1"
+      version = "2.24.0"
     }
 
     keycloak = {
       source  = "mrparkers/keycloak"
       version = "4.3.1"
-    }
-
-    random = {
-      source  = "hashicorp/random"
-      version = "3.5.1"
     }
   }
 }

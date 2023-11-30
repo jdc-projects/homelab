@@ -8,27 +8,12 @@ terraform {
   required_providers {
     helm = {
       source  = "hashicorp/helm"
-      version = "2.10.1"
+      version = "2.12.0"
     }
 
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "2.21.1"
-    }
-
-    null = {
-      source  = "hashicorp/null"
-      version = "3.2.1"
-    }
-
-    random = {
-      source  = "hashicorp/random"
-      version = "3.5.1"
-    }
-
-    archive = {
-      source  = "hashicorp/archive"
-      version = "2.4.0"
+      version = "2.24.0"
     }
   }
 }
@@ -44,14 +29,12 @@ provider "kubernetes" {
 }
 
 provider "null" {
-  # Configuration options
 }
 
 provider "random" {
 }
 
 provider "archive" {
-  # Configuration options
 }
 
 resource "kubernetes_namespace" "keycloak" {
