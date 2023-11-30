@@ -186,6 +186,11 @@ resource "helm_release" "velero" {
   }
 
   set {
+    name  = "nodeAgent.resources.limits.memory"
+    value = "4Gi"
+  }
+
+  set {
     name  = "schedules.${local.nightly_backup_name}.disabled"
     value = "false"
   }
