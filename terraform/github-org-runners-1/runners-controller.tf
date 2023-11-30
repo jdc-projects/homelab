@@ -3,7 +3,7 @@ resource "helm_release" "github_org_runners_controller" {
 
   repository = "https://actions-runner-controller.github.io/actions-runner-controller"
   chart      = "actions-runner-controller"
-  version    = "v0.23.5"
+  version    = "v0.23.7"
 
   namespace = kubernetes_namespace.github_org_runners.metadata[0].name
 
@@ -32,7 +32,7 @@ resource "helm_release" "github_org_runners_controller" {
   }
   set {
     name  = "image.dindSidecarRepositoryAndTag"
-    value = "docker:24.0.6-dind"
+    value = "docker:24.0.7-dind"
   }
 
   set {

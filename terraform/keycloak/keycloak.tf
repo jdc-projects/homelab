@@ -1,6 +1,6 @@
 resource "null_resource" "keycloak_version" {
   triggers = {
-    keycloak_version = "17.0.3"
+    keycloak_version = "17.3.4"
   }
 }
 
