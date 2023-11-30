@@ -1,13 +1,5 @@
-resource "null_resource" "keycloak_version" {
-  triggers = {
-    keycloak_version = "17.3.4"
-  }
-}
-
-resource "null_resource" "keycloak_domain" {
-  triggers = {
-    keycloak_domain = "idp.${var.server_base_domain}"
-  }
+locals {
+  keycloak_domain = "idp.${var.server_base_domain}"
 }
 
 resource "kubernetes_config_map" "keycloak_extra_env_vars" {
@@ -27,7 +19,7 @@ resource "helm_release" "keycloak" {
 
   repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "keycloak"
-  version    = null_resource.keycloak_version.triggers.keycloak_version
+  version    = "17.3.4"
 
   timeout = 600
 
@@ -96,7 +88,7 @@ resource "helm_release" "keycloak" {
   }
   set {
     name  = "ingress.hostname"
-    value = null_resource.keycloak_domain.triggers.keycloak_domain
+    value = local.keycloak_domain
   }
   set {
     name  = "ingress.servicePort"
@@ -128,18 +120,15 @@ resource "helm_release" "keycloak" {
   lifecycle {
     replace_triggered_by = [
       kubernetes_config_map.keycloak_custom_scripts,
-      null_resource.keycloak_version,
     ]
 
     create_before_destroy = false
   }
-
-  depends_on = [null_resource.keycloak_version]
 }
 
 resource "null_resource" "keycloak_liveness_check" {
   provisioner "local-exec" {
-    command = "timeout 300 bash -c 'while ! curl -sfI https://${null_resource.keycloak_domain.triggers.keycloak_domain}; do echo \"Waiting for Keycloak to be live.\" && sleep 1; done'"
+    command = "timeout 300 bash -c 'while ! curl -sfI https://${local.keycloak_domain}; do echo \"Waiting for Keycloak to be live.\" && sleep 1; done'"
   }
 
   depends_on = [helm_release.keycloak]
