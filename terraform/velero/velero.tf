@@ -187,7 +187,7 @@ resource "helm_release" "velero" {
 
   set {
     name  = "nodeAgent.resources.requests.cpu"
-    value = "2000m"
+    value = "2G"
   }
   set {
     name  = "nodeAgent.resources.requests.memory"
@@ -195,7 +195,7 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "nodeAgent.resources.limits.cpu"
-    value = "4000M"
+    value = "4G"
   }
   set {
     name  = "nodeAgent.resources.limits.memory"
