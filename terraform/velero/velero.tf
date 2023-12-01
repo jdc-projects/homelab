@@ -167,7 +167,7 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "configuration.defaultVolumesToFsBackup"
-    value = "true"
+    value = "false"
   }
   set {
     name  = "configuration.defaultRepoMaintainFrequency"
