@@ -40,7 +40,7 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "initContainers[0].image"
-    value = "velero/velero-plugin-for-aws:v1.8.1"
+    value = "velero/velero-plugin-for-aws:v1.8.2"
   }
   set {
     name  = "initContainers[0].imagePullPolicy"
@@ -60,7 +60,7 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "initContainers[1].image"
-    value = "velero/velero-plugin-for-csi:v0.6.1"
+    value = "velero/velero-plugin-for-csi:v0.6.2"
   }
   set {
     name  = "initContainers[1].imagePullPolicy"
