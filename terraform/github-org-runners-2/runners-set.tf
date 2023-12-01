@@ -77,26 +77,43 @@ resource "kubernetes_manifest" "github_org_runners_set" {
         }
 
         spec = {
-          containers = [{
-            name = "runner"
+          containers = [
+            {
+              name = "runner"
 
-            volumeMounts = [{
-              mountPath = "/opt/hostedtoolcache"
-              name      = "tool-cache"
-            }]
+              volumeMounts = [{
+                mountPath = "/opt/hostedtoolcache"
+                name      = "tool-cache"
+              }]
 
-            resources = {
-              requests = {
-                cpu    = "200m"
-                memory = "256Mi"
+              resources = {
+                requests = {
+                  cpu    = "200m"
+                  memory = "256Mi"
+                }
+
+                limits = {
+                  cpu    = "1"
+                  memory = "1024Mi"
+                }
               }
+            },
+            {
+              name = "docker"
 
-              limits = {
-                cpu    = "1"
-                memory = "1024Mi"
+              resources = {
+                requests = {
+                  cpu    = "200m"
+                  memory = "256Mi"
+                }
+
+                limits = {
+                  cpu    = "1"
+                  memory = "1024Mi"
+                }
               }
             }
-          }]
+          ]
 
           volumes = [{
             name = "tool-cache"
