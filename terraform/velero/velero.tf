@@ -139,7 +139,7 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "configuration.logLevel"
-    value = "info"
+    value = "debug"
   }
   set {
     name  = "configuration.pluginDir"
