@@ -158,12 +158,16 @@ resource "helm_release" "velero" {
     value = "EnableCSI"
   }
   set {
+    name  = "configuration.defaultSnapshotMoveData"
+    value = "true"
+  }
+  set {
     name  = "configuration.namespace"
     value = kubernetes_namespace.velero.metadata[0].name
   }
   set {
     name  = "configuration.defaultVolumesToFsBackup"
-    value = "false"
+    value = "true"
   }
   set {
     name  = "configuration.defaultRepoMaintainFrequency"

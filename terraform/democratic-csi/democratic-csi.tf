@@ -57,6 +57,11 @@ resource "helm_release" "democratic_csi" {
     type  = "string"
   }
   set {
+    name  = "volumeSnapshotClasses[0].annotations.velero\\.io/csi-volumesnapshot-class"
+    value = "true"
+    type  = "string"
+  }
+  set {
     name  = "volumeSnapshotClasses[0].labels.velero\\.io/csi-volumesnapshot-class"
     value = "true"
     type  = "string"
