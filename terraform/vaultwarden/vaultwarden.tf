@@ -91,8 +91,8 @@ resource "kubernetes_deployment" "vaultwarden_deployment" {
             }
 
             limits = {
-              cpu      = "500m"
-              memberOf = "512Mi"
+              cpu    = "500m"
+              memory = "512Mi"
             }
           }
         }

@@ -32,8 +32,8 @@ resource "kubernetes_deployment" "traefik_forward_auth_test" {
             }
 
             limits = {
-              cpu      = "200m"
-              memberOf = "256Mi"
+              cpu    = "200m"
+              memory = "256Mi"
             }
           }
         }

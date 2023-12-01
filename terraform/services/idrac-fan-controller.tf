@@ -77,8 +77,8 @@ resource "kubernetes_deployment" "idrac_fan_controller_deployment" {
             }
 
             limits = {
-              cpu      = "200m"
-              memberOf = "256Mi"
+              cpu    = "200m"
+              memory = "256Mi"
             }
           }
         }

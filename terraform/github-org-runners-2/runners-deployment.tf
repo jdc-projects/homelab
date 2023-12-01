@@ -92,8 +92,8 @@ resource "kubernetes_manifest" "github_org_runners_set" {
               }
 
               limits = {
-                cpu      = "1"
-                memberOf = "1024Mi"
+                cpu    = "1"
+                memory = "1024Mi"
               }
             }
           }]

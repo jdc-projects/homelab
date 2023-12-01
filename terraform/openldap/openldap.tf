@@ -103,8 +103,8 @@ resource "kubernetes_deployment" "openldap" {
             }
 
             limits = {
-              cpu      = "500m"
-              memberOf = "512Mi"
+              cpu    = "500m"
+              memory = "512Mi"
             }
           }
         }
