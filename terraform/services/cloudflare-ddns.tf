@@ -53,6 +53,18 @@ resource "kubernetes_deployment" "cloudflare_ddns_deployment" {
             name  = "ZONE"
             value = var.server_base_domain
           }
+
+          resources {
+            requests = {
+              cpu    = "100m"
+              memory = "128Mi"
+            }
+
+            limits = {
+              cpu      = "200m"
+              memberOf = "256Mi"
+            }
+          }
         }
       }
     }

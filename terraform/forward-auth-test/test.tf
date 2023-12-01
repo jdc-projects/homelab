@@ -24,6 +24,18 @@ resource "kubernetes_deployment" "traefik_forward_auth_test" {
         container {
           image = "traefik/whoami:v1.10"
           name  = "traefik-forward-auth-test"
+
+          resources {
+            requests = {
+              cpu    = "100m"
+              memory = "128Mi"
+            }
+
+            limits = {
+              cpu      = "200m"
+              memberOf = "256Mi"
+            }
+          }
         }
       }
     }

@@ -83,6 +83,18 @@ resource "kubernetes_deployment" "vaultwarden_deployment" {
             mount_path = "/data"
             name       = "vaultwarden-data"
           }
+
+          resources {
+            requests = {
+              cpu    = "200m"
+              memory = "256Mi"
+            }
+
+            limits = {
+              cpu      = "500m"
+              memberOf = "512Mi"
+            }
+          }
         }
 
         volume {

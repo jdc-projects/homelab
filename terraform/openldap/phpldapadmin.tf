@@ -58,6 +58,18 @@ resource "kubernetes_deployment" "phpldapadmin" {
             sub_path   = "env.yaml"
             mount_path = "/container/environment/01-custom/env.yaml"
           }
+
+          resources {
+            requests = {
+              cpu    = "200m"
+              memory = "256Mi"
+            }
+
+            limits = {
+              cpu      = "500m"
+              memberOf = "512Mi"
+            }
+          }
         }
 
         volume {

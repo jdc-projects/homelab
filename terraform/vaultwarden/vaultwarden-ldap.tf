@@ -65,6 +65,18 @@ resource "kubernetes_deployment" "vaultwarden_ldap_deployment" {
               name = kubernetes_secret.vaultwarden_ldap_env.metadata[0].name
             }
           }
+
+          resources {
+            requests = {
+              cpu    = "100m"
+              memory = "128Mi"
+            }
+
+            limits = {
+              cpu      = "200m"
+              memberOf = "256Mi"
+            }
+          }
         }
       }
     }

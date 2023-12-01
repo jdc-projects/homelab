@@ -3,7 +3,8 @@ resource "kubernetes_namespace" "idrac_fan_controller" {
     name = "idrac-fan-controller"
   }
 }
-resource "kubernetes_secret" "idrac_fan_controller_access_secret" {
+
+resource "kubernetes_secret" "idrac_fan_controller_env" {
   metadata {
     name      = "idrac-fan-controller-access"
     namespace = kubernetes_namespace.idrac_fan_controller.metadata[0].name
@@ -12,6 +13,21 @@ resource "kubernetes_secret" "idrac_fan_controller_access_secret" {
   data = {
     IDRAC_USERNAME = var.idrac_username
     IDRAC_PASSWORD = var.idrac_password
+  }
+}
+
+resource "kubernetes_config_map" "idrac_fan_controller_env" {
+  metadata {
+    name      = "idrac-fan-controller-access"
+    namespace = kubernetes_namespace.idrac_fan_controller.metadata[0].name
+  }
+
+  data = {
+    IDRAC_HOST                                                  = "192.168.1.180"
+    FAN_SPEED                                                   = "5"
+    CPU_TEMPERATURE_THRESHOLD                                   = "60"
+    CHECK_INTERVAL                                              = "60"
+    DISABLE_THIRD_PARTY_PCIE_CARD_DELL_DEFAULT_COOLING_RESPONSE = "false"
   }
 }
 
@@ -44,29 +60,26 @@ resource "kubernetes_deployment" "idrac_fan_controller_deployment" {
 
           env_from {
             secret_ref {
-              name = kubernetes_secret.idrac_fan_controller_access_secret.metadata[0].name
+              name = kubernetes_secret.idrac_fan_controller_env.metadata[0].name
             }
           }
 
-          env {
-            name  = "IDRAC_HOST"
-            value = "192.168.1.180"
+          env_from {
+            config_map_ref {
+              name = kubernetes_config_map.idrac_fan_controller_env[0].name
+            }
           }
-          env {
-            name  = "FAN_SPEED"
-            value = "5"
-          }
-          env {
-            name  = "CPU_TEMPERATURE_THRESHOLD"
-            value = "60"
-          }
-          env {
-            name  = "CHECK_INTERVAL"
-            value = "60"
-          }
-          env {
-            name  = "DISABLE_THIRD_PARTY_PCIE_CARD_DELL_DEFAULT_COOLING_RESPONSE"
-            value = "false"
+
+          resources {
+            requests = {
+              cpu    = "100m"
+              memory = "128Mi"
+            }
+
+            limits = {
+              cpu      = "200m"
+              memberOf = "256Mi"
+            }
           }
         }
       }

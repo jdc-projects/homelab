@@ -79,6 +79,18 @@ resource "kubernetes_deployment" "ldap_user_manager" {
               name = kubernetes_secret.ldap_user_manager_env.metadata[0].name
             }
           }
+
+          resources {
+            requests = {
+              cpu    = "200m"
+              memory = "256Mi"
+            }
+
+            limits = {
+              cpu      = "500m"
+              memberOf = "512Mi"
+            }
+          }
         }
       }
     }

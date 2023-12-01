@@ -95,6 +95,18 @@ resource "kubernetes_deployment" "openldap" {
             mount_path = "/bitnami/openldap"
             name       = "openldap-data"
           }
+
+          resources {
+            requests = {
+              cpu    = "200m"
+              memory = "256Mi"
+            }
+
+            limits = {
+              cpu      = "500m"
+              memberOf = "512Mi"
+            }
+          }
         }
 
         volume {
