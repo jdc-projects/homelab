@@ -25,8 +25,6 @@ resource "kubernetes_manifest" "velero_restore" {
         "kube-system",
         "kube-public",
         "kube-node-lease",
-        kubernetes_namespace.velero.metadata[0].name,
-        "democratic-csi",
       ]
 
       includeClusterResources = true

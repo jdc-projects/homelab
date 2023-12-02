@@ -3,6 +3,9 @@ terraform {
     secret_suffix = "csi-driver-nfs"
     config_path   = "../cluster.yml"
     namespace     = "terraform-state"
+    labels = {
+      "velero.io/exclude-from-backup" = "true"
+    }
   }
 
   required_providers {
@@ -33,6 +36,7 @@ resource "kubernetes_namespace" "democratic_csi" {
     name = "democratic-csi"
 
     labels = {
+      "velero.io/exclude-from-backup" = "true"
       "pod-security.kubernetes.io/enforce" = "privileged"
     }
   }

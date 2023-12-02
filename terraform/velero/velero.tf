@@ -247,14 +247,6 @@ resource "helm_release" "velero" {
     value = "kube-node-lease"
   }
   set {
-    name  = "schedules.${local.nightly_backup_name}.template.excludedNamespaces[4]"
-    value = kubernetes_namespace.velero.metadata[0].name
-  }
-  set {
-    name  = "schedules.${local.nightly_backup_name}.template.excludedNamespaces[5]"
-    value = "democratic-csi" # should get this from the democratic-csi terraform state
-  }
-  set {
     name  = "schedules.${local.nightly_backup_name}.template.includeClusterResources"
     value = "true"
   }

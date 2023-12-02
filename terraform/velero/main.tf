@@ -39,6 +39,7 @@ resource "kubernetes_namespace" "velero" {
     name = "velero"
 
     labels = {
+      "velero.io/exclude-from-backup" = "true"
       "pod-security.kubernetes.io/enforce" = "privileged"
     }
   }
