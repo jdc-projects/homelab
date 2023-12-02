@@ -6,7 +6,7 @@ resource "kubernetes_manifest" "velero_restore" {
     kind       = "Restore"
 
     metadata = {
-      name      = "${local.nightly_backup_name}-backup-restore-${timestamp()}"
+      name      = "${local.nightly_backup_name}-backup-restore-${formatdate("YYYYMMDDhhmmss", timestamp())}"
       namespace = kubernetes_namespace.velero.metadata[0].name
     }
 
