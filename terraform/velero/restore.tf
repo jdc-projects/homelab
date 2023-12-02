@@ -11,10 +11,12 @@ resource "kubernetes_manifest" "velero_restore" {
     }
 
     spec = {
+      backupName = ""
+
       # The unique name of the Velero schedule
       # to restore from. If specified, and BackupName is empty, Velero will
       # restore from the most recent successful backup created from this schedule.
-      scheduleName = local.nightly_backup_name
+      scheduleName = "velero-${local.nightly_backup_name}"
 
       # Whether or not to include cluster-scoped resources. Valid values are true, false, and
       # null/unset. If true, all cluster-scoped resources are included (subject to included/excluded
