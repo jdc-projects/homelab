@@ -56,7 +56,7 @@ resource "kubernetes_service" "ldap_user_manager" {
 
 resource "kubernetes_manifest" "openldap_ingress" {
   manifest = {
-    apiVersion = "traefik.containo.us/v1alpha1"
+    apiVersion = "traefik.io/v1alpha1"
     kind       = "IngressRouteTCP"
 
     metadata = {
@@ -86,7 +86,7 @@ resource "kubernetes_manifest" "phpldapadmin_ingress" {
   count = var.enable_phpldapadmin ? 1 : 0
 
   manifest = {
-    apiVersion = "traefik.containo.us/v1alpha1"
+    apiVersion = "traefik.io/v1alpha1"
     kind       = "IngressRoute"
 
     metadata = {
@@ -112,7 +112,7 @@ resource "kubernetes_manifest" "phpldapadmin_ingress" {
 
 resource "kubernetes_manifest" "ldap_user_manager_ingress" {
   manifest = {
-    apiVersion = "traefik.containo.us/v1alpha1"
+    apiVersion = "traefik.io/v1alpha1"
     kind       = "IngressRoute"
 
     metadata = {

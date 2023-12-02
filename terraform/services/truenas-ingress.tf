@@ -18,7 +18,7 @@ resource "kubernetes_service" "truenas" {
 
 resource "kubernetes_manifest" "truenas_ingressroute" {
   manifest = {
-    apiVersion = "traefik.containo.us/v1alpha1"
+    apiVersion = "traefik.io/v1alpha1"
     kind       = "IngressRoute"
 
     metadata = {

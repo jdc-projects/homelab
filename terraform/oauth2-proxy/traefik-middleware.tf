@@ -1,6 +1,6 @@
 resource "kubernetes_manifest" "oauth2_proxy_headers_middleware" {
   manifest = {
-    apiVersion = "traefik.containo.us/v1alpha1"
+    apiVersion = "traefik.io/v1alpha1"
     kind       = "Middleware"
 
     metadata = {
@@ -26,7 +26,7 @@ resource "kubernetes_manifest" "oauth2_proxy_headers_middleware" {
 
 resource "kubernetes_manifest" "oauth2_proxy_redirect_middleware" {
   manifest = {
-    apiVersion = "traefik.containo.us/v1alpha1"
+    apiVersion = "traefik.io/v1alpha1"
     kind       = "Middleware"
 
     metadata = {
@@ -49,7 +49,7 @@ resource "kubernetes_manifest" "oauth2_proxy_redirect_middleware" {
 
 resource "kubernetes_manifest" "oauth2_proxy_wo_redirect_middleware" {
   manifest = {
-    apiVersion = "traefik.containo.us/v1alpha1"
+    apiVersion = "traefik.io/v1alpha1"
     kind       = "Middleware"
 
     metadata = {

@@ -36,7 +36,7 @@ resource "kubernetes_service" "vaultwarden_websocket" {
 
 resource "kubernetes_manifest" "vaultwarden_webvault_ingress" {
   manifest = {
-    apiVersion = "traefik.containo.us/v1alpha1"
+    apiVersion = "traefik.io/v1alpha1"
     kind       = "IngressRoute"
 
     metadata = {
@@ -62,7 +62,7 @@ resource "kubernetes_manifest" "vaultwarden_webvault_ingress" {
 
 resource "kubernetes_manifest" "vaultwarden_webvault_negotiate_ingress" {
   manifest = {
-    apiVersion = "traefik.containo.us/v1alpha1"
+    apiVersion = "traefik.io/v1alpha1"
     kind       = "IngressRoute"
 
     metadata = {
@@ -89,7 +89,7 @@ resource "kubernetes_manifest" "vaultwarden_webvault_negotiate_ingress" {
 
 resource "kubernetes_manifest" "vaultwarden_websocket_ingress" {
   manifest = {
-    apiVersion = "traefik.containo.us/v1alpha1"
+    apiVersion = "traefik.io/v1alpha1"
     kind       = "IngressRoute"
 
     metadata = {
