@@ -18,6 +18,8 @@ resource "kubernetes_manifest" "velero_restore" {
       # restore from the most recent successful backup created from this schedule.
       scheduleName = "velero-${local.nightly_backup_name}"
 
+      itemOperationTimeout = "23h"
+
       excludedNamespaces = [
         "default",
         "kube-system",
