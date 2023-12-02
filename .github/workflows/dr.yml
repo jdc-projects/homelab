@@ -11,9 +11,20 @@ jobs:
       manifest-file: ./terraform/terraform-state-namespace.yml
       runner-type: ubuntu-latest
 
-  deploy-velero:
+  deploy-democratic-csi:
     needs: [
       deploy-terraform-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/democratic-csi
+      runner-type: ubuntu-latest
+
+  deploy-velero:
+    needs: [
+      deploy-democratic-csi,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit

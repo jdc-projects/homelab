@@ -37,5 +37,9 @@ provider "null" {
 resource "kubernetes_namespace" "velero" {
   metadata {
     name = "velero"
+
+    labels = {
+      "pod-security.kubernetes.io/enforce" = "privileged"
+    }
   }
 }
