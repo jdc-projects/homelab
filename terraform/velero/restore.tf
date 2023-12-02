@@ -37,4 +37,6 @@ resource "kubernetes_manifest" "velero_restore" {
       existingResourcePolicy = "update"
     }
   }
+
+  depends_on = [helm_release.velero]
 }
