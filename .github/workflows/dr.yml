@@ -9,7 +9,7 @@ jobs:
 
     with:
       manifest-file: ./terraform/terraform-state-namespace.yml
-      runner-type: ${{ github.event.inputs.runner-type }}
+      runner-type: ubuntu-latest
 
   deploy-velero:
     needs: [
