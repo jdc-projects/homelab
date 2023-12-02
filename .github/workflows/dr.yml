@@ -3,6 +3,14 @@ on:
   workflow_dispatch:
 
 jobs:
+  deploy-terraform-state-namespace:
+    uses: ./.github/workflows/kubernetes-manifest-deploy.yml
+    secrets: inherit
+
+    with:
+      manifest-file: ./terraform/terraform-state-namespace.yml
+      runner-type: ${{ github.event.inputs.runner-type }}
+
   deploy-velero:
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
