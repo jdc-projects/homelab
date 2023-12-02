@@ -3,7 +3,7 @@ resource "kubernetes_manifest" "velero_restore" {
 
   manifest = {
     apiVersion = "velero.io/v1"
-    kind       = "IngressRoute"
+    kind       = "Restore"
 
     metadata = {
       name      = "${local.nightly_backup_name}-backup-restore-${timestamp()}"
