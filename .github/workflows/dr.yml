@@ -12,6 +12,9 @@ jobs:
       runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-velero:
+    needs: [
+      deploy-terraform-state-namespace,
+    ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
 
