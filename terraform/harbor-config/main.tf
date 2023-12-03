@@ -55,9 +55,3 @@ provider "harbor" {
   username = data.terraform_remote_state.harbor.outputs.harbor_admin_username
   password = data.terraform_remote_state.harbor.outputs.harbor_admin_password
 }
-
-provider "random" {
-}
-
-provider "ssh" {
-}

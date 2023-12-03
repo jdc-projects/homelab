@@ -17,15 +17,6 @@ provider "kubernetes" {
   config_path = "../cluster.yml"
 }
 
-provider "null" {
-}
-
-provider "random" {
-}
-
-provider "local" {
-}
-
 resource "kubernetes_namespace" "openldap" {
   metadata {
     name = "openldap"

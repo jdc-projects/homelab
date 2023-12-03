@@ -27,9 +27,6 @@ provider "kubernetes" {
   config_path = "../cluster.yml"
 }
 
-provider "random" {
-}
-
 data "terraform_remote_state" "openldap" {
   backend = "kubernetes"
 

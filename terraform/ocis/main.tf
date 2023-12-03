@@ -33,17 +33,11 @@ provider "kubernetes" {
   config_path = "../cluster.yml"
 }
 
-provider "null" {
-}
-
 provider "keycloak" {
   client_id = "admin-cli"
   username  = data.terraform_remote_state.keycloak_config.outputs.keycloak_admin_username
   password  = data.terraform_remote_state.keycloak_config.outputs.keycloak_admin_password
   url       = data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url
-}
-
-provider "random" {
 }
 
 data "terraform_remote_state" "keycloak_config" {

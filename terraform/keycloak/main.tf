@@ -28,15 +28,6 @@ provider "kubernetes" {
   config_path = "../cluster.yml"
 }
 
-provider "null" {
-}
-
-provider "random" {
-}
-
-provider "archive" {
-}
-
 resource "kubernetes_namespace" "keycloak" {
   metadata {
     name = "keycloak"

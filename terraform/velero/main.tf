@@ -32,9 +32,6 @@ provider "kubernetes" {
   config_path = "../cluster.yml"
 }
 
-provider "null" {
-}
-
 resource "kubernetes_namespace" "velero" {
   metadata {
     name = "velero"

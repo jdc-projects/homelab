@@ -28,9 +28,6 @@ provider "kubernetes" {
   config_path = "../cluster.yml"
 }
 
-provider "random" {
-}
-
 resource "kubernetes_namespace" "loki" {
   metadata {
     name = "loki"

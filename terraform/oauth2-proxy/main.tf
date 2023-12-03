@@ -40,9 +40,6 @@ provider "keycloak" {
   url       = data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url
 }
 
-provider "random" {
-}
-
 data "terraform_remote_state" "keycloak_config" {
   backend = "kubernetes"
 
