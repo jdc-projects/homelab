@@ -69,9 +69,5 @@ data "terraform_remote_state" "openldap" {
 resource "kubernetes_namespace" "ocis" {
   metadata {
     name = "ocis"
-
-    labels = {
-      "velero.io/exclude-from-backup" = "true"
-    }
   }
 }
