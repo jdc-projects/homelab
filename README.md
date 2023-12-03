@@ -47,6 +47,17 @@ This system requires that some setup is completed on the first:
 * TRUENAS_K3S_DATASET
 * TRUENAS_K3S_SNAPSHOT_DATASET
 
+## Disaster Recovery
+
+1. Provision server(s):
+   1. K3s server(s)
+   2. Truenas
+2. Run DR pipeline
+3. Remove Harbor Docker hub proxy config object from Terraform state (in harbor-config):
+    ```
+    terraform state rm ssh_sensitive_resource.k3s_registries_config_copy
+    ```
+
 ## Stuff to do / ideas
 
 * [Trivy](https://github.com/aquasecurity/Trivy) for vulnerability scanning
