@@ -3,6 +3,10 @@ terraform {
     secret_suffix = "ocis"
     config_path   = "../cluster.yml"
     namespace     = "terraform-state"
+
+    labels = {
+      "velero.io/exclude-from-backup" = "true"
+    }
   }
 
   required_providers {
@@ -69,5 +73,9 @@ data "terraform_remote_state" "openldap" {
 resource "kubernetes_namespace" "ocis" {
   metadata {
     name = "ocis"
+
+    labels = {
+      "velero.io/exclude-from-backup" = "true"
+    }
   }
 }
