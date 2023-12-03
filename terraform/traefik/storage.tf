@@ -9,7 +9,7 @@ resource "kubernetes_persistent_volume_claim" "traefik" {
 
     resources {
       requests = {
-        storage = "128Mi"
+        storage = "1Gi"
       }
     }
   }
