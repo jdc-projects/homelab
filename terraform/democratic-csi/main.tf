@@ -36,7 +36,7 @@ resource "kubernetes_namespace" "democratic_csi" {
     name = "democratic-csi"
 
     labels = {
-      "velero.io/exclude-from-backup" = "true"
+      "velero.io/exclude-from-backup"      = "true"
       "pod-security.kubernetes.io/enforce" = "privileged"
     }
   }
