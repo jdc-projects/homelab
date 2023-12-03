@@ -3,6 +3,7 @@ terraform {
     secret_suffix = "velero"
     config_path   = "../cluster.yml"
     namespace     = "terraform-state"
+
     labels = {
       "velero.io/exclude-from-backup" = "true"
     }
