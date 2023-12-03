@@ -1,6 +1,6 @@
 terraform {
   backend "kubernetes" {
-    secret_suffix = "csi-driver-nfs"
+    secret_suffix = "democratic-csi"
     config_path   = "../cluster.yml"
     namespace     = "terraform-state"
 
