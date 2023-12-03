@@ -16,5 +16,7 @@ resource "kubernetes_persistent_volume_claim" "runners_cache" {
 
   lifecycle {
     prevent_destroy = false
+
+    ignore_changes = [spec.selector]
   }
 }

@@ -30,6 +30,7 @@ resource "kubernetes_persistent_volume_claim" "harbor" {
   spec {
     access_modes = ["ReadWriteMany"]
 
+
     resources {
       requests = {
         storage = each.value.storage
@@ -39,5 +40,7 @@ resource "kubernetes_persistent_volume_claim" "harbor" {
 
   lifecycle {
     prevent_destroy = true
+
+    ignore_changes = [spec.selector]
   }
 }
