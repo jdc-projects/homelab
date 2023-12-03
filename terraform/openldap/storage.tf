@@ -17,6 +17,6 @@ resource "kubernetes_persistent_volume_claim" "openldap" {
   lifecycle {
     prevent_destroy = true
 
-    ignore_changes = [spec.selector]
+    ignore_changes = [spec[0].selector]
   }
 }
