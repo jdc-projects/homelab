@@ -20,13 +20,6 @@ resource "kubernetes_manifest" "velero_restore" {
 
       itemOperationTimeout = "23h"
 
-      excludedNamespaces = [
-        "default",
-        "kube-system",
-        "kube-public",
-        "kube-node-lease",
-      ]
-
       includeClusterResources = true
 
       # restorePVs specifies whether to restore all included PVs
