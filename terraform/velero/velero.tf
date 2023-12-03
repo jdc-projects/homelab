@@ -208,7 +208,7 @@ resource "helm_release" "velero" {
 
   set {
     name  = "schedules.${local.nightly_backup_name}.disabled"
-    value = "false"
+    value = var.restore_mode ? "true" : "false"
   }
   set {
     name  = "schedules.${local.nightly_backup_name}.schedule"
