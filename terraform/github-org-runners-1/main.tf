@@ -37,7 +37,7 @@ resource "kubernetes_namespace" "github_org_runners" {
     name = "github-org-runners"
 
     labels = {
-      "velero.io/exclude-from-backup"      = "true"
+      "velero.io/exclude-from-backup" = "true"
     }
   }
 }
