@@ -42,9 +42,9 @@ resource "kubernetes_deployment" "traefik_forward_auth_test" {
   }
 
   timeouts {
-    create = "1m"
-    update = "1m"
-    delete = "1m"
+    create = "5m"
+    update = "5m"
+    delete = "5m"
   }
 }
 

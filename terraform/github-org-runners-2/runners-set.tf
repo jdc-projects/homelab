@@ -43,8 +43,8 @@ resource "kubernetes_job" "runners_cache_chown" {
   wait_for_completion = true
 
   timeouts {
-    create = "1m"
-    update = "1m"
+    create = "5m"
+    update = "5m"
   }
 }
 
