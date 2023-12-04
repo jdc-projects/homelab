@@ -79,11 +79,11 @@ resource "helm_release" "democratic_csi" {
     name  = "driver.config.httpConnection.protocol"
     value = "https"
   }
-  set {
+  set_sensitive {
     name  = "driver.config.httpConnection.host"
     value = var.truenas_ip_address
   }
-  set_sensitive {
+  set {
     name  = "driver.config.httpConnection.port"
     value = "443"
   }
@@ -91,7 +91,7 @@ resource "helm_release" "democratic_csi" {
     name  = "driver.config.httpConnection.apiKey"
     value = var.truenas_api_key
   }
-  set_sensitive {
+  set {
     name  = "driver.config.httpConnection.allowInsecure"
     value = "true"
   }
