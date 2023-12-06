@@ -70,3 +70,4 @@ This system requires that some setup is completed on the first:
 * Setup Dependabot
 * [KubeVirt](https://kubevirt.io/user-guide/operations/installation/)?
 * [Appflowy](https://www.appflowy.io/) with [Supabase](https://github.com/supabase/supabase/tree/v0.23.10/docker) (Helm charts for Supabase aren't great, so Docker config linked here to take inspiration from)
+* Create and deploy solution to update Truenas dataset stuff after Velero restore (see [here](https://github.com/democratic-csi/democratic-csi/issues/352))
