@@ -58,9 +58,7 @@ resource "kubernetes_deployment" "vaultwarden_ldap_deployment" {
             config_map_ref {
               name = kubernetes_config_map.vaultwarden_ldap_env.metadata[0].name
             }
-          }
 
-          env_from {
             secret_ref {
               name = kubernetes_secret.vaultwarden_ldap_env.metadata[0].name
             }

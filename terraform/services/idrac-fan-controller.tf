@@ -62,9 +62,7 @@ resource "kubernetes_deployment" "idrac_fan_controller_deployment" {
             secret_ref {
               name = kubernetes_secret.idrac_fan_controller_env.metadata[0].name
             }
-          }
 
-          env_from {
             config_map_ref {
               name = kubernetes_config_map.idrac_fan_controller_env.metadata[0].name
             }

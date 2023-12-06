@@ -71,9 +71,7 @@ resource "kubernetes_deployment" "vaultwarden_deployment" {
             config_map_ref {
               name = kubernetes_config_map.vaultwarden_env.metadata[0].name
             }
-          }
 
-          env_from {
             secret_ref {
               name = kubernetes_secret.vaultwarden_env.metadata[0].name
             }
