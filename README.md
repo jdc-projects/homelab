@@ -69,4 +69,4 @@ This system requires that some setup is completed on the first:
 * Add a proper, secure secrets manager
 * Setup Dependabot
 * [KubeVirt](https://kubevirt.io/user-guide/operations/installation/)?
-* [Appflowy](https://www.appflowy.io/) with [Supabase](https://supabase.com/)
+* [Appflowy](https://www.appflowy.io/) with [Supabase](https://github.com/supabase/supabase/tree/v0.23.10/docker) (Helm charts for Supabase aren't great, so Docker config linked here to take inspiration from)
