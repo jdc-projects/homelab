@@ -223,6 +223,14 @@ resource "helm_release" "velero" {
     value = "23h"
   }
   set {
+    name  = "schedules.${local.nightly_backup_name}.template.resourcePolicy.kind"
+    value = "configmap"
+  }
+  set {
+    name  = "schedules.${local.nightly_backup_name}.template.resourcePolicy.name"
+    value = kubernetes_config_map.resource_policy.metadata[0].name
+  }
+  set {
     name  = "schedules.${local.nightly_backup_name}.template.itemOperationTimeout"
     value = "23h"
   }

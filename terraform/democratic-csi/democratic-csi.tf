@@ -48,6 +48,39 @@ resource "helm_release" "democratic_csi" {
   }
 
   set {
+    name  = "storageClasses[1].name"
+    value = "truenas-nfs-csi-no-backup"
+  }
+  set {
+    name  = "storageClasses[1].defaultClass"
+    value = "false"
+  }
+  set {
+    name  = "storageClasses[1].reclaimPolicy"
+    value = "Delete"
+  }
+  set {
+    name  = "storageClasses[1].volumeBindingMode"
+    value = "Immediate"
+  }
+  set {
+    name  = "storageClasses[1].allowVolumeExpansion"
+    value = "true"
+  }
+  set {
+    name  = "storageClasses[1].parameters.fsType"
+    value = "nfs"
+  }
+  set {
+    name  = "storageClasses[1].mountOptions[0]"
+    value = "noatime"
+  }
+  set {
+    name  = "storageClasses[1].mountOptions[1]"
+    value = "nfsvers=4.2"
+  }
+
+  set {
     name  = "volumeSnapshotClasses[0].name"
     value = "truenas-nfs-csi"
   }
