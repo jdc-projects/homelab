@@ -19,7 +19,7 @@ variable "external_scheme" {
 }
 
 variable "external_port" {
-  type        = string
+  type        = number
   description = "Port for the external domain or IP."
 }
 

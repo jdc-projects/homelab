@@ -1,5 +1,3 @@
-
-
 resource "kubernetes_service" "forward_auth" {
   metadata {
     name      = "forward-auth"
@@ -33,6 +31,10 @@ resource "kubernetes_manifest" "forward_auth_ingress" {
           namespace = var.namespace
           scheme    = var.external_scheme
           port      = var.external_port
+        }]
+        middlewares = [{
+          name      = data.terraform_remote_state.oauth2_proxy.outputs.redirect_middleware_name
+          namespace = data.terraform_remote_state.oauth2_proxy.outputs.middleware_namespace
         }]
       }]
     }
