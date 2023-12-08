@@ -73,7 +73,9 @@ resource "kubernetes_deployment" "openldap" {
             config_map_ref {
               name = kubernetes_config_map.openldap_env.metadata[0].name
             }
+          }
 
+          env_from {
             secret_ref {
               name = kubernetes_secret.openldap_env.metadata[0].name
             }

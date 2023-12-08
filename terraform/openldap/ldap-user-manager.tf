@@ -72,7 +72,9 @@ resource "kubernetes_deployment" "ldap_user_manager" {
             config_map_ref {
               name = kubernetes_config_map.ldap_user_manager_env.metadata[0].name
             }
+          }
 
+          env_from {
             secret_ref {
               name = kubernetes_secret.ldap_user_manager_env.metadata[0].name
             }
