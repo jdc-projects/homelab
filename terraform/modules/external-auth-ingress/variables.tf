@@ -27,8 +27,3 @@ variable "path_prefix" {
   type        = string
   description = "Path prefix for the ingress."
 }
-
-variable "service_port" {
-  type        = string
-  description = "Target port for the service."
-}
