@@ -7,8 +7,10 @@ resource "keycloak_openid_client" "oauth2_proxy" {
 
   access_type = "CONFIDENTIAL"
   valid_redirect_uris = [
-    "https://admin.${var.server_base_domain}/*",
-    "https://traefik-auth.${var.server_base_domain}/*"
+    # this needs to be updated with any subdomains used in authed ingresses
+    "https://router.${var.server_base_domain}/*",
+    "https://nas.${var.server_base_domain}/*",
+    "https://pve.${var.server_base_domain}/*",
   ]
   web_origins = [
   ]

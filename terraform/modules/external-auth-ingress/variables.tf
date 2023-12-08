@@ -23,7 +23,7 @@ variable "external_port" {
   description = "Port for the external domain or IP."
 }
 
-variable "path_prefix" {
+variable "url_subdomain" {
   type        = string
-  description = "Path prefix for the ingress."
+  description = "Subdomain for the URL ($url_subdomain.$server_base_domain)."
 }

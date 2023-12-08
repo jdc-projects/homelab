@@ -65,20 +65,10 @@ jobs:
       terraform-dir: ./terraform/traefik
       runner-type: ${{ github.event.inputs.runner-type }}
 
-  deploy-services:
+  deploy-velero:
     needs: [
       deploy-github-org-runner-2,
       deploy-traefik,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/services
-
-  deploy-velero:
-    needs: [
-      deploy-services,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -88,7 +78,7 @@ jobs:
 
   deploy-loki:
     needs: [
-      deploy-services,
+      deploy-velero,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -98,7 +88,7 @@ jobs:
 
   deploy-openldap:
     needs: [
-      deploy-services,
+      deploy-velero,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -108,7 +98,7 @@ jobs:
 
   deploy-keycloak:
     needs: [
-      deploy-services,
+      deploy-velero,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -118,7 +108,7 @@ jobs:
 
   deploy-harbor:
     needs: [
-      deploy-services,
+      deploy-velero,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -178,7 +168,8 @@ jobs:
     with:
       terraform-dir: ./terraform/oauth2-proxy
 
-  deploy-forward-auth-test:
+  # ***** authed-services
+  deploy-services:
     needs: [
       deploy-oauth2-proxy,
     ]
@@ -186,16 +177,15 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/forward-auth-test
+      terraform-dir: ./terraform/services
 
   deploy-harbor-config:
     needs: [
-      deploy-velero,
       deploy-harbor,
       deploy-vaultwarden,
       deploy-ocis,
       deploy-grafana,
-      deploy-forward-auth-test,
+      deploy-services,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit

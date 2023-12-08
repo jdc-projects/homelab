@@ -33,7 +33,7 @@ resource "kubernetes_manifest" "forward_auth_ingress" {
 
       routes = [{
         kind  = "Rule"
-        match = "Host(`admin.${var.server_base_domain}`) && PathPrefix(`/${var.path_prefix}`)"
+        match = "Host(`${var.url_subdomain}.${var.server_base_domain}`)"
         services = [{
           name      = kubernetes_service.forward_auth.metadata[0].name
           namespace = var.namespace

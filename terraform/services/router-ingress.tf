@@ -1,16 +1,16 @@
-resource "kubernetes_namespace" "pve" {
+resource "kubernetes_namespace" "router" {
   metadata {
-    name = "pve"
+    name = "router"
   }
 }
 
-module "pve_ingress" {
+module "router_ingress" {
   source = "../modules/external-auth-ingress"
 
   server_base_domain = var.server_base_domain
   namespace          = kubernetes_namespace.pve.metadata[0].name
-  external_name      = "192.168.1.190"
+  external_name      = "192.168.1.1"
   external_scheme    = "https"
-  external_port      = 8006
-  url_subdomain      = "pve"
+  external_port      = 444
+  url_subdomain      = "router"
 }
