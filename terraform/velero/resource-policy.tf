@@ -1,6 +1,6 @@
 resource "kubernetes_config_map" "resource_policy" {
   metadata {
-    name = "resource-policy"
+    name      = "resource-policy"
     namespace = kubernetes_namespace.velero.metadata[0].name
   }
 
