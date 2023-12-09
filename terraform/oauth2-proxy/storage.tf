@@ -16,7 +16,7 @@ resource "kubernetes_persistent_volume_claim" "oauth2_proxy" {
   }
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
 
     ignore_changes = [spec[0].selector]
   }

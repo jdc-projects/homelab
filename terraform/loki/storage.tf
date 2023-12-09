@@ -23,7 +23,7 @@ resource "kubernetes_persistent_volume_claim" "loki" {
   }
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
 
     ignore_changes = [spec[0].selector]
   }
