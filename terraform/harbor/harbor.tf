@@ -212,11 +212,11 @@ resource "helm_release" "harbor" {
 
   set {
     name  = "database.internal.livenessProbe.timeoutSeconds"
-    value = "3600" # default 1
+    value = "3600" # default 1 *****
   }
   set {
     name  = "database.internal.readinessProbe.timeoutSeconds"
-    value = "3600" # default 1
+    value = "3600" # default 1 *****
   }
 
   depends_on = [
