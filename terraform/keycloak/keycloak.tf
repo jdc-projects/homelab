@@ -125,6 +125,7 @@ resource "helm_release" "keycloak" {
   lifecycle {
     replace_triggered_by = [
       kubernetes_config_map.keycloak_custom_scripts,
+      kubernetes_persistent_volume_claim.keycloak_db,
     ]
 
     create_before_destroy = false

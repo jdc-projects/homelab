@@ -223,4 +223,10 @@ resource "helm_release" "harbor" {
     helm_release.minio,
     kubernetes_job.harbor_chown
   ]
+
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_persistent_volume_claim.harbor,
+    ]
+  }
 }
