@@ -11,6 +11,7 @@ resource "keycloak_openid_client" "oauth2_proxy" {
     "https://router.${var.server_base_domain}/*",
     "https://nas.${var.server_base_domain}/*",
     "https://pve.${var.server_base_domain}/*",
+    "https://traefik.${var.server_base_domain}/*",
   ]
   web_origins = [
   ]
