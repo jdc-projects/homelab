@@ -15,13 +15,13 @@ resource "kubernetes_manifest" "forward_auth_headers_ingress" {
         kind  = "Rule"
         match = "Host(`${var.url_subdomain}.${var.server_base_domain}`) && PathPrefix(`/oauth2/`)"
         services = [{
-          name      = helm_release.oauth2_proxy.name
-          namespace = data.terraform_remote_state.oauth2_proxy.outputs.middleware_namespace
+          name      = data.terraform_remote_state.oauth2_proxy.outputs.service_name
+          namespace = data.terraform_remote_state.oauth2_proxy.outputs.namespace
           port      = "80"
         }]
         middlewares = [{
-          name      = kubernetes_manifest.oauth2_proxy_headers_middleware.manifest["metadata"].name
-          namespace = kubernetes_manifest.oauth2_proxy_headers_middleware.manifest["metadata"].namespace
+          name      = data.terraform_remote_state.oauth2_proxy.outputs.headers_middleware_name
+          namespace = data.terraform_remote_state.oauth2_proxy.outputs.namespace
         }]
       }]
     }
@@ -69,7 +69,7 @@ resource "kubernetes_manifest" "forward_auth_ingress" {
         }]
         middlewares = [{
           name      = data.terraform_remote_state.oauth2_proxy.outputs.redirect_middleware_name
-          namespace = data.terraform_remote_state.oauth2_proxy.outputs.middleware_namespace
+          namespace = data.terraform_remote_state.oauth2_proxy.outputs.namespace
         }]
       }]
     }
