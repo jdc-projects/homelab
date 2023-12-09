@@ -23,3 +23,9 @@ It would be nice to fully automate the provisioning of the K3s machine, but for 
 3. Create 'terraform.tfvars' in this directory, and populate with the required values
 4. Run the Terraform in this directory
 5. Get the kubeconfig values (at /etc/rancher/k3s/k3s.yaml)
+
+## Truenas / democratic-csi minimum size hack script
+
+```sh
+for d in ./*/ ; do (cd "$d" && truncate -s 2G DO_NOT_REMOVE_MIN_SIZE_HACK); done
+```
