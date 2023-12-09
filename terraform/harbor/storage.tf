@@ -6,15 +6,15 @@ resource "kubernetes_persistent_volume_claim" "harbor" {
     })
     jobservice = tomap({
       name    = "jobservice"
-      storage = "1Gi"
+      storage = "5Gi"
     })
     database = tomap({
       name    = "database"
-      storage = "1Gi"
+      storage = "5Gi"
     })
     redis = tomap({
       name    = "redis"
-      storage = "1Gi"
+      storage = "5Gi"
     })
     trivy = tomap({
       name    = "trivy"

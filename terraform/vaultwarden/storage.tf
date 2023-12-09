@@ -9,7 +9,7 @@ resource "kubernetes_persistent_volume_claim" "vaultwarden" {
 
     resources {
       requests = {
-        storage = "1Gi"
+        storage = "5Gi"
       }
     }
   }

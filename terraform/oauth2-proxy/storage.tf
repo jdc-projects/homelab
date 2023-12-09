@@ -5,7 +5,8 @@ resource "kubernetes_persistent_volume_claim" "oauth2_proxy" {
   }
 
   spec {
-    access_modes = ["ReadWriteMany"]
+    access_modes       = ["ReadWriteMany"]
+    storage_class_name = "truenas-nfs-csi-no-backup"
 
     resources {
       requests = {

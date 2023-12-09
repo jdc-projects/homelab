@@ -26,7 +26,7 @@ resource "kubernetes_persistent_volume_claim" "ocis" {
     })
     web = tomap({
       name    = "web"
-      storage = "1Gi"
+      storage = "5Gi"
     })
   })
 
