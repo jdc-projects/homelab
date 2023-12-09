@@ -168,6 +168,23 @@ resource "helm_release" "loki" {
     value = kubernetes_persistent_volume_claim.loki["minio"].spec[0].resources[0].requests.storage
   }
 
+  set {
+    name  = "write.persistence.storageClass"
+    value = "truenas-nfs-csi-no-backup"
+  }
+  set {
+    name  = "read.persistence.storageClass"
+    value = "truenas-nfs-csi-no-backup"
+  }
+  set {
+    name  = "backend.persistence.storageClass"
+    value = "truenas-nfs-csi-no-backup"
+  }
+  set {
+    name  = "singleBinary.persistence.storageClass"
+    value = "truenas-nfs-csi-no-backup"
+  }
+
   depends_on = [
     kubernetes_job.loki_chown
   ]
