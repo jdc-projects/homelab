@@ -7,7 +7,7 @@ It would be nice to fully automate the provisioning of the K3s machine, but for 
 1. Create a VM and install Ubuntu Server
 2. Setup the SSH user (with the below commands), and take note of the private key (at /home/k3s/.ssh/ed25519)
    1. Add k3s user and change into its shell:
-        ```
+        ```sh
         sudo useradd k3s &&
         sudo mkhomedir_helper k3s &&
         sudo usermod -s /bin/bash k3s &&
@@ -15,7 +15,7 @@ It would be nice to fully automate the provisioning of the K3s machine, but for 
         sudo su - k3s
         ```
    2. Setup k3s SSH keys:
-        ```
+        ```sh
         mkdir -p /home/k3s/.ssh &&
         ssh-keygen -f /home/k3s/.ssh/ed25519 -N '' -t ed25519 &&
         cat /home/k3s/.ssh/ed25519.pub  | sudo tee -a /home/k3s/.ssh/authorized_keys
