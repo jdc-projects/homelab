@@ -27,5 +27,5 @@ It would be nice to fully automate the provisioning of the K3s machine, but for 
 ## Truenas / democratic-csi minimum size hack script
 
 ```sh
-for d in ./*/ ; do (cd "$d" && truncate -s 2G DO_NOT_REMOVE_MIN_SIZE_HACK); done
+cd /mnt/vault/exclude/k3s/live && for d in ./*/ ; do (cd "$d" && truncate -s 2G DO_NOT_REMOVE_MIN_SIZE_HACK || true); done
 ```
