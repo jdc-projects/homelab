@@ -54,6 +54,7 @@ This system requires that some setup is completed on the first:
    2. Truenas
 2. Run DR pipeline
 3. Wait for Velero restore to finish
+   1. If any PVCs are stuck pending, it's likely because they contained no data - if that is the case, delete them and continue
 4. Remove Harbor Docker hub proxy config object from Terraform state (in harbor-config):
     ```
     terraform state rm ssh_sensitive_resource.k3s_registries_config_copy
