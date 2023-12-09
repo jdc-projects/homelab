@@ -111,6 +111,10 @@ resource "helm_release" "keycloak" {
     name  = "postgresql.volumePermissions.enabled"
     value = "true"
   }
+  set {
+    name  = "postgresql.primary.livenessProbe.enabled"
+    value = "false"
+  }
 
   set {
     name  = "logging.level"
