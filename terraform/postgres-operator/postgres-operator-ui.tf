@@ -24,6 +24,15 @@ resource "helm_release" "postgres_operator_ui" {
     name  = "envs.targetNamespace"
     value = kubernetes_namespace.postgres_operator.metadata[0].name
   }
+
+  set {
+    name  = "extraEnvs[0].name"
+    value = "READ_ONLY_MODE"
+  }
+  set {
+    name  = "extraEnvs[0].value"
+    value = "true"
+  }
 }
 
 module "postgres_operator_ui_ingress" {
