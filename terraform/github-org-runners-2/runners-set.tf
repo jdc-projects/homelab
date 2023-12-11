@@ -1,8 +1,8 @@
 resource "kubernetes_job" "runners_cache_chown" {
   for_each = tomap({
     tool-cache = tomap({
-    })
-    work = tomap({
+      chown_uid  = "1001"
+      chown_gid  = "121"
     })
   })
 
@@ -20,14 +20,14 @@ resource "kubernetes_job" "runners_cache_chown" {
           image = "alpine:3.18.4"
           name  = "runners-cache-chown-${each.key}"
 
-          command = ["sh", "-c", "chown -R 1001:121 /export"]
+          command = ["sh", "-c", "chown -R ${each.value.chown_uid}:${each.value.chown_gid} /chown"]
 
           security_context {
             run_as_user = 0
           }
 
           volume_mount {
-            mount_path = "/export"
+            mount_path = "/chown"
             name       = each.key
           }
         }
