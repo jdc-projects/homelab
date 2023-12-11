@@ -28,12 +28,12 @@ resource "kubernetes_job" "runners_cache_chown" {
 
           volume_mount {
             mount_path = "/export"
-            name       = "${each.key}"
+            name       = each.key
           }
         }
 
         volume {
-          name = "${each.key}"
+          name = each.key
 
           persistent_volume_claim {
             claim_name = kubernetes_persistent_volume_claim.runners[each.key].metadata[0].name
