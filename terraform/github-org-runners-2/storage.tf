@@ -3,9 +3,6 @@ resource "kubernetes_persistent_volume_claim" "runners" {
     tool-cache = tomap({
       storage = "50Gi"
     })
-    work = tomap({
-      storage = "10Gi"
-    })
   })
 
   metadata {
