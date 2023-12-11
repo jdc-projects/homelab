@@ -3,6 +3,8 @@ locals {
 }
 
 resource "helm_release" "postgres_operator_ui" {
+  count = var.enable_postgres_operator_ui ? 1 : 0
+
   name      = "postgres-operator-ui"
   namespace = kubernetes_namespace.postgres_operator.metadata[0].name
 
@@ -27,11 +29,13 @@ resource "helm_release" "postgres_operator_ui" {
 }
 
 module "postgres_operator_ui_ingress" {
+  count = var.enable_postgres_operator_ui ? 1 : 0
+
   source = "../modules/auth-ingress"
 
   server_base_domain = var.server_base_domain
   namespace          = kubernetes_namespace.postgres_operator.metadata[0].name
-  service_name       = helm_release.postgres_operator_ui.name
+  service_name       = helm_release.postgres_operator_ui[0].name
   service_port       = 80
   url_subdomain      = local.postgres_operator_ui_subdomain
 }
