@@ -8,9 +8,9 @@ variable "namespace" {
   description = "Namespace to put resources in."
 }
 
-variable "service_selector_app" {
+variable "service_name" {
   type        = string
-  description = "Selector 'app' name for service."
+  description = "Name of the service."
 }
 
 variable "service_port" {
