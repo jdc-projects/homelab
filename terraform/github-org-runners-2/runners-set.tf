@@ -53,6 +53,12 @@ resource "kubernetes_job" "runners_cache_chown" {
     create = "5m"
     update = "5m"
   }
+
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_persistent_volume_claim.runners
+    ]
+  }
 }
 
 resource "kubernetes_manifest" "github_org_runners_set" {
@@ -135,6 +141,12 @@ resource "kubernetes_manifest" "github_org_runners_set" {
   }
 
   depends_on = [kubernetes_job.runners_cache_chown]
+
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_persistent_volume_claim.runners
+    ]
+  }
 }
 
 resource "kubernetes_manifest" "github_org_runners_autoscaler" {
@@ -167,6 +179,8 @@ resource "kubernetes_manifest" "github_org_runners_autoscaler" {
   }
 
   lifecycle {
-    replace_triggered_by = [kubernetes_persistent_volume_claim.runners]
+    replace_triggered_by = [
+      kubernetes_persistent_volume_claim.runners
+    ]
   }
 }

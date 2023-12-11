@@ -69,6 +69,12 @@ resource "kubernetes_job" "harbor_chown" {
     create = "5m"
     update = "5m"
   }
+
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_persistent_volume_claim.harbor,
+    ]
+  }
 }
 
 resource "helm_release" "harbor" {
