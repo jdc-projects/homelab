@@ -43,8 +43,4 @@ module "postgres_operator_ui_ingress" {
   service_name       = helm_release.postgres_operator_ui.name
   service_port       = 80
   url_subdomain      = "postgres"
-
-  depends_on = [
-    helm_release.postgres_operator_ui,
-  ]
 }
