@@ -18,11 +18,6 @@ terraform {
   }
 }
 
-provider "truenas" {
-  api_key  = var.truenas_api_key
-  base_url = "https://nas.${var.server_base_domain}/api/v2.0"
-}
-
 provider "kubernetes" {
   config_path = "../cluster.yml"
 }
