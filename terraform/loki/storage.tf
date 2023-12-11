@@ -1,13 +1,12 @@
 resource "kubernetes_persistent_volume_claim" "loki" {
   for_each = tomap({
     minio = tomap({
-      name    = "minio"
       storage = "50Gi"
     })
   })
 
   metadata {
-    name      = each.value.name
+    name      = each.key
     namespace = kubernetes_namespace.loki.metadata[0].name
   }
 

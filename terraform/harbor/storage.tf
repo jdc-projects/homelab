@@ -1,29 +1,24 @@
 resource "kubernetes_persistent_volume_claim" "harbor" {
   for_each = tomap({
     minio = tomap({
-      name    = "minio"
       storage = "5Gi"
     })
     jobservice = tomap({
-      name    = "jobservice"
       storage = "5Gi"
     })
     database = tomap({
-      name    = "database"
       storage = "5Gi"
     })
     redis = tomap({
-      name    = "redis"
       storage = "5Gi"
     })
     trivy = tomap({
-      name    = "trivy"
       storage = "5Gi"
     })
   })
 
   metadata {
-    name      = each.value.name
+    name      = each.key
     namespace = kubernetes_namespace.harbor.metadata[0].name
   }
 
