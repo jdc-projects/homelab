@@ -1,7 +1,7 @@
 resource "kubernetes_persistent_volume_claim" "runners" {
   for_each = tomap({
     tool-cache = tomap({
-      storage = "50Gi"
+      storage = "10Gi"
     })
   })
 
