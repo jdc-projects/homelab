@@ -1,16 +1,24 @@
-resource "kubernetes_persistent_volume_claim" "runners_cache" {
+resource "kubernetes_persistent_volume_claim" "runners" {
+  for_each = tomap({
+    tool-cache = tomap({
+      storage = "50Gi"
+    })
+    work = tomap({
+      storage = "10Gi"
+    })
+  })
+
   metadata {
-    name      = "runners-cache"
+    name      = each.key
     namespace = data.terraform_remote_state.github_org_runners_1.outputs.github_org_runners_namespace_name
   }
 
   spec {
-    access_modes       = ["ReadWriteMany"]
-    storage_class_name = "truenas-nfs-csi-no-backup"
+    access_modes = ["ReadWriteMany"]
 
     resources {
       requests = {
-        storage = "50Gi"
+        storage = each.value.storage
       }
     }
   }
