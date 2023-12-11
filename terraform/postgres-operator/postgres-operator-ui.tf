@@ -1,5 +1,5 @@
 locals {
-  postgres_operator_ui_domain = "postgres.${var.server_base_domain}"
+  postgres_operator_ui_subdomain = "postgres"
 }
 
 resource "helm_release" "postgres_operator_ui" {
@@ -14,7 +14,7 @@ resource "helm_release" "postgres_operator_ui" {
 
   set {
     name  = "envs.appUrl"
-    value = "https://${local.postgres_operator_ui_domain}"
+    value = "https://${local.postgres_operator_ui_subdomain}.${var.server_base_domain}"
   }
   set {
     name  = "envs.operatorApiUrl"
@@ -23,15 +23,6 @@ resource "helm_release" "postgres_operator_ui" {
   set {
     name  = "envs.targetNamespace"
     value = kubernetes_namespace.postgres_operator.metadata[0].name
-  }
-
-  set {
-    name  = "extraEnvs[0].name"
-    value = "READ_ONLY_MODE"
-  }
-  set {
-    name  = "extraEnvs[0].value"
-    value = "true"
   }
 }
 
@@ -42,5 +33,5 @@ module "postgres_operator_ui_ingress" {
   namespace          = kubernetes_namespace.postgres_operator.metadata[0].name
   service_name       = helm_release.postgres_operator_ui.name
   service_port       = 80
-  url_subdomain      = "postgres"
+  url_subdomain      = local.postgres_operator_ui_subdomain
 }
