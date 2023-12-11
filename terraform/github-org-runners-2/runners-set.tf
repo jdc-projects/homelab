@@ -1,6 +1,13 @@
 resource "kubernetes_job" "runners_cache_chown" {
+  for_each = tomap({
+    tool-cache = tomap({
+    })
+    work = tomap({
+    })
+  })
+
   metadata {
-    name      = "runners-cache-chown"
+    name      = "runners-cache-chown-${each.key}"
     namespace = data.terraform_remote_state.github_org_runners_1.outputs.github_org_runners_namespace_name
   }
 
@@ -11,7 +18,7 @@ resource "kubernetes_job" "runners_cache_chown" {
       spec {
         container {
           image = "alpine:3.18.4"
-          name  = "runners-cache-chown"
+          name  = "runners-cache-chown-${each.key}"
 
           command = ["sh", "-c", "chown -R 1001:121 /export"]
 
@@ -21,15 +28,15 @@ resource "kubernetes_job" "runners_cache_chown" {
 
           volume_mount {
             mount_path = "/export"
-            name       = "runners-cache"
+            name       = "${each.key}"
           }
         }
 
         volume {
-          name = "runners-cache"
+          name = "${each.key}"
 
           persistent_volume_claim {
-            claim_name = kubernetes_persistent_volume_claim.runners_cache.metadata[0].name
+            claim_name = kubernetes_persistent_volume_claim.runners[each.key].metadata[0].name
           }
         }
 
