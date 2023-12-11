@@ -111,11 +111,6 @@ resource "helm_release" "keycloak" {
     name  = "postgresql.volumePermissions.enabled"
     value = "true"
   }
-  # disable this if postgres needs to recover, otherwise it will just restart constantly
-  set {
-    name  = "postgresql.primary.livenessProbe.enabled"
-    value = "true"
-  }
 
   set {
     name  = "logging.level"

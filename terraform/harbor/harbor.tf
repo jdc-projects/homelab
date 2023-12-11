@@ -210,15 +210,6 @@ resource "helm_release" "harbor" {
     value = random_password.harbor_secret_key.result
   }
 
-  set {
-    name  = "database.internal.livenessProbe.timeoutSeconds"
-    value = "3600" # default 1 *****
-  }
-  set {
-    name  = "database.internal.readinessProbe.timeoutSeconds"
-    value = "3600" # default 1 *****
-  }
-
   depends_on = [
     helm_release.minio,
     kubernetes_job.harbor_chown
