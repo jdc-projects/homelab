@@ -173,4 +173,8 @@ resource "kubernetes_manifest" "github_org_runners_autoscaler" {
       }]
     }
   }
+
+  lifecycle {
+    replace_triggered_by = [kubernetes_persistent_volume_claim.runners]
+  }
 }
