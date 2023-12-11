@@ -84,7 +84,7 @@ resource "kubernetes_manifest" "github_org_runners_set" {
               volumeMounts = [{
                 mountPath = "/opt/hostedtoolcache"
                 name      = "tool-cache"
-              },{
+                }, {
                 mountPath = "/runner/_work"
                 name      = "work"
               }]
@@ -123,7 +123,7 @@ resource "kubernetes_manifest" "github_org_runners_set" {
             persistentVolumeClaim = {
               claimName = kubernetes_persistent_volume_claim.runners["tool-cache"].metadata[0].name
             }
-          },{
+            }, {
             name = "work"
             persistentVolumeClaim = {
               claimName = kubernetes_persistent_volume_claim.runners["work"].metadata[0].name
