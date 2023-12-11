@@ -24,7 +24,7 @@ resource "kubernetes_persistent_volume_claim" "ocis" {
   })
 
   metadata {
-    name      = each.name
+    name      = each.key
     namespace = kubernetes_namespace.ocis.metadata[0].name
   }
 
