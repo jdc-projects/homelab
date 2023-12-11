@@ -1,8 +1,8 @@
 resource "kubernetes_job" "runners_cache_chown" {
   for_each = tomap({
     tool-cache = tomap({
-      chown_uid  = "1001"
-      chown_gid  = "121"
+      chown_uid = "1001"
+      chown_gid = "121"
     })
   })
 
