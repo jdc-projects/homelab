@@ -65,10 +65,20 @@ jobs:
       terraform-dir: ./terraform/traefik
       runner-type: ${{ github.event.inputs.runner-type }}
 
-  deploy-velero:
+  deploy-stackgres:
     needs: [
       deploy-github-org-runner-2,
       deploy-traefik,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/stackgres
+
+  deploy-velero:
+    needs: [
+      deploy-stackgres,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -78,7 +88,7 @@ jobs:
 
   deploy-loki:
     needs: [
-      deploy-velero,
+      deploy-stackgres,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -88,7 +98,7 @@ jobs:
 
   deploy-openldap:
     needs: [
-      deploy-velero,
+      deploy-stackgres,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -98,7 +108,7 @@ jobs:
 
   deploy-keycloak:
     needs: [
-      deploy-velero,
+      deploy-stackgres,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -108,7 +118,7 @@ jobs:
 
   deploy-harbor:
     needs: [
-      deploy-velero,
+      deploy-stackgres,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -178,16 +188,6 @@ jobs:
     with:
       terraform-dir: ./terraform/services
 
-  deploy-postgres-operator:
-    needs: [
-      deploy-oauth2-proxy,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/postgres-operator
-
   deploy-harbor-config:
     needs: [
       deploy-harbor,
@@ -195,7 +195,6 @@ jobs:
       deploy-ocis,
       deploy-grafana,
       deploy-services,
-      deploy-postgres-operator,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit

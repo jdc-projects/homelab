@@ -1,6 +1,6 @@
 terraform {
   backend "kubernetes" {
-    secret_suffix = "postgres-operator"
+    secret_suffix = "stackgres"
     config_path   = "../cluster.yml"
     namespace     = "terraform-state"
   }
@@ -28,8 +28,8 @@ provider "kubernetes" {
   config_path = "../cluster.yml"
 }
 
-resource "kubernetes_namespace" "postgres_operator" {
+resource "kubernetes_namespace" "stackgres" {
   metadata {
-    name = "postgres-operator"
+    name = "stackgres"
   }
 }
