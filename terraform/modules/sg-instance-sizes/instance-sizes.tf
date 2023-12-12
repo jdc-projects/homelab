@@ -28,7 +28,7 @@ resource "kubernetes_manifest" "sg_instance_profile" {
 
     metadata = {
       name      = each.key
-      namespace = kubernetes_namespace.stackgres.metadata[0].name
+      namespace = var.namespace
     }
 
     spec = {
