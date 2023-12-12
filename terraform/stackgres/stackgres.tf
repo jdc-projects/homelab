@@ -50,9 +50,9 @@ resource "kubernetes_manifest" "ingress" {
       entryPoints = ["websecure"]
 
       routes = [{
-        kind  = "Rule"
+        kind     = "Rule"
         priority = "20"
-        match = "Host(`postgres.${var.server_base_domain}`)"
+        match    = "Host(`postgres.${var.server_base_domain}`)"
         services = [{
           name      = "${helm_release.stackgres.name}-restapi"
           namespace = kubernetes_namespace.stackgres.metadata[0].name
