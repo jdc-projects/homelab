@@ -1,24 +1,54 @@
 resource "kubernetes_manifest" "sg_instance_profile" {
   for_each = {
     xs = {
-      cpu    = "200m"
-      memory = "500Mi"
+      requests = {
+        cpu    = "100m"
+        memory = "256Mi"
+      }
+      limits = {
+        cpu    = "200m"
+        memory = "512Mi"
+      }
     }
     s = {
-      cpu    = "500m"
-      memory = "1Gi"
+      requests = {
+        cpu    = "250m"
+        memory = "500Mi"
+      }
+      limits = {
+        cpu    = "500m"
+        memory = "1Gi"
+      }
     }
     m = {
-      cpu    = "1"
-      memory = "2Gi"
+      requests = {
+        cpu    = "500m"
+        memory = "1Gi"
+      }
+      limits = {
+        cpu    = "1"
+        memory = "2Gi"
+      }
     }
     l = {
-      cpu    = "2"
-      memory = "4Gi"
+      requests = {
+        cpu    = "1"
+        memory = "2Gi"
+      }
+      limits = {
+        cpu    = "2"
+        memory = "4Gi"
+      }
     }
     xl = {
-      cpu    = "4"
-      memory = "8Gi"
+      requests = {
+        cpu    = "2"
+        memory = "4Gi"
+      }
+      limits = {
+        cpu    = "4"
+        memory = "8Gi"
+      }
     }
   }
 
@@ -32,8 +62,18 @@ resource "kubernetes_manifest" "sg_instance_profile" {
     }
 
     spec = {
-      cpu    = each.value.cpu
-      memory = each.value.memory
+      cpu    = each.value.limits.cpu
+      memory = each.value.limits.memory
+
+      requests = {
+        cpu    = each.value.requests.cpu
+        memory = each.value.requests.memory
+      }
     }
   }
+
+  computed_fields = [
+    "spec.containers",
+    "spec.requests.initContainers",
+  ]
 }
