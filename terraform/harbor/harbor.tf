@@ -209,7 +209,7 @@ resource "helm_release" "harbor" {
   }
   set {
     name  = "database.external.host"
-    value = "${kubernetes_manifest.keycloak_db.manifest.metadata.name}-rw"
+    value = "${kubernetes_manifest.harbor_db.manifest.metadata.name}-rw"
   }
   set {
     name  = "database.external.port"
@@ -217,7 +217,7 @@ resource "helm_release" "harbor" {
   }
   set {
     name  = "database.external.coreDatabase"
-    value = kubernetes_manifest.keycloak_db.manifest.spec.bootstrap.initdb.database
+    value = kubernetes_manifest.harbor_db.manifest.spec.bootstrap.initdb.database
   }
   set {
     name  = "database.external.existingSecret"
