@@ -12,7 +12,7 @@ resource "kubernetes_manifest" "keycloak_db" {
       # https://github.com/cloudnative-pg/postgres-containers/pkgs/container/postgresql
       imageName = "ghcr.io/cloudnative-pg/postgresql:16.1-7"
 
-      instances = local.keycloak_db_replicas
+      instances = local.keycloak_db_instances
 
       bootstrap = {
         initdb = {
@@ -50,7 +50,7 @@ resource "kubernetes_manifest" "keycloak_db" {
   wait {
     fields = {
       "status.phase"          = "Cluster in healthy state"
-      "status.readyInstances" = local.keycloak_db_replicas
+      "status.readyInstances" = local.keycloak_db_instances
     }
   }
 
