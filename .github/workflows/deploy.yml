@@ -65,7 +65,7 @@ jobs:
       terraform-dir: ./terraform/traefik
       runner-type: ${{ github.event.inputs.runner-type }}
 
-  deploy-stackgres:
+  deploy-cloudnative-pg:
     needs: [
       deploy-github-org-runner-2,
       deploy-traefik,
@@ -74,11 +74,11 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/stackgres
+      terraform-dir: ./terraform/cloudnative-pg
 
   deploy-velero:
     needs: [
-      deploy-stackgres,
+      deploy-cloudnative-pg,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -88,7 +88,7 @@ jobs:
 
   deploy-loki:
     needs: [
-      deploy-stackgres,
+      deploy-cloudnative-pg,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -98,7 +98,7 @@ jobs:
 
   deploy-openldap:
     needs: [
-      deploy-stackgres,
+      deploy-cloudnative-pg,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -108,7 +108,7 @@ jobs:
 
   deploy-keycloak:
     needs: [
-      deploy-stackgres,
+      deploy-cloudnative-pg,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -118,7 +118,7 @@ jobs:
 
   deploy-harbor:
     needs: [
-      deploy-stackgres,
+      deploy-cloudnative-pg,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
