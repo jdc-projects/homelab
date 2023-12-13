@@ -6,9 +6,6 @@ resource "kubernetes_persistent_volume_claim" "harbor" {
     jobservice = tomap({
       storage = "5Gi"
     })
-    # database = tomap({
-    #   storage = "5Gi"
-    # })
     redis = tomap({
       storage = "5Gi"
     })

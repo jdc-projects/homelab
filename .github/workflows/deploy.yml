@@ -116,15 +116,15 @@ jobs:
     with:
       terraform-dir: ./terraform/keycloak
 
-  # deploy-harbor:
-  #   needs: [
-  #     deploy-cloudnative-pg,
-  #   ]
-  #   uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-  #   secrets: inherit
+  deploy-harbor:
+    needs: [
+      deploy-cloudnative-pg,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
 
-  #   with:
-  #     terraform-dir: ./terraform/harbor
+    with:
+      terraform-dir: ./terraform/harbor
 
   deploy-keycloak-config:
     needs: [
@@ -190,7 +190,7 @@ jobs:
 
   deploy-harbor-config:
     needs: [
-      # deploy-harbor,
+      deploy-harbor,
       # deploy-vaultwarden,
       deploy-ocis,
       deploy-grafana,
