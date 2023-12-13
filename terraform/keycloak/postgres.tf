@@ -1,13 +1,7 @@
-module "sg_instance_sizes" {
-  source = "../modules/sg-instance-sizes"
-
-  namespace = kubernetes_namespace.keycloak.metadata[0].name
-}
-
-resource "kubernetes_manifest" "sg_distributed_logs" {
+resource "kubernetes_manifest" "keycloak_db" {
   manifest = {
-    apiVersion = "stackgres.io/v1"
-    kind       = "SGDistributedLogs"
+    apiVersion = "postgresql.cnpg.io/v1"
+    kind       = "Cluster"
 
     metadata = {
       name      = "keycloak-db"
@@ -15,80 +9,52 @@ resource "kubernetes_manifest" "sg_distributed_logs" {
     }
 
     spec = {
-      persistentVolume = {
-        size = "10Gi"
-      }
+      # https://github.com/cloudnative-pg/postgres-containers/pkgs/container/postgresql
+      imageName = "ghcr.io/cloudnative-pg/postgresql:16.1-7"
 
-      resources = {
-        disableResourcesRequestsSplitFromTotal = "true"
-      }
-    }
-  }
-}
+      instances = local.keycloak_db_replicas
 
-resource "kubernetes_manifest" "sg_cluster" {
-  manifest = {
-    apiVersion = "stackgres.io/v1"
-    kind       = "SGCluster"
-
-    metadata = {
-      name      = "keycloak-db"
-      namespace = kubernetes_namespace.keycloak.metadata[0].name
-    }
-
-    spec = {
-      postgres = {
-        version = "16"
-      }
-
-      instances = 1
-
-      sgInstanceProfile = "xs"
-
-      pods = {
-        resources = {
-          disableResourcesRequestsSplitFromTotal = true
-          enableClusterLimitsRequirements        = false
-        }
-
-        persistentVolume = {
-          size = "10Gi"
-        }
-      }
-
-      distributedLogs = {
-        sgDistributedLogs = kubernetes_manifest.sg_distributed_logs.manifest.metadata.name
-      }
-
-      configurations = {
-        credentials = {
-          users = {
-            superuser = {
-              username = {
-                name = kubernetes_secret.db_credentials.metadata[0].name
-                key  = "username"
-              }
-              password = {
-                name = kubernetes_secret.db_credentials.metadata[0].name
-                key  = "password"
-              }
-            }
+      bootstrap = {
+        initdb = {
+          database = "keycloak"
+          owner    = random_password.keycloak_db_username.result
+          secret = {
+            name = kubernetes_secret.db_credentials.metadata[0].name
           }
         }
       }
 
-      prometheusAutobind = "false"
+      storage = {
+        size = "5Gi"
+      }
 
-      # nonproductionoptions = {
-      #   disableClusterPodAntiAffinity = true
-      # }
+      resources = {
+        requests = {
+          cpu    = "500m"
+          memory = "1Gi"
+        }
+
+        limits = {
+          cpu    = "1"
+          memory = "2Gi"
+        }
+      }
+
+      primaryUpdateStrategy = "unsupervised"
+      primaryUpdateMethod   = "switchover"
+
+      logLevel = "info"
     }
   }
 
-  computed_fields = [
-    "spec.postgres.version",
-    "spec.initContainers",
-  ]
+  wait {
+    fields = {
+      "status.phase"          = "Cluster in healthy state"
+      "status.readyInstances" = local.keycloak_db_replicas
+    }
+  }
 
-  depends_on = [module.sg_instance_sizes]
+  lifecycle {
+    prevent_destroy = true
+  }
 }
