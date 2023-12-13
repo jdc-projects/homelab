@@ -6,9 +6,9 @@ resource "kubernetes_persistent_volume_claim" "harbor" {
     jobservice = tomap({
       storage = "5Gi"
     })
-    database = tomap({
-      storage = "5Gi"
-    })
+    # database = tomap({
+    #   storage = "5Gi"
+    # })
     redis = tomap({
       storage = "5Gi"
     })
@@ -25,7 +25,6 @@ resource "kubernetes_persistent_volume_claim" "harbor" {
   spec {
     access_modes = ["ReadWriteMany"]
 
-
     resources {
       requests = {
         storage = each.value.storage
@@ -34,7 +33,7 @@ resource "kubernetes_persistent_volume_claim" "harbor" {
   }
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
 
     ignore_changes = [spec[0].selector]
   }
