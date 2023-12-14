@@ -73,3 +73,4 @@ This system requires that some setup is completed on the first:
 * [Appflowy](https://www.appflowy.io/)
 * Create and deploy solution to update Truenas dataset stuff after Velero restore (see [here](https://github.com/democratic-csi/democratic-csi/issues/352))
 * [Firezone](https://oopflow.medium.com/how-to-deploy-firezone-on-kubernetes-3373c4ac1a86) Wireguard VPN
+* [Kubernetes Dashbaord](https://github.com/kubernetes/dashboard/tree/master/charts/helm-chart/kubernetes-dashboard) in a [read-only](https://discuss.kubernetes.io/t/readonly-kubernetes-dashboard/5451/2) mode
