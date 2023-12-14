@@ -23,6 +23,7 @@ It would be nice to fully automate the provisioning of the K3s machine, but for 
 3. Create 'terraform.tfvars' in this directory, and populate with the required values
 4. Run the Terraform in this directory
 5. Get the kubeconfig values (at /etc/rancher/k3s/k3s.yaml)
+6. Restart the server before deploying anything
 
 ## Truenas notes
 
