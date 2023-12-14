@@ -1,6 +1,17 @@
+resource "null_resource" "ocis_helm_repo_clone" {
+  triggers = {
+    always_run = timestamp()
+    version    = "v0.5.0"
+  }
+
+  provisioner "local-exec" {
+    command = "git clone --depth 1 -b ${self.triggers.version} https://github.com/owncloud/ocis-charts.git"
+  }
+}
+
 resource "helm_release" "ocis" {
   name  = "ocis"
-  chart = "https://github.com/owncloud/ocis-charts/tree/v0.5.0/charts/ocis"
+  chart = "./ocis-charts/charts/ocis"
 
   namespace = kubernetes_namespace.ocis.metadata[0].name
 
@@ -301,4 +312,22 @@ resource "helm_release" "ocis" {
     name  = "services.web.persistence.existingClaim"
     value = kubernetes_persistent_volume_claim.ocis["web"].metadata[0].name
   }
+
+  depends_on = [null_resource.ocis_helm_repo_clone]
+
+  lifecycle {
+    replace_triggered_by = [null_resource.ocis_helm_repo_clone]
+  }
+}
+
+resource "null_resource" "ocis_helm_cleanup" {
+  triggers = {
+    always_run = timestamp()
+  }
+
+  provisioner "local-exec" {
+    command = "rm -rf ./ocis-charts"
+  }
+
+  depends_on = [helm_release.ocis]
 }
