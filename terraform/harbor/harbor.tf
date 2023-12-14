@@ -215,6 +215,10 @@ resource "helm_release" "harbor" {
     name  = "database.external.port"
     value = "5432"
   }
+  set_sensitive {
+    name  = "database.external.username"
+    value = random_password.harbor_db_username.result
+  }
   set {
     name  = "database.external.coreDatabase"
     value = kubernetes_manifest.harbor_db.manifest.spec.bootstrap.initdb.database
