@@ -234,29 +234,26 @@ resource "helm_release" "velero" {
     name  = "schedules.${local.nightly_backup_name}.template.itemOperationTimeout"
     value = "23h"
   }
-  set {
-    name  = "schedules.${local.nightly_backup_name}.template.includedNamespaces[0]"
-    value = "*"
+  set_list {
+    name  = "schedules.${local.nightly_backup_name}.template.includedNamespaces"
+    value = [
+      "*",
+    ]
   }
-  set {
-    name  = "schedules.${local.nightly_backup_name}.template.excludedNamespaces[0]"
-    value = "default"
+  set_list {
+    name  = "schedules.${local.nightly_backup_name}.template.excludedNamespaces"
+    value = [
+      "default",
+      "kube-system",
+      "kube-public",
+      "kube-node-lease",
+    ]
   }
-  set {
-    name  = "schedules.${local.nightly_backup_name}.template.excludedNamespaces[1]"
-    value = "kube-system"
-  }
-  set {
-    name  = "schedules.${local.nightly_backup_name}.template.excludedNamespaces[2]"
-    value = "kube-public"
-  }
-  set {
-    name  = "schedules.${local.nightly_backup_name}.template.excludedNamespaces[3]"
-    value = "kube-node-lease"
-  }
-  set {
-    name  = "schedules.${local.nightly_backup_name}.template.includeClusterResources"
-    value = "true"
+  set_list {
+    name  = "schedules.${local.nightly_backup_name}.template.excludedResources"
+    value = [
+      "pods",
+    ]
   }
   set {
     name  = "schedules.${local.nightly_backup_name}.template.snapshotVolumes"
