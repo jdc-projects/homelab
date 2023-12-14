@@ -5,7 +5,7 @@ resource "ssh_resource" "fs_inotify_update" {
 
   commands = [
     "sudo echo -e \"fs.inotify.max_queued_events = 65536\" | sudo tee -a /etc/sysctl.conf",
-    "sudo echo -e \"fs.inotify.max_user_instances=512\" | sudo tee -a /etc/sysctl.conf",
+    "sudo echo -e \"fs.inotify.max_user_instances = 512\" | sudo tee -a /etc/sysctl.conf",
     "sudo echo -e \"fs.inotify.max_user_watches = 996788\" | sudo tee -a /etc/sysctl.conf",
   ]
 }
