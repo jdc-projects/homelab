@@ -27,10 +27,14 @@ It would be nice to fully automate the provisioning of the K3s machine, but for 
 
 ## Truenas notes
 
+# fs.inotify settings
+
+Match those in fs.inotify.tf.
+
 ### NFS setup
 
 * Set up the datasets as required in democratic-csi
-* Set the NFS workers high - max is 256. If it's set too low everything will eventually crash due to the number of pods.
+* Set the NFS workers high - max is 256. If it's set too low everything will eventually crash due to the number of pods. Can match the value in apt-packages.tf
 
 ### democratic-csi minimum size hack script
 
