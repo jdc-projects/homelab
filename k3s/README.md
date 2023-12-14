@@ -24,7 +24,14 @@ It would be nice to fully automate the provisioning of the K3s machine, but for 
 4. Run the Terraform in this directory
 5. Get the kubeconfig values (at /etc/rancher/k3s/k3s.yaml)
 
-## Truenas / democratic-csi minimum size hack script
+## Truenas notes
+
+### NFS setup
+
+* Set up the datasets as required in democratic-csi
+* Set the NFS workers high - max is 256. If it's set too low everything will eventually crash due to the number of pods.
+
+### democratic-csi minimum size hack script
 
 ```sh
 cd /mnt/vault/exclude/k3s/live && for d in ./*/ ; do ( cd "$d" && truncate -s 2G DO_NOT_REMOVE_MIN_SIZE_HACK ); done || true
