@@ -6,6 +6,6 @@ resource "ssh_resource" "apt_packages" {
   commands = [
     "sudo apt update",
     "sudo apt install -y qemu-guest-agent nfs-common at htop net-tools vim",
-    "nfsconf --set nfsd threads 128",
+    "nfsconf --set nfsd threads 32",
   ]
 }
