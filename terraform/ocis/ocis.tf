@@ -319,15 +319,3 @@ resource "helm_release" "ocis" {
     replace_triggered_by = [null_resource.ocis_helm_repo_clone]
   }
 }
-
-resource "null_resource" "ocis_helm_cleanup" {
-  triggers = {
-    always_run = timestamp()
-  }
-
-  provisioner "local-exec" {
-    command = "rm -rf ./ocis-charts"
-  }
-
-  depends_on = [helm_release.ocis]
-}
