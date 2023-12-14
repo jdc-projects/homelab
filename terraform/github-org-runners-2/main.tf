@@ -3,10 +3,6 @@ terraform {
     secret_suffix = "github-org-runners-2"
     config_path   = "../cluster.yml"
     namespace     = "terraform-state"
-
-    labels = {
-      "velero.io/exclude-from-backup" = "true"
-    }
   }
 
   required_providers {
