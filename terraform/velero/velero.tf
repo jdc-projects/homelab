@@ -235,13 +235,13 @@ resource "helm_release" "velero" {
     value = "23h"
   }
   set_list {
-    name  = "schedules.${local.nightly_backup_name}.template.includedNamespaces"
+    name = "schedules.${local.nightly_backup_name}.template.includedNamespaces"
     value = [
       "*",
     ]
   }
   set_list {
-    name  = "schedules.${local.nightly_backup_name}.template.excludedNamespaces"
+    name = "schedules.${local.nightly_backup_name}.template.excludedNamespaces"
     value = [
       "default",
       "kube-system",
@@ -250,7 +250,7 @@ resource "helm_release" "velero" {
     ]
   }
   set_list {
-    name  = "schedules.${local.nightly_backup_name}.template.excludedResources"
+    name = "schedules.${local.nightly_backup_name}.template.excludedResources"
     value = [
       "pods",
     ]
