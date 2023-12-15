@@ -28,6 +28,10 @@ resource "kubernetes_manifest" "velero_restore" {
       # existingResourcePolicy specifies the restore behaviour
       # for the Kubernetes resource to be restored. Optional
       existingResourcePolicy = "update"
+
+      excludedResources = [
+        "pods",
+      ]
     }
   }
 

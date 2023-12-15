@@ -249,12 +249,6 @@ resource "helm_release" "velero" {
       "kube-node-lease",
     ]
   }
-  set_list {
-    name = "schedules.${local.nightly_backup_name}.template.excludedResources"
-    value = [
-      "pods",
-    ]
-  }
   set {
     name  = "schedules.${local.nightly_backup_name}.template.snapshotVolumes"
     value = "true"
