@@ -64,10 +64,11 @@ This system requires that some setup is completed on the first:
 
 * [Trivy](https://github.com/aquasecurity/Trivy) for vulnerability scanning
 * Migrate to [ARC scale sets](https://github.com/actions/actions-runner-controller/discussions/2775)
-* Add metrics into Grafana with Mimir
 * Add a proper, secure secrets manager
 * Setup Dependabot
 * [Appflowy](https://www.appflowy.io/)
 * Create and deploy solution to update Truenas dataset stuff after Velero restore (see [here](https://github.com/democratic-csi/democratic-csi/issues/352))
 * [Firezone](https://oopflow.medium.com/how-to-deploy-firezone-on-kubernetes-3373c4ac1a86) Wireguard VPN
 * [Kubernetes Dashbaord](https://github.com/kubernetes/dashboard/tree/master/charts/helm-chart/kubernetes-dashboard) in a [read-only](https://discuss.kubernetes.io/t/readonly-kubernetes-dashboard/5451/2) mode
+* [Minio operator](https://github.com/minio/operator) (and use in appplications in place of the existing Helm deployments)
+* [Prometheus operator](https://github.com/prometheus-operator/prometheus-operator)
