@@ -14,6 +14,12 @@ resource "kubernetes_manifest" "keycloak_db" {
 
       instances = local.keycloak_db_instances
 
+      postgresql = {
+        parameters = {
+          shared_buffers = "256MB"
+        }
+      }
+
       bootstrap = {
         initdb = {
           database = "keycloak"
@@ -35,8 +41,8 @@ resource "kubernetes_manifest" "keycloak_db" {
         }
 
         limits = {
-          cpu    = "1"
-          memory = "2Gi"
+          cpu    = "500m"
+          memory = "1Gi"
         }
       }
 

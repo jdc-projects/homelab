@@ -18,6 +18,12 @@ resource "kubernetes_manifest" "harbor_db" {
 
       instances = local.harbor_db_instances
 
+      postgresql = {
+        parameters = {
+          shared_buffers = "256MB"
+        }
+      }
+
       bootstrap = {
         initdb = {
           database = "harbor"
@@ -39,8 +45,8 @@ resource "kubernetes_manifest" "harbor_db" {
         }
 
         limits = {
-          cpu    = "1"
-          memory = "2Gi"
+          cpu    = "500m"
+          memory = "1Gi"
         }
       }
 
