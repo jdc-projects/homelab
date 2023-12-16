@@ -6,6 +6,10 @@ resource "kubernetes_manifest" "keycloak_db" {
     metadata = {
       name      = "keycloak-db"
       namespace = kubernetes_namespace.keycloak.metadata[0].name
+
+      annotations = {
+        "cnpg.io/hibernation" = var.is_db_hibernate ? "on" : "off"
+      }
     }
 
     spec = {
@@ -53,10 +57,18 @@ resource "kubernetes_manifest" "keycloak_db" {
     }
   }
 
+  computed_fields = [
+    "spec.postgresql.parameters",
+  ]
+
   wait {
-    fields = {
-      "status.phase"          = "Cluster in healthy state"
-      "status.readyInstances" = local.keycloak_db_instances
+    fields = var.is_db_hibernate ? {
+      "status.phase"                                           = "Cluster in healthy state"
+      "status.danglingPVC[${local.keycloak_db_instances - 1}]" = "*"
+      } : {
+      "status.phase"                                          = "Cluster in healthy state"
+      "status.readyInstances"                                 = local.keycloak_db_instances
+      "status.healthyPVC[${local.keycloak_db_instances - 1}]" = "*"
     }
   }
 

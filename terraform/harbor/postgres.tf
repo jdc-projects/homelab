@@ -10,6 +10,10 @@ resource "kubernetes_manifest" "harbor_db" {
     metadata = {
       name      = "harbor-db"
       namespace = kubernetes_namespace.harbor.metadata[0].name
+
+      annotations = {
+        "cnpg.io/hibernation" = var.is_db_hibernate ? "on" : "off"
+      }
     }
 
     spec = {
@@ -57,10 +61,18 @@ resource "kubernetes_manifest" "harbor_db" {
     }
   }
 
+  computed_fields = [
+    "spec.postgresql.parameters",
+  ]
+
   wait {
-    fields = {
-      "status.phase"          = "Cluster in healthy state"
-      "status.readyInstances" = local.harbor_db_instances
+    fields = var.is_db_hibernate ? {
+      "status.phase"                                         = "Cluster in healthy state"
+      "status.danglingPVC[${local.harbor_db_instances - 1}]" = "*"
+      } : {
+      "status.phase"                                        = "Cluster in healthy state"
+      "status.readyInstances"                               = local.harbor_db_instances
+      "status.healthyPVC[${local.harbor_db_instances - 1}]" = "*"
     }
   }
 
