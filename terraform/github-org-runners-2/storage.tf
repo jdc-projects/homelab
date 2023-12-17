@@ -12,6 +12,7 @@ resource "kubernetes_persistent_volume_claim" "runners" {
 
   spec {
     access_modes = ["ReadWriteMany"]
+    storage_class_name = "truenas-nfs-csi-no-backup"
 
     resources {
       requests = {
