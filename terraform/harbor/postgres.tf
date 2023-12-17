@@ -11,6 +11,10 @@ resource "kubernetes_manifest" "harbor_db" {
       name      = "harbor-db"
       namespace = kubernetes_namespace.harbor.metadata[0].name
 
+      labels = {
+        "velero.io/exclude-from-backup" = "true"
+      }
+
       annotations = {
         "cnpg.io/hibernation" = var.is_db_hibernate ? "on" : "off"
       }
