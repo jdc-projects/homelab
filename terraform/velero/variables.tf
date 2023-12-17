@@ -1,4 +1,4 @@
-variable "restore_mode" {
+variable "is_restore_mode" {
   type        = bool
   default     = false
   description = "Set to true if restoring in DR, otherwise false."

@@ -10,6 +10,10 @@ on:
         options:
           - self-hosted
           - ubuntu-latest
+  workflow_run:
+    workflows: [Disaster Recovery]
+    types:
+      - completed
 
 jobs:
   deploy-terraform-state-namespace:
