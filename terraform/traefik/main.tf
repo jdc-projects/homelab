@@ -37,7 +37,7 @@ resource "kubernetes_namespace" "traefik" {
     name = "traefik"
 
     labels = {
-      "velero.io/exclude-from-backup"      = "true"
+      "velero.io/exclude-from-backup" = "true"
     }
   }
 }

@@ -5,7 +5,7 @@ resource "kubernetes_persistent_volume_claim" "traefik" {
   }
 
   spec {
-    access_modes = ["ReadWriteMany"]
+    access_modes       = ["ReadWriteMany"]
     storage_class_name = "truenas-nfs-csi-no-backup"
 
     resources {

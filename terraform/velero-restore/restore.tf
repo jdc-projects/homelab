@@ -9,11 +9,11 @@ resource "kubernetes_manifest" "velero_restore" {
     }
 
     spec = {
-      backupName = ""
-      scheduleName = data.terraform_remote_state.velero.outputs.nightly_backup_name
-      itemOperationTimeout = "23h"
+      backupName              = ""
+      scheduleName            = data.terraform_remote_state.velero.outputs.nightly_backup_name
+      itemOperationTimeout    = "23h"
       includeClusterResources = true
-      existingResourcePolicy = "update"
+      existingResourcePolicy  = "update"
     }
   }
 

@@ -30,19 +30,19 @@ resource "kubernetes_config_map" "velero_resource_policy" {
 resource "kubernetes_manifest" "velero_nightly_schedule" {
   manifest = {
     apiVersion = "velero.io/v1"
-    kind = "Schedule"
+    kind       = "Schedule"
 
     metadata = {
-      name = data.terraform_remote_state.velero.outputs.nightly_backup_name
+      name      = data.terraform_remote_state.velero.outputs.nightly_backup_name
       namespace = data.terraform_remote_state.velero.outputs.velero_namespace_name
     }
 
     spec = {
-      paused = "true"
+      paused   = "true"
       schedule = "0 2 * * *"
 
       template = {
-        csiSnapshotTimeout = "23h"
+        csiSnapshotTimeout   = "23h"
         itemOperationTimeout = "23h"
 
         resourcePolicy = {
