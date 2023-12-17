@@ -66,5 +66,3 @@ This system requires that some setup is completed on the first:
 * [Kubernetes Dashbaord](https://github.com/kubernetes/dashboard/tree/master/charts/helm-chart/kubernetes-dashboard) in a [read-only](https://discuss.kubernetes.io/t/readonly-kubernetes-dashboard/5451/2) mode
 * [Minio operator](https://github.com/minio/operator) (and use in appplications in place of the existing Helm deployments)
 * [Prometheus operator](https://github.com/prometheus-operator/prometheus-operator)
-* [Kubevirt](https://kubevirt.io/)
-* [Kubescape](https://github.com/kubescape/kubescape)
