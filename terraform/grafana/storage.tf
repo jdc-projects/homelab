@@ -15,7 +15,7 @@ resource "kubernetes_persistent_volume_claim" "grafana" {
   }
 
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = true
 
     ignore_changes = [spec[0].selector]
   }
