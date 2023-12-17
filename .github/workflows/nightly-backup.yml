@@ -43,7 +43,7 @@ jobs:
           VELERO_VERSION: 1.12.2
         run: |
           mkdir velero
-          curl https://github.com/vmware-tanzu/velero/releases/download/$VELERO_VERSION/velero-$VELERO_VERSION-linux-amd64.tar.gz -Lo velero.tar.gz
+          curl https://github.com/vmware-tanzu/velero/releases/download/${{ env.VELERO_VERSION }}/velero-${{ env.VELERO_VERSION }}-linux-amd64.tar.gz -Lo velero.tar.gz
           tar -xvf velero.tar.gz -C ./velero --strip-components=1
           cp ./velero/velero /usr/local/bin/velero
       - name: "Generate and install kubeconfig"
@@ -56,3 +56,20 @@ jobs:
         run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
       - name: "Start backup"
         run: velero create backup --from-schedule nightly
+      - name: "Wait some time for snapshots"
+        run: sleep 300
+
+  restart-databases:
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    strategy:
+      matrix:
+        # it would be nice to dynamically find these
+        database: [
+          harbor,
+          keycloak,
+        ]
+
+    with:
+      terraform-dir: ./terraform/${{ matrix.database }}
