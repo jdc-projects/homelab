@@ -7,6 +7,10 @@ resource "kubernetes_manifest" "keycloak_db" {
       name      = "keycloak-db"
       namespace = kubernetes_namespace.keycloak.metadata[0].name
 
+      labels = {
+        "velero.io/exclude-from-backup" = "true"
+      }
+
       annotations = {
         "cnpg.io/hibernation" = var.is_db_hibernate ? "on" : "off"
       }
@@ -58,6 +62,8 @@ resource "kubernetes_manifest" "keycloak_db" {
   }
 
   computed_fields = [
+    "metadata.labels",
+    "metadata.annotations",
     "spec.postgresql.parameters",
   ]
 

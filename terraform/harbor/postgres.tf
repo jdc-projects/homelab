@@ -62,6 +62,8 @@ resource "kubernetes_manifest" "harbor_db" {
   }
 
   computed_fields = [
+    "metadata.labels",
+    "metadata.annotations",
     "spec.postgresql.parameters",
   ]
 
