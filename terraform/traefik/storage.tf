@@ -6,6 +6,7 @@ resource "kubernetes_persistent_volume_claim" "traefik" {
 
   spec {
     access_modes = ["ReadWriteMany"]
+    storage_class_name = "truenas-nfs-csi-no-backup"
 
     resources {
       requests = {
@@ -15,7 +16,7 @@ resource "kubernetes_persistent_volume_claim" "traefik" {
   }
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
 
     ignore_changes = [spec[0].selector]
   }

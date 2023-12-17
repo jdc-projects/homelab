@@ -3,6 +3,10 @@ terraform {
     secret_suffix = "traefik"
     config_path   = "../cluster.yml"
     namespace     = "terraform-state"
+
+    labels = {
+      "velero.io/exclude-from-backup" = "true"
+    }
   }
 
   required_providers {
@@ -31,5 +35,9 @@ provider "kubernetes" {
 resource "kubernetes_namespace" "traefik" {
   metadata {
     name = "traefik"
+
+    labels = {
+      "velero.io/exclude-from-backup"      = "true"
+    }
   }
 }

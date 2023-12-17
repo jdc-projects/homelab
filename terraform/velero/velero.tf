@@ -4,10 +4,6 @@ resource "null_resource" "velero_version" {
   }
 }
 
-locals {
-  nightly_backup_name = "nightly"
-}
-
 resource "kubernetes_secret" "velero_s3_secret" {
   metadata {
     name      = "velero-s3-secret"
@@ -138,6 +134,10 @@ resource "helm_release" "velero" {
     value = "backblaze"
   }
   set {
+    name  = "configuration.defaultBackupTTL"
+    value = "720h"
+  }
+  set {
     name  = "configuration.logLevel"
     value = "info"
   }
@@ -204,70 +204,6 @@ resource "helm_release" "velero" {
   set {
     name  = "nodeAgent.resources.limits.memory"
     value = "4Gi"
-  }
-
-  set {
-    name  = "schedules.${local.nightly_backup_name}.disabled"
-    value = var.restore_mode ? "true" : "false"
-  }
-  set {
-    name  = "schedules.${local.nightly_backup_name}.schedule"
-    value = "0 2 * * *"
-  }
-  set {
-    name  = "schedules.${local.nightly_backup_name}.useOwnerReferencesInBackup"
-    value = "false"
-  }
-  set {
-    name  = "schedules.${local.nightly_backup_name}.template.csiSnapshotTimeout"
-    value = "23h"
-  }
-  set {
-    name  = "schedules.${local.nightly_backup_name}.template.resourcePolicy.kind"
-    value = "configmap"
-  }
-  set {
-    name  = "schedules.${local.nightly_backup_name}.template.resourcePolicy.name"
-    value = kubernetes_config_map.resource_policy.metadata[0].name
-  }
-  set {
-    name  = "schedules.${local.nightly_backup_name}.template.itemOperationTimeout"
-    value = "23h"
-  }
-  set_list {
-    name = "schedules.${local.nightly_backup_name}.template.includedNamespaces"
-    value = [
-      "*",
-    ]
-  }
-  set_list {
-    name = "schedules.${local.nightly_backup_name}.template.excludedNamespaces"
-    value = [
-      "default",
-      "kube-system",
-      "kube-public",
-      "kube-node-lease",
-    ]
-  }
-  set {
-    name  = "schedules.${local.nightly_backup_name}.template.snapshotVolumes"
-    value = "true"
-  }
-  set {
-    name  = "schedules.${local.nightly_backup_name}.template.storageLocation"
-    value = "backblaze"
-  }
-  set {
-    name  = "schedules.${local.nightly_backup_name}.template.snapshotMoveData"
-    value = "true"
-  }
-  set {
-    name  = "schedules.${local.nightly_backup_name}.template.ttl"
-    value = "720h"
-  }
-  set {
-    name  = "schedules.${local.nightly_backup_name}.template.defaultVolumesToFsBackup"
-    value = "false"
   }
 
   lifecycle {
