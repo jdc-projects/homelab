@@ -35,6 +35,17 @@ jobs:
       terraform-dir: ./terraform/democratic-csi
       runner-type: ${{ github.event.inputs.runner-type }}
 
+  deploy-prometheus-operator:
+    needs: [
+      deploy-terraform-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/prometheus-operator
+      runner-type: ${{ github.event.inputs.runner-type }}
+
   deploy-github-org-runner-1:
     needs: [
       deploy-terraform-state-namespace,
@@ -61,6 +72,7 @@ jobs:
   deploy-traefik:
     needs: [
       deploy-democratic-csi,
+      deploy-prometheus-operator,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
