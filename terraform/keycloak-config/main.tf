@@ -33,6 +33,16 @@ data "terraform_remote_state" "openldap" {
   }
 }
 
+data "terraform_remote_state" "prometheus_operator" {
+  backend = "prometheus-operator"
+
+  config = {
+    secret_suffix = "prometheus-operator"
+    config_path   = "../cluster.yml"
+    namespace     = "terraform-state"
+  }
+}
+
 provider "keycloak" {
   client_id = "admin-cli"
   username  = data.terraform_remote_state.keycloak.outputs.keycloak_admin_username
