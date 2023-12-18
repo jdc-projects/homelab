@@ -118,15 +118,15 @@ resource "helm_release" "grafana" {
   }
   set {
     name  = "grafana\\.ini.auth\\.generic_oauth.auth_url"
-    value = "https://idp.${var.server_base_domain}/realms/${data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id}/protocol/openid-connect/auth"
+    value = data.terraform_remote_state.keycloak_config.outputs.keycloak_auth_url
   }
   set {
     name  = "grafana\\.ini.auth\\.generic_oauth.token_url"
-    value = "https://idp.${var.server_base_domain}/realms/${data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id}/protocol/openid-connect/token"
+    value = data.terraform_remote_state.keycloak_config.outputs.keycloak_token_url
   }
   set {
     name  = "grafana\\.ini.auth\\.generic_oauth.api_url"
-    value = "https://idp.${var.server_base_domain}/realms/${data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id}/protocol/openid-connect/userinfo"
+    value = data.terraform_remote_state.keycloak_config.outputs.keycloak_api_url
   }
   set {
     name  = "grafana\\.ini.auth\\.generic_oauth.role_attribute_strict"
