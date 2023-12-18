@@ -1,16 +1,16 @@
 resource "keycloak_openid_client" "grafana" {
   realm_id  = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
-  client_id = "grafana-old"
+  client_id = "grafana"
 
-  name    = "grafana-old"
+  name    = "grafana"
   enabled = true
 
   access_type = "CONFIDENTIAL"
   valid_redirect_uris = [
-    "https://grafana.${var.server_base_domain}/*"
+    "https://${local.grafana_domain}/*"
   ]
   web_origins = [
-    "https://grafana.${var.server_base_domain}"
+    "https://${local.grafana_domain}"
   ]
 
   client_authenticator_type = "client-secret"
