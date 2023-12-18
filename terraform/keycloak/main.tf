@@ -28,6 +28,16 @@ provider "kubernetes" {
   config_path = "../cluster.yml"
 }
 
+data "terraform_remote_state" "prometheus_operator" {
+  backend = "kubernetes"
+
+  config = {
+    secret_suffix = "prometheus-operator"
+    config_path   = "../cluster.yml"
+    namespace     = "terraform-state"
+  }
+}
+
 resource "kubernetes_namespace" "keycloak" {
   metadata {
     name = "keycloak"

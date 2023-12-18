@@ -84,7 +84,7 @@ resource "helm_release" "keycloak" {
   }
   set {
     name  = "ingress.hostname"
-    value = local.keycloak_domain
+    value = data.terraform_remote_state.prometheus_operator.outputs.oauth_domain
   }
   set {
     name  = "ingress.servicePort"
@@ -135,7 +135,7 @@ resource "helm_release" "keycloak" {
 
 resource "null_resource" "keycloak_liveness_check" {
   provisioner "local-exec" {
-    command = "timeout 300 bash -c 'while ! curl -sfI https://${local.keycloak_domain}; do echo \"Waiting for Keycloak to be live.\" && sleep 1; done'"
+    command = "timeout 300 bash -c 'while ! curl -sfI https://${data.terraform_remote_state.prometheus_operator.outputs.oauth_domain}; do echo \"Waiting for Keycloak to be live.\" && sleep 1; done'"
   }
 
   depends_on = [helm_release.keycloak]

@@ -1,7 +1,7 @@
 resource "keycloak_ldap_user_federation" "openldap" {
   for_each = tomap({
-    server_base_domain = tomap({
-      id = keycloak_realm.server_base_domain.id
+    primary = tomap({
+      id = keycloak_realm.primary.id
     })
     master = tomap({
       id = data.keycloak_realm.master.id
@@ -37,10 +37,10 @@ resource "keycloak_ldap_user_federation" "openldap" {
 
 resource "keycloak_ldap_group_mapper" "openldap" {
   for_each = tomap({
-    server_base_domain = tomap({
-      realm_id                    = keycloak_realm.server_base_domain.id
-      ldap_federation_id          = keycloak_ldap_user_federation.openldap["server_base_domain"].id
-      ldap_federation_sync_period = keycloak_ldap_user_federation.openldap["server_base_domain"].full_sync_period
+    primary = tomap({
+      realm_id                    = keycloak_realm.primary.id
+      ldap_federation_id          = keycloak_ldap_user_federation.openldap["primary"].id
+      ldap_federation_sync_period = keycloak_ldap_user_federation.openldap["primary"].full_sync_period
     })
     master = tomap({
       realm_id                    = data.keycloak_realm.master.id

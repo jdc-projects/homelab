@@ -37,7 +37,7 @@ provider "keycloak" {
   client_id = "admin-cli"
   username  = data.terraform_remote_state.keycloak_config.outputs.keycloak_admin_username
   password  = data.terraform_remote_state.keycloak_config.outputs.keycloak_admin_password
-  url       = data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url
+  url       = data.terraform_remote_state.keycloak_config.outputs.keycloak_url
 }
 
 data "terraform_remote_state" "keycloak_config" {

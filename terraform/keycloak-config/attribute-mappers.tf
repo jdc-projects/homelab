@@ -47,11 +47,11 @@ resource "keycloak_ldap_user_attribute_mapper" "master" {
   always_read_value_from_ldap = "true"
 }
 
-resource "keycloak_ldap_user_attribute_mapper" "server_base_domain" {
+resource "keycloak_ldap_user_attribute_mapper" "primary" {
   for_each = local.attribute_mapper_settings
 
-  realm_id                = keycloak_realm.server_base_domain.id
-  ldap_user_federation_id = keycloak_ldap_user_federation.openldap["server_base_domain"].id
+  realm_id                = keycloak_realm.primary.id
+  ldap_user_federation_id = keycloak_ldap_user_federation.openldap["primary"].id
   name                    = each.value.mapper_name
 
   user_model_attribute = each.value.keycloak_attribute
