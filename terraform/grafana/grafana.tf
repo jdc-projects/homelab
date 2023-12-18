@@ -15,7 +15,7 @@ resource "helm_release" "grafana" {
   }
   set {
     name  = "ingress.hosts[0]"
-    value = "grafana.${var.server_base_domain}"
+    value = "old.${var.server_base_domain}"
   }
 
   set {
@@ -74,7 +74,7 @@ resource "helm_release" "grafana" {
 
   set {
     name  = "grafana\\.ini.server.root_url"
-    value = "https://grafana.${var.server_base_domain}"
+    value = "https://old.${var.server_base_domain}"
   }
   set {
     name  = "grafana\\.ini.auth\\.generic_oauth.enabled"

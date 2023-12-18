@@ -1,5 +1,5 @@
 locals {
-  grafana_domain = "new.${var.server_base_domain}"
+  grafana_domain = "grafana.${var.server_base_domain}"
 }
 
 resource "helm_release" "prometheus_operator" {
