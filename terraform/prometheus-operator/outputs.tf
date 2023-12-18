@@ -1,10 +1,10 @@
 output "grafana_admin_username" {
-  value = "admin"
+  value     = "admin"
   sensitive = true
 }
 
 output "grafana_admin_password" {
-  value = random_password.grafana_admin_password.result
+  value     = random_password.grafana_admin_password.result
   sensitive = true
 }
 

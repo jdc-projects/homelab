@@ -97,7 +97,7 @@ resource "helm_release" "traefik" {
     value = "false"
   }
   set_list {
-    name  = "metrics.serviceMonitor.metricRelabelings"
+    name = "metrics.serviceMonitor.metricRelabelings"
     value = [
       <<-EOF
         sourceLabels: [__name__]
@@ -110,7 +110,7 @@ resource "helm_release" "traefik" {
     ]
   }
   set_list {
-    name  = "metrics.serviceMonitor.relabelings"
+    name = "metrics.serviceMonitor.relabelings"
     value = [
       <<-EOF
         sourceLabels: [__meta_kubernetes_pod_node_name]
@@ -144,7 +144,7 @@ resource "helm_release" "traefik" {
     value = kubernetes_namespace.traefik.metadata[0].name
   }
   set_list {
-    name  = "metrics.prometheusRule.rules"
+    name = "metrics.prometheusRule.rules"
     value = [
       <<-EOF
         alert: TraefikDown
