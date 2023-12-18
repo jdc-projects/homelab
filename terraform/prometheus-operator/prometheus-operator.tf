@@ -30,11 +30,12 @@ resource "helm_release" "prometheus_operator" {
       local.grafana_domain,
     ]
   }
+  set_list {
+    name  = "grafana.extraConfigmapMounts"
+    value = [
 
-  # set {
-  #   name  = ""
-  #   value = ""
-  # }
+    ]
+  }
 
   # set {
   #   name  = ""

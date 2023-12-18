@@ -7,10 +7,10 @@ resource "keycloak_openid_client" "grafana" {
 
   access_type = "CONFIDENTIAL"
   valid_redirect_uris = [
-    "https://grafana.${var.server_base_domain}/*"
+    "https://${local.grafana_domain}/*"
   ]
   web_origins = [
-    "https://grafana.${var.server_base_domain}"
+    "https://${local.grafana_domain}"
   ]
 
   client_authenticator_type = "client-secret"
