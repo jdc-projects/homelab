@@ -68,3 +68,4 @@ This system requires that some setup is completed on the first:
 * [Prometheus operator](https://github.com/prometheus-operator/prometheus-operator)
 * [Kubevirt](https://kubevirt.io/)
 * [Kubescape](https://github.com/kubescape/kubescape)
+* [Keycloak Operator](https://github.com/epam/edp-keycloak-operator)?
