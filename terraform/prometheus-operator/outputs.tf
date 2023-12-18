@@ -17,7 +17,7 @@ output "grafana_oauth_client_id" {
 }
 
 output "grafana_oauth_client_secret" {
-  value = random_password.oauth_client_secret.result
+  value     = random_password.oauth_client_secret.result
   sensitive = true
 }
 

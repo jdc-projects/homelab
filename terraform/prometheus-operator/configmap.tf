@@ -4,9 +4,9 @@ locals {
   oauth_domain          = "${local.oauth_subdomain}.${var.server_base_domain}"
   oauth_realm_name      = var.server_base_domain
   oauth_url_base        = "https://${local.oauth_domain}/realms/${local.oauth_realm_name}/protocol/openid-connect"
-  oauth_auth_url = "${local.oauth_url_base}/auth"
-  oauth_token_url = "${local.oauth_url_base}/token"
-  oauth_api_url = "${local.oauth_url_base}/userinfo"
+  oauth_auth_url        = "${local.oauth_url_base}/auth"
+  oauth_token_url       = "${local.oauth_url_base}/token"
+  oauth_api_url         = "${local.oauth_url_base}/userinfo"
   oauth_admin_role_name = "grafanaAdmin"
 }
 
