@@ -1,7 +1,3 @@
-locals {
-  grafana_domain = "old.${var.server_base_domain}"
-}
-
 resource "helm_release" "grafana" {
   name = "grafana"
 
@@ -19,7 +15,7 @@ resource "helm_release" "grafana" {
   }
   set {
     name  = "ingress.hosts[0]"
-    value = local.grafana_domain
+    value = "old.${var.server_base_domain}"
   }
 
   set {
@@ -78,7 +74,7 @@ resource "helm_release" "grafana" {
 
   set {
     name  = "grafana\\.ini.server.root_url"
-    value = "https://${local.grafana_domain}"
+    value = "https://old.${var.server_base_domain}"
   }
   set {
     name  = "grafana\\.ini.auth\\.generic_oauth.enabled"
