@@ -69,3 +69,4 @@ This system requires that some setup is completed on the first:
 * [Kubevirt](https://kubevirt.io/)
 * [Kubescape](https://github.com/kubescape/kubescape)
 * [Keycloak Operator](https://github.com/epam/edp-keycloak-operator)?
+* [Loki operator](https://loki-operator.dev/)?
