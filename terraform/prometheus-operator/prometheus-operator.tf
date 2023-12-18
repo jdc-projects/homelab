@@ -30,29 +30,16 @@ resource "helm_release" "prometheus_operator" {
       local.grafana_domain,
     ]
   }
-
-  # set {
-  #   name  = ""
-  #   value = ""
-  # }
-
-  # set {
-  #   name  = ""
-  #   value = ""
-  # }
-
-  # set {
-  #   name  = ""
-  #   value = ""
-  # }
-
-  # set {
-  #   name  = ""
-  #   value = ""
-  # }
-
-  # set {
-  #   name  = ""
-  #   value = ""
-  # }
+  set_list {
+    name = "grafana.extraConfigmapMounts"
+    value = [
+      <<-EOF
+        name: ${kubernetes_config_map.etc_grafana.metadata[0].name}
+        mountPath: /etc/grafana/
+        configMap: ${kubernetes_config_map.etc_grafana.metadata[0].name}
+        readOnly: true
+      EOF
+      ,
+    ]
+  }
 }
