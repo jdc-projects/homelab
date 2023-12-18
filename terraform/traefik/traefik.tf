@@ -109,11 +109,6 @@ resource "helm_release" "traefik" {
   }
 
   set {
-    name  = "ports.metrics.expose"
-    value = "true"
-  }
-
-  set {
     name  = "ports.ldaps.port"
     value = "8636"
   }
