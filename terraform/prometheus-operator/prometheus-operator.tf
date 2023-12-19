@@ -41,6 +41,10 @@ resource "helm_release" "prometheus_operator" {
   }
 
   set {
+    name  = "grafana.grafana\\.ini.server.root_url"
+    value = "https://${local.grafana_domain}"
+  }
+  set {
     name  = "grafana.grafana\\.ini.auth\\.generic_oauth.enabled"
     value = "true"
   }
