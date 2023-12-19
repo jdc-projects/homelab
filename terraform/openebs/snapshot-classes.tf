@@ -1,4 +1,4 @@
-resource "kubernetes_manifest" "snapshot_class_openebs_zfs_localpv" {
+resource "kubernetes_manifest" "volume_snapshot_class_openebs_zfs_localpv" {
   for_each = kubernetes_storage_class.openebs_zfs_localpv
 
   manifest = {
@@ -7,6 +7,10 @@ resource "kubernetes_manifest" "snapshot_class_openebs_zfs_localpv" {
 
     metadata = {
       name = "openebs-zfs-localpv"
+
+      labels = {
+        "velero.io/csi-volumesnapshot-class" = "true"
+      }
     }
 
     driver         = "zfs.csi.openebs.io"
