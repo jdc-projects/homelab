@@ -10,22 +10,7 @@ resource "helm_release" "openebs" {
   timeout = 300
 
   set {
-    name  = ""
-    value = ""
-  }
-
-  set {
-    name  = ""
-    value = ""
-  }
-
-  set {
-    name  = ""
-    value = ""
-  }
-
-  set {
-    name  = ""
-    value = ""
+    name  = "zfs-localpv.enabled"
+    value = "true"
   }
 }
