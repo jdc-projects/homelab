@@ -3,7 +3,7 @@ data "keycloak_realm" "master" {
 }
 
 resource "keycloak_realm" "primary" {
-  realm   = data.terraform_remote_state.prometheus_operator.outputs.keycloak_realm_name
+  realm   = data.terraform_remote_state.keycloak.outputs.keycloak_realm_name
   enabled = true
 
   registration_email_as_username = false

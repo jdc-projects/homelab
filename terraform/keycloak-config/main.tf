@@ -34,7 +34,7 @@ data "terraform_remote_state" "openldap" {
 }
 
 data "terraform_remote_state" "prometheus_operator" {
-  backend = "prometheus-operator"
+  backend = "kubernetes"
 
   config = {
     secret_suffix = "prometheus-operator"

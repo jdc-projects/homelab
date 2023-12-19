@@ -1,8 +1,3 @@
-data "keycloak_group" "system_admins" {
-  realm_id = keycloak_realm.primary.id
-  name     = "system_admins"
-}
-
 resource "keycloak_role" "grafana_admin" {
   realm_id    = keycloak_realm.primary.id
   client_id   = keycloak_openid_client.grafana.id
@@ -12,7 +7,7 @@ resource "keycloak_role" "grafana_admin" {
 
 resource "keycloak_group_roles" "grafana_admin" {
   realm_id = keycloak_realm.primary.id
-  group_id = data.keycloak_group.system_admins.id
+  group_id = data.keycloak_group.system_admins["primary"].id
 
   role_ids = [
     keycloak_role.grafana_admin.id
