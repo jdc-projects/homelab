@@ -173,17 +173,6 @@ jobs:
     with:
       terraform-dir: ./terraform/ocis
 
-  deploy-grafana:
-    needs: [
-      deploy-loki,
-      deploy-keycloak-config,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/grafana
-
   deploy-oauth2-proxy:
     needs: [
       deploy-keycloak-config,
@@ -209,7 +198,6 @@ jobs:
       deploy-harbor,
       # deploy-vaultwarden,
       deploy-ocis,
-      deploy-grafana,
       deploy-services,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
