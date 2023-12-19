@@ -15,6 +15,11 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "2.24.0"
     }
+
+    grafana = {
+      source  = "grafana/grafana"
+      version = "2.8.0"
+    }
   }
 }
 
@@ -26,6 +31,21 @@ provider "helm" {
 
 provider "kubernetes" {
   config_path = "../cluster.yml"
+}
+
+data "terraform_remote_state" "prometheus_operator" {
+  backend = "kubernetes"
+
+  config = {
+    secret_suffix = "prometheus-operator"
+    config_path   = "../cluster.yml"
+    namespace     = "terraform-state"
+  }
+}
+
+provider "grafana" {
+  url  = data.terraform_remote_state.prometheus_operator.outputs.grafana_url
+  auth = "${data.terraform_remote_state.prometheus_operator.outputs.grafana_admin_username}:${data.terraform_remote_state.prometheus_operator.outputs.grafana_admin_password}"
 }
 
 resource "kubernetes_namespace" "loki" {
