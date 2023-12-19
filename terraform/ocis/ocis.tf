@@ -87,15 +87,15 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.oidc.issuerURI"
-    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id}"
+    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.primary_realm_id}"
   }
   set {
     name  = "features.externalUserManagement.sessionManagementLink"
-    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id}/account/"
+    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.primary_realm_id}/account/"
   }
   set {
     name  = "features.externalUserManagement.editAccountLink"
-    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id}/account/"
+    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.primary_realm_id}/account/"
   }
   set {
     name  = "features.externalUserManagement.oidc.webClientID"

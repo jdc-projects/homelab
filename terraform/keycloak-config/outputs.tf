@@ -8,10 +8,22 @@ output "keycloak_admin_password" {
   sensitive = true
 }
 
-output "keycloak_hostname_url" {
-  value = data.terraform_remote_state.keycloak.outputs.keycloak_hostname_url
+output "keycloak_url" {
+  value = data.terraform_remote_state.keycloak.outputs.keycloak_url
 }
 
-output "server_base_domain_realm_id" {
-  value = keycloak_realm.server_base_domain.id
+output "primary_realm_id" {
+  value = keycloak_realm.primary.id
+}
+
+output "keycloak_auth_url" {
+  value = data.terraform_remote_state.prometheus_operator.outputs.oauth_auth_url
+}
+
+output "keycloak_token_url" {
+  value = data.terraform_remote_state.prometheus_operator.outputs.oauth_token_url
+}
+
+output "keycloak_api_url" {
+  value = data.terraform_remote_state.prometheus_operator.outputs.oauth_api_url
 }

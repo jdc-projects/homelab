@@ -1,5 +1,5 @@
 resource "keycloak_openid_client" "oauth2_proxy" {
-  realm_id  = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
+  realm_id  = data.terraform_remote_state.keycloak_config.outputs.primary_realm_id
   client_id = "oauth2-proxy"
 
   name    = "oauth2-proxy"
@@ -30,7 +30,7 @@ resource "keycloak_openid_client" "oauth2_proxy" {
 }
 
 resource "keycloak_openid_audience_protocol_mapper" "audience_mapper" {
-  realm_id  = data.terraform_remote_state.keycloak_config.outputs.server_base_domain_realm_id
+  realm_id  = data.terraform_remote_state.keycloak_config.outputs.primary_realm_id
   client_id = keycloak_openid_client.oauth2_proxy.id
   name      = "audience-mapper"
 
