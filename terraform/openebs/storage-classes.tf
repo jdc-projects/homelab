@@ -8,7 +8,7 @@ resource "kubernetes_storage_class" "openebs_zfs_localpv" {
       name_suffix = "general"
       recordsize  = "128k"
     })
-    mass = tomap({
+    bulk = tomap({
       name_suffix = "bulk"
       recordsize  = "1m"
     })
@@ -20,7 +20,7 @@ resource "kubernetes_storage_class" "openebs_zfs_localpv" {
       name_suffix = "general-no-backup"
       recordsize  = "128k"
     })
-    mass_no_backup = tomap({
+    bulk_no_backup = tomap({
       name_suffix = "bulk-no-backup"
       recordsize  = "1m"
     })
