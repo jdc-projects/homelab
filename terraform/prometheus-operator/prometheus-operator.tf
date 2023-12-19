@@ -1,5 +1,5 @@
 locals {
-  grafana_domain = "grafana.${var.server_base_domain}"
+  grafana_domain        = "grafana.${var.server_base_domain}"
   oauth_client_id       = "grafana"
   oauth_subdomain       = "idp"
   oauth_domain          = "${local.oauth_subdomain}.${var.server_base_domain}"
