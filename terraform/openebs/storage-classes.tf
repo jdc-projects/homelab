@@ -1,33 +1,33 @@
 resource "kubernetes_storage_class" "openebs_zfs_localpv" {
   for_each = tomap({
     random = tomap({
-      is_included_in_backup = true
-      recordsize            = "64k"
+      name_suffix = "random"
+      recordsize  = "64k"
     })
     general = tomap({
-      is_included_in_backup = true
-      recordsize            = "128k"
+      name_suffix = "general"
+      recordsize  = "128k"
     })
     mass = tomap({
-      is_included_in_backup = true
-      recordsize            = "1m"
+      name_suffix = "bulk"
+      recordsize  = "1m"
     })
     random_no_backup = tomap({
-      is_included_in_backup = false
-      recordsize            = "64k"
+      name_suffix = "random-no-backup"
+      recordsize  = "64k"
     })
     general_no_backup = tomap({
-      is_included_in_backup = false
-      recordsize            = "128k"
+      name_suffix = "general-no-backup"
+      recordsize  = "128k"
     })
     mass_no_backup = tomap({
-      is_included_in_backup = false
-      recordsize            = "1m"
+      name_suffix = "bulk-no-backup"
+      recordsize  = "1m"
     })
   })
 
   metadata {
-    name = format("openebs-zfs-localpv-${each.key}%s", each.value.is_included_in_backup ? "" : "-no-backup")
+    name = "openebs-zfs-localpv-${each.value.name_suffix}"
   }
 
   storage_provisioner = "zfs.csi.openebs.io"
