@@ -5,6 +5,6 @@ resource "ssh_resource" "apt_packages" {
 
   commands = [
     "sudo apt update",
-    "sudo apt install -y zfsutils-linux cockpit at htop net-tools vim",
+    "sudo apt install -y zfsutils-linux git cockpit at htop net-tools vim",
   ]
 }
