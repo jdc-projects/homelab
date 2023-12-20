@@ -2,7 +2,7 @@ terraform {
   backend "kubernetes" {
     secret_suffix = "vaultwarden"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
   }
 
   required_providers {
@@ -23,7 +23,7 @@ data "terraform_remote_state" "openldap" {
   config = {
     secret_suffix = "openldap"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
   }
 }
 

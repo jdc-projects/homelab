@@ -2,7 +2,7 @@ terraform {
   backend "kubernetes" {
     secret_suffix = "keycloak-config"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
   }
 
   required_providers {
@@ -19,7 +19,7 @@ data "terraform_remote_state" "keycloak" {
   config = {
     secret_suffix = "keycloak"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
   }
 }
 
@@ -29,7 +29,7 @@ data "terraform_remote_state" "openldap" {
   config = {
     secret_suffix = "openldap"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
   }
 }
 
@@ -39,7 +39,7 @@ data "terraform_remote_state" "prometheus_operator" {
   config = {
     secret_suffix = "prometheus-operator"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
   }
 }
 

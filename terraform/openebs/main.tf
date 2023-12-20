@@ -2,7 +2,7 @@ terraform {
   backend "kubernetes" {
     secret_suffix = "openebs"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
 
     labels = {
       "velero.io/exclude-from-backup" = "true"

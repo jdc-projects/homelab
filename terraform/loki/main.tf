@@ -2,7 +2,7 @@ terraform {
   backend "kubernetes" {
     secret_suffix = "loki"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
   }
 
   required_providers {
@@ -39,7 +39,7 @@ data "terraform_remote_state" "prometheus_operator" {
   config = {
     secret_suffix = "prometheus-operator"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
   }
 }
 

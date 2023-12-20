@@ -16,17 +16,17 @@ on:
       - completed
 
 jobs:
-  deploy-terraform-state-namespace:
+  deploy-tf-state-namespace:
     uses: ./.github/workflows/kubernetes-manifest-deploy.yml
     secrets: inherit
 
     with:
-      manifest-file: ./terraform/terraform-state-namespace.yml
+      manifest-file: ./terraform/tf-state-namespace.yml
       runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-openebs:
     needs: [
-      deploy-terraform-state-namespace,
+      deploy-tf-state-namespace,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -37,7 +37,7 @@ jobs:
 
   deploy-prometheus-operator:
     needs: [
-      deploy-terraform-state-namespace,
+      deploy-tf-state-namespace,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -48,7 +48,7 @@ jobs:
 
   deploy-github-org-runner-1:
     needs: [
-      deploy-terraform-state-namespace,
+      deploy-tf-state-namespace,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit

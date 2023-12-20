@@ -4,7 +4,7 @@ data "terraform_remote_state" "velero" {
   config = {
     secret_suffix = "velero"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
   }
 }
 

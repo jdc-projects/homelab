@@ -2,7 +2,7 @@ terraform {
   backend "kubernetes" {
     secret_suffix = "services"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
   }
 
   required_providers {
