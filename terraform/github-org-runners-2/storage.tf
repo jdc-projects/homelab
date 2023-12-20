@@ -2,6 +2,7 @@ resource "kubernetes_persistent_volume_claim" "runners" {
   for_each = tomap({
     tool-cache = tomap({
       storage = "10Gi"
+      storage_class_name = "openebs-zfs-localpv-random-no-backup"
     })
   })
 
@@ -12,7 +13,7 @@ resource "kubernetes_persistent_volume_claim" "runners" {
 
   spec {
     access_modes       = ["ReadWriteMany"]
-    storage_class_name = "truenas-nfs-csi-no-backup"
+    storage_class_name = each.value.storage_class_name
 
     resources {
       requests = {

@@ -2,24 +2,31 @@ resource "kubernetes_persistent_volume_claim" "ocis" {
   for_each = tomap({
     nats = tomap({
       storage = "10Gi"
+      storage_class_name = "openebs-zfs-localpv-general"
     })
     search = tomap({
       storage = "10Gi"
+      storage_class_name = "openebs-zfs-localpv-general"
     })
     storagesystem = tomap({
       storage = "5Gi"
+      storage_class_name = "openebs-zfs-localpv-random"
     })
     storageusers = tomap({
       storage = "200Gi"
+      storage_class_name = "openebs-zfs-localpv-bulk"
     })
     store = tomap({
       storage = "5Gi"
+      storage_class_name = "openebs-zfs-localpv-random"
     })
     thumbnails = tomap({
       storage = "10Gi"
+      storage_class_name = "openebs-zfs-localpv-random"
     })
     web = tomap({
       storage = "5Gi"
+      storage_class_name = "openebs-zfs-localpv-random"
     })
   })
 
@@ -30,6 +37,7 @@ resource "kubernetes_persistent_volume_claim" "ocis" {
 
   spec {
     access_modes = ["ReadWriteMany"]
+    storage_class_name = each.value.storage_class
 
     resources {
       requests = {

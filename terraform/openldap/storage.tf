@@ -6,6 +6,7 @@ resource "kubernetes_persistent_volume_claim" "openldap" {
 
   spec {
     access_modes = ["ReadWriteMany"]
+    storage_class_name = "openebs-zfs-localpv-random"
 
     resources {
       requests = {

@@ -43,6 +43,7 @@ resource "kubernetes_manifest" "harbor_db" {
       }
 
       storage = {
+        storageClass = "openebs-zfs-localpv-random"
         size = "5Gi"
       }
 
