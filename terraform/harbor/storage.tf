@@ -1,19 +1,19 @@
 resource "kubernetes_persistent_volume_claim" "harbor" {
   for_each = tomap({
     minio = tomap({
-      storage = "5Gi"
+      storage            = "5Gi"
       storage_class_name = "openebs-zfs-localpv-random"
     })
     jobservice = tomap({
-      storage = "5Gi"
+      storage            = "5Gi"
       storage_class_name = "openebs-zfs-localpv-random"
     })
     redis = tomap({
-      storage = "5Gi"
+      storage            = "5Gi"
       storage_class_name = "openebs-zfs-localpv-random"
     })
     trivy = tomap({
-      storage = "5Gi"
+      storage            = "5Gi"
       storage_class_name = "openebs-zfs-localpv-random"
     })
   })
@@ -24,7 +24,7 @@ resource "kubernetes_persistent_volume_claim" "harbor" {
   }
 
   spec {
-    access_modes = ["ReadWriteMany"]
+    access_modes       = ["ReadWriteMany"]
     storage_class_name = each.value.storage_class_name
 
     resources {

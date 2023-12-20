@@ -44,7 +44,7 @@ resource "kubernetes_manifest" "keycloak_db" {
 
       storage = {
         storageClass = "openebs-zfs-localpv-random"
-        size = "5Gi"
+        size         = "5Gi"
       }
 
       resources = {
