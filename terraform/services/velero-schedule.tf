@@ -18,11 +18,13 @@ resource "kubernetes_config_map" "velero_resource_policy" {
     "resource-policy.yaml" = <<-EOF
       version: v1
       volumePolicies:
-      - conditions:
-          storageClass:
-          - truenas-nfs-csi-no-backup
-        action:
-          type: skip
+        - conditions:
+            storageClass:
+              - openebs-zfs-localpv-random-no-backup
+              - openebs-zfs-localpv-general-no-backup
+              - openebs-zfs-localpv-bulk-no-backup
+          action:
+            type: skip
     EOF
   }
 }
