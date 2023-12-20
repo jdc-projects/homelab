@@ -170,19 +170,19 @@ resource "helm_release" "loki" {
 
   set {
     name  = "write.persistence.storageClass"
-    value = "truenas-nfs-csi-no-backup"
+    value = "openebs-zfs-localpv-random-no-backup"
   }
   set {
     name  = "read.persistence.storageClass"
-    value = "truenas-nfs-csi-no-backup"
+    value = "openebs-zfs-localpv-random-no-backup"
   }
   set {
     name  = "backend.persistence.storageClass"
-    value = "truenas-nfs-csi-no-backup"
+    value = "openebs-zfs-localpv-random-no-backup"
   }
   set {
     name  = "singleBinary.persistence.storageClass"
-    value = "truenas-nfs-csi-no-backup"
+    value = "openebs-zfs-localpv-random-no-backup"
   }
 
   depends_on = [
