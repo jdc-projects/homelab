@@ -1,6 +1,4 @@
 resource "kubernetes_manifest" "volume_snapshot_class_openebs_zfs_localpv" {
-  for_each = kubernetes_storage_class.openebs_zfs_localpv
-
   manifest = {
     apiVersion = "snapshot.storage.k8s.io/v1"
     kind       = "VolumeSnapshotClass"
