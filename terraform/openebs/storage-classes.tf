@@ -1,3 +1,21 @@
+resource "kubernetes_storage_class" "default" {
+  metadata {
+    name = "default"
+
+    annotations = {
+      "storageclass.kubernetes.io/is-default-class" = true
+    }
+  }
+
+  storage_provisioner = "device.csi.openebs.io"
+  reclaim_policy      = "Delete"
+  volume_binding_mode = "WaitForFirstConsumer"
+
+  depends_on = [
+    helm_release.openebs,
+  ]
+}
+
 resource "kubernetes_storage_class" "openebs_zfs_localpv" {
   for_each = tomap({
     random = tomap({
