@@ -10,7 +10,7 @@ resource "ssh_resource" "cockpit_setup" {
   commands = [
     "git clone --depth 1 -b ${local.cockpit_zfs_manager_version} https://github.com/45drives/cockpit-zfs-manager.git",
     "sudo cp -r ./cockpit-zfs-manager/zfs /usr/share/cockpit",
-    "rm -tf ./cockpit-zfs-manager",
+    "rm -rf ./cockpit-zfs-manager",
   ]
 
   depends_on = [
