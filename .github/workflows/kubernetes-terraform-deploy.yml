@@ -44,10 +44,6 @@ env:
   TF_VAR_k3s_username: "k3s"
   TF_VAR_k3s_ssh_private_key: ${{ secrets.K3S_SSH_PRIVATE_KEY }}
   TF_VAR_k3s_ip_address: ${{ secrets.K3S_IP_ADDRESS }}
-  TF_VAR_truenas_api_key: ${{ secrets.TRUENAS_API_KEY }}
-  TF_VAR_truenas_k3s_dataset: ${{ vars.TRUENAS_K3S_DATASET }}
-  TF_VAR_truenas_k3s_snapshot_dataset: ${{ vars.TRUENAS_K3S_SNAPSHOT_DATASET }}
-  TF_VAR_truenas_ip_address: ${{ secrets.TRUENAS_IP_ADDRESS }}
 
 jobs:
   deploy-kubernetes-terraform:

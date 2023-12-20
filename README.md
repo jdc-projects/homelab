@@ -7,9 +7,8 @@ Infrastructure and code for deploying my Homelab. There are some dependencies.
 This system requires that some setup is completed on the first:
 
 * The Kubernetes management interface port must be exposed to the internet (through router port forwarding), alongside HTTP and HTTPS
-* The root must point towards the public IP
+* The root of the server_base_domain must point towards the public IP
 * Setup of the [Github Org app](https://github.com/actions/actions-runner-controller/blob/master/docs/using-arc-across-organizations.md)
-* Truenas setup as required for democratic-csi
 
 ## Environment variables required for build
 
@@ -27,8 +26,6 @@ This system requires that some setup is completed on the first:
 * VELERO_S3_SECRET_ACCESS_KEY
 * K3S_SSH_PRIVATE_KEY
 * K3S_IP_ADDRESS
-* TRUENAS_API_KEY
-* TRUENAS_IP_ADDRESS
 
 ### Variables
 
@@ -44,14 +41,11 @@ This system requires that some setup is completed on the first:
 * VELERO_S3_BUCKET_NAME
 * VELERO_S3_REGION
 * VELERO_S3_URL
-* TRUENAS_K3S_DATASET
-* TRUENAS_K3S_SNAPSHOT_DATASET
 
 ## Disaster Recovery
 
 1. Provision server(s):
    1. K3s server(s)
-   2. Truenas
 2. Run DR pipeline
 
 ## Stuff to do / ideas
@@ -63,7 +57,6 @@ This system requires that some setup is completed on the first:
 * Add a proper, secure secrets manager
 * Setup Dependabot
 * [Appflowy](https://www.appflowy.io/)
-* Create and deploy solution to update Truenas dataset stuff after Velero restore (see [here](https://github.com/democratic-csi/democratic-csi/issues/352))
 * [Firezone](https://oopflow.medium.com/how-to-deploy-firezone-on-kubernetes-3373c4ac1a86) Wireguard VPN
 * [Kubernetes Dashboard](https://github.com/kubernetes/dashboard/tree/master/charts/helm-chart/kubernetes-dashboard) in a [read-only](https://discuss.kubernetes.io/t/readonly-kubernetes-dashboard/5451/2) mode
 * [Kubevirt](https://kubevirt.io/)
