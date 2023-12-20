@@ -1,13 +1,24 @@
-resource "kubernetes_namespace" "idrac_fan_controller" {
+resource "kubernetes_namespace" "idrac" {
   metadata {
-    name = "idrac-fan-controller"
+    name = "idrac"
   }
+}
+
+module "idrac_ingress" {
+  source = "../modules/external-auth-ingress"
+
+  server_base_domain = var.server_base_domain
+  namespace          = kubernetes_namespace.idrac.metadata[0].name
+  external_name      = "192.168.1.180"
+  external_scheme    = "https"
+  external_port      = 444
+  url_subdomain      = "idrac"
 }
 
 resource "kubernetes_secret" "idrac_fan_controller_env" {
   metadata {
     name      = "idrac-fan-controller-access"
-    namespace = kubernetes_namespace.idrac_fan_controller.metadata[0].name
+    namespace = kubernetes_namespace.idrac.metadata[0].name
   }
 
   data = {
@@ -19,7 +30,7 @@ resource "kubernetes_secret" "idrac_fan_controller_env" {
 resource "kubernetes_config_map" "idrac_fan_controller_env" {
   metadata {
     name      = "idrac-fan-controller-access"
-    namespace = kubernetes_namespace.idrac_fan_controller.metadata[0].name
+    namespace = kubernetes_namespace.idrac.metadata[0].name
   }
 
   data = {
@@ -34,7 +45,7 @@ resource "kubernetes_config_map" "idrac_fan_controller_env" {
 resource "kubernetes_deployment" "idrac_fan_controller_deployment" {
   metadata {
     name      = "idrac-fan-controller"
-    namespace = kubernetes_namespace.idrac_fan_controller.metadata[0].name
+    namespace = kubernetes_namespace.idrac.metadata[0].name
   }
 
   spec {
