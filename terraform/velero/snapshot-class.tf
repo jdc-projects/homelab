@@ -24,8 +24,4 @@ resource "kubernetes_manifest" "volume_snapshot_class_openebs_zfs_localpv" {
       dedup       = "off"
     }
   }
-
-  depends_on = [
-    helm_release.openebs,
-  ]
 }
