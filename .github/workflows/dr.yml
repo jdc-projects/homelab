@@ -11,7 +11,7 @@ jobs:
       manifest-file: ./terraform/terraform-state-namespace.yml
       runner-type: ubuntu-latest
 
-  deploy-democratic-csi:
+  deploy-openebs:
     needs: [
       deploy-terraform-state-namespace,
     ]
@@ -19,7 +19,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/democratic-csi
+      terraform-dir: ./terraform/openebs
       runner-type: ubuntu-latest
 
   deploy-github-org-runner-1:
@@ -35,7 +35,7 @@ jobs:
 
   deploy-github-org-runner-2:
     needs: [
-      deploy-democratic-csi,
+      deploy-openebs,
       deploy-github-org-runner-1,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
@@ -47,7 +47,7 @@ jobs:
 
   deploy-traefik:
     needs: [
-      deploy-democratic-csi,
+      deploy-openebs,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
