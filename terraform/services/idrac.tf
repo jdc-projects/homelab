@@ -11,7 +11,7 @@ module "idrac_ingress" {
   namespace          = kubernetes_namespace.idrac.metadata[0].name
   external_name      = "192.168.1.180"
   external_scheme    = "https"
-  external_port      = 444
+  external_port      = 443
   url_subdomain      = "idrac"
 }
 
