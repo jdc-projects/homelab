@@ -52,8 +52,9 @@ resource "kubernetes_storage_class" "openebs_zfs_localpv" {
   reclaim_policy      = "Delete"
 
   parameters = {
-    poolname    = "vault"
+    poolname    = "vault/k3s"
     fstype      = "zfs"
+    shared      = "yes"
     xattr       = "sa"
     compression = "lz4"
     atime       = "off"
