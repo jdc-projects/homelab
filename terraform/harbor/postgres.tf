@@ -47,7 +47,9 @@ resource "kubernetes_manifest" "harbor_db" {
         size         = "5Gi"
 
         pvcTemplate = {
-          accessModes
+          accessModes = [
+            "ReadWriteOnce",
+          ]
         }
       }
 
