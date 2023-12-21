@@ -37,7 +37,7 @@ resource "kubernetes_persistent_volume_claim" "ocis" {
 
   spec {
     access_modes       = ["ReadWriteOnce"]
-    storage_class_name = each.value.storage_class
+    storage_class_name = each.value.storage_class_name
 
     resources {
       requests = {
