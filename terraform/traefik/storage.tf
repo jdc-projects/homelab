@@ -5,7 +5,7 @@ resource "kubernetes_persistent_volume_claim" "traefik" {
   }
 
   spec {
-    access_modes       = ["ReadWriteMany"]
+    access_modes       = ["ReadWriteOnce"]
     storage_class_name = "openebs-zfs-localpv-random-no-backup"
 
     resources {

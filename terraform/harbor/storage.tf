@@ -24,7 +24,7 @@ resource "kubernetes_persistent_volume_claim" "harbor" {
   }
 
   spec {
-    access_modes       = ["ReadWriteMany"]
+    access_modes       = ["ReadWriteOnce"]
     storage_class_name = each.value.storage_class_name
 
     resources {
