@@ -10,6 +10,7 @@ resource "keycloak_openid_client" "oauth2_proxy" {
     # this needs to be updated with any subdomains used in authed ingresses
     "https://router.${var.server_base_domain}/*",
     "https://traefik.${var.server_base_domain}/*",
+    "https://idrac.${var.server_base_domain}/*",
     "https://cockpit.${var.server_base_domain}/*",
   ]
   web_origins = [
