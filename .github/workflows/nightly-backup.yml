@@ -40,7 +40,7 @@ jobs:
           version: 'v1.28.2'
       - name: "Install Velero CLI"
         env:
-          VELERO_VERSION: 1.12.2
+          VELERO_VERSION: 'v1.12.2'
         run: |
           mkdir velero
           curl https://github.com/vmware-tanzu/velero/releases/download/${{ env.VELERO_VERSION }}/velero-${{ env.VELERO_VERSION }}-linux-amd64.tar.gz -Lo velero.tar.gz
