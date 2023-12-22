@@ -57,9 +57,12 @@ jobs:
       - name: "Start backup"
         run: velero create backup --from-schedule nightly
       - name: "Wait some time for snapshots"
-        run: sleep 300
+        run: sleep 600
 
   restart-databases:
+    needs: [
+      start-velero-backup,
+    ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
 
