@@ -45,7 +45,6 @@ jobs:
           mkdir velero
           curl https://github.com/vmware-tanzu/velero/releases/download/${{ env.VELERO_VERSION }}/velero-${{ env.VELERO_VERSION }}-linux-amd64.tar.gz -Lo velero.tar.gz
           tar -xvf velero.tar.gz -C ./velero --strip-components=1
-          cp ./velero/velero /usr/local/bin/velero
       - name: "Generate and install kubeconfig"
         working-directory: ./terraform
         run: |
