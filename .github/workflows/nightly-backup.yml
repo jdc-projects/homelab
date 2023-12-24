@@ -55,7 +55,7 @@ jobs:
         run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
       - name: test 1
         working-directory: ./terraform
-        run: kubectl version --kubceconfig='./cluster.yml'
+        run: kubectl version --kubeconfig='./cluster.yml'
       - name: test 2
         run: kubectl version
       - name: "Start backup"
