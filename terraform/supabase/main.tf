@@ -2,7 +2,7 @@ terraform {
   backend "kubernetes" {
     secret_suffix = "supabase"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
 
     # ***** temporary
     labels = {
