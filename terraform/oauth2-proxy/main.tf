@@ -2,7 +2,7 @@ terraform {
   backend "kubernetes" {
     secret_suffix = "oauth2-proxy"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
   }
 
   required_providers {
@@ -37,7 +37,7 @@ provider "keycloak" {
   client_id = "admin-cli"
   username  = data.terraform_remote_state.keycloak_config.outputs.keycloak_admin_username
   password  = data.terraform_remote_state.keycloak_config.outputs.keycloak_admin_password
-  url       = data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url
+  url       = data.terraform_remote_state.keycloak_config.outputs.keycloak_url
 }
 
 data "terraform_remote_state" "keycloak_config" {
@@ -46,7 +46,7 @@ data "terraform_remote_state" "keycloak_config" {
   config = {
     secret_suffix = "keycloak-config"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
   }
 }
 

@@ -1,3 +1,7 @@
+locals {
+  keycloak_db_instances = 2
+}
+
 resource "kubernetes_manifest" "keycloak_db" {
   manifest = {
     apiVersion = "postgresql.cnpg.io/v1"
@@ -39,7 +43,14 @@ resource "kubernetes_manifest" "keycloak_db" {
       }
 
       storage = {
-        size = "5Gi"
+        storageClass = "openebs-zfs-localpv-random"
+        size         = "5Gi"
+
+        pvcTemplate = {
+          accessModes = [
+            "ReadWriteOnce",
+          ]
+        }
       }
 
       resources = {

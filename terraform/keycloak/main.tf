@@ -2,7 +2,7 @@ terraform {
   backend "kubernetes" {
     secret_suffix = "keycloak"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
   }
 
   required_providers {
@@ -26,6 +26,16 @@ provider "helm" {
 
 provider "kubernetes" {
   config_path = "../cluster.yml"
+}
+
+data "terraform_remote_state" "prometheus_operator" {
+  backend = "kubernetes"
+
+  config = {
+    secret_suffix = "prometheus-operator"
+    config_path   = "../cluster.yml"
+    namespace     = "tf-state"
+  }
 }
 
 resource "kubernetes_namespace" "keycloak" {

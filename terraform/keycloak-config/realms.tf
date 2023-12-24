@@ -2,8 +2,8 @@ data "keycloak_realm" "master" {
   realm = "master"
 }
 
-resource "keycloak_realm" "server_base_domain" {
-  realm   = var.server_base_domain
+resource "keycloak_realm" "primary" {
+  realm   = data.terraform_remote_state.keycloak.outputs.keycloak_realm_name
   enabled = true
 
   registration_email_as_username = false

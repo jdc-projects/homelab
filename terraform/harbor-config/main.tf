@@ -2,7 +2,7 @@ terraform {
   backend "kubernetes" {
     secret_suffix = "harbor-config"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
   }
 
   required_providers {
@@ -29,7 +29,7 @@ data "terraform_remote_state" "keycloak_config" {
   config = {
     secret_suffix = "keycloak-config"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
   }
 }
 
@@ -39,7 +39,7 @@ data "terraform_remote_state" "harbor" {
   config = {
     secret_suffix = "harbor"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
   }
 }
 
@@ -47,7 +47,7 @@ provider "keycloak" {
   client_id = "admin-cli"
   username  = data.terraform_remote_state.keycloak_config.outputs.keycloak_admin_username
   password  = data.terraform_remote_state.keycloak_config.outputs.keycloak_admin_password
-  url       = data.terraform_remote_state.keycloak_config.outputs.keycloak_hostname_url
+  url       = data.terraform_remote_state.keycloak_config.outputs.keycloak_url
 }
 
 provider "harbor" {

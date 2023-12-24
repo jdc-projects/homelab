@@ -40,12 +40,11 @@ jobs:
           version: 'v1.28.2'
       - name: "Install Velero CLI"
         env:
-          VELERO_VERSION: 1.12.2
+          VELERO_VERSION: 'v1.12.2'
         run: |
           mkdir velero
           curl https://github.com/vmware-tanzu/velero/releases/download/${{ env.VELERO_VERSION }}/velero-${{ env.VELERO_VERSION }}-linux-amd64.tar.gz -Lo velero.tar.gz
           tar -xvf velero.tar.gz -C ./velero --strip-components=1
-          cp ./velero/velero /usr/local/bin/velero
       - name: "Generate and install kubeconfig"
         working-directory: ./terraform
         run: |
@@ -55,11 +54,14 @@ jobs:
       - name: "Add cluster CA certificate"
         run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
       - name: "Start backup"
-        run: velero create backup --from-schedule nightly
+        run: ./velero/velero create backup --from-schedule nightly
       - name: "Wait some time for snapshots"
-        run: sleep 300
+        run: sleep 600
 
   restart-databases:
+    needs: [
+      start-velero-backup,
+    ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
 

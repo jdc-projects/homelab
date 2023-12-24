@@ -16,28 +16,39 @@ on:
       - completed
 
 jobs:
-  deploy-terraform-state-namespace:
+  deploy-tf-state-namespace:
     uses: ./.github/workflows/kubernetes-manifest-deploy.yml
     secrets: inherit
 
     with:
-      manifest-file: ./terraform/terraform-state-namespace.yml
+      manifest-file: ./terraform/tf-state-namespace.yml
       runner-type: ${{ github.event.inputs.runner-type }}
 
-  deploy-democratic-csi:
+  deploy-openebs:
     needs: [
-      deploy-terraform-state-namespace,
+      deploy-tf-state-namespace,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/democratic-csi
+      terraform-dir: ./terraform/openebs
+      runner-type: ${{ github.event.inputs.runner-type }}
+
+  deploy-prometheus-operator:
+    needs: [
+      deploy-tf-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/prometheus-operator
       runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-github-org-runner-1:
     needs: [
-      deploy-terraform-state-namespace,
+      deploy-tf-state-namespace,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -48,7 +59,7 @@ jobs:
 
   deploy-github-org-runner-2:
     needs: [
-      deploy-democratic-csi,
+      deploy-openebs,
       deploy-github-org-runner-1,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
@@ -60,7 +71,8 @@ jobs:
 
   deploy-traefik:
     needs: [
-      deploy-democratic-csi,
+      deploy-openebs,
+      deploy-prometheus-operator,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -161,17 +173,6 @@ jobs:
     with:
       terraform-dir: ./terraform/ocis
 
-  deploy-grafana:
-    needs: [
-      deploy-loki,
-      deploy-keycloak-config,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/grafana
-
   deploy-oauth2-proxy:
     needs: [
       deploy-keycloak-config,
@@ -197,7 +198,6 @@ jobs:
       deploy-harbor,
       # deploy-vaultwarden,
       deploy-ocis,
-      deploy-grafana,
       deploy-services,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml

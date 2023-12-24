@@ -1,8 +1,8 @@
 terraform {
   backend "kubernetes" {
-    secret_suffix = "democratic-csi"
+    secret_suffix = "openebs"
     config_path   = "../cluster.yml"
-    namespace     = "terraform-state"
+    namespace     = "tf-state"
 
     labels = {
       "velero.io/exclude-from-backup" = "true"
@@ -32,13 +32,12 @@ provider "kubernetes" {
   config_path = "../cluster.yml"
 }
 
-resource "kubernetes_namespace" "democratic_csi" {
+resource "kubernetes_namespace" "openebs" {
   metadata {
-    name = "democratic-csi"
+    name = "openebs"
 
     labels = {
-      "velero.io/exclude-from-backup"      = "true"
-      "pod-security.kubernetes.io/enforce" = "privileged"
+      "velero.io/exclude-from-backup" = "true"
     }
   }
 }

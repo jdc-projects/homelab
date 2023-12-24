@@ -5,7 +5,6 @@ resource "ssh_resource" "apt_packages" {
 
   commands = [
     "sudo apt update",
-    "sudo apt install -y qemu-guest-agent nfs-common at htop net-tools vim",
-    "sudo nfsconf --set nfsd threads 32",
+    "sudo apt install -y cron zfsutils-linux git cockpit at htop net-tools vim",
   ]
 }
