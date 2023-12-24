@@ -53,6 +53,11 @@ jobs:
           cp cluster.yml ~/.kube/config
       - name: "Add cluster CA certificate"
         run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
+      - name: test 1
+        working-directory: ./terraform
+        run: kubectl version --kubceconfig='./cluster.yml'
+      - name: test 2
+        run: kubectl version
       - name: "Start backup"
         run: ./velero/velero create backup --from-schedule nightly
       - name: "Wait some time for snapshots"
