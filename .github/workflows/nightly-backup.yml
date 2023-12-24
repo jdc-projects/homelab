@@ -4,6 +4,13 @@ on:
   # schedule:
   #   - cron:  '* 2 * * *'
 
+env:
+  CLIENT_CERT_DATA: ${{ secrets.KUBE_CLIENT_CERT_DATA }}
+  CLIENT_KEY_DATA: ${{ secrets.KUBE_CLIENT_KEY_DATA }}
+  CLUSTER_CA_CERT_DATA: ${{ secrets.KUBE_CLUSTER_CA_CERT_DATA }}
+  SERVER_KUBE_PORT: ${{ vars.SERVER_KUBE_PORT }}
+  SERVER_BASE_DOMAIN: ${{ vars.SERVER_BASE_DOMAIN }}
+
 jobs:
   # hibernate-databases:
   #   uses: ./.github/workflows/kubernetes-terraform-deploy.yml
@@ -58,10 +65,10 @@ jobs:
         run: kubectl version --kubeconfig='./cluster.yml'
       - name: test 2
         run: kubectl version
-      - name: "Start backup"
-        run: ./velero/velero create backup --from-schedule nightly
-      - name: "Wait some time for snapshots"
-        run: sleep 600
+      # - name: "Start backup"
+      #   run: ./velero/velero create backup --from-schedule nightly
+      # - name: "Wait some time for snapshots"
+      #   run: sleep 600
 
   # restart-databases:
   #   needs: [
