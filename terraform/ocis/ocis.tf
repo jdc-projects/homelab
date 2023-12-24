@@ -17,6 +17,13 @@ resource "helm_release" "ocis" {
 
   timeout = 600
 
+  # the default image tag is 4.0.1 and seems to have a bug with OIDC that prevents login
+  # remove this when next upgrading
+  set {
+    name  = "image.tag"
+    value = "4.0.2"
+  }
+
   set {
     name  = "logging.level"
     value = "info"
