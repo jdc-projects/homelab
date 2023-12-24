@@ -61,11 +61,6 @@ jobs:
           curl https://github.com/vmware-tanzu/velero/releases/download/${{ env.VELERO_VERSION }}/velero-${{ env.VELERO_VERSION }}-linux-amd64.tar.gz -Lo velero.tar.gz
           tar -xvf velero.tar.gz -C ./velero --strip-components=1
           sudo cp ./velero/velero /usr/local/bin/velero
-      - name: test 1
-        working-directory: ./terraform
-        run: kubectl version --kubeconfig='./cluster.yml'
-      - name: test 2
-        run: kubectl version
       - name: "Start backup"
         run: velero create backup --from-schedule nightly
       - name: "Wait some time for snapshots"
