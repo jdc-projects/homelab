@@ -5,25 +5,25 @@ on:
   #   - cron:  '* 2 * * *'
 
 jobs:
-  hibernate-databases:
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
+  # hibernate-databases:
+  #   uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+  #   secrets: inherit
 
-    strategy:
-      matrix:
-        # it would be nice to dynamically find these
-        database: [
-          harbor,
-          keycloak,
-        ]
+  #   strategy:
+  #     matrix:
+  #       # it would be nice to dynamically find these
+  #       database: [
+  #         harbor,
+  #         keycloak,
+  #       ]
 
-    with:
-      terraform-dir: ./terraform/${{ matrix.database }}
-      extra-variable: is_db_hibernate=true
+  #   with:
+  #     terraform-dir: ./terraform/${{ matrix.database }}
+  #     extra-variable: is_db_hibernate=true
 
   start-velero-backup:
     needs: [
-      hibernate-databases,
+      # hibernate-databases,
     ]
     runs-on: self-hosted
 
@@ -63,20 +63,20 @@ jobs:
       - name: "Wait some time for snapshots"
         run: sleep 600
 
-  restart-databases:
-    needs: [
-      start-velero-backup,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
+  # restart-databases:
+  #   needs: [
+  #     start-velero-backup,
+  #   ]
+  #   uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+  #   secrets: inherit
 
-    strategy:
-      matrix:
-        # it would be nice to dynamically find these
-        database: [
-          harbor,
-          keycloak,
-        ]
+  #   strategy:
+  #     matrix:
+  #       # it would be nice to dynamically find these
+  #       database: [
+  #         harbor,
+  #         keycloak,
+  #       ]
 
-    with:
-      terraform-dir: ./terraform/${{ matrix.database }}
+  #   with:
+  #     terraform-dir: ./terraform/${{ matrix.database }}
