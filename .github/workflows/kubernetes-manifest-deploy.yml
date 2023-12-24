@@ -39,5 +39,5 @@ jobs:
         uses: azure/setup-kubectl@v3
         with:
           version: 'v1.28.2'
-      - name: "Create tf-state namespace"
+      - name: "Apply manifest"
         run: "kubectl apply -f ${{ inputs.manifest-file }}"

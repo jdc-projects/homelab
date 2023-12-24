@@ -30,10 +30,18 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v4
+      - name: "Add cluster CA certificate"
+        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
       - name: "Setup node"
         uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: "Generate and install kubeconfig"
+        working-directory: ./terraform
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
       - name: "Setup kubectl"
         uses: azure/setup-kubectl@v3
         with:
@@ -45,14 +53,6 @@ jobs:
           mkdir velero
           curl https://github.com/vmware-tanzu/velero/releases/download/${{ env.VELERO_VERSION }}/velero-${{ env.VELERO_VERSION }}-linux-amd64.tar.gz -Lo velero.tar.gz
           tar -xvf velero.tar.gz -C ./velero --strip-components=1
-      - name: "Generate and install kubeconfig"
-        working-directory: ./terraform
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Add cluster CA certificate"
-        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
       - name: test 1
         working-directory: ./terraform
         run: kubectl version --kubeconfig='./cluster.yml'
