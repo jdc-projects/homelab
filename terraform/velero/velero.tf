@@ -35,6 +35,23 @@ resource "helm_release" "velero" {
   timeout = 300
 
   set {
+    name  = "resources.requests.cpu"
+    value = "2"
+  }
+  set {
+    name  = "resources.requests.memory"
+    value = "1Gi"
+  }
+  set {
+    name  = "resources.limits.cpu"
+    value = "2"
+  }
+  set {
+    name  = "resources.limits.memory"
+    value = "1Gi"
+  }
+
+  set {
     name  = "initContainers[0].name"
     value = "velero-plugin-for-aws"
   }
