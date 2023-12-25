@@ -64,7 +64,7 @@ jobs:
       - name: "Start backup"
         run: velero create backup --from-schedule nightly
       - name: "Wait some time for snapshots"
-        run: sleep 600
+        run: sleep 300
 
   restart-databases:
     needs: [
