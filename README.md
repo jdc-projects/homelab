@@ -56,7 +56,7 @@ This system requires that some setup is completed on the first:
 * Migrate to [ARC scale sets](https://github.com/actions/actions-runner-controller/discussions/2775)
 * Add a proper, secure secrets manager
 * Setup Dependabot
-* [Appflowy](https://www.appflowy.io/) or [Affine](https://affine.pro/)
+* [Appflowy](https://www.appflowy.io/) or [Affine](https://affine.pro/) or [Outline (BSL though)](https://www.getoutline.com/)
 * [Firezone](https://oopflow.medium.com/how-to-deploy-firezone-on-kubernetes-3373c4ac1a86) Wireguard VPN
 * [Kubernetes Dashboard](https://github.com/kubernetes/dashboard/tree/master/charts/helm-chart/kubernetes-dashboard) in a [read-only](https://discuss.kubernetes.io/t/readonly-kubernetes-dashboard/5451/2) mode
 * [Kubevirt](https://kubevirt.io/)
