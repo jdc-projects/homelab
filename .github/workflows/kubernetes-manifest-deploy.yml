@@ -38,6 +38,6 @@ jobs:
       - name: "Setup kubectl"
         uses: azure/setup-kubectl@v3
         with:
-          version: 'v1.28.2'
+          version: 'v1.28.4'
       - name: "Apply manifest"
         run: "kubectl apply -f ${{ inputs.manifest-file }}"
