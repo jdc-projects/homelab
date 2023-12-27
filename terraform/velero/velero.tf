@@ -40,7 +40,7 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "resources.requests.memory"
-    value = "1Gi"
+    value = "4Gi"
   }
   set {
     name  = "resources.limits.cpu"
@@ -48,7 +48,7 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "resources.limits.memory"
-    value = "1Gi"
+    value = "4Gi"
   }
 
   set {
