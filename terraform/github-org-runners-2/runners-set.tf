@@ -126,6 +126,10 @@ resource "kubernetes_manifest" "github_org_runners_set" {
                   memory = "2048Mi"
                 }
               }
+
+              securityContext = {
+                privileged = true
+              }
             }
           ]
 
