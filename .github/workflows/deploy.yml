@@ -23,27 +23,27 @@ jobs:
       - name: "Repo checkout"
         uses: actions/checkout@v4
       - name: tf-state namespace
-        uses: actions/manifest-deploy
+        uses: ./.github/actions/manifest-deploy
         with:
           manifest-file: ./terraform/tf-state-namespace.yml
       - name: openebs
-        uses: actions/terraform-deploy
+        uses: ./.github/actions/terraform-deploy
         with:
           terraform-dir: ./terraform/openebs
       - name: prometheus-operator
-        uses: actions/terraform-deploy
+        uses: ./.github/actions/terraform-deploy
         with:
           terraform-dir: ./terraform/prometheus-operator
       - name: github-org-runner-1
-        uses: actions/terraform-deploy
+        uses: ./.github/actions/terraform-deploy
         with:
           terraform-dir: ./terraform/github-org-runner-1
       - name: github-org-runner-2
-        uses: actions/terraform-deploy
+        uses: ./.github/actions/terraform-deploy
         with:
           terraform-dir: ./terraform/github-org-runner-2
       - name: traefik
-        uses: actions/terraform-deploy
+        uses: ./.github/actions/terraform-deploy
         with:
           terraform-dir: ./terraform/traefik
 
@@ -58,50 +58,50 @@ jobs:
       - name: "Repo checkout"
         uses: actions/checkout@v4
       - name: cloudnative-pg
-        uses: actions/terraform-deploy
+        uses: ./.github/actions/terraform-deploy
         with:
           terraform-dir: ./terraform/cloudnative-pg
       - name: velero
-        uses: actions/terraform-deploy
+        uses: ./.github/actions/terraform-deploy
         with:
           terraform-dir: ./terraform/velero
       - name: loki
-        uses: actions/terraform-deploy
+        uses: ./.github/actions/terraform-deploy
         with:
           terraform-dir: ./terraform/loki
       - name: openldap
-        uses: actions/terraform-deploy
+        uses: ./.github/actions/terraform-deploy
         with:
           terraform-dir: ./terraform/openldap
       - name: keycloak
-        uses: actions/terraform-deploy
+        uses: ./.github/actions/terraform-deploy
         with:
           terraform-dir: ./terraform/keycloak
       - name: harbor
-        uses: actions/terraform-deploy
+        uses: ./.github/actions/terraform-deploy
         with:
           terraform-dir: ./terraform/harbor
       - name: keycloak-config
-        uses: actions/terraform-deploy
+        uses: ./.github/actions/terraform-deploy
         with:
           terraform-dir: ./terraform/keycloak-config
       # - name: vaultwarden
-      #   uses: actions/terraform-deploy
+      #   uses: ./.github/actions/terraform-deploy
       #   with:
       #     terraform-dir: ./terraform/vaultwarden
       - name: ocis
-        uses: actions/terraform-deploy
+        uses: ./.github/actions/terraform-deploy
         with:
           terraform-dir: ./terraform/ocis
       - name: oauth2-proxy
-        uses: actions/terraform-deploy
+        uses: ./.github/actions/terraform-deploy
         with:
           terraform-dir: ./terraform/oauth2-proxy
       - name: services
-        uses: actions/terraform-deploy
+        uses: ./.github/actions/terraform-deploy
         with:
           terraform-dir: ./terraform/services
       - name: harbor-config
-        uses: actions/terraform-deploy
+        uses: ./.github/actions/terraform-deploy
         with:
           terraform-dir: ./terraform/harbor-config
