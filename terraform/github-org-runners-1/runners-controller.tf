@@ -32,7 +32,7 @@ resource "helm_release" "github_org_runners_controller" {
   }
   set {
     name  = "image.dindSidecarRepositoryAndTag"
-    value = "summerwind/actions-runner-dind:v2.311.0-ubuntu-22.04"
+    value = "summerwind/actions-runner-dind-rootless:v2.311.0-ubuntu-22.04"
   }
 
   set {
