@@ -8,12 +8,9 @@ inputs:
 runs:
   using: "composite"
 
-  defaults:
-    run:
-      shell: bash
-
   steps:
     - name: "Add cluster CA certificate"
+      shell: bash
       run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
     - name: "Setup node"
       uses: actions/setup-node@v4
@@ -21,6 +18,7 @@ runs:
         node-version: 20
     - name: "Generate and install kubeconfig"
       working-directory: ./terraform
+      shell: bash
       run: |
         ./cluster-config-write.sh
         mkdir ~/.kube
@@ -30,4 +28,5 @@ runs:
       with:
         version: 'v1.28.4'
     - name: "Apply manifest"
+      shell: bash
       run: "kubectl apply -f ${{ inputs.manifest-file }}"
