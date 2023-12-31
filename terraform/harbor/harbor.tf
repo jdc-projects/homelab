@@ -28,7 +28,7 @@ resource "kubernetes_job" "harbor_chown" {
 
       spec {
         container {
-          image = "alpine:3.18.4"
+          image = "alpine:3.19.0"
           name  = "harbor-${each.value.claim_name}-chown"
 
           command = ["sh", "-c", "chown -R ${each.value.chown_uid}:${each.value.chown_gid} /chown"]

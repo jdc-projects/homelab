@@ -17,7 +17,7 @@ resource "kubernetes_job" "runners_cache_chown" {
 
       spec {
         container {
-          image = "alpine:3.18.4"
+          image = "alpine:3.19.0"
           name  = "runners-cache-chown-${each.key}"
 
           command = ["sh", "-c", "chown -R ${each.value.chown_uid}:${each.value.chown_gid} /chown"]
