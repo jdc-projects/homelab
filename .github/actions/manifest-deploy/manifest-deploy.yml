@@ -1,0 +1,39 @@
+name: 'Terraform Deploy'
+description: 'Deploy Terraform configuration'
+inputs:
+  terraform-dir:
+    required: true
+    type: string
+  resource-name:
+    required: false
+    type: string
+    default: ''
+  extra-variable:
+    required: false
+    type: string
+    default: ''
+
+runs:
+  defaults:
+    run:
+      working-directory: ${{ inputs.terraform-dir }}
+
+  steps:
+    - name: "Add cluster CA certificate"
+      run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
+    - name: "Setup node"
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+    - name: "Generate and install kubeconfig"
+      working-directory: ./terraform
+      run: |
+        ./cluster-config-write.sh
+        mkdir ~/.kube
+        cp cluster.yml ~/.kube/config
+    - name: "Setup kubectl"
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'v1.28.4'
+    - name: "Apply manifest"
+      run: "kubectl apply -f ${{ inputs.manifest-file }}"

@@ -16,192 +16,92 @@ on:
       - completed
 
 jobs:
-  deploy-tf-state-namespace:
-    uses: ./.github/workflows/kubernetes-manifest-deploy.yml
-    secrets: inherit
+  part-1:
+    runs-on: ${{ github.event.inputs.runner-type }}
 
-    with:
-      manifest-file: ./terraform/tf-state-namespace.yml
-      runner-type: ${{ github.event.inputs.runner-type }}
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v4
+      - name: tf-state namespace
+        uses: actions/manifest-deploy
+        with:
+          manifest-file: ./terraform/tf-state-namespace.yml
+      - name: openebs
+        uses: actions/terraform-deploy
+        with:
+          terraform-dir: ./terraform/openebs
+      - name: prometheus-operator
+        uses: actions/terraform-deploy
+        with:
+          terraform-dir: ./terraform/prometheus-operator
+      - name: github-org-runner-1
+        uses: actions/terraform-deploy
+        with:
+          terraform-dir: ./terraform/github-org-runner-1
+      - name: github-org-runner-2
+        uses: actions/terraform-deploy
+        with:
+          terraform-dir: ./terraform/github-org-runner-2
+      - name: traefik
+        uses: actions/terraform-deploy
+        with:
+          terraform-dir: ./terraform/traefik
 
-  deploy-openebs:
+
+  part-2:
     needs: [
-      deploy-tf-state-namespace,
+      part-1,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
+    runs-on: self-hosted
 
-    with:
-      terraform-dir: ./terraform/openebs
-      runner-type: ${{ github.event.inputs.runner-type }}
-
-  deploy-prometheus-operator:
-    needs: [
-      deploy-tf-state-namespace,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/prometheus-operator
-      runner-type: ${{ github.event.inputs.runner-type }}
-
-  deploy-github-org-runner-1:
-    needs: [
-      deploy-tf-state-namespace,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/github-org-runners-1
-      runner-type: ${{ github.event.inputs.runner-type }}
-
-  deploy-github-org-runner-2:
-    needs: [
-      deploy-openebs,
-      deploy-github-org-runner-1,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/github-org-runners-2
-      runner-type: ${{ github.event.inputs.runner-type }}
-
-  deploy-traefik:
-    needs: [
-      deploy-openebs,
-      deploy-prometheus-operator,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/traefik
-      runner-type: ${{ github.event.inputs.runner-type }}
-
-  deploy-cloudnative-pg:
-    needs: [
-      deploy-github-org-runner-2,
-      deploy-traefik,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/cloudnative-pg
-
-  deploy-velero:
-    needs: [
-      deploy-cloudnative-pg,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/velero
-
-  deploy-loki:
-    needs: [
-      deploy-cloudnative-pg,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/loki
-
-  deploy-openldap:
-    needs: [
-      deploy-cloudnative-pg,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/openldap
-
-  deploy-keycloak:
-    needs: [
-      deploy-cloudnative-pg,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/keycloak
-
-  deploy-harbor:
-    needs: [
-      deploy-cloudnative-pg,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/harbor
-
-  deploy-keycloak-config:
-    needs: [
-      deploy-openldap,
-      deploy-keycloak,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/keycloak-config
-
-  # deploy-vaultwarden:
-  #   needs: [
-  #     deploy-openldap,
-  #   ]
-  #   uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-  #   secrets: inherit
-
-  #   with:
-  #     terraform-dir: ./terraform/vaultwarden
-
-  deploy-ocis:
-    needs: [
-      deploy-keycloak-config,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/ocis
-
-  deploy-oauth2-proxy:
-    needs: [
-      deploy-keycloak-config,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/oauth2-proxy
-
-  deploy-services:
-    needs: [
-      deploy-oauth2-proxy,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/services
-
-  deploy-harbor-config:
-    needs: [
-      deploy-harbor,
-      # deploy-vaultwarden,
-      deploy-ocis,
-      deploy-services,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/harbor-config
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v4
+      - name: cloudnative-pg
+        uses: actions/terraform-deploy
+        with:
+          terraform-dir: ./terraform/cloudnative-pg
+      - name: velero
+        uses: actions/terraform-deploy
+        with:
+          terraform-dir: ./terraform/velero
+      - name: loki
+        uses: actions/terraform-deploy
+        with:
+          terraform-dir: ./terraform/loki
+      - name: openldap
+        uses: actions/terraform-deploy
+        with:
+          terraform-dir: ./terraform/openldap
+      - name: keycloak
+        uses: actions/terraform-deploy
+        with:
+          terraform-dir: ./terraform/keycloak
+      - name: harbor
+        uses: actions/terraform-deploy
+        with:
+          terraform-dir: ./terraform/harbor
+      - name: keycloak-config
+        uses: actions/terraform-deploy
+        with:
+          terraform-dir: ./terraform/keycloak-config
+      # - name: vaultwarden
+      #   uses: actions/terraform-deploy
+      #   with:
+      #     terraform-dir: ./terraform/vaultwarden
+      - name: ocis
+        uses: actions/terraform-deploy
+        with:
+          terraform-dir: ./terraform/ocis
+      - name: oauth2-proxy
+        uses: actions/terraform-deploy
+        with:
+          terraform-dir: ./terraform/oauth2-proxy
+      - name: services
+        uses: actions/terraform-deploy
+        with:
+          terraform-dir: ./terraform/services
+      - name: harbor-config
+        uses: actions/terraform-deploy
+        with:
+          terraform-dir: ./terraform/harbor-config
