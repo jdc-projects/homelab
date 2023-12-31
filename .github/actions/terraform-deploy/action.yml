@@ -19,6 +19,7 @@ runs:
   defaults:
     run:
       working-directory: ${{ inputs.terraform-dir }}
+      shell: bash
 
   steps:
     - name: "Add cluster CA certificate"
