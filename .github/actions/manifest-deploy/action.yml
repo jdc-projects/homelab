@@ -1,23 +1,11 @@
 name: 'Terraform Deploy'
 description: 'Deploy Terraform configuration'
 inputs:
-  terraform-dir:
+  manifest-file:
     required: true
     type: string
-  resource-name:
-    required: false
-    type: string
-    default: ''
-  extra-variable:
-    required: false
-    type: string
-    default: ''
 
 runs:
-  defaults:
-    run:
-      working-directory: ${{ inputs.terraform-dir }}
-
   steps:
     - name: "Add cluster CA certificate"
       run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
