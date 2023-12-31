@@ -50,10 +50,10 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v4
-      - name: tf-state namespace
-        uses: ./.github/actions/manifest-deploy
-        with:
-          manifest-file: ./terraform/tf-state-namespace.yml
+      - name: "Runner setup"
+        uses: ./.github/actions/runner-setup
+      - name: "Apply manifest"
+        run: "kubectl apply -f ${{ inputs.manifest-file }}"
       - name: openebs
         uses: ./.github/actions/terraform-deploy
         with:
@@ -85,6 +85,8 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v4
+      - name: "Runner setup"
+        uses: ./.github/actions/runner-setup
       - name: cloudnative-pg
         uses: ./.github/actions/terraform-deploy
         with:
