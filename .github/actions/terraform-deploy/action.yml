@@ -19,24 +19,24 @@ runs:
   steps:
     - name: "Terraform format check"
       working-directory: ${{ inputs.terraform-dir }}
-      shell: bash
+      shell: sh
       run: "terraform fmt -check"
     - name: "Terraform init"
       working-directory: ${{ inputs.terraform-dir }}
-      shell: bash
+      shell: sh
       run: "terraform init"
     - name: "Terraform apply all resources"
       working-directory: ${{ inputs.terraform-dir }}
-      shell: bash
+      shell: sh
       if: "${{ ('' == inputs.resource-name) && ('' == inputs.extra-variable) }}"
       run: "terraform apply -auto-approve -input=false"
     - name: "Terraform apply specific resource"
       working-directory: ${{ inputs.terraform-dir }}
-      shell: bash
+      shell: sh
       if: "${{ '' != inputs.resource-name }}"
       run: "terraform apply -auto-approve -input=false -target=${{ inputs.resource-name }}"
     - name: "Terraform apply extra variable"
       working-directory: ${{ inputs.terraform-dir }}
-      shell: bash
+      shell: sh
       if: "${{ '' != inputs.extra-variable }}"
       run: "terraform apply -auto-approve -input=false -var=${{ inputs.extra-variable }}"
