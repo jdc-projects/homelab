@@ -62,14 +62,14 @@ jobs:
         uses: ./.github/actions/terraform-deploy
         with:
           terraform-dir: ./terraform/prometheus-operator
-      - name: github-org-runner-1
+      - name: github-org-runners-1
         uses: ./.github/actions/terraform-deploy
         with:
-          terraform-dir: ./terraform/github-org-runner-1
-      - name: github-org-runner-2
+          terraform-dir: ./terraform/github-org-runners-1
+      - name: github-org-runners-2
         uses: ./.github/actions/terraform-deploy
         with:
-          terraform-dir: ./terraform/github-org-runner-2
+          terraform-dir: ./terraform/github-org-runners-2
       - name: traefik
         uses: ./.github/actions/terraform-deploy
         with:
