@@ -6,11 +6,11 @@ runs:
 
   steps:
     - name: "Add cluster CA certificate"
-      shell: sh
+      shell: bash
       run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
     - name: "Generate and install kubeconfig"
       working-directory: ./terraform
-      shell: sh
+      shell: bash
       run: |
         ./cluster-config-write.sh
         mkdir ~/.kube
