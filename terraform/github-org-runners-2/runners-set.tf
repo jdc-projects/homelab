@@ -102,13 +102,13 @@ resource "kubernetes_manifest" "github_org_runners_set" {
 
               resources = {
                 requests = {
-                  cpu    = "200m"
-                  memory = "512Mi"
+                  cpu    = "500m"
+                  memory = "1024Mi"
                 }
 
                 limits = {
-                  cpu    = "500m"
-                  memory = "1024Mi"
+                  cpu    = "1"
+                  memory = "2048Mi"
                 }
               }
             },
@@ -117,13 +117,13 @@ resource "kubernetes_manifest" "github_org_runners_set" {
 
               resources = {
                 requests = {
-                  cpu    = "200m"
-                  memory = "512Mi"
+                  cpu    = "500m"
+                  memory = "1024Mi"
                 }
 
                 limits = {
-                  cpu    = "500m"
-                  memory = "1024Mi"
+                  cpu    = "1"
+                  memory = "2048Mi"
                 }
               }
             }
@@ -160,8 +160,8 @@ resource "kubernetes_manifest" "github_org_runners_autoscaler" {
     }
 
     spec = {
-      minReplicas = "10"
-      maxReplicas = "20"
+      minReplicas = "5"
+      maxReplicas = "10"
 
       scaleTargetRef = {
         kind = "RunnerSet"
