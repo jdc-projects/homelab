@@ -74,6 +74,8 @@ resource "kubernetes_manifest" "github_org_runners_set" {
     spec = {
       organization = var.github_org_name
 
+      dockerMTU = 1450
+
       selector = {
         matchLabels = {
           app = "github-org-runners"
