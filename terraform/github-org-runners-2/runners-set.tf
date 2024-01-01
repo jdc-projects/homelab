@@ -112,21 +112,21 @@ resource "kubernetes_manifest" "github_org_runners_set" {
                 }
               }
             },
-            # {
-            #   name = "docker"
+            {
+              name = "docker"
 
-            #   resources = {
-            #     requests = {
-            #       cpu    = "500m"
-            #       memory = "1024Mi"
-            #     }
+              resources = {
+                requests = {
+                  cpu    = "500m"
+                  memory = "1024Mi"
+                }
 
-            #     limits = {
-            #       cpu    = "1"
-            #       memory = "2048Mi"
-            #     }
-            #   }
-            # }
+                limits = {
+                  cpu    = "1"
+                  memory = "2048Mi"
+                }
+              }
+            }
           ]
 
           volumes = [{
