@@ -32,7 +32,7 @@ resource "helm_release" "github_org_runners_controller" {
   }
   set {
     name  = "image.dindSidecarRepositoryAndTag"
-    value = "docker:24.0.7-dind-rootless"
+    value = "docker:24.0.7-dind"
   }
 
   set {
