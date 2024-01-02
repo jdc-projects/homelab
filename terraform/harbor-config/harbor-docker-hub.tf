@@ -51,12 +51,10 @@ resource "ssh_sensitive_resource" "k3s_registries_config_copy" {
   file {
     content     = <<-EOF
       mirrors:
-        docker.io/goharbor:
-          endpoint:
-            - "https://docker.io/goharbor"
         docker.io:
           endpoint:
             - "https://harbor.${var.server_base_domain}/v2/${harbor_project.docker_hub.name}"
+            - "https://docker.io"
       configs:
         "harbor.${var.server_base_domain}":
           auth:
