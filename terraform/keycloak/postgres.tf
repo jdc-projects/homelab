@@ -22,7 +22,7 @@ resource "kubernetes_manifest" "keycloak_db" {
 
     spec = {
       # https://github.com/cloudnative-pg/postgres-containers/pkgs/container/postgresql
-      imageName = "ghcr.io/cloudnative-pg/postgresql:16.1-7"
+      imageName = "ghcr.io/cloudnative-pg/postgresql:16.1-12"
 
       instances = local.keycloak_db_instances
 
