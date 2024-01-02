@@ -54,7 +54,7 @@ resource "ssh_sensitive_resource" "k3s_registries_config_copy" {
         docker.io:
           endpoint:
             - "https://harbor.${var.server_base_domain}/v2/${harbor_project.docker_hub.name}"
-            - "https://docker.io"
+            - "https://registry.hub.docker.com"
       configs:
         "harbor.${var.server_base_domain}":
           auth:
