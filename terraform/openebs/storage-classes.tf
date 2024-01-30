@@ -51,6 +51,9 @@ resource "kubernetes_storage_class" "openebs_zfs_localpv" {
   storage_provisioner = "zfs.csi.openebs.io"
   reclaim_policy      = "Delete"
 
+  # based on:
+  #  - https://jrs-s.net/2018/08/17/zfs-tuning-cheat-sheet/
+  #  - https://www.high-availability.com/docs/ZFS-Tuning-Guide/#:~:text=When%20dealing%20with%20larger%20files,records%20needing%20to%20be%20processed.
   parameters = {
     poolname    = "vault/k3s"
     fstype      = "zfs"
