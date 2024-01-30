@@ -51,7 +51,7 @@ resource "kubernetes_deployment" "cloudflare_ddns_deployment" {
 
           env {
             name  = "ZONE"
-            value = var.server_base_domain
+            value = "*.${var.server_base_domain}"
           }
 
           resources {
