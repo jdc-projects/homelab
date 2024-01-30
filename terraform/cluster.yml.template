@@ -2,7 +2,7 @@ apiVersion: v1
 clusters:
 - cluster:
     certificate-authority-data: {certificate-authority-data}
-    server: https://{server-domain}:{server-port}
+    server: https://kubernetes.{server-domain}:{server-port}
   name: default
 contexts:
 - context:

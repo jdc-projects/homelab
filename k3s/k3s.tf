@@ -6,7 +6,7 @@ resource "ssh_resource" "k3s_provisioning" {
   file {
     content     = <<-EOF
       tls-san:
-        - "${var.server_base_domain}"
+        - "kubernetes.${var.server_base_domain}"
       disable:
         - "traefik"
         - "local-storage"
