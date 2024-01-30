@@ -156,7 +156,7 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "configuration.defaultBackupTTL"
-    value = "720h"
+    value = "2160h"
   }
   set {
     name  = "configuration.logLevel"
