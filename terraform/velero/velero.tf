@@ -1,6 +1,6 @@
 resource "null_resource" "velero_version" {
   triggers = {
-    velero_version = "5.2.0"
+    velero_version = "5.3.0"
   }
 }
 

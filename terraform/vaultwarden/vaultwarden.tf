@@ -1,5 +1,5 @@
 resource "random_password" "vaultwarden_admin_token" {
-  length           = 16
+  length           = 40
   special          = true
   override_special = "!#$%&*()-_=+[]{}<>:?"
 }
@@ -11,8 +11,7 @@ resource "kubernetes_config_map" "vaultwarden_env" {
   }
 
   data = {
-    WEBSOCKET_ENABLED        = "true"
-    WEBSOCKET_PORT           = "3012"
+    WEBSOCKET_ENABLED        = "false" # this doesn't disable live sync, it just disables the old, separate websocket server
     EMERGENCY_ACCESS_ALLOWED = "false"
     SIGNUPS_ALLOWED          = "false"
     SIGNUPS_VERIFY           = "false"
@@ -64,7 +63,7 @@ resource "kubernetes_deployment" "vaultwarden_deployment" {
 
       spec {
         container {
-          image = "vaultwarden/server:1.30.1-alpine"
+          image = "vaultwarden/server:1.30.2-alpine"
           name  = "vaultwarden"
 
           env_from {

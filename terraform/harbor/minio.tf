@@ -53,7 +53,7 @@ resource "helm_release" "minio" {
 
   repository = "https://charts.min.io/"
   chart      = "minio"
-  version    = "5.0.14"
+  version    = "5.0.15"
 
   namespace = kubernetes_namespace.harbor.metadata[0].name
 

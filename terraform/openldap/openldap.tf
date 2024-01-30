@@ -66,7 +66,7 @@ resource "kubernetes_deployment" "openldap" {
         }
 
         container {
-          image = "bitnami/openldap:2.6.6-debian-11-r61"
+          image = "bitnami/openldap:2.6.6-debian-11-r64"
           name  = "openldap"
 
           env_from {
