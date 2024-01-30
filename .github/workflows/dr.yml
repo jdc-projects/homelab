@@ -68,44 +68,44 @@ jobs:
       terraform-dir: ./terraform/velero
       extra-variable: is_restore_mode=true
 
-  do-velero-restore:
-    needs: [
-      deploy-velero,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
+  # do-velero-restore:
+  #   needs: [
+  #     deploy-velero,
+  #   ]
+  #   uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+  #   secrets: inherit
 
-    with:
-      terraform-dir: ./terraform/velero-restore
+  #   with:
+  #     terraform-dir: ./terraform/velero-restore
 
-  fix-harbor-docker-hub-proxy-state:
-    needs: [
-      do-velero-restore,
-    ]
-    runs-on: self-hosted
+  # fix-harbor-docker-hub-proxy-state:
+  #   needs: [
+  #     do-velero-restore,
+  #   ]
+  #   runs-on: self-hosted
 
-    defaults:
-      run:
-        working-directory: ./terraform/harbor-config
+  #   defaults:
+  #     run:
+  #       working-directory: ./terraform/harbor-config
 
-    steps:
-      - name: "Repo checkout"
-        uses: actions/checkout@v4
-      - name: "Setup node"
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: "Terraform setup"
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.5.6
-      - name: "Generate kubeconfig"
-        working-directory: ./terraform
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Terraform init"
-        run: "terraform init"
-      - name: "Terraform remove state"
-        run: "terraform state rm ssh_sensitive_resource.k3s_registries_config_copy"
+  #   steps:
+  #     - name: "Repo checkout"
+  #       uses: actions/checkout@v4
+  #     - name: "Setup node"
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20
+  #     - name: "Terraform setup"
+  #       uses: hashicorp/setup-terraform@v2
+  #       with:
+  #         terraform_version: 1.5.6
+  #     - name: "Generate kubeconfig"
+  #       working-directory: ./terraform
+  #       run: |
+  #         ./cluster-config-write.sh
+  #         mkdir ~/.kube
+  #         cp cluster.yml ~/.kube/config
+  #     - name: "Terraform init"
+  #       run: "terraform init"
+  #     - name: "Terraform remove state"
+  #       run: "terraform state rm ssh_sensitive_resource.k3s_registries_config_copy"
