@@ -10,10 +10,12 @@ on:
         options:
           - self-hosted
           - ubuntu-latest
-  workflow_run:
-    workflows: [Disaster Recovery]
-    types:
-      - completed
+  workflow_call:
+    inputs:
+      runner-type:
+        required: false
+        default: self-hosted
+        type: string
 
 jobs:
   deploy-tf-state-namespace:

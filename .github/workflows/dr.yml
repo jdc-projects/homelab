@@ -113,3 +113,7 @@ jobs:
         run: "terraform init"
       - name: "Terraform remove state"
         run: "terraform state rm ssh_sensitive_resource.k3s_registries_config_copy"
+
+  run-deploy:
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
