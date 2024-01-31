@@ -22,7 +22,7 @@ resource "kubernetes_config_map" "cloudflare_ddns_env" {
   }
 
   data = {
-    ZONE = var.server_base_domain
+    ZONE      = var.server_base_domain
     SUBDOMAIN = "*"
   }
 }
