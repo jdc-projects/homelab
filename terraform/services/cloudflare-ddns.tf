@@ -4,15 +4,26 @@ resource "kubernetes_namespace" "cloudflare_ddns" {
   }
 }
 
-# secret for api key
-resource "kubernetes_secret" "cloudflare_ddns_token_secret" {
+resource "kubernetes_secret" "cloudflare_ddns_env" {
   metadata {
-    name      = "cloudflare-ddns-token"
+    name      = "cloudflare-ddns-env"
     namespace = kubernetes_namespace.cloudflare_ddns.metadata[0].name
   }
 
   data = {
     API_KEY = var.cloudflare_ddns_token
+  }
+}
+
+resource "kubernetes_config_map" "cloudflare_ddns_env" {
+  metadata {
+    name      = "cloudflare-ddns-env"
+    namespace = kubernetes_namespace.cloudflare_ddns.metadata[0].name
+  }
+
+  data = {
+    ZONE = var.server_base_domain
+    SUBDOMAIN = "*"
   }
 }
 
@@ -45,13 +56,14 @@ resource "kubernetes_deployment" "cloudflare_ddns_deployment" {
 
           env_from {
             secret_ref {
-              name = kubernetes_secret.cloudflare_ddns_token_secret.metadata[0].name
+              name = kubernetes_secret.cloudflare_ddns_env.metadata[0].name
             }
           }
 
-          env {
-            name  = "ZONE"
-            value = "*.${var.server_base_domain}"
+          env_from {
+            config_map_ref {
+              name = kubernetes_config_map.cloudflare_ddns_env.metadata[0].name
+            }
           }
 
           resources {
