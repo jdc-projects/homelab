@@ -10,7 +10,7 @@ resource "kubernetes_config_map" "vaultwarden_env" {
     SIGNUPS_ALLOWED          = "false"
     SIGNUPS_VERIFY           = "false"
     INVITATIONS_ALLOWED      = "true"
-    PASSWORD_HINTS_ALLOWED   = "false"
+    PASSWORD_HINTS_ALLOWED   = "true"
     DOMAIN                   = "https://vault.${var.server_base_domain}"
     ROCKET_PORT              = "80"
     SMTP_HOST                = var.smtp_host
