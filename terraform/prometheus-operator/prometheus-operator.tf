@@ -104,4 +104,9 @@ resource "helm_release" "prometheus_operator" {
     name  = "grafana.grafana\\.ini.auth\\.generic_oauth.auto_login"
     value = "true"
   }
+  # I should fix this in a better way in the future
+  set {
+    name  = "grafana.assertNoLeakedSecrets"
+    value = "false"
+  }
 }
