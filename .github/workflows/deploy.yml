@@ -197,6 +197,7 @@ jobs:
 
   deploy-harbor-config:
     needs: [
+      deploy-keycloak-config,
       deploy-harbor,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
