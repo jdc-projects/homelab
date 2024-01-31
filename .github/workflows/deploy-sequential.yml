@@ -115,10 +115,10 @@ jobs:
         uses: ./.github/actions/terraform-deploy
         with:
           terraform-dir: ./terraform/keycloak-config
-      # - name: vaultwarden
-      #   uses: ./.github/actions/terraform-deploy
-      #   with:
-      #     terraform-dir: ./terraform/vaultwarden
+      - name: vaultwarden
+        uses: ./.github/actions/terraform-deploy
+        with:
+          terraform-dir: ./terraform/vaultwarden
       - name: ocis
         uses: ./.github/actions/terraform-deploy
         with:
