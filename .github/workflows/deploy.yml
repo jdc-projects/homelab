@@ -198,9 +198,6 @@ jobs:
   deploy-harbor-config:
     needs: [
       deploy-harbor,
-      # deploy-vaultwarden,
-      deploy-ocis,
-      deploy-services,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
