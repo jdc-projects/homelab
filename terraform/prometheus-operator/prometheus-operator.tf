@@ -122,6 +122,8 @@ resource "helm_release" "prometheus_operator" {
     replace_triggered_by = [
       null_resource.prometheus_operator_version
     ]
+
+    create_before_destroy = false
   }
 
   provisioner "local-exec" {
