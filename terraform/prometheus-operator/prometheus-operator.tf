@@ -14,8 +14,6 @@ locals {
 resource "null_resource" "prometheus_operator_version" {
   triggers = {
     version = "56.3.0"
-
-    always_replace = timestamp()
   }
 }
 
