@@ -22,6 +22,7 @@ jobs:
         database: [
           harbor,
           keycloak,
+          vaultwarden,
         ]
 
     with:
@@ -79,6 +80,7 @@ jobs:
         database: [
           harbor,
           keycloak,
+          vaultwarden,
         ]
 
     with:
