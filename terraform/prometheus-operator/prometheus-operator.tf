@@ -121,4 +121,9 @@ resource "helm_release" "prometheus_operator" {
       null_resource.prometheus_operator_version
     ]
   }
+
+  provisioner "local-exec" {
+    when = destroy
+    command = "for crd in `kubectl get crds -oname | grep monitoring.coreos.com | awk -F / '{ print $2 }'`; do kubectl delete crd $crd; done"
+  }
 }
