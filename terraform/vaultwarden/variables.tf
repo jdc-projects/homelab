@@ -23,3 +23,9 @@ variable "smtp_password" {
   sensitive   = true
   description = "Password for the SMTP server."
 }
+
+variable "is_db_hibernate" {
+  type        = bool
+  description = "Whether the DB should be in hibernate mode."
+  default     = false
+}

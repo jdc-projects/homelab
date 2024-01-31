@@ -1,9 +1,3 @@
-resource "random_password" "vaultwarden_admin_token" {
-  length           = 40
-  special          = true
-  override_special = "!#$%&*()-_=+[]{}<>:?"
-}
-
 resource "kubernetes_config_map" "vaultwarden_env" {
   metadata {
     name      = "vaultwarden"
@@ -36,6 +30,7 @@ resource "kubernetes_secret" "vaultwarden_env" {
   data = {
     SMTP_PASSWORD = var.smtp_password
     ADMIN_TOKEN   = random_password.vaultwarden_admin_token.result
+    DATABASE_URL  = "postgresql://${random_password.vaultwarden_db_username.result}:${random_password.vaultwarden_db_password.result}@${kubernetes_manifest.vaultwarden_db.manifest.metadata.name}-rw:5432/${kubernetes_manifest.vaultwarden_db.manifest.spec.bootstrap.initdb.database}"
   }
 }
 
