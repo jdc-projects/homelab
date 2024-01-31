@@ -18,6 +18,9 @@ resource "kubernetes_config_map" "vaultwarden_env" {
     SMTP_PORT                = var.smtp_port
     SMTP_SECURITY            = "force_tls"
     SMTP_USERNAME            = var.smtp_username
+    PUSH_ENABLED             = "true"
+    PUSH_RELAY_URI           = "https://push.bitwarden.${var.is_vaultwarden_push_data_region_us ? "com" : "eu"}"
+    PUSH_IDENTITY_URI        = "https://identity.bitwarden.${var.is_vaultwarden_push_data_region_us ? "com" : "eu"}"
   }
 }
 
@@ -28,9 +31,11 @@ resource "kubernetes_secret" "vaultwarden_env" {
   }
 
   data = {
-    SMTP_PASSWORD = var.smtp_password
-    ADMIN_TOKEN   = random_password.vaultwarden_admin_token.result
-    DATABASE_URL  = "postgresql://${random_password.vaultwarden_db_username.result}:${random_password.vaultwarden_db_password.result}@${kubernetes_manifest.vaultwarden_db.manifest.metadata.name}-rw:5432/${kubernetes_manifest.vaultwarden_db.manifest.spec.bootstrap.initdb.database}"
+    SMTP_PASSWORD         = var.smtp_password
+    ADMIN_TOKEN           = random_password.vaultwarden_admin_token.result
+    DATABASE_URL          = "postgresql://${random_password.vaultwarden_db_username.result}:${random_password.vaultwarden_db_password.result}@${kubernetes_manifest.vaultwarden_db.manifest.metadata.name}-rw:5432/${kubernetes_manifest.vaultwarden_db.manifest.spec.bootstrap.initdb.database}"
+    PUSH_INSTALLATION_ID  = var.vaultwarden_push_installation_id
+    PUSH_INSTALLATION_KEY = var.vaultwarden_push_installation_key
   }
 }
 

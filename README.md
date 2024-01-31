@@ -26,6 +26,8 @@ This system requires that some setup is completed on the first:
 * VELERO_S3_SECRET_ACCESS_KEY
 * K3S_SSH_PRIVATE_KEY
 * K3S_IP_ADDRESS
+* VAULTWARDEN_PUSH_INSTALLATION_ID
+* VAULTWARDEN_PUSH_INSTALLATION_KEY
 
 ### Variables
 
