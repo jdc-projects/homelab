@@ -11,19 +11,13 @@ locals {
   oauth_admin_role_name = "grafanaAdmin"
 }
 
-resource "null_resource" "prometheus_operator_version" {
-  triggers = {
-    version = "56.3.0"
-  }
-}
-
 resource "helm_release" "prometheus_operator" {
   name      = "prometheus-operator"
   namespace = kubernetes_namespace.prometheus_operator.metadata[0].name
 
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "kube-prometheus-stack"
-  version    = null_resource.prometheus_operator_version.triggers.version
+  version    = "56.3.0"
 
   timeout = 300
 
@@ -114,14 +108,6 @@ resource "helm_release" "prometheus_operator" {
   set {
     name  = "grafana.assertNoLeakedSecrets"
     value = "false"
-  }
-
-  lifecycle {
-    replace_triggered_by = [
-      null_resource.prometheus_operator_version,
-    ]
-
-    create_before_destroy = false
   }
 }
 
