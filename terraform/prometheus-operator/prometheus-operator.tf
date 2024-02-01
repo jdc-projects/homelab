@@ -118,14 +118,33 @@ resource "helm_release" "prometheus_operator" {
 
   lifecycle {
     replace_triggered_by = [
-      null_resource.prometheus_operator_version
+      null_resource.prometheus_operator_version,
     ]
 
     create_before_destroy = false
   }
+}
+
+resource "null_resource" "crd_updates" {
+  lifecycle {
+    replace_triggered_by = [
+      helm_release.prometheus_operator,
+    ]
+  }
 
   provisioner "local-exec" {
-    when    = destroy
-    command = "for crd in `kubectl get crds -oname | grep monitoring.coreos.com | awk -F / '{ print $2 }'`; do kubectl delete crd $crd; done"
+    when    = create
+    command = <<-EOF
+      kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${helm_release.prometheus_operator.app_version}/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
+      kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${helm_release.prometheus_operator.app_version}/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
+      kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${helm_release.prometheus_operator.app_version}/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
+      kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${helm_release.prometheus_operator.app_version}/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml
+      kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${helm_release.prometheus_operator.app_version}/example/prometheus-operator-crd/monitoring.coreos.com_prometheusagents.yaml
+      kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${helm_release.prometheus_operator.app_version}/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
+      kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${helm_release.prometheus_operator.app_version}/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
+      kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${helm_release.prometheus_operator.app_version}/example/prometheus-operator-crd/monitoring.coreos.com_scrapeconfigs.yaml
+      kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${helm_release.prometheus_operator.app_version}/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+      kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${helm_release.prometheus_operator.app_version}/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
+    EOF
   }
 }
