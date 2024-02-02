@@ -78,8 +78,8 @@ jobs:
         uses: tailscale/github-action@v2
         with:
           version: '1.58.2'
-          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          oauth-client-id: ${{ secrets.TAILSCALE_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TAILSCALE_CLIENT_SECRET }}
           tags: tag:github-org-runner
           args: "--exit-node=k3s"
       - name: "Terraform format check"
