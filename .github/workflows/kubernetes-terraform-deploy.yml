@@ -74,6 +74,14 @@ jobs:
           ./cluster-config-write.sh
           mkdir ~/.kube
           cp cluster.yml ~/.kube/config
+      - name: "Connect to Tailnet"
+        uses: tailscale/github-action@v2
+        with:
+          version: '1.58.2'
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:github-org-runner
+          args: "--exit-node=k3s"
       - name: "Terraform format check"
         run: "terraform fmt -check"
       - name: "Terraform init"

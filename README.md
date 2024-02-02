@@ -14,6 +14,8 @@ This system requires that some setup is completed on the first:
 
 ### Secrets
 
+* TAILSCALE_CLIENT_ID
+* TAILSCALE_CLIENT_SECRET
 * CLOUDFLARE_ACME_TOKEN
 * CLOUDFLARE_DDNS_TOKEN
 * GH_ORG_RUNNERS_APP_PRIVATE_KEY

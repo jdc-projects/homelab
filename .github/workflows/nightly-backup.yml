@@ -62,6 +62,14 @@ jobs:
           curl https://github.com/vmware-tanzu/velero/releases/download/${{ env.VELERO_VERSION }}/velero-${{ env.VELERO_VERSION }}-linux-amd64.tar.gz -Lo velero.tar.gz
           tar -xvf velero.tar.gz -C ./velero --strip-components=1
           sudo cp ./velero/velero /usr/local/bin/velero
+      - name: "Connect to Tailnet"
+        uses: tailscale/github-action@v2
+        with:
+          version: '1.58.2'
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:github-org-runner
+          args: "--exit-node=k3s"
       - name: "Start backup"
         run: velero create backup --from-schedule nightly
       - name: "Wait some time for snapshots"
