@@ -20,3 +20,15 @@ variable "k3s_ip_address" {
   sensitive   = true
   description = "IP address for the k3s server."
 }
+
+variable "k3s_subnet" {
+  type        = string
+  sensitive   = true
+  description = "Subnet that the k3s server is in."
+}
+
+variable "tailscale_auth_key" {
+  type        = string
+  sensitive   = true
+  description = "Auth key for the tailscale client."
+}
