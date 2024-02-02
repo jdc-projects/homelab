@@ -69,7 +69,8 @@ jobs:
           oauth-client-id: ${{ secrets.TAILSCALE_CLIENT_ID }}
           oauth-secret: ${{ secrets.TAILSCALE_CLIENT_SECRET }}
           tags: tag:github-org-runner
-          args: "--exit-node=k3s"
+      - name: "Connect Tailscale exit node"
+        run: "tailscale up --exit-node k3s"
       - name: "Start backup"
         run: velero create backup --from-schedule nightly
       - name: "Wait some time for snapshots"

@@ -81,7 +81,8 @@ jobs:
           oauth-client-id: ${{ secrets.TAILSCALE_CLIENT_ID }}
           oauth-secret: ${{ secrets.TAILSCALE_CLIENT_SECRET }}
           tags: tag:github-org-runner
-          args: "--exit-node=k3s"
+      - name: "Connect Tailscale exit node"
+        run: "tailscale up --exit-node k3s"
       - name: "Terraform format check"
         run: "terraform fmt -check"
       - name: "Terraform init"
