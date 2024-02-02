@@ -48,6 +48,7 @@ jobs:
           oauth-secret: ${{ secrets.TAILSCALE_CLIENT_SECRET }}
           tags: tag:github-org-runner
       - name: "Connect Tailscale exit node"
+        if: "${{ ('self-hosted' != inputs.runner-type) }}"
         run: "tailscale up --exit-node k3s"
       - name: "Apply manifest"
         run: "kubectl apply -f ${{ inputs.manifest-file }}"
