@@ -84,7 +84,9 @@ jobs:
           tags: tag:github-org-runner
       - name: "Connect Tailscale exit node"
         if: "${{ ('self-hosted' != inputs.runner-type) }}"
-        run: "tailscale up --exit-node=k3s --accept-routes --advertise-tags=tag:github-org-runner"
+        run: |
+          export hostname=$(hostname)
+          tailscale up --exit-node=k3s --accept-routes --advertise-tags=tag:github-org-runner --hostname=$hostname
       - name: "Terraform format check"
         run: "terraform fmt -check"
       - name: "Terraform init"
