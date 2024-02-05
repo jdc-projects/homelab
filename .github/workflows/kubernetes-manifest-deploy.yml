@@ -49,7 +49,6 @@ jobs:
           tags: tag:github-org-runner
       - name: "Connect Tailscale exit node"
         if: "${{ ('self-hosted' != inputs.runner-type) }}"
-        run: |
-          sudo hostname=$(hostname) tailscale up --exit-node=k3s --accept-routes --advertise-tags=tag:github-org-runner --hostname=$hostname
+        run: "sudo tailscale up --exit-node=k3s --accept-routes --advertise-tags=tag:github-org-runner --hostname=$(hostname)"
       - name: "Apply manifest"
         run: "kubectl apply -f ${{ inputs.manifest-file }}"
