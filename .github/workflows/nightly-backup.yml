@@ -12,7 +12,17 @@ env:
   SERVER_BASE_DOMAIN: ${{ vars.SERVER_BASE_DOMAIN }}
 
 jobs:
+  check-server-up:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get server status
+        run: curl --max-time 5 https://ping.${{ vars.SERVER_BASE_DOMAIN }}
+
   hibernate-databases:
+    needs: [
+      check-server-up,
+    ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
 
