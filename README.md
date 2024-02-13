@@ -67,11 +67,6 @@ This system requires that some setup is completed on the first:
   * [Siyuan](https://github.com/siyuan-note/siyuan)
   * [AnyType](https://anytype.io/) (no webapp)
   * [Trilium](https://github.com/zadam/trilium) (no actively developed)
-* A VPN:
-  * [Netbird](https://github.com/netbirdio/netbird)
-  * [Firezone](https://oopflow.medium.com/how-to-deploy-firezone-on-kubernetes-3373c4ac1a86)
-  * [Netmaker](https://github.com/gravitl/netmaker) with a [Helm chart](https://github.com/gravitl/netmaker-helm)
-  * [Headscale](https://github.com/juanfont/headscale)
 * [Kubernetes Dashboard](https://github.com/kubernetes/dashboard/tree/master/charts/helm-chart/kubernetes-dashboard) in a [read-only](https://discuss.kubernetes.io/t/readonly-kubernetes-dashboard/5451/2) mode
 * [Kubevirt](https://kubevirt.io/)
 * [Penpot](https://github.com/penpot/penpot), with [Docker](https://help.penpot.app/technical-guide/getting-started/#install-with-docker) instructions - waiting for v2
