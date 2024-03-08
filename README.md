@@ -1,12 +1,12 @@
 # homelab
 
-Infrastructure and code for deploying my Homelab. There are some dependencies.
+Infrastructure and code for deploying my Homelab.
 
 ## Prequisites
 
 This system requires that some setup is completed on the first:
 
-* The Kubernetes management interface port must be exposed to the internet (through router port forwarding), alongside HTTP and HTTPS
+* The ports 80 and 443 port must be exposed to the internet
 * The root of the server_base_domain must point towards the public IP
 * Setup of the [Github Org app](https://github.com/actions/actions-runner-controller/blob/master/docs/using-arc-across-organizations.md)
 
@@ -48,8 +48,7 @@ This system requires that some setup is completed on the first:
 
 ## Disaster Recovery
 
-1. Provision server(s):
-   1. K3s server(s)
+1. Provision K3s server (see `k3s` directory)
 2. Run DR pipeline
 
 ## Stuff to do / ideas
@@ -71,4 +70,3 @@ This system requires that some setup is completed on the first:
 * [Kubevirt](https://kubevirt.io/)
 * [Penpot](https://github.com/penpot/penpot), with [Docker](https://help.penpot.app/technical-guide/getting-started/#install-with-docker) instructions - waiting for v2
 * [Pihole](https://github.com/MoJo2600/pihole-kubernetes/tree/main/charts/pihole) or alternative
-* [Dapr](https://dapr.io/) with a [Helm Chart](https://github.com/dapr/dapr/blob/master/charts/dapr/README.md)
