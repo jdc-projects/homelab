@@ -10,7 +10,7 @@ resource "kubernetes_job" "loki_chown" {
 
       spec {
         container {
-          image = "alpine:3.18.4"
+          image = "alpine:3.19.0"
           name  = "loki-chown"
 
           command = ["sh", "-c", "chown -R 1000:1000 /export"]
@@ -53,7 +53,7 @@ resource "helm_release" "loki" {
 
   repository = "https://grafana.github.io/helm-charts"
   chart      = "loki"
-  version    = "5.39.0"
+  version    = "5.42.0"
 
   namespace = kubernetes_namespace.loki.metadata[0].name
 

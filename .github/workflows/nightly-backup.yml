@@ -1,11 +1,28 @@
 name: Nightly Backup
 on:
   workflow_dispatch:
-  # schedule:
-  #   - cron:  '* 2 * * *'
+  schedule:
+    - cron:  '0 2 * * *'
+
+env:
+  CLIENT_CERT_DATA: ${{ secrets.KUBE_CLIENT_CERT_DATA }}
+  CLIENT_KEY_DATA: ${{ secrets.KUBE_CLIENT_KEY_DATA }}
+  CLUSTER_CA_CERT_DATA: ${{ secrets.KUBE_CLUSTER_CA_CERT_DATA }}
+  SERVER_KUBE_PORT: ${{ vars.SERVER_KUBE_PORT }}
+  SERVER_BASE_DOMAIN: ${{ vars.SERVER_BASE_DOMAIN }}
 
 jobs:
+  check-server-up:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get server status
+        run: curl --max-time 5 https://ping.${{ vars.SERVER_BASE_DOMAIN }}
+
   hibernate-databases:
+    needs: [
+      check-server-up,
+    ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
 
@@ -15,6 +32,7 @@ jobs:
         database: [
           harbor,
           keycloak,
+          vaultwarden,
         ]
 
     with:
@@ -30,14 +48,22 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v4
+      - name: "Add cluster CA certificate"
+        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
       - name: "Setup node"
         uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: "Generate and install kubeconfig"
+        working-directory: ./terraform
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
       - name: "Setup kubectl"
         uses: azure/setup-kubectl@v3
         with:
-          version: 'v1.28.2'
+          version: 'v1.28.4'
       - name: "Install Velero CLI"
         env:
           VELERO_VERSION: 'v1.12.2'
@@ -45,18 +71,11 @@ jobs:
           mkdir velero
           curl https://github.com/vmware-tanzu/velero/releases/download/${{ env.VELERO_VERSION }}/velero-${{ env.VELERO_VERSION }}-linux-amd64.tar.gz -Lo velero.tar.gz
           tar -xvf velero.tar.gz -C ./velero --strip-components=1
-      - name: "Generate and install kubeconfig"
-        working-directory: ./terraform
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Add cluster CA certificate"
-        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
+          sudo cp ./velero/velero /usr/local/bin/velero
       - name: "Start backup"
-        run: ./velero/velero create backup --from-schedule nightly
+        run: velero create backup --from-schedule nightly
       - name: "Wait some time for snapshots"
-        run: sleep 600
+        run: sleep 300
 
   restart-databases:
     needs: [
@@ -71,6 +90,7 @@ jobs:
         database: [
           harbor,
           keycloak,
+          vaultwarden,
         ]
 
     with:

@@ -1,6 +1,6 @@
 resource "null_resource" "velero_version" {
   triggers = {
-    velero_version = "5.1.5"
+    velero_version = "5.3.0"
   }
 }
 
@@ -33,6 +33,23 @@ resource "helm_release" "velero" {
   namespace = kubernetes_namespace.velero.metadata[0].name
 
   timeout = 300
+
+  set {
+    name  = "resources.requests.cpu"
+    value = "2"
+  }
+  set {
+    name  = "resources.requests.memory"
+    value = "4Gi"
+  }
+  set {
+    name  = "resources.limits.cpu"
+    value = "2"
+  }
+  set {
+    name  = "resources.limits.memory"
+    value = "4Gi"
+  }
 
   set {
     name  = "initContainers[0].name"
@@ -139,7 +156,7 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "configuration.defaultBackupTTL"
-    value = "720h"
+    value = "2160h"
   }
   set {
     name  = "configuration.logLevel"

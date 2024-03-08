@@ -1,9 +1,3 @@
-resource "random_password" "vaultwarden_admin_token" {
-  length           = 16
-  special          = true
-  override_special = "!#$%&*()-_=+[]{}<>:?"
-}
-
 resource "kubernetes_config_map" "vaultwarden_env" {
   metadata {
     name      = "vaultwarden"
@@ -11,13 +5,12 @@ resource "kubernetes_config_map" "vaultwarden_env" {
   }
 
   data = {
-    WEBSOCKET_ENABLED        = "true"
-    WEBSOCKET_PORT           = "3012"
+    WEBSOCKET_ENABLED        = "false" # this doesn't disable live sync, it just disables the old, separate websocket server
     EMERGENCY_ACCESS_ALLOWED = "false"
     SIGNUPS_ALLOWED          = "false"
     SIGNUPS_VERIFY           = "false"
     INVITATIONS_ALLOWED      = "true"
-    PASSWORD_HINTS_ALLOWED   = "false"
+    PASSWORD_HINTS_ALLOWED   = "true"
     DOMAIN                   = "https://vault.${var.server_base_domain}"
     ROCKET_PORT              = "80"
     SMTP_HOST                = var.smtp_host
@@ -25,6 +18,9 @@ resource "kubernetes_config_map" "vaultwarden_env" {
     SMTP_PORT                = var.smtp_port
     SMTP_SECURITY            = "force_tls"
     SMTP_USERNAME            = var.smtp_username
+    PUSH_ENABLED             = "true"
+    PUSH_RELAY_URI           = "https://push.bitwarden.${var.is_vaultwarden_push_data_region_us ? "com" : "eu"}"
+    PUSH_IDENTITY_URI        = "https://identity.bitwarden.${var.is_vaultwarden_push_data_region_us ? "com" : "eu"}"
   }
 }
 
@@ -35,8 +31,11 @@ resource "kubernetes_secret" "vaultwarden_env" {
   }
 
   data = {
-    SMTP_PASSWORD = var.smtp_password
-    ADMIN_TOKEN   = random_password.vaultwarden_admin_token.result
+    SMTP_PASSWORD         = var.smtp_password
+    ADMIN_TOKEN           = random_password.vaultwarden_admin_token.result
+    DATABASE_URL          = "postgresql://${random_password.vaultwarden_db_username.result}:${random_password.vaultwarden_db_password.result}@${kubernetes_manifest.vaultwarden_db.manifest.metadata.name}-rw:5432/${kubernetes_manifest.vaultwarden_db.manifest.spec.bootstrap.initdb.database}"
+    PUSH_INSTALLATION_ID  = var.vaultwarden_push_installation_id
+    PUSH_INSTALLATION_KEY = var.vaultwarden_push_installation_key
   }
 }
 
@@ -64,7 +63,7 @@ resource "kubernetes_deployment" "vaultwarden_deployment" {
 
       spec {
         container {
-          image = "vaultwarden/server:1.30.1-alpine"
+          image = "vaultwarden/server:1.30.2-alpine"
           name  = "vaultwarden"
 
           env_from {

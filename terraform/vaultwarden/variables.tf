@@ -23,3 +23,27 @@ variable "smtp_password" {
   sensitive   = true
   description = "Password for the SMTP server."
 }
+
+variable "is_db_hibernate" {
+  type        = bool
+  description = "Whether the DB should be in hibernate mode."
+  default     = false
+}
+
+variable "is_vaultwarden_push_data_region_us" {
+  type        = bool
+  description = "Region selection for the push notification data region. US (true) or EU (false)."
+  default     = false
+}
+
+variable "vaultwarden_push_installation_id" {
+  type        = string
+  sensitive   = true
+  description = "Installation ID for push notifications."
+}
+
+variable "vaultwarden_push_installation_key" {
+  type        = string
+  sensitive   = true
+  description = "Installation key for push notifications."
+}

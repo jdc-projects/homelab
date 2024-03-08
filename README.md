@@ -1,12 +1,12 @@
 # homelab
 
-Infrastructure and code for deploying my Homelab. There are some dependencies.
+Infrastructure and code for deploying my Homelab.
 
 ## Prequisites
 
 This system requires that some setup is completed on the first:
 
-* The Kubernetes management interface port must be exposed to the internet (through router port forwarding), alongside HTTP and HTTPS
+* The ports 80 and 443 port must be exposed to the internet
 * The root of the server_base_domain must point towards the public IP
 * Setup of the [Github Org app](https://github.com/actions/actions-runner-controller/blob/master/docs/using-arc-across-organizations.md)
 
@@ -14,6 +14,8 @@ This system requires that some setup is completed on the first:
 
 ### Secrets
 
+* TAILSCALE_CLIENT_ID
+* TAILSCALE_CLIENT_SECRET
 * CLOUDFLARE_ACME_TOKEN
 * CLOUDFLARE_DDNS_TOKEN
 * GH_ORG_RUNNERS_APP_PRIVATE_KEY
@@ -26,6 +28,8 @@ This system requires that some setup is completed on the first:
 * VELERO_S3_SECRET_ACCESS_KEY
 * K3S_SSH_PRIVATE_KEY
 * K3S_IP_ADDRESS
+* VAULTWARDEN_PUSH_INSTALLATION_ID
+* VAULTWARDEN_PUSH_INSTALLATION_KEY
 
 ### Variables
 
@@ -44,8 +48,7 @@ This system requires that some setup is completed on the first:
 
 ## Disaster Recovery
 
-1. Provision server(s):
-   1. K3s server(s)
+1. Provision K3s server (see `k3s` directory)
 2. Run DR pipeline
 
 ## Stuff to do / ideas
@@ -56,8 +59,14 @@ This system requires that some setup is completed on the first:
 * Migrate to [ARC scale sets](https://github.com/actions/actions-runner-controller/discussions/2775)
 * Add a proper, secure secrets manager
 * Setup Dependabot
-* [Appflowy](https://www.appflowy.io/)
-* [Firezone](https://oopflow.medium.com/how-to-deploy-firezone-on-kubernetes-3373c4ac1a86) Wireguard VPN
+* Note taking (one of the following):
+  * [Appflowy](https://www.appflowy.io/)
+  * [Affine](https://affine.pro/)
+  * [Outline](https://www.getoutline.com/) (BSL though)
+  * [Siyuan](https://github.com/siyuan-note/siyuan)
+  * [AnyType](https://anytype.io/) (no webapp)
+  * [Trilium](https://github.com/zadam/trilium) (no actively developed)
 * [Kubernetes Dashboard](https://github.com/kubernetes/dashboard/tree/master/charts/helm-chart/kubernetes-dashboard) in a [read-only](https://discuss.kubernetes.io/t/readonly-kubernetes-dashboard/5451/2) mode
 * [Kubevirt](https://kubevirt.io/)
-* Use [composite action](https://docs.github.com/en/actions/creating-actions/creating-a-composite-action) for terraform deployments
+* [Penpot](https://github.com/penpot/penpot), with [Docker](https://help.penpot.app/technical-guide/getting-started/#install-with-docker) instructions - waiting for v2
+* [Pihole](https://github.com/MoJo2600/pihole-kubernetes/tree/main/charts/pihole) or alternative

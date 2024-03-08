@@ -1,6 +1,6 @@
 resource "null_resource" "traefik_version" {
   triggers = {
-    traefik_version = "25.0.0"
+    traefik_version = "26.0.0"
   }
 }
 
@@ -282,7 +282,7 @@ resource "null_resource" "traefik_cert_check" {
   }
 
   provisioner "local-exec" {
-    command = "timeout 300 bash -c 'while ! curl -sI https://${var.server_base_domain}; do echo \"Waiting for valid HTTPS cert\" && sleep 1; done'"
+    command = "timeout 300 bash -c 'while ! curl -sI https://ping.${var.server_base_domain}; do echo \"Waiting for valid HTTPS cert\" && sleep 1; done'"
   }
 
   depends_on = [helm_release.traefik]

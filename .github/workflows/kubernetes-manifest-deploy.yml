@@ -38,6 +38,17 @@ jobs:
       - name: "Setup kubectl"
         uses: azure/setup-kubectl@v3
         with:
-          version: 'v1.28.2'
-      - name: "Create tf-state namespace"
+          version: 'v1.28.4'
+      - name: "Connect to Tailnet"
+        if: "${{ ('self-hosted' != inputs.runner-type) }}"
+        uses: tailscale/github-action@v2
+        with:
+          version: '1.58.2'
+          oauth-client-id: ${{ secrets.TAILSCALE_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TAILSCALE_CLIENT_SECRET }}
+          tags: tag:github-org-runner
+      - name: "Connect Tailscale exit node"
+        if: "${{ ('self-hosted' != inputs.runner-type) }}"
+        run: "sudo tailscale up --exit-node=k3s --accept-routes --advertise-tags=tag:github-org-runner --hostname=github-$(hostname)"
+      - name: "Apply manifest"
         run: "kubectl apply -f ${{ inputs.manifest-file }}"

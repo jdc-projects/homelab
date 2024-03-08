@@ -21,7 +21,7 @@ resource "helm_release" "ocis" {
   # remove this when next upgrading
   set {
     name  = "image.tag"
-    value = "4.0.2"
+    value = "4.0.5"
   }
 
   set {

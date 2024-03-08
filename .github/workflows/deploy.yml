@@ -10,10 +10,12 @@ on:
         options:
           - self-hosted
           - ubuntu-latest
-  workflow_run:
-    workflows: [Disaster Recovery]
-    types:
-      - completed
+  workflow_call:
+    inputs:
+      runner-type:
+        required: false
+        default: self-hosted
+        type: string
 
 jobs:
   deploy-tf-state-namespace:
@@ -153,15 +155,15 @@ jobs:
     with:
       terraform-dir: ./terraform/keycloak-config
 
-  # deploy-vaultwarden:
-  #   needs: [
-  #     deploy-openldap,
-  #   ]
-  #   uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-  #   secrets: inherit
+  deploy-vaultwarden:
+    needs: [
+      deploy-openldap,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
 
-  #   with:
-  #     terraform-dir: ./terraform/vaultwarden
+    with:
+      terraform-dir: ./terraform/vaultwarden
 
   deploy-ocis:
     needs: [
@@ -195,10 +197,8 @@ jobs:
 
   deploy-harbor-config:
     needs: [
+      deploy-keycloak-config,
       deploy-harbor,
-      # deploy-vaultwarden,
-      deploy-ocis,
-      deploy-services,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit

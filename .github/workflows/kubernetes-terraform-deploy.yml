@@ -44,6 +44,8 @@ env:
   TF_VAR_k3s_username: "k3s"
   TF_VAR_k3s_ssh_private_key: ${{ secrets.K3S_SSH_PRIVATE_KEY }}
   TF_VAR_k3s_ip_address: ${{ secrets.K3S_IP_ADDRESS }}
+  TF_VAR_vaultwarden_push_installation_id: ${{ secrets.VAULTWARDEN_PUSH_INSTALLATION_ID }}
+  TF_VAR_vaultwarden_push_installation_key: ${{ secrets.VAULTWARDEN_PUSH_INSTALLATION_KEY }}
 
 jobs:
   deploy-kubernetes-terraform:
@@ -72,6 +74,17 @@ jobs:
           ./cluster-config-write.sh
           mkdir ~/.kube
           cp cluster.yml ~/.kube/config
+      - name: "Connect to Tailnet"
+        if: "${{ ('self-hosted' != inputs.runner-type) }}"
+        uses: tailscale/github-action@v2
+        with:
+          version: '1.58.2'
+          oauth-client-id: ${{ secrets.TAILSCALE_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TAILSCALE_CLIENT_SECRET }}
+          tags: tag:github-org-runner
+      - name: "Connect Tailscale exit node"
+        if: "${{ ('self-hosted' != inputs.runner-type) }}"
+        run: "sudo tailscale up --exit-node=k3s --accept-routes --advertise-tags=tag:github-org-runner --hostname=github-$(hostname)"
       - name: "Terraform format check"
         run: "terraform fmt -check"
       - name: "Terraform init"
