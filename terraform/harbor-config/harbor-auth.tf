@@ -2,7 +2,7 @@ resource "harbor_config_auth" "oidc" {
   auth_mode          = "oidc_auth"
   primary_auth_mode  = true
   oidc_name          = "keycloak"
-  oidc_endpoint      = "https://idp.${var.server_base_domain}/realms/${data.terraform_remote_state.keycloak_config.outputs.primary_realm_id}"
+  oidc_endpoint      = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.primary_realm_id}"
   oidc_client_id     = keycloak_openid_client.harbor.client_id
   oidc_client_secret = random_password.keycloak_client_secret.result
   oidc_scope         = "openid"
