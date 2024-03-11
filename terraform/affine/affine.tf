@@ -1,3 +1,7 @@
+locals {
+  affine_server_host = "notes.${var.server_base_domain}"
+}
+
 resource "kubernetes_config_map" "affine_env" {
   metadata {
     name      = "affine-env"
@@ -5,7 +9,7 @@ resource "kubernetes_config_map" "affine_env" {
   }
 
   data = {
-    AFFINE_SERVER_HOST    = "notes.${var.server_base_domain}"
+    AFFINE_SERVER_HOST    = local.affine_server_host
     AFFINE_SERVER_PORT    = 3010
     AFFINE_SERVER_HTTPS   = "true"
     MAILER_HOST           = var.smtp_host
@@ -19,6 +23,8 @@ resource "kubernetes_config_map" "affine_env" {
     NODE_OPTIONS          = "--import=./scripts/register.js"
     AFFINE_CONFIG_PATH    = "/root/.affine/config"
     NODE_ENV              = "production"
+    # hack for signin URLs not being correct in emails
+    NEXTAUTH_URL = "https://${local.affine_server_host}"
   }
 }
 
