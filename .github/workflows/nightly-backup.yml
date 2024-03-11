@@ -33,7 +33,6 @@ jobs:
           harbor,
           keycloak,
           vaultwarden,
-          affine,
         ]
 
     with:
@@ -92,7 +91,6 @@ jobs:
           harbor,
           keycloak,
           vaultwarden,
-          affine,
         ]
 
     with:
