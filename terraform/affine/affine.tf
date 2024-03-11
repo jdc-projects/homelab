@@ -1,5 +1,5 @@
 locals {
-  affine_server_host = "notes.${var.server_base_domain}"
+  affine_server_host = "affine.${var.server_base_domain}"
 }
 
 resource "kubernetes_config_map" "affine_env" {
