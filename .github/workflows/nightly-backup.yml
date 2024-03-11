@@ -33,6 +33,7 @@ jobs:
           harbor,
           keycloak,
           vaultwarden,
+          supabase,
         ]
 
     with:
@@ -91,6 +92,7 @@ jobs:
           harbor,
           keycloak,
           vaultwarden,
+          supabase,
         ]
 
     with:
