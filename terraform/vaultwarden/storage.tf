@@ -6,7 +6,7 @@ resource "kubernetes_persistent_volume_claim" "vaultwarden" {
 
   spec {
     access_modes       = ["ReadWriteOnce"]
-    storage_class_name = "openebs-zfs-localpv-general" # ***** need to check this when deployed
+    storage_class_name = "openebs-zfs-localpv-general"
 
     resources {
       requests = {
