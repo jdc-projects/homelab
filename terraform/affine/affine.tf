@@ -15,7 +15,7 @@ resource "kubernetes_config_map" "affine_env" {
     MAILER_HOST           = var.smtp_host
     MAILER_PORT           = var.smtp_port
     MAILER_USER           = var.smtp_username
-    MAILER_SENDER         = "noreply@${var.server_base_domain}"
+    MAILER_SENDER         = "AFFiNE <noreply@${var.server_base_domain}>"
     REDIS_SERVER_HOST     = "${helm_release.redis.name}-master"
     REDIS_SERVER_PORT     = 6379
     REDIS_SERVER_USER     = ""
