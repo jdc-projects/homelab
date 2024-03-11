@@ -66,22 +66,6 @@ resource "kubernetes_deployment" "affine" {
       }
 
       spec {
-        # init_container {
-        #   image = "alpine:3.19.0"
-        #   name  = "affine-chown"
-
-        #   command = ["sh", "-c", "chown -R 1001 /bitnami/affine"]
-
-        #   security_context {
-        #     run_as_user = 0
-        #   }
-
-        #   volume_mount {
-        #     mount_path = "/bitnami/affine"
-        #     name       = "affine-data"
-        #   }
-        # }
-
         container {
           image = "ghcr.io/toeverything/affine-graphql:stable-cd56d8a"
           name  = "affine"
