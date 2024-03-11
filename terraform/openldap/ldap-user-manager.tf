@@ -21,7 +21,6 @@ resource "kubernetes_config_map" "ldap_user_manager_env" {
     SMTP_HOSTNAME                      = var.smtp_host
     SMTP_HOST_PORT                     = var.smtp_port
     SMTP_USERNAME                      = var.smtp_username
-    SMTP_PASSWORD                      = var.smtp_password
     SMTP_USE_TLS                       = "TRUE"
     EMAIL_FROM_ADDRESS                 = "noreply@${var.server_base_domain}"
     EMAIL_FROM_NAME                    = "LDAP User Manager ${var.server_base_domain}"
@@ -38,6 +37,7 @@ resource "kubernetes_secret" "ldap_user_manager_env" {
 
   data = {
     LDAP_ADMIN_BIND_PWD = random_password.openldap_admin_password.result
+    SMTP_PASSWORD       = var.smtp_password
   }
 }
 
