@@ -8,10 +8,10 @@ resource "kubernetes_config_map" "affine_env" {
     AFFINE_SERVER_HOST    = "notes.${var.server_base_domain}"
     AFFINE_SERVER_PORT    = 3010
     AFFINE_SERVER_HTTPS   = "true"
-    MAILER_HOST           = ""
-    MAILER_PORT           = ""
-    MAILER_USER           = ""
-    MAILER_SENDER         = ""
+    MAILER_HOST           = var.smtp_host
+    MAILER_PORT           = var.smtp_port
+    MAILER_USER           = var.smtp_username
+    MAILER_SENDER         = "noreply@${var.server_base_domain}"
     REDIS_SERVER_HOST     = "${helm_release.redis.name}-master"
     REDIS_SERVER_PORT     = 6379
     REDIS_SERVER_USER     = ""
@@ -29,7 +29,7 @@ resource "kubernetes_secret" "affine_env" {
   }
 
   data = {
-    MAILER_PASSWORD       = ""
+    MAILER_PASSWORD       = var.smtp_password
     DATABASE_URL          = "postgresql://${random_password.affine_db_username.result}:${random_password.affine_db_password.result}@${kubernetes_manifest.affine_db.manifest.metadata.name}-rw:5432/${kubernetes_manifest.affine_db.manifest.spec.bootstrap.initdb.database}"
     REDIS_SERVER_PASSWORD = random_password.affine_redis_password.result
     AFFINE_ADMIN_EMAIL    = "${random_password.affine_admin_username.result}@${var.server_base_domain}"
