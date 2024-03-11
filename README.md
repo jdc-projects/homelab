@@ -59,14 +59,8 @@ This system requires that some setup is completed on the first:
 * Migrate to [ARC scale sets](https://github.com/actions/actions-runner-controller/discussions/2775)
 * Add a proper, secure secrets manager
 * Setup Dependabot
-* Note taking (one of the following):
-  * [Appflowy](https://www.appflowy.io/)
-  * [Affine](https://affine.pro/)
-  * [Outline](https://www.getoutline.com/) (BSL though)
-  * [Siyuan](https://github.com/siyuan-note/siyuan)
-  * [AnyType](https://anytype.io/) (no webapp)
-  * [Trilium](https://github.com/zadam/trilium) (no actively developed)
 * [Kubernetes Dashboard](https://github.com/kubernetes/dashboard/tree/master/charts/helm-chart/kubernetes-dashboard) in a [read-only](https://discuss.kubernetes.io/t/readonly-kubernetes-dashboard/5451/2) mode
 * [Kubevirt](https://kubevirt.io/)
 * [Penpot](https://github.com/penpot/penpot), with [Docker](https://help.penpot.app/technical-guide/getting-started/#install-with-docker) instructions - waiting for v2
 * [Pihole](https://github.com/MoJo2600/pihole-kubernetes/tree/main/charts/pihole) or alternative
+* [Grist](https://support.getgrist.com/self-managed/#what-is-self-managed-grist)
