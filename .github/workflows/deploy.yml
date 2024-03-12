@@ -144,16 +144,6 @@ jobs:
     with:
       terraform-dir: ./terraform/harbor
 
-  deploy-outline:
-    needs: [
-      deploy-cloudnative-pg,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/outline
-
   deploy-keycloak-config:
     needs: [
       deploy-openldap,
@@ -194,6 +184,16 @@ jobs:
 
     with:
       terraform-dir: ./terraform/oauth2-proxy
+
+  deploy-outline:
+    needs: [
+      deploy-keycloak-config,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/outline
 
   deploy-services:
     needs: [
