@@ -105,11 +105,6 @@ resource "kubernetes_deployment" "outline" {
             }
           }
 
-          # volume_mount {
-          #   mount_path = "/var/lib/outline/data"
-          #   name       = "outline-data"
-          # }
-
           resources {
             requests = {
               cpu    = "200m"
@@ -122,14 +117,6 @@ resource "kubernetes_deployment" "outline" {
             }
           }
         }
-
-        # volume {
-        #   name = "outline-data"
-
-        #   persistent_volume_claim {
-        #     claim_name = kubernetes_persistent_volume_claim.outline.metadata[0].name
-        #   }
-        # }
       }
     }
   }
