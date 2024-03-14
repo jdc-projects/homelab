@@ -10,7 +10,7 @@ resource "kubernetes_persistent_volume_claim" "harbor" {
     })
     redis = tomap({
       storage            = "5Gi"
-      storage_class_name = "openebs-zfs-localpv-random"
+      storage_class_name = "openebs-zfs-localpv-random-no-backup"
     })
     trivy = tomap({
       storage            = "5Gi"
