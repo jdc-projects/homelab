@@ -6,7 +6,7 @@ resource "kubernetes_persistent_volume_claim" "redis" {
 
   spec {
     access_modes       = ["ReadWriteOnce"]
-    storage_class_name = "openebs-zfs-localpv-random"
+    storage_class_name = "openebs-zfs-localpv-random-no-backup"
 
     resources {
       requests = {
