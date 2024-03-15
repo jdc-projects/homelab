@@ -19,9 +19,27 @@ jobs:
       - name: Get server status
         run: curl --max-time 5 https://ping.${{ vars.SERVER_BASE_DOMAIN }}
 
-  hibernate-databases:
+  # if something depends on one of the services in 'hibernate-databases-2' it has to go here
+  hibernate-databases-1:
     needs: [
       check-server-up,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    strategy:
+      matrix:
+        # it would be nice to dynamically find these
+        database: [
+          outline,
+        ]
+
+    with:
+      terraform-dir: ./terraform/${{ matrix.database }}
+
+  hibernate-databases-2:
+    needs: [
+      hibernate-databases-1,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -33,7 +51,6 @@ jobs:
           harbor,
           keycloak,
           vaultwarden,
-          outline,
         ]
 
     with:
@@ -42,7 +59,7 @@ jobs:
 
   start-velero-backup:
     needs: [
-      hibernate-databases,
+      hibernate-databases-2,
     ]
     runs-on: self-hosted
 
