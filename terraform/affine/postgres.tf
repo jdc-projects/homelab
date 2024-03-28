@@ -53,6 +53,12 @@ resource "kubernetes_manifest" "affine_db" {
         }
       }
 
+      backup = {
+        volumeSnapshot = {
+          className = "openebs-zfs-localpv"
+        }
+      }
+
       resources = {
         requests = {
           cpu    = "500m"
