@@ -32,6 +32,7 @@ jobs:
         # it would be nice to dynamically find these
         database: [
           outline,
+          grist,
         ]
 
     with:
@@ -127,6 +128,7 @@ jobs:
         # it would be nice to dynamically find these
         database: [
           outline,
+          grist,
         ]
 
     with:
