@@ -10,7 +10,7 @@ resource "kubernetes_job" "minio_chown" {
 
       spec {
         container {
-          image = "alpine:3.19.0"
+          image = "alpine:3.20.0"
           name  = "minio-chown"
 
           command = ["sh", "-c", "chown -R 1000:1000 /export"]
@@ -53,7 +53,7 @@ resource "helm_release" "minio" {
 
   repository = "https://charts.min.io/"
   chart      = "minio"
-  version    = "5.0.15"
+  version    = "5.2.0"
 
   namespace = kubernetes_namespace.harbor.metadata[0].name
 

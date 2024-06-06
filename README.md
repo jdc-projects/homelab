@@ -64,3 +64,4 @@ This system requires that some setup is completed on the first:
 * [Penpot](https://github.com/penpot/penpot), with [Docker](https://help.penpot.app/technical-guide/getting-started/#install-with-docker) instructions - waiting for v2
 * [Pihole](https://github.com/MoJo2600/pihole-kubernetes/tree/main/charts/pihole) or alternative
 * [Grist](https://support.getgrist.com/self-managed/#what-is-self-managed-grist)
+* [web-check](https://github.com/lissy93/web-check)

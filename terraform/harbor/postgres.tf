@@ -22,7 +22,7 @@ resource "kubernetes_manifest" "harbor_db" {
 
     spec = {
       # https://github.com/cloudnative-pg/postgres-containers/pkgs/container/postgresql
-      imageName = "ghcr.io/cloudnative-pg/postgresql:16.1-16"
+      imageName = "ghcr.io/cloudnative-pg/postgresql:16.3-1"
 
       instances = local.harbor_db_instances
 
