@@ -53,7 +53,7 @@ resource "helm_release" "loki" {
 
   repository = "https://grafana.github.io/helm-charts"
   chart      = "loki"
-  version    = "6.6.2"
+  version    = "5.47.2"
 
   namespace = kubernetes_namespace.loki.metadata[0].name
 
