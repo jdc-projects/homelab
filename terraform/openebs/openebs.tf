@@ -15,21 +15,21 @@ resource "helm_release" "openebs" {
   }
 
   set {
-    name = "lvm-localpv.enabled"
+    name  = "lvm-localpv.enabled"
     value = "false"
   }
 
   set {
-    name = "mayastor.enabled"
+    name  = "mayastor.enabled"
     value = "false"
   }
 
   set {
-    name = "engines.local.lvm.enabled"
+    name  = "engines.local.lvm.enabled"
     value = "false"
   }
   set {
-    name = "engines.replicated.mayastor.enabled"
+    name  = "engines.replicated.mayastor.enabled"
     value = "false"
   }
 }
