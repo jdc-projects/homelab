@@ -4,7 +4,7 @@ resource "helm_release" "cloudnative_pg" {
 
   repository = "https://cloudnative-pg.github.io/charts"
   chart      = "cloudnative-pg"
-  version    = "0.23.1"
+  version    = "0.21.4"
 
   timeout = 60
 }
