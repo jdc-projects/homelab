@@ -1,7 +1,7 @@
 resource "helm_release" "openebs" {
   name = "openebs"
 
-  repository = "https://openebs.github.io/openebs"
+  repository = "https://openebs.github.io/charts"
   chart      = "openebs"
   version    = "3.10.0"
 
