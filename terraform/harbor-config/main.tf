@@ -8,17 +8,12 @@ terraform {
   required_providers {
     keycloak = {
       source  = "mrparkers/keycloak"
-      version = "4.3.1"
+      version = "4.4.0"
     }
 
     harbor = {
       source  = "goharbor/harbor"
-      version = "3.10.4"
-    }
-
-    ssh = {
-      source  = "loafoe/ssh"
-      version = "2.6.0"
+      version = "3.10.11"
     }
   }
 }
