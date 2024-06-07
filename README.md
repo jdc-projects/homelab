@@ -6,8 +6,8 @@ Infrastructure and code for deploying my Homelab.
 
 This system requires that some setup is completed on the first:
 
-* The ports 80 and 443 port must be exposed to the internet
-* The root of the server_base_domain must point towards the public IP
+* The ports 80 and 443 must be exposed to the internet
+* The "*.server_base_domain" must point towards the public IP
 * Setup of the [Github Org app](https://github.com/actions/actions-runner-controller/blob/master/docs/using-arc-across-organizations.md)
 
 ## Environment variables required for build
