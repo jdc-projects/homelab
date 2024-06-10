@@ -27,7 +27,7 @@ resource "kubernetes_config_map" "penpot_backend_env" {
     PENPOT_STORAGE_ASSETS_S3_BUCKET    = local.minio_bucket_name
     PENPOT_STORAGE_ASSETS_S3_ENDPOINT  = "http://${helm_release.minio.name}:9000"
     PENPOT_HTTP_SERVER_PORT            = 6060
-    PENPOT_HTTP_SERVER_HOST            = "penpot-backend"
+    PENPOT_HTTP_SERVER_HOST            = "0.0.0.0"
     PENPOT_PUBLIC_URI                  = "https://${local.penpot_domain}"
   }
 }
