@@ -16,7 +16,7 @@ output "keycloak_realm_name" {
   value = data.terraform_remote_state.prometheus_operator.outputs.oauth_realm_name
 }
 
-output "keycloak_url_base" {
+output "keycloak_base_url" {
   value = data.terraform_remote_state.prometheus_operator.outputs.oauth_url_base
 }
 
