@@ -6,7 +6,10 @@ locals {
     "disable-login-with-password",
     "enable-login-with-oidc",
     "enable-smtp",
+    "disable-onboarding-team",
+    "disable-onboarding-newsletter",
     "disable-onboarding-questions",
+    "disable-onboarding",
   ])
 }
 
