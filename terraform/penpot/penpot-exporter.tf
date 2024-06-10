@@ -61,7 +61,6 @@ resource "kubernetes_deployment" "penpot_exporter" {
   lifecycle {
     replace_triggered_by = [
       kubernetes_config_map.penpot_exporter_env,
-      kubernetes_secret.penpot_exporter_env,
     ]
   }
 }

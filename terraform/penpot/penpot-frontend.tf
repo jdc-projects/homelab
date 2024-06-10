@@ -74,7 +74,6 @@ resource "kubernetes_deployment" "penpot_frontend" {
   lifecycle {
     replace_triggered_by = [
       kubernetes_config_map.penpot_frontend_env,
-      kubernetes_secret.penpot_frontend_env,
     ]
   }
 }
