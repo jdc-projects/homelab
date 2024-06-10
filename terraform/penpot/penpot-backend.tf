@@ -87,13 +87,13 @@ resource "kubernetes_deployment" "penpot_backend" {
 
           resources {
             requests = {
-              cpu    = "200m"
-              memory = "256Mi"
+              cpu    = "2"
+              memory = "2Gi"
             }
 
             limits = {
-              cpu    = "500m"
-              memory = "512Mi"
+              cpu    = "4"
+              memory = "4Gi"
             }
           }
         }
