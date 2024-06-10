@@ -45,6 +45,10 @@ output "oauth_api_url" {
   value = local.oauth_api_url
 }
 
+output "oauth_logout_url" {
+  value = local.oauth_logout_url
+}
+
 output "grafana_oauth_admin_role_name" {
   value = local.oauth_admin_role_name
 }
