@@ -10,6 +10,7 @@ locals {
     "disable-onboarding-newsletter",
     "disable-onboarding-questions",
     "disable-onboarding",
+    "disable-dashboard-templates-section",
   ])
 }
 
