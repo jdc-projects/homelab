@@ -12,6 +12,7 @@ resource "keycloak_openid_client" "oauth2_proxy" {
     "https://traefik.${var.server_base_domain}/*",
     "https://idrac.${var.server_base_domain}/*",
     "https://cockpit.${var.server_base_domain}/*",
+    "https://ups.${var.server_base_domain}/*",
   ]
   web_origins = [
   ]
