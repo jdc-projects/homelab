@@ -29,10 +29,6 @@ output "oauth_realm_name" {
   value = local.oauth_realm_name
 }
 
-output "oauth_url_base" {
-  value = local.oauth_url_base
-}
-
 output "oauth_auth_url" {
   value = local.oauth_auth_url
 }

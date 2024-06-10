@@ -87,15 +87,15 @@ resource "helm_release" "ocis" {
   }
   set {
     name  = "features.externalUserManagement.oidc.issuerURI"
-    value = data.terraform_remote_state.keycloak_config.outputs.keycloak_base_url
+    value = data.terraform_remote_state.keycloak_config.outputs.keycloak_issuer_url
   }
   set {
     name  = "features.externalUserManagement.sessionManagementLink"
-    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_base_url}/account/"
+    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_issuer_url}/account/"
   }
   set {
     name  = "features.externalUserManagement.editAccountLink"
-    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_base_url}/account/"
+    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_issuer_url}/account/"
   }
   set {
     name  = "features.externalUserManagement.oidc.webClientID"
