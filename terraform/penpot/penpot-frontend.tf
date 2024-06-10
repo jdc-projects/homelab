@@ -5,7 +5,8 @@ locals {
     "disable-registration",
     "disable-login-with-password",
     "enable-login-with-oidc",
-    "enable-smtp"
+    "enable-smtp",
+    "disable-onboarding-questions",
   ])
 }
 
