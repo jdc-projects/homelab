@@ -1,5 +1,5 @@
 locals {
-  outline_domain = "outline.${var.server_base_domain}"
+  outline_domain = "notes.${var.server_base_domain}"
 }
 
 resource "kubernetes_config_map" "outline_env" {
