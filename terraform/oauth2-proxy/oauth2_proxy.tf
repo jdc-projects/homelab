@@ -44,7 +44,7 @@ resource "helm_release" "oauth2_proxy" {
   }
   set {
     name  = "configuration.oidcIssuerUrl"
-    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.primary_realm_id}"
+    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_url}/realms/master"
   }
   set {
     name  = "configuration.whiteList"
