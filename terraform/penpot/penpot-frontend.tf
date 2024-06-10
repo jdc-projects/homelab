@@ -46,7 +46,7 @@ resource "kubernetes_deployment" "penpot_frontend" {
 
       spec {
         container {
-          image = "penpotapp/backend:${local.penpot_version}"
+          image = "penpotapp/frontend:${local.penpot_version}"
           name  = "penpot-frontend"
 
           env_from {
@@ -76,4 +76,9 @@ resource "kubernetes_deployment" "penpot_frontend" {
       kubernetes_config_map.penpot_frontend_env,
     ]
   }
+
+  depends_on = [
+    kubernetes_deployment.penpot_backend,
+    kubernetes_deployment.penpot_exporter,
+  ]
 }
