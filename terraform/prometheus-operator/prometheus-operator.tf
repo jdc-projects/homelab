@@ -8,6 +8,7 @@ locals {
   oauth_auth_url        = "${local.oauth_url_base}/auth"
   oauth_token_url       = "${local.oauth_url_base}/token"
   oauth_api_url         = "${local.oauth_url_base}/userinfo"
+  oauth_logout_url      = "${local.oauth_url_base}/logout"
   oauth_admin_role_name = "grafanaAdmin"
 }
 

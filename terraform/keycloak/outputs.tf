@@ -31,3 +31,7 @@ output "keycloak_token_url" {
 output "keycloak_api_url" {
   value = data.terraform_remote_state.prometheus_operator.outputs.oauth_api_url
 }
+
+output "keycloak_logout_url" {
+  value = data.terraform_remote_state.prometheus_operator.outputs.oauth_logout_url
+}
