@@ -25,11 +25,11 @@ resource "kubernetes_config_map" "grist_env" {
     # GRIST_SANDBOX = ""
     PYTHON_VERSION             = "3"
     PYTHON_VERSION_ON_CREATION = "3"
-    # TYPEORM_DATABASE           = kubernetes_manifest.grist_db.manifest.spec.bootstrap.initdb.database
-    # TYPEORM_HOST               = "postgres-debug" # "${kubernetes_manifest.grist_db.manifest.metadata.name}-rw"
-    # TYPEORM_LOGGING            = "true" # *****
-    # TYPEORM_PORT               = 5432
-    # TYPEORM_TYPE               = "postgres"
+    TYPEORM_DATABASE           = kubernetes_manifest.grist_db.manifest.spec.bootstrap.initdb.database
+    TYPEORM_HOST               = "${kubernetes_manifest.grist_db.manifest.metadata.name}-rw" # "postgres-debug"
+    TYPEORM_LOGGING            = "true" # *****
+    TYPEORM_PORT               = 5432
+    TYPEORM_TYPE               = "postgres"
     GRIST_OIDC_IDP_ISSUER      = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.primary_realm_id}"
     GRIST_OIDC_IDP_CLIENT_ID   = keycloak_openid_client.grist.name
     GRIST_DOCS_MINIO_BUCKET    = local.minio_bucket_name
@@ -55,8 +55,8 @@ resource "kubernetes_secret" "grist_env" {
   data = {
     GRIST_SESSION_SECRET = random_password.grist_session_secret.result
     REDIS_URL                    = "redis://:${random_password.grist_redis_password.result}@${helm_release.redis.name}-master:6379"
-    # TYPEORM_PASSWORD             = random_password.grist_db_password.result
-    # TYPEORM_USERNAME             = random_password.grist_db_username.result
+    TYPEORM_PASSWORD             = random_password.grist_db_password.result
+    TYPEORM_USERNAME             = random_password.grist_db_username.result
     GRIST_OIDC_IDP_CLIENT_SECRET = random_password.keycloak_client_secret.result
     GRIST_DOCS_MINIO_ACCESS_KEY  = random_password.minio_access_key.result
     GRIST_DOCS_MINIO_SECRET_KEY  = random_password.minio_secret_key.result
@@ -87,7 +87,7 @@ resource "kubernetes_deployment" "grist" {
 
       spec {
         container {
-          image = "gristlabs/grist:1.1.12"
+          image = "gristlabs/grist:1.1.14"
           name  = "grist"
 
           env_from {

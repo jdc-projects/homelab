@@ -22,7 +22,7 @@ resource "kubernetes_manifest" "grist_db" {
 
     spec = {
       # https://github.com/cloudnative-pg/postgres-containers/pkgs/container/postgresql
-      imageName = "ghcr.io/cloudnative-pg/postgresql:16.1-16"
+      imageName = "ghcr.io/cloudnative-pg/postgresql:16.3-1"
 
       instances = local.grist_db_instances
 
