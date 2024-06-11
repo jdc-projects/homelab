@@ -28,7 +28,7 @@ resource "kubernetes_job" "harbor_chown" {
 
       spec {
         container {
-          image = "alpine:3.19.0"
+          image = "alpine:3.20.0"
           name  = "harbor-${each.value.claim_name}-chown"
 
           command = ["sh", "-c", "chown -R ${each.value.chown_uid}:${each.value.chown_gid} /chown"]
@@ -77,7 +77,7 @@ resource "helm_release" "harbor" {
 
   repository = "https://helm.goharbor.io"
   chart      = "harbor"
-  version    = "1.14.0"
+  version    = "1.14.2"
 
   namespace = kubernetes_namespace.harbor.metadata[0].name
 

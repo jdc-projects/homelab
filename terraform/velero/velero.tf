@@ -1,6 +1,6 @@
 resource "null_resource" "velero_version" {
   triggers = {
-    velero_version = "5.3.0"
+    velero_version = "6.6.0"
   }
 }
 
@@ -156,7 +156,7 @@ resource "helm_release" "velero" {
   }
   set {
     name  = "configuration.defaultBackupTTL"
-    value = "2160h"
+    value = "8760h"
   }
   set {
     name  = "configuration.logLevel"

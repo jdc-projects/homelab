@@ -1,15 +1,15 @@
 locals {
-  vaultwarden_db_instances = 2
+  penpot_db_instances = 2
 }
 
-resource "kubernetes_manifest" "vaultwarden_db" {
+resource "kubernetes_manifest" "penpot_db" {
   manifest = {
     apiVersion = "postgresql.cnpg.io/v1"
     kind       = "Cluster"
 
     metadata = {
-      name      = "vaultwarden-db"
-      namespace = kubernetes_namespace.vaultwarden.metadata[0].name
+      name      = "penpot-db"
+      namespace = kubernetes_namespace.penpot.metadata[0].name
 
       labels = {
         "velero.io/exclude-from-backup" = "true"
@@ -24,7 +24,7 @@ resource "kubernetes_manifest" "vaultwarden_db" {
       # https://github.com/cloudnative-pg/postgres-containers/pkgs/container/postgresql
       imageName = "ghcr.io/cloudnative-pg/postgresql:16.3-1"
 
-      instances = local.vaultwarden_db_instances
+      instances = local.penpot_db_instances
 
       postgresql = {
         parameters = {
@@ -34,8 +34,8 @@ resource "kubernetes_manifest" "vaultwarden_db" {
 
       bootstrap = {
         initdb = {
-          database = "vaultwarden"
-          owner    = random_password.vaultwarden_db_username.result
+          database = "penpot"
+          owner    = random_password.penpot_db_username.result
           secret = {
             name = kubernetes_secret.db_credentials.metadata[0].name
           }
@@ -86,12 +86,12 @@ resource "kubernetes_manifest" "vaultwarden_db" {
 
   wait {
     fields = var.is_db_hibernate ? {
-      "status.phase"                                              = "Cluster in healthy state"
-      "status.danglingPVC[${local.vaultwarden_db_instances - 1}]" = "*"
+      "status.phase"                                         = "Cluster in healthy state"
+      "status.danglingPVC[${local.penpot_db_instances - 1}]" = "*"
       } : {
-      "status.phase"                                             = "Cluster in healthy state"
-      "status.readyInstances"                                    = local.vaultwarden_db_instances
-      "status.healthyPVC[${local.vaultwarden_db_instances - 1}]" = "*"
+      "status.phase"                                        = "Cluster in healthy state"
+      "status.readyInstances"                               = local.penpot_db_instances
+      "status.healthyPVC[${local.penpot_db_instances - 1}]" = "*"
     }
   }
 

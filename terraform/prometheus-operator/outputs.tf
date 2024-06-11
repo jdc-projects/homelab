@@ -29,10 +29,6 @@ output "oauth_realm_name" {
   value = local.oauth_realm_name
 }
 
-output "oauth_url_base" {
-  value = local.oauth_url_base
-}
-
 output "oauth_auth_url" {
   value = local.oauth_auth_url
 }
@@ -43,6 +39,10 @@ output "oauth_token_url" {
 
 output "oauth_api_url" {
   value = local.oauth_api_url
+}
+
+output "oauth_logout_url" {
+  value = local.oauth_logout_url
 }
 
 output "grafana_oauth_admin_role_name" {

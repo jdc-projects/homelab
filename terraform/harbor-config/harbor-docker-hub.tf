@@ -42,29 +42,3 @@ resource "harbor_robot_account" "docker_hub_reader" {
 
   secret = random_password.docker_hub_reader_secret.result
 }
-
-# resource "ssh_sensitive_resource" "k3s_registries_config_copy" {
-#   host        = var.k3s_ip_address
-#   user        = var.k3s_username
-#   private_key = var.k3s_ssh_private_key
-
-#   file {
-#     content     = <<-EOF
-#       mirrors:
-#         docker.io:
-#           endpoint:
-#             - "https://harbor.${var.server_base_domain}/v2/${harbor_project.docker_hub.name}"
-#             - "https://registry.hub.docker.com"
-#       configs:
-#         "harbor.${var.server_base_domain}":
-#           auth:
-#             username: ${harbor_robot_account.docker_hub_reader.full_name}
-#             password: ${harbor_robot_account.docker_hub_reader.secret}
-#     EOF
-#     destination = "/etc/rancher/k3s/registries.yaml"
-#   }
-
-#   commands = [
-#     "echo 'systemctl reload-or-restart k3s' | sudo at now + 5 min",
-#   ]
-# }

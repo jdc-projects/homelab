@@ -1,7 +1,12 @@
+locals {
+  minio_domain      = "minio-${local.penpot_domain}"
+  minio_bucket_name = "data"
+}
+
 resource "kubernetes_job" "minio_chown" {
   metadata {
     name      = "minio-chown"
-    namespace = kubernetes_namespace.harbor.metadata[0].name
+    namespace = kubernetes_namespace.penpot.metadata[0].name
   }
 
   spec {
@@ -29,7 +34,7 @@ resource "kubernetes_job" "minio_chown" {
           name = "minio-data"
 
           persistent_volume_claim {
-            claim_name = kubernetes_persistent_volume_claim.harbor["minio"].metadata[0].name
+            claim_name = kubernetes_persistent_volume_claim.minio.metadata[0].name
           }
         }
 
@@ -55,7 +60,7 @@ resource "helm_release" "minio" {
   chart      = "minio"
   version    = "5.2.0"
 
-  namespace = kubernetes_namespace.harbor.metadata[0].name
+  namespace = kubernetes_namespace.penpot.metadata[0].name
 
   timeout = 300
 
@@ -88,11 +93,16 @@ resource "helm_release" "minio" {
   }
   set {
     name  = "persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.harbor["minio"].metadata[0].name
+    value = kubernetes_persistent_volume_claim.minio.metadata[0].name
   }
   set {
     name  = "persistence.size"
-    value = kubernetes_persistent_volume_claim.harbor["minio"].spec[0].resources[0].requests.storage
+    value = kubernetes_persistent_volume_claim.minio.spec[0].resources[0].requests.storage
+  }
+
+  set {
+    name  = "ingress.enabled"
+    value = "false"
   }
 
   set_sensitive {
@@ -110,7 +120,7 @@ resource "helm_release" "minio" {
 
   set {
     name  = "buckets[0].name"
-    value = "harbor"
+    value = local.minio_bucket_name
   }
   set {
     name  = "buckets[0].policy"

@@ -39,7 +39,7 @@ resource "kubernetes_deployment" "drawio" {
 
       spec {
         container {
-          image = "jgraph/drawio:24.0.6"
+          image = "jgraph/drawio:24.4.15"
           name  = "drawio"
 
           env_from {

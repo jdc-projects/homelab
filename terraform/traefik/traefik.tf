@@ -1,6 +1,6 @@
 resource "null_resource" "traefik_version" {
   triggers = {
-    traefik_version = "26.0.0"
+    traefik_version = "28.2.0"
   }
 }
 
@@ -167,7 +167,7 @@ resource "helm_release" "traefik" {
   }
 
   set {
-    name  = "ports.traefik.expose"
+    name  = "ports.traefik.expose.default"
     value = "true"
   }
 
@@ -194,7 +194,7 @@ resource "helm_release" "traefik" {
     value = "8636"
   }
   set {
-    name  = "ports.ldaps.expose"
+    name  = "ports.ldaps.expose.default"
     value = "true"
   }
   set {

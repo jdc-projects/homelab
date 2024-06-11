@@ -17,7 +17,7 @@ resource "helm_release" "oauth2_proxy" {
 
   repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "oauth2-proxy"
-  version    = "4.5.2"
+  version    = "5.3.3"
 
   namespace = kubernetes_namespace.oauth2_proxy.metadata[0].name
 
@@ -44,7 +44,7 @@ resource "helm_release" "oauth2_proxy" {
   }
   set {
     name  = "configuration.oidcIssuerUrl"
-    value = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.primary_realm_id}"
+    value = data.terraform_remote_state.keycloak_config.outputs.keycloak_issuer_url
   }
   set {
     name  = "configuration.whiteList"

@@ -5,7 +5,10 @@ resource "kubernetes_config_map" "keycloak_extra_env_vars" {
   }
 
   data = {
-    KC_FEATURES = "scripts"
+    KC_FEATURES = join(" ", [
+      "scripts",
+      "persistent-user-session",
+    ])
   }
 }
 
@@ -15,7 +18,7 @@ resource "helm_release" "keycloak" {
 
   repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "keycloak"
-  version    = "18.3.3"
+  version    = "21.4.0"
 
   timeout = 300
 

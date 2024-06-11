@@ -1,9 +1,9 @@
 resource "helm_release" "openebs" {
   name = "openebs"
 
-  repository = "https://openebs.github.io/charts"
+  repository = "https://openebs.github.io/openebs"
   chart      = "openebs"
-  version    = "3.10.0"
+  version    = "4.0.1"
 
   namespace = kubernetes_namespace.openebs.metadata[0].name
 
@@ -12,5 +12,24 @@ resource "helm_release" "openebs" {
   set {
     name  = "zfs-localpv.enabled"
     value = "true"
+  }
+
+  set {
+    name  = "lvm-localpv.enabled"
+    value = "false"
+  }
+
+  set {
+    name  = "mayastor.enabled"
+    value = "false"
+  }
+
+  set {
+    name  = "engines.local.lvm.enabled"
+    value = "false"
+  }
+  set {
+    name  = "engines.replicated.mayastor.enabled"
+    value = "false"
   }
 }

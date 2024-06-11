@@ -8,6 +8,7 @@ locals {
   oauth_auth_url        = "${local.oauth_url_base}/auth"
   oauth_token_url       = "${local.oauth_url_base}/token"
   oauth_api_url         = "${local.oauth_url_base}/userinfo"
+  oauth_logout_url      = "${local.oauth_url_base}/logout"
   oauth_admin_role_name = "grafanaAdmin"
 }
 
@@ -17,7 +18,7 @@ resource "helm_release" "prometheus_operator" {
 
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "kube-prometheus-stack"
-  version    = "56.3.0"
+  version    = "60.0.0"
 
   timeout = 300
 

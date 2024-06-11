@@ -1,6 +1,6 @@
 resource "helm_release" "redis" {
   name      = "redis"
-  namespace = kubernetes_namespace.outline.metadata[0].name
+  namespace = kubernetes_namespace.penpot.metadata[0].name
 
   repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "redis"
@@ -15,7 +15,7 @@ resource "helm_release" "redis" {
 
   set_sensitive {
     name  = "auth.password"
-    value = random_password.outline_redis_password.result
+    value = random_password.penpot_redis_password.result
   }
 
   set {

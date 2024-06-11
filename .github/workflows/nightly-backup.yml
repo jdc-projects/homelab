@@ -32,6 +32,7 @@ jobs:
         # it would be nice to dynamically find these
         database: [
           outline,
+          penpot,
           grist,
         ]
 
@@ -80,12 +81,12 @@ jobs:
           mkdir ~/.kube
           cp cluster.yml ~/.kube/config
       - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v3
+        uses: azure/setup-kubectl@v4
         with:
           version: 'v1.28.4'
       - name: "Install Velero CLI"
         env:
-          VELERO_VERSION: 'v1.12.2'
+          VELERO_VERSION: 'v1.13.2'
         run: |
           mkdir velero
           curl https://github.com/vmware-tanzu/velero/releases/download/${{ env.VELERO_VERSION }}/velero-${{ env.VELERO_VERSION }}-linux-amd64.tar.gz -Lo velero.tar.gz
@@ -128,6 +129,7 @@ jobs:
         # it would be nice to dynamically find these
         database: [
           outline,
+          penpot,
           grist,
         ]
 

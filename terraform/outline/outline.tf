@@ -1,5 +1,5 @@
 locals {
-  outline_domain = "outline.${var.server_base_domain}"
+  outline_domain = "notes.${var.server_base_domain}"
 }
 
 resource "kubernetes_config_map" "outline_env" {
@@ -22,10 +22,10 @@ resource "kubernetes_config_map" "outline_env" {
     FILE_STORAGE_LOCAL_ROOT_DIR  = "/var/lib/outline/data" # shouldn't be needed since we're using S3 (minio), but set it just in case
     FILE_STORAGE_UPLOAD_MAX_SIZE = 1000000000              # 1G
     OIDC_CLIENT_ID               = keycloak_openid_client.outline.client_id
-    OIDC_AUTH_URI                = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.primary_realm_id}/protocol/openid-connect/auth"
-    OIDC_TOKEN_URI               = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.primary_realm_id}/protocol/openid-connect/token"
-    OIDC_USERINFO_URI            = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.primary_realm_id}/protocol/openid-connect/userinfo"
-    OIDC_LOGOUT_URI              = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_url}/realms/${data.terraform_remote_state.keycloak_config.outputs.primary_realm_id}/protocol/openid-connect/logout"
+    OIDC_AUTH_URI                = data.terraform_remote_state.keycloak_config.outputs.keycloak_auth_url
+    OIDC_TOKEN_URI               = data.terraform_remote_state.keycloak_config.outputs.keycloak_token_url
+    OIDC_USERINFO_URI            = data.terraform_remote_state.keycloak_config.outputs.keycloak_api_url
+    OIDC_LOGOUT_URI              = data.terraform_remote_state.keycloak_config.outputs.keycloak_logout_url
     OIDC_USERNAME_CLAIM          = "preferred_username"
     OIDC_DISPLAY_NAME            = "Keycloak"
     OIDC_SCOPES                  = "openid"
@@ -90,7 +90,7 @@ resource "kubernetes_deployment" "outline" {
 
       spec {
         container {
-          image = "outlinewiki/outline:0.75.2"
+          image = "outlinewiki/outline:0.76.1"
           name  = "outline"
 
           env_from {

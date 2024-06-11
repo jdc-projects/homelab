@@ -1,6 +1,6 @@
 terraform {
   backend "kubernetes" {
-    secret_suffix = "outline"
+    secret_suffix = "penpot"
     config_path   = "../cluster.yml"
     namespace     = "tf-state"
   }
@@ -50,8 +50,8 @@ data "terraform_remote_state" "keycloak_config" {
   }
 }
 
-resource "kubernetes_namespace" "outline" {
+resource "kubernetes_namespace" "penpot" {
   metadata {
-    name = "outline"
+    name = "penpot"
   }
 }
