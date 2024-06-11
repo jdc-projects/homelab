@@ -50,18 +50,3 @@ This system requires that some setup is completed on the first:
 
 1. Provision K3s server (see `k3s` directory)
 2. Run DR pipeline
-
-## Stuff to do / ideas
-
-* [Trivy](https://github.com/aquasecurity/Trivy) for vulnerability scanning
-  AND / OR
-  [Kubescape](https://github.com/kubescape/kubescape)
-* Migrate to [ARC scale sets](https://github.com/actions/actions-runner-controller/discussions/2775)
-* Add a proper, secure secrets manager
-* Setup Dependabot
-* [Kubernetes Dashboard](https://github.com/kubernetes/dashboard/tree/master/charts/helm-chart/kubernetes-dashboard) in a [read-only](https://discuss.kubernetes.io/t/readonly-kubernetes-dashboard/5451/2) mode
-* [Kubevirt](https://kubevirt.io/)
-* [Penpot](https://github.com/penpot/penpot), with [Docker](https://help.penpot.app/technical-guide/getting-started/#install-with-docker) instructions - waiting for v2
-* [Pihole](https://github.com/MoJo2600/pihole-kubernetes/tree/main/charts/pihole) or alternative
-* [Grist](https://support.getgrist.com/self-managed/#what-is-self-managed-grist)
-* [web-check](https://github.com/lissy93/web-check)
