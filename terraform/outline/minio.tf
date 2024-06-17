@@ -113,6 +113,23 @@ resource "helm_release" "minio" {
     value = local.minio_domain
   }
 
+  set {
+    name  = "resources.requests.cpu"
+    value = "100m"
+  }
+  set {
+    name  = "resources.requests.memory"
+    value = "1G"
+  }
+  set {
+    name  = "resources.limits.cpu"
+    value = "200m"
+  }
+  set {
+    name  = "resources.limits.memory"
+    value = "2G"
+  }
+
   set_sensitive {
     name  = "users[0].accessKey"
     value = random_password.minio_access_key.result
