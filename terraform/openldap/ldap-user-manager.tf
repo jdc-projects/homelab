@@ -9,7 +9,7 @@ resource "kubernetes_config_map" "ldap_user_manager_env" {
     LDAP_BASE_DN                       = "dc=idm,dc=homelab"
     LDAP_ADMIN_BIND_DN                 = "cn=${random_password.openldap_admin_username.result},dc=idm,dc=homelab"
     LDAP_ADMINS_GROUP                  = "system_admins"
-    SERVER_HOSTNAME                    = "idm3.${var.server_base_domain}"
+    SERVER_HOSTNAME                    = "idm.${var.server_base_domain}"
     SERVER_PORT                        = "80"
     NO_HTTPS                           = "TRUE"
     ORGANISATION_NAME                  = var.server_base_domain
