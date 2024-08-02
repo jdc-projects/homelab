@@ -20,7 +20,7 @@ resource "helm_release" "keycloak" {
   chart      = "keycloak"
   version    = "22.0.0"
 
-  timeout = 300
+  timeout = 600
 
   set_sensitive {
     name  = "auth.adminUser"
