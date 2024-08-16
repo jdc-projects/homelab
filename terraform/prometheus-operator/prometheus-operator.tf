@@ -134,8 +134,8 @@ resource "null_resource" "crd_updates" {
       helm show chart kube-prometheus-stack --repo https://prometheus-community.github.io/helm-charts | sudo tee chart.yml
       APP_VERSION=`sudo yq -r .appVersion chart.yml` && export APP_VERSION
       sudo curl -Lo prometheus-operator.tar.gz https://github.com/prometheus-operator/prometheus-operator/archive/refs/tags/$APP_VERSION.tar.gz
-      sudo tar -xzvf prometheus-operator.tar.gz
-      sudo kubectl apply --server-side -f ./prometheus-operator/example/prometheus-operator-crd/
+      sudo tar -xzvf prometheus-operator.tar.gz -C prometheus-operator
+      sudo kubectl apply --server-side -f ./prometheus-operator/*/example/prometheus-operator-crd/
     EOF
   }
 }
