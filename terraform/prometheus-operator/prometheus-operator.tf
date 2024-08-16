@@ -135,7 +135,7 @@ resource "null_resource" "crd_updates" {
       APP_VERSION=`sudo yq -r .appVersion chart.yml` && export APP_VERSION
       sudo curl -Lo prometheus-operator.tar.gz https://github.com/prometheus-operator/prometheus-operator/archive/refs/tags/$APP_VERSION.tar.gz
       sudo tar -xzvf prometheus-operator.tar.gz
-      sudo kubectl apply --server-side -f ./prometheus-operator/prometheus-operator/$APP_VERSION/example/prometheus-operator-crd/
+      sudo kubectl apply --server-side -f ./prometheus-operator/example/prometheus-operator-crd/
     EOF
   }
 }
