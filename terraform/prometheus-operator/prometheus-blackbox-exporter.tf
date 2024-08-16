@@ -7,4 +7,8 @@ resource "helm_release" "prometheus_blackbox_exporter" {
   version    = "9.0.0"
 
   timeout = 300
+
+  depends_on = [
+    helm_release.prometheus_operator,
+  ]
 }
