@@ -113,6 +113,19 @@ resource "helm_release" "prometheus_operator" {
     value = "false"
   }
 
+  set {
+    name  = "prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues"
+    value = "false"
+  }
+  set {
+    name  = "prometheus.prometheusSpec.podMonitorSelectorNilUsesHelmValues"
+    value = "false"
+  }
+  set {
+    name  = "prometheus.prometheusSpec.probeSelectorNilUsesHelmValues"
+    value = "false"
+  }
+
   depends_on = [
     null_resource.crd_updates,
   ]
