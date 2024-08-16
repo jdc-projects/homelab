@@ -128,7 +128,7 @@ resource "null_resource" "crd_updates" {
   provisioner "local-exec" {
     when    = create
     command = <<-EOF
-      sudo curl -O https://github.com/mikefarah/yq/releases/download/${self.triggers.yq_version}/yq_${self.triggers.yq_binary}.tar.gz
+      sudo curl -LO https://github.com/mikefarah/yq/releases/download/${self.triggers.yq_version}/yq_${self.triggers.yq_binary}.tar.gz
       sudo tar -xzvf yq_${self.triggers.yq_binary}.tar.gz
       sudo mv yq_${self.triggers.yq_binary}.tar.gz /usr/bin/yq
       helm show chart kube-prometheus-stack --repo https://prometheus-community.github.io/helm-charts | sudo tee chart.yml
