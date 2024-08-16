@@ -128,12 +128,14 @@ resource "null_resource" "crd_updates" {
   provisioner "local-exec" {
     when    = create
     command = <<-EOF
-      sudo curl -LO https://github.com/mikefarah/yq/releases/download/${self.triggers.yq_version}/yq_${self.triggers.yq_binary}.tar.gz
+      sudo curl -Lo yq_${self.triggers.yq_binary}.tar.gz https://github.com/mikefarah/yq/releases/download/${self.triggers.yq_version}/yq_${self.triggers.yq_binary}.tar.gz
       sudo tar -xzvf yq_${self.triggers.yq_binary}.tar.gz
       sudo mv yq_${self.triggers.yq_binary} /usr/bin/yq
       helm show chart kube-prometheus-stack --repo https://prometheus-community.github.io/helm-charts | sudo tee chart.yml
       APP_VERSION=`sudo yq -r .appVersion chart.yml` && export APP_VERSION
-      kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/$APP_VERSION
+      sudo curl -Lo prometheus-operator.tar.gz https://github.com/prometheus-operator/prometheus-operator/archive/refs/tags/$APP_VERSION.tar.gz
+      sudo tar -xzvf prometheus-operator.tar.gz
+      sudo kubectl apply --server-side -f ./prometheus-operator/prometheus-operator/$APP_VERSION/example/prometheus-operator-crd/
     EOF
   }
 }
