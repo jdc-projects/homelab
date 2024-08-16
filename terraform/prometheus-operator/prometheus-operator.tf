@@ -137,7 +137,10 @@ resource "null_resource" "crd_updates" {
       sudo mkdir ./prometheus-operator
       sudo tar -xzvf prometheus-operator.tar.gz -C prometheus-operator
       cd ./prometheus-operator/*/example/prometheus-operator-crd/
-      sudo kubectl apply --server-side -f ./
+      kubectl version
+      kubectl config view
+      sudo kubectl config view
+      kubectl apply --server-side -f ./
     EOF
   }
 }
