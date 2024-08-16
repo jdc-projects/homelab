@@ -129,13 +129,13 @@ resource "null_resource" "crd_updates" {
     when    = create
     command = <<-EOF
       sudo curl -Lo yq_${self.triggers.yq_binary}.tar.gz https://github.com/mikefarah/yq/releases/download/${self.triggers.yq_version}/yq_${self.triggers.yq_binary}.tar.gz
-      sudo tar -xzvf yq_${self.triggers.yq_binary}.tar.gz
+      sudo tar -xzf yq_${self.triggers.yq_binary}.tar.gz
       sudo mv yq_${self.triggers.yq_binary} /usr/bin/yq
       helm show chart kube-prometheus-stack --repo https://prometheus-community.github.io/helm-charts | sudo tee chart.yml
       APP_VERSION=`sudo yq -r .appVersion chart.yml` && export APP_VERSION
       sudo curl -Lo prometheus-operator.tar.gz https://github.com/prometheus-operator/prometheus-operator/archive/refs/tags/$APP_VERSION.tar.gz
       sudo mkdir ./prometheus-operator
-      sudo tar -xzvf prometheus-operator.tar.gz -C prometheus-operator
+      sudo tar -xzf prometheus-operator.tar.gz -C prometheus-operator
       cd ./prometheus-operator/*/example/prometheus-operator-crd/
       kubectl apply --server-side --force-conflicts -f ./
     EOF
