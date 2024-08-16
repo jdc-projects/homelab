@@ -110,6 +110,10 @@ resource "helm_release" "prometheus_operator" {
     name  = "grafana.assertNoLeakedSecrets"
     value = "false"
   }
+
+  depends_on = [
+    null_resource.crd_updates,
+  ]
 }
 
 resource "null_resource" "crd_updates" {
