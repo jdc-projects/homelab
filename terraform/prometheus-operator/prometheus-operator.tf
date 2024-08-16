@@ -1,4 +1,6 @@
 locals {
+  kube_prometheus_stack_version = "61.9.0"
+
   grafana_domain        = "grafana.${var.server_base_domain}"
   oauth_client_id       = "grafana"
   oauth_subdomain       = "idp"
@@ -18,7 +20,7 @@ resource "helm_release" "prometheus_operator" {
 
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "kube-prometheus-stack"
-  version    = "61.9.0"
+  version    = local.kube_prometheus_stack_version
 
   timeout = 300
 
@@ -118,13 +120,20 @@ resource "helm_release" "prometheus_operator" {
 
 resource "null_resource" "crd_updates" {
   triggers = {
-    version = helm_release.prometheus_operator.app_version
+    chart_version = local.kube_prometheus_stack_version
+    yq_version    = "v4.44.3"
+    yq_binary     = "linux_amd64"
   }
 
   provisioner "local-exec" {
     when    = create
     command = <<-EOF
-      kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/${self.triggers.version}
+      sudo curl -O https://github.com/mikefarah/yq/releases/download/${self.triggers.yq_version}/yq_${self.triggers.yq_binary}.tar.gz
+      sudo tar -xzvf yq_${self.triggers.yq_binary}.tar.gz
+      sudo mv yq_${self.triggers.yq_binary}.tar.gz /usr/bin/yq
+      helm show chart kube-prometheus-stack --repo https://prometheus-community.github.io/helm-charts | sudo tee chart.yml
+      APP_VERSION=`sudo yq -r .appVersion chart.yml` && export APP_VERSION
+      kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/$APP_VERSION
     EOF
   }
 }

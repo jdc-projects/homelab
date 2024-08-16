@@ -38,7 +38,7 @@ jobs:
       - name: "Setup kubectl"
         uses: azure/setup-kubectl@v4
         with:
-          version: 'v1.28.4'
+          version: 'v1.29.5'
       - name: "Connect to Tailnet"
         if: "${{ ('self-hosted' != inputs.runner-type) }}"
         uses: tailscale/github-action@v2

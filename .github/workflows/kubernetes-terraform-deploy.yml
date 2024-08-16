@@ -64,6 +64,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.29.5'
+      - name: "Setup Helm"
+        uses: azure/setup-helm@v4
+        with:
+           version: 'v3.15.4'
       - name: "Terraform setup"
         uses: hashicorp/setup-terraform@v3
         with:
