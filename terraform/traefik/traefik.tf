@@ -1,6 +1,6 @@
 resource "null_resource" "traefik_version" {
   triggers = {
-    traefik_version = "28.2.0"
+    traefik_version = "30.1.0"
   }
 }
 
@@ -74,91 +74,6 @@ resource "helm_release" "traefik" {
   set {
     name  = "providers.kubernetesIngress.allowExternalNameServices"
     value = "true"
-  }
-
-  set {
-    name  = "metrics.prometheus"
-    value = "null"
-  }
-  set {
-    name  = "metrics.service.enabled"
-    value = "false"
-  }
-  set {
-    name  = "metrics.service.labels"
-    value = "{}"
-  }
-  set {
-    name  = "metrics.service.annotations"
-    value = "{}"
-  }
-  set {
-    name  = "metrics.disableAPICheck"
-    value = "false"
-  }
-  set_list {
-    name = "metrics.serviceMonitor.metricRelabelings"
-    value = [
-      <<-EOF
-        sourceLabels: [__name__]
-        separator: ;
-        regex: ^fluentd_output_status_buffer_(oldest|newest)_.+
-        replacement: $1
-        action: drop
-      EOF
-      ,
-    ]
-  }
-  set_list {
-    name = "metrics.serviceMonitor.relabelings"
-    value = [
-      <<-EOF
-        sourceLabels: [__meta_kubernetes_pod_node_name]
-        separator: ;
-        regex: ^(.*)$
-        targetLabel: nodename
-        replacement: $1
-        action: replace
-      EOF
-      ,
-    ]
-  }
-  set {
-    name  = "metrics.serviceMonitor.jobLabel"
-    value = "traefik"
-  }
-  set {
-    name  = "metrics.serviceMonitor.interval"
-    value = "30s"
-  }
-  set {
-    name  = "metrics.serviceMonitor.honorLabels"
-    value = "true"
-  }
-  set {
-    name  = "metrics.prometheusRule.additionalLabels"
-    value = "{}"
-  }
-  set {
-    name  = "metrics.prometheusRule.namespace"
-    value = kubernetes_namespace.traefik.metadata[0].name
-  }
-  set_list {
-    name = "metrics.prometheusRule.rules"
-    value = [
-      <<-EOF
-        alert: TraefikDown
-        expr: up{job="traefik"} == 0
-        for: 5m
-        labels:
-          context: traefik
-          severity: warning
-        annotations:
-          summary: "Traefik Down"
-          description: "{{ $labels.pod }} on {{ $labels.nodename }} is down"
-      EOF
-      ,
-    ]
   }
 
   set {
