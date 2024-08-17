@@ -6,8 +6,8 @@ resource "kubernetes_config_map" "keycloak_extra_env_vars" {
 
   data = {
     KC_FEATURES = join(",", [
-      "scripts",
-      "persistent-user-sessions",
+      # "scripts",
+      # "persistent-user-sessions",
     ])
   }
 }
