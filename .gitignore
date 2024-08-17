@@ -1,6 +1,6 @@
 *.lock.hcl
 *.tfstate
-*.tfstate.backup
+*.tfstate.*
 .terraform
 cluster.yml
 *-old
