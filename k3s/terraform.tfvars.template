@@ -1,0 +1,7 @@
+server_base_domain  = ""
+k3s_username        = ""
+k3s_ssh_private_key = <<-EOF
+EOF
+k3s_ip_address      = ""
+k3s_subnet          = ""
+tailscale_auth_key  = ""
