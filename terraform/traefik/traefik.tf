@@ -97,10 +97,6 @@ resource "helm_release" "traefik" {
   }
   set {
     name  = "ports.websecure.tls.domains[0].main"
-    value = var.server_base_domain
-  }
-  set {
-    name  = "ports.websecure.tls.domains[0].sans[0]"
     value = "*.${var.server_base_domain}"
   }
 
@@ -131,10 +127,6 @@ resource "helm_release" "traefik" {
   }
   set {
     name  = "tlsStore.default.defaultGeneratedCert.domain.main"
-    value = var.server_base_domain
-  }
-  set {
-    name  = "tlsStore.default.defaultGeneratedCert.domain.sans[0]"
     value = "*.${var.server_base_domain}"
   }
 
