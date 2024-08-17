@@ -43,7 +43,7 @@ jobs:
         if: "${{ ('self-hosted' != inputs.runner-type) }}"
         uses: tailscale/github-action@v2
         with:
-          version: '1.58.2'
+          version: '1.70.0'
           oauth-client-id: ${{ secrets.TAILSCALE_CLIENT_ID }}
           oauth-secret: ${{ secrets.TAILSCALE_CLIENT_SECRET }}
           tags: tag:github-org-runner
