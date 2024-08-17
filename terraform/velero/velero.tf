@@ -71,26 +71,6 @@ resource "helm_release" "velero" {
     name  = "initContainers[0].volumeMounts[0].name"
     value = "plugins"
   }
-  set {
-    name  = "initContainers[1].name"
-    value = "velero-plugin-for-csi"
-  }
-  set {
-    name  = "initContainers[1].image"
-    value = "velero/velero-plugin-for-csi:v0.6.2"
-  }
-  set {
-    name  = "initContainers[1].imagePullPolicy"
-    value = "IfNotPresent"
-  }
-  set {
-    name  = "initContainers[1].volumeMounts[0].mountPath"
-    value = "/target"
-  }
-  set {
-    name  = "initContainers[1].volumeMounts[0].name"
-    value = "plugins"
-  }
 
   set {
     name  = "cleanUpCRDs"
