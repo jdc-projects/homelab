@@ -58,6 +58,8 @@ resource "kubernetes_manifest" "velero_nightly_schedule" {
           "kube-public",
           "kube-node-lease",
         ]
+
+        includeClusterResources = true
       }
     }
   }
