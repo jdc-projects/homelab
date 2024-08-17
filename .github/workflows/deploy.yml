@@ -220,6 +220,7 @@ jobs:
   deploy-services:
     needs: [
       deploy-oauth2-proxy,
+      deploy-velero,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
