@@ -1,5 +1,7 @@
 locals {
-  kubelet_config_location = "/etc/rancher/k3s/kubelet.config"
+  rancher_directory       = "/etc/rancher"
+  k3s_directory           = "${local.rancher_directory}/k3s"
+  kubelet_config_location = "${local.k3s_directory}/kubelet.config"
 }
 
 resource "ssh_resource" "k3s_kubelet_config" {
@@ -15,6 +17,13 @@ resource "ssh_resource" "k3s_kubelet_config" {
     EOF
     destination = local.kubelet_config_location
   }
+
+  pre_commands = [
+    "sudo mkdir -p ${local.k3s_directory}",
+    "sudo chown -R k3s ${local.rancher_directory}",
+  ]
+
+  timeout = "30s"
 }
 
 resource "ssh_resource" "k3s_provisioning" {
@@ -37,17 +46,14 @@ resource "ssh_resource" "k3s_provisioning" {
       cluster-init: true
       kubelet-arg: "config=${local.kubelet_config_location}"
     EOF
-    destination = "/etc/rancher/k3s/config.yaml"
+    destination = "${local.k3s_directory}/config.yaml"
   }
-
-  pre_commands = [
-    "sudo mkdir -p /etc/rancher/k3s",
-    "sudo chown -R k3s /etc/rancher",
-  ]
 
   commands = [
     "curl -sfL https://get.k3s.io | sh -",
   ]
+
+  timeout = "1m"
 
   depends_on = [
     ssh_resource.k3s_kubelet_config,
