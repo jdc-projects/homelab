@@ -24,7 +24,7 @@ variable "k3s_ip_address" {
 variable "k3s_subnet" {
   type        = string
   sensitive   = true
-  description = "Subnet that the k3s server is in."
+  description = "Subnet that the k3s server is in. (e.g. 192.168.1.0/24)"
 }
 
 variable "tailscale_auth_key" {
