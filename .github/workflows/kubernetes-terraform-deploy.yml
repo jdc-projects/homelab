@@ -76,7 +76,7 @@ jobs:
         if: inputs.needs-kubectl
         uses: azure/setup-kubectl@v4
         with:
-          version: 'v1.29.5'
+          version: 'v1.30.3'
       - name: "Setup Helm"
         if: inputs.needs-helm
         uses: azure/setup-helm@v4
