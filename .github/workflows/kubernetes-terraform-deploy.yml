@@ -16,6 +16,14 @@ on:
         required: false
         type: string
         default: ''
+      needs-kubectl:
+        required: false
+        type: boolean
+        default: false
+      needs-helm:
+        required: false
+        type: boolean
+        default: false
 
 env:
   CLIENT_CERT_DATA: ${{ secrets.KUBE_CLIENT_CERT_DATA }}
@@ -65,10 +73,12 @@ jobs:
         with:
           node-version: 20
       - name: "Setup kubectl"
+        if: inputs.needs-kubectl
         uses: azure/setup-kubectl@v4
         with:
           version: 'v1.29.5'
       - name: "Setup Helm"
+        if: inputs.needs-helm
         uses: azure/setup-helm@v4
         with:
            version: 'v3.15.4'

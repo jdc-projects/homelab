@@ -47,6 +47,8 @@ jobs:
     with:
       terraform-dir: ./terraform/prometheus-operator
       runner-type: ${{ github.event.inputs.runner-type }}
+      needs-kubectl: true
+      needs-helm: true
 
   deploy-github-org-runner-1:
     needs: [
