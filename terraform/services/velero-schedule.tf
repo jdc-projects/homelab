@@ -25,6 +25,15 @@ resource "kubernetes_config_map" "velero_resource_policy" {
               - openebs-zfs-localpv-bulk-no-backup
           action:
             type: skip
+        - conditions:
+            volumeTypes:
+              - emptyDir
+              - downwardAPI
+              - projected
+              - configMap
+              - secret
+          action:
+            type: skip
     EOF
   }
 }
