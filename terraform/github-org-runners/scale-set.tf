@@ -1,3 +1,8 @@
+locals {
+  runner_uid = "1001"
+  group_uid  = "1001"
+}
+
 resource "helm_release" "runner_scale_set" {
   name = "runner-scale-set"
 
@@ -37,6 +42,11 @@ resource "helm_release" "runner_scale_set" {
   }
 
   set {
+    name  = "runnerScaleSetName"
+    value = "self-hosted"
+  }
+
+  set {
     name  = "containerMode.type"
     value = "kubernetes"
   }
@@ -54,16 +64,38 @@ resource "helm_release" "runner_scale_set" {
   }
 
   set {
+    name  = "template.spec.initContainers[0].name"
+    value = "chown-work"
+  }
+  set_list {
+    name = "template.spec.initContainers[0].command"
+    value = [
+      "sh", "-c", "chown -R ${local.runner_uid}:${runner.runner_gid} /chown",
+    ]
+  }
+  set {
+    name  = "template.spec.initContainers[0].securityContext.runAsUser"
+    value = "0"
+  }
+  set {
+    name  = "template.spec.initContainers[0].volumeMounts[0].name"
+    value = "work"
+  }
+  set {
+    name  = "template.spec.initContainers[0].volumeMounts[0].mountPath"
+    value = "/chown"
+  }
+  set {
     name  = "template.spec.containers[0].name"
     value = "runner"
   }
   set {
     name  = "template.spec.containers[0].image"
-    value = "ghcr.io/actions/actions-runner:2.319.1"
+    value = "ghcr.io/actions/actions-runner:${local.runner_version}"
   }
   set {
-    name  = "template.spec.containers[0].command:"
-    value = "[\"/home/runner/run.sh\"]"
+    name  = "template.spec.containers[0].command[0]"
+    value = "/home/runner/run.sh"
   }
   set {
     name  = "template.spec.containers[0].env[0].name"
