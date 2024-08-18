@@ -1,3 +1,14 @@
+locals {
+  keycloak_features_enable = [
+      # "scripts",
+      # "persistent-user-sessions",
+  ]
+  keycloak_features_disable = [
+      "scripts",
+      "persistent-user-sessions",
+  ]
+}
+
 resource "kubernetes_config_map" "keycloak_extra_env_vars" {
   metadata {
     name      = "keycloak-extra-env-vars"
@@ -5,14 +16,8 @@ resource "kubernetes_config_map" "keycloak_extra_env_vars" {
   }
 
   data = {
-    KC_FEATURES = join(",", [
-      # "scripts",
-      # "persistent-user-sessions",
-    ])
-    KC_FEATURES_DISABLED = join(",", [
-      "scripts",
-      "persistent-user-sessions",
-    ])
+    KC_FEATURES = (0 != length(local.keycloak_features_enable)) ? join(",", local.keycloak_features_enable) : ""
+    KC_FEATURES_DISABLED = (0 != length(local.keycloak_features_disable)) ? join(",", local.keycloak_features_disable) : ""
   }
 }
 
