@@ -70,7 +70,7 @@ resource "helm_release" "runner_scale_set" {
     value = "ACTIONS_RUNNER_CONTAINER_HOOKS"
   }
   set {
-    name = "template.spec.containers[0].env[0].value"
+    name  = "template.spec.containers[0].env[0].value"
     value = "/home/runner/k8s/index.js"
   }
   set {
@@ -78,7 +78,7 @@ resource "helm_release" "runner_scale_set" {
     value = "ACTIONS_RUNNER_POD_NAME"
   }
   set {
-    name = "template.spec.containers[0].env[1].valueFrom.fieldRef.fieldPath"
+    name  = "template.spec.containers[0].env[1].valueFrom.fieldRef.fieldPath"
     value = "metadata.name"
   }
   set {
