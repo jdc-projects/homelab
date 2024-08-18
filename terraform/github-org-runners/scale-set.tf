@@ -1,6 +1,6 @@
 locals {
   runner_uid = "1001"
-  group_uid  = "1001"
+  runner_gid  = "1001"
 }
 
 resource "helm_release" "runner_scale_set" {
@@ -70,7 +70,7 @@ resource "helm_release" "runner_scale_set" {
   set_list {
     name = "template.spec.initContainers[0].command"
     value = [
-      "sh", "-c", "chown -R ${local.runner_uid}:${runner.runner_gid} /chown",
+      "sh", "-c", "chown -R ${local.runner_uid}:${local.runner_gid} /chown",
     ]
   }
   set {
