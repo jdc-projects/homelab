@@ -1,8 +1,8 @@
 resource "helm_release" "runner_scale_set" {
-  name = "github-org-runners-controller"
+  name = "runner-scale-set"
 
-  repository = "oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set"
-  chart      = "runner-scale-set"
+  repository = "oci://ghcr.io/actions/actions-runner-controller-charts"
+  chart      = "gha-runner-scale-set"
   version    = local.arc_version
 
   namespace = kubernetes_namespace.github_org_runners.metadata[0].name
@@ -123,4 +123,8 @@ resource "helm_release" "runner_scale_set" {
     value = "1Gi"
   }
   # ***** hosted-tool cache *****
+
+  depends_on = [
+    helm_release.actions_runner_controller
+  ]
 }
