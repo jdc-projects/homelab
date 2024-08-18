@@ -1,3 +1,7 @@
+locals {
+  runner_version = "v2.318.0-ubuntu-22.04"
+}
+
 resource "helm_release" "github_org_runners_controller" {
   name = "github-org-runners-controller"
 
@@ -28,11 +32,11 @@ resource "helm_release" "github_org_runners_controller" {
 
   set {
     name  = "image.actionsRunnerRepositoryAndTag"
-    value = "summerwind/actions-runner:v2.318.0-ubuntu-22.04"
+    value = "summerwind/actions-runner:${local.runner_version}"
   }
   set {
     name  = "image.dindSidecarRepositoryAndTag"
-    value = "docker:27.1.2-dind"
+    value = "summerwind/actions-runner-dind:${local.runner_version}"
   }
 
   set {
