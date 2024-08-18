@@ -135,6 +135,7 @@ resource "helm_release" "keycloak" {
 
   lifecycle {
     replace_triggered_by = [
+      kubernetes_config_map.keycloak_extra_env_vars,
       kubernetes_config_map.keycloak_custom_scripts,
     ]
   }
