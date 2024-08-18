@@ -1,7 +1,3 @@
-locals {
-  runner_version = "v2.318.0-ubuntu-22.04"
-}
-
 resource "helm_release" "github_org_runners_controller" {
   name = "github-org-runners-controller"
 
@@ -32,11 +28,12 @@ resource "helm_release" "github_org_runners_controller" {
 
   set {
     name  = "image.actionsRunnerRepositoryAndTag"
-    value = "summerwind/actions-runner:${local.runner_version}"
+    value = "summerwind/actions-runner:v2.318.0-ubuntu-22.04"
   }
+
   set {
-    name  = "image.dindSidecarRepositoryAndTag"
-    value = "summerwind/actions-runner-dind:${local.runner_version}"
+    name  = "rbac.allowGrantingKubernetesContainerModePermissions"
+    value = "true"
   }
 
   set {

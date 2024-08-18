@@ -118,21 +118,6 @@ resource "kubernetes_manifest" "github_org_runners_set" {
                 name  = "DISABLE_RUNNER_UPDATE"
                 value = "true"
               }]
-            },
-            {
-              name = "docker"
-
-              resources = {
-                requests = {
-                  cpu    = "500m"
-                  memory = "1Gi"
-                }
-
-                limits = {
-                  cpu    = "500m"
-                  memory = "1Gi"
-                }
-              }
             }
           ]
 
