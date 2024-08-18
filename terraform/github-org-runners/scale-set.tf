@@ -1,6 +1,6 @@
 locals {
   runner_uid = "1001"
-  runner_gid  = "1001"
+  runner_gid = "1001"
 }
 
 resource "helm_release" "runner_scale_set" {
