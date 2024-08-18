@@ -104,13 +104,13 @@ resource "kubernetes_manifest" "github_org_runners_set" {
 
               resources = {
                 requests = {
-                  cpu    = "200m"
-                  memory = "512Mi"
+                  cpu    = "500m"
+                  memory = "1Gi"
                 }
 
                 limits = {
                   cpu    = "500m"
-                  memory = "1024Mi"
+                  memory = "1Gi"
                 }
               }
 
@@ -124,13 +124,13 @@ resource "kubernetes_manifest" "github_org_runners_set" {
 
               resources = {
                 requests = {
-                  cpu    = "200m"
-                  memory = "512Mi"
+                  cpu    = "500m"
+                  memory = "1Gi"
                 }
 
                 limits = {
                   cpu    = "500m"
-                  memory = "1024Mi"
+                  memory = "1Gi"
                 }
               }
             }
