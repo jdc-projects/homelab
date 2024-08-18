@@ -3,6 +3,11 @@ variable "server_base_domain" {
   description = "Domain for applications."
 }
 
+variable "github_org_name" {
+  type        = string
+  description = ""
+}
+
 variable "github_org_runners_app_id" {
   type        = string
   description = ""

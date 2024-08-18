@@ -1,6 +1,6 @@
 terraform {
   backend "kubernetes" {
-    secret_suffix = "github-org-runners-1"
+    secret_suffix = "github-org-runners"
     config_path   = "../cluster.yml"
     namespace     = "tf-state"
 

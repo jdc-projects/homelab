@@ -50,7 +50,7 @@ jobs:
       needs-kubectl: true
       needs-helm: true
 
-  deploy-github-org-runner-1:
+  deploy-github-org-runner:
     needs: [
       deploy-tf-state-namespace,
     ]
@@ -58,19 +58,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/github-org-runners-1
-      runner-type: ${{ github.event.inputs.runner-type }}
-
-  deploy-github-org-runner-2:
-    needs: [
-      deploy-openebs,
-      deploy-github-org-runner-1,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/github-org-runners-2
+      terraform-dir: ./terraform/github-org-runners
       runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-traefik:
@@ -87,7 +75,7 @@ jobs:
 
   deploy-cloudnative-pg:
     needs: [
-      deploy-github-org-runner-2,
+      deploy-github-org-runner,
       deploy-traefik,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
