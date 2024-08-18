@@ -9,10 +9,6 @@ resource "kubernetes_config_map" "keycloak_extra_env_vars" {
       # "scripts",
       # "persistent-user-sessions",
     ])
-    KC_FEATURES_DISABLED = join(",", [
-      "scripts",
-      "persistent-user-sessions",
-    ])
   }
 }
 
