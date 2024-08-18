@@ -98,7 +98,7 @@ resource "helm_release" "runner_scale_set" {
     value = "ghcr.io/actions/actions-runner:${local.runner_version}"
   }
   set_list {
-    name  = "template.spec.containers[0].command"
+    name = "template.spec.containers[0].command"
     value = [
       "/bin/sh", "-c",
       "sudo apt update && sudo apt install -y unzip && /home/runner/run.sh",
