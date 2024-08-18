@@ -67,6 +67,10 @@ resource "helm_release" "runner_scale_set" {
     name  = "template.spec.initContainers[0].name"
     value = "chown-work"
   }
+  set {
+    name  = "template.spec.initContainers[0].image"
+    value = "alpine:3.20.0"
+  }
   set_list {
     name = "template.spec.initContainers[0].command"
     value = [
