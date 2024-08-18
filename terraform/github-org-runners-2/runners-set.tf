@@ -137,6 +137,11 @@ resource "kubernetes_manifest" "github_org_runners_set" {
               claimName = kubernetes_persistent_volume_claim.runners["tool-cache"].metadata[0].name
             }
           }]
+
+          env = [{
+            name  = "DISABLE_RUNNER_UPDATE"
+            value = "true"
+          }]
         }
       }
     }
