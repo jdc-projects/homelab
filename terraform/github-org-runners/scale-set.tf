@@ -41,8 +41,8 @@ resource "helm_release" "runner_scale_set" {
     value = "kubernetes"
   }
   set {
-    name  = "containerMode.kubernetesModeWorkVolumeClaim.accessModes"
-    value = "[ \"ReadWriteOnce\" ]"
+    name  = "containerMode.kubernetesModeWorkVolumeClaim.accessModes[0]"
+    value = "ReadWriteOnce"
   }
   set {
     name  = "containerMode.kubernetesModeWorkVolumeClaim.storageClassName"
@@ -87,7 +87,7 @@ resource "helm_release" "runner_scale_set" {
   }
   set {
     name  = "template.spec.containers[0].env[2].value"
-    value = "true"
+    value = "\"true\""
   }
   set {
     name  = "template.spec.containers[0].env[3].name"
@@ -95,7 +95,7 @@ resource "helm_release" "runner_scale_set" {
   }
   set {
     name  = "template.spec.containers[0].env[3].value"
-    value = "true"
+    value = "\"true\""
   }
   set {
     name  = "template.spec.containers[0].volumeMounts[0].name"
@@ -111,8 +111,8 @@ resource "helm_release" "runner_scale_set" {
     value = "work"
   }
   set {
-    name  = "template.spec.volumes[0].ephemeral.volumeClaimTemplate.spec.accessModes"
-    value = "[ \"ReadWriteOnce\" ]"
+    name  = "template.spec.volumes[0].ephemeral.volumeClaimTemplate.spec.accessModes[0]"
+    value = "ReadWriteOnce"
   }
   set {
     name  = "template.spec.volumes[0].ephemeral.volumeClaimTemplate.spec.storageClassName"
