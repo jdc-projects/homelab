@@ -1,11 +1,7 @@
 locals {
   keycloak_features_enable = [
-      # "scripts",
-      # "persistent-user-sessions",
   ]
   keycloak_features_disable = [
-      "scripts",
-      "persistent-user-sessions",
   ]
 }
 
