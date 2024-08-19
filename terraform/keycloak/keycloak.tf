@@ -16,8 +16,8 @@ resource "kubernetes_config_map" "keycloak_extra_env_vars" {
   }
 
   data = {
-    KC_FEATURES          = (0 != length(local.keycloak_features_enable)) ? join(",", local.keycloak_features_enable) : ""
-    KC_FEATURES_DISABLED = (0 != length(local.keycloak_features_disable)) ? join(",", local.keycloak_features_disable) : ""
+    KC_FEATURES          = (0 != length(local.keycloak_features_enable)) ? join(",", local.keycloak_features_enable) : null
+    KC_FEATURES_DISABLED = (0 != length(local.keycloak_features_disable)) ? join(",", local.keycloak_features_disable) : null
   }
 }
 
