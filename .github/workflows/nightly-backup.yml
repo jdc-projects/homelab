@@ -28,6 +28,7 @@ jobs:
     secrets: inherit
 
     strategy:
+      fail-fast: false
       matrix:
         # it would be nice to dynamically find these
         database: [
@@ -46,6 +47,7 @@ jobs:
     secrets: inherit
 
     strategy:
+      fail-fast: false
       matrix:
         # it would be nice to dynamically find these
         database: [
@@ -104,6 +106,7 @@ jobs:
     secrets: inherit
 
     strategy:
+      fail-fast: false
       matrix:
         # it would be nice to dynamically find these
         database: [
@@ -124,6 +127,7 @@ jobs:
     secrets: inherit
 
     strategy:
+      fail-fast: false
       matrix:
         # it would be nice to dynamically find these
         database: [
