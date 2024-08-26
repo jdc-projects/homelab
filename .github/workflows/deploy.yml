@@ -102,7 +102,7 @@ jobs:
 
   deploy-openldap:
     needs: [
-      deploy-openebs,
+      deploy-traefik,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -112,7 +112,7 @@ jobs:
 
   deploy-keycloak:
     needs: [
-      deploy-openebs,
+      deploy-traefik,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -122,7 +122,7 @@ jobs:
 
   deploy-harbor:
     needs: [
-      deploy-openebs,
+      deploy-traefik,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -132,7 +132,7 @@ jobs:
 
   deploy-drawio:
     needs: [
-      deploy-github-org-runner,
+      deploy-traefik,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
