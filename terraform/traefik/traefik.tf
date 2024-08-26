@@ -89,6 +89,11 @@ resource "helm_release" "traefik" {
   # }
 
   set {
+    name  = "ingressRoute.dashboard.enabled"
+    value = "true"
+  }
+
+  set {
     name  = "providers.kubernetesCRD.allowCrossNamespace"
     value = "true"
   }
