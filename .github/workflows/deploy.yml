@@ -26,30 +26,6 @@ jobs:
       manifest-file: ./terraform/tf-state-namespace.yml
       runner-type: ${{ github.event.inputs.runner-type }}
 
-  deploy-openebs:
-    needs: [
-      deploy-tf-state-namespace,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/openebs
-      runner-type: ${{ github.event.inputs.runner-type }}
-
-  deploy-prometheus-operator:
-    needs: [
-      deploy-tf-state-namespace,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/prometheus-operator
-      runner-type: ${{ github.event.inputs.runner-type }}
-      needs-kubectl: true
-      needs-helm: true
-
   deploy-github-org-runner:
     needs: [
       deploy-tf-state-namespace,
@@ -61,22 +37,41 @@ jobs:
       terraform-dir: ./terraform/github-org-runners
       runner-type: ${{ github.event.inputs.runner-type }}
 
+  deploy-openebs:
+    needs: [
+      deploy-github-org-runner,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/openebs
+
+  deploy-prometheus-operator:
+    needs: [
+      deploy-github-org-runner,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/prometheus-operator
+      needs-kubectl: true
+      needs-helm: true
+
   deploy-traefik:
     needs: [
       deploy-openebs,
-      deploy-prometheus-operator,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
 
     with:
       terraform-dir: ./terraform/traefik
-      runner-type: ${{ github.event.inputs.runner-type }}
 
   deploy-cloudnative-pg:
     needs: [
       deploy-github-org-runner,
-      deploy-traefik,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -84,19 +79,9 @@ jobs:
     with:
       terraform-dir: ./terraform/cloudnative-pg
 
-  deploy-traefik-config:
-    needs: [
-      deploy-cloudnative-pg,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/traefik-config
-
   deploy-velero:
     needs: [
-      deploy-cloudnative-pg,
+      deploy-openebs,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -106,7 +91,8 @@ jobs:
 
   deploy-loki:
     needs: [
-      deploy-cloudnative-pg,
+      deploy-openebs,
+      deploy-prometheus-operator,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -116,7 +102,7 @@ jobs:
 
   deploy-openldap:
     needs: [
-      deploy-cloudnative-pg,
+      deploy-openebs,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -126,7 +112,7 @@ jobs:
 
   deploy-keycloak:
     needs: [
-      deploy-cloudnative-pg,
+      deploy-openebs,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -136,7 +122,7 @@ jobs:
 
   deploy-harbor:
     needs: [
-      deploy-cloudnative-pg,
+      deploy-openebs,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -146,13 +132,23 @@ jobs:
 
   deploy-drawio:
     needs: [
-      deploy-cloudnative-pg,
+      deploy-github-org-runner,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
 
     with:
       terraform-dir: ./terraform/drawio
+
+  deploy-traefik-config:
+    needs: [
+      deploy-traefik,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/traefik-config
 
   deploy-keycloak-config:
     needs: [
