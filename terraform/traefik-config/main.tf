@@ -17,11 +17,11 @@ provider "kubernetes" {
   config_path = "../cluster.yml"
 }
 
-data "terraform_remote_state" "keycloak" {
+data "terraform_remote_state" "traefik" {
   backend = "kubernetes"
 
   config = {
-    secret_suffix = "keycloak"
+    secret_suffix = "traefik"
     config_path   = "../cluster.yml"
     namespace     = "tf-state"
   }
