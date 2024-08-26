@@ -35,29 +35,18 @@ jobs:
 
     with:
       terraform-dir: ./terraform/github-org-runners
-      runner-type: ubuntu-lates
-
-  deploy-traefik:
-    needs: [
-      deploy-openebs,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/traefik
       runner-type: ubuntu-latest
 
   deploy-velero:
     needs: [
-      deploy-github-org-runner,
-      deploy-traefik,
+      deploy-tf-state-namespace,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
 
     with:
       terraform-dir: ./terraform/velero
+      runner-type: ubuntu-latest
       extra-variable: is_restore_mode=true
 
   do-velero-restore:
