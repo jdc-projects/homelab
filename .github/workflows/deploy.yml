@@ -84,6 +84,16 @@ jobs:
     with:
       terraform-dir: ./terraform/cloudnative-pg
 
+  deploy-treafik-config:
+    needs: [
+      deploy-cloudnative-pg,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/treafik-config
+
   deploy-velero:
     needs: [
       deploy-cloudnative-pg,

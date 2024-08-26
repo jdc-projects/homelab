@@ -1,16 +1,11 @@
 terraform {
   backend "kubernetes" {
-    secret_suffix = "traefik"
+    secret_suffix = "traefik-config"
     config_path   = "../cluster.yml"
     namespace     = "tf-state"
   }
 
   required_providers {
-    helm = {
-      source  = "hashicorp/helm"
-      version = "2.13.2"
-    }
-
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = "2.30.0"
@@ -18,18 +13,16 @@ terraform {
   }
 }
 
-provider "helm" {
-  kubernetes {
-    config_path = "../cluster.yml"
-  }
-}
-
 provider "kubernetes" {
   config_path = "../cluster.yml"
 }
 
-resource "kubernetes_namespace" "traefik" {
-  metadata {
-    name = "traefik"
+data "terraform_remote_state" "keycloak" {
+  backend = "kubernetes"
+
+  config = {
+    secret_suffix = "keycloak"
+    config_path   = "../cluster.yml"
+    namespace     = "tf-state"
   }
 }

@@ -64,6 +64,31 @@ resource "helm_release" "traefik" {
   # end of hack
 
   set {
+    name  = "experimental.plugins.cloudflarewarp.modulename"
+    value = "github.com/BetterCorp/cloudflarewarp"
+  }
+  set {
+    name  = "experimental.plugins.cloudflarewarp.version"
+    value = "v1.3.0"
+  }
+  # set {
+  #   name  = "experimental.plugins."
+  #   value = ""
+  # }
+  # set {
+  #   name  = "experimental.plugins."
+  #   value = ""
+  # }
+  # set {
+  #   name  = "experimental.plugins."
+  #   value = ""
+  # }
+  # set {
+  #   name  = "experimental.plugins."
+  #   value = ""
+  # }
+
+  set {
     name  = "providers.kubernetesCRD.allowCrossNamespace"
     value = "true"
   }
