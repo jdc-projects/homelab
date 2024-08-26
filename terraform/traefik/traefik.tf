@@ -20,6 +20,11 @@ resource "helm_release" "traefik" {
     value = "INFO"
   }
 
+  set {
+    name  = "deployment.kind"
+    value = "DaemonSet"
+  }
+
   # hack for acme.json permissions problem
   set {
     name  = "deployment.initContainers[0].name"
