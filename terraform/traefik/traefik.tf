@@ -64,7 +64,7 @@ resource "helm_release" "traefik" {
   # end of hack
 
   set {
-    name  = "experimental.plugins.cloudflarewarp.modulename"
+    name  = "experimental.plugins.cloudflarewarp.moduleName"
     value = "github.com/BetterCorp/cloudflarewarp"
   }
   set {
