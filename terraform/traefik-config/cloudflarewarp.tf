@@ -5,7 +5,7 @@ resource "kubernetes_manifest" "cloudflarewarp_middleware" {
 
     metadata = {
       name      = "cloudflarewarp"
-      namespace = data.terraform_remote_state.traefik.outputs.treafik_namespace
+      namespace = data.terraform_remote_state.traefik.outputs.traefik_namespace
     }
 
     spec = {
