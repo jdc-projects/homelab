@@ -84,7 +84,7 @@ jobs:
     with:
       terraform-dir: ./terraform/cloudnative-pg
 
-  deploy-treafik-config:
+  deploy-traefik-config:
     needs: [
       deploy-cloudnative-pg,
     ]
@@ -92,7 +92,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/treafik-config
+      terraform-dir: ./terraform/traefik-config
 
   deploy-velero:
     needs: [
