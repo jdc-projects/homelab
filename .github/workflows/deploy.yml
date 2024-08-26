@@ -113,6 +113,7 @@ jobs:
   deploy-keycloak:
     needs: [
       deploy-traefik,
+      deploy-cloudnative-pg,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -123,6 +124,7 @@ jobs:
   deploy-harbor:
     needs: [
       deploy-traefik,
+      deploy-cloudnative-pg,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -163,6 +165,7 @@ jobs:
 
   deploy-vaultwarden:
     needs: [
+      deploy-cloudnative-pg,
       deploy-openldap,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
