@@ -71,7 +71,7 @@ jobs:
 
   deploy-cloudnative-pg:
     needs: [
-      deploy-github-org-runner,
+      deploy-openebs,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
