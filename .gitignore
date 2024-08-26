@@ -1,3 +1,4 @@
+.vscode
 *.lock.hcl
 *.tfstate
 *.tfstate.*
