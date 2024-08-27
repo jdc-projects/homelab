@@ -12,7 +12,7 @@ resource "kubernetes_manifest" "crowdsec_bouncer_traefik_plugin_middleware" {
 
     spec = {
       plugin = {
-        crowdsec-bouncer-traefik-plugin = {
+        crowdsec-bouncer = {
           Enabled      = "true"
           LogLevel     = "INFO"
           CrowdsecMode = "live"
