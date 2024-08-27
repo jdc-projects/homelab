@@ -4,13 +4,13 @@ resource "kubernetes_manifest" "cloudflarewarp_middleware" {
     kind       = "Middleware"
 
     metadata = {
-      name      = "cloudflarewarp"
+      name      = "cloudflare-real-ip"
       namespace = data.terraform_remote_state.traefik.outputs.traefik_namespace
     }
 
     spec = {
       plugin = {
-        cloudflarewarp = {
+        cloudflare-real-ip = {
           disableDefault = "false"
         }
       }

@@ -69,19 +69,19 @@ resource "helm_release" "traefik" {
   # end of hack
 
   set {
-    name  = "experimental.plugins.cloudflarewarp.moduleName"
+    name  = "experimental.plugins.cloudflare-real-ip.moduleName"
     value = "github.com/BetterCorp/cloudflarewarp"
   }
   set {
-    name  = "experimental.plugins.cloudflarewarp.version"
+    name  = "experimental.plugins.cloudflare-real-ip.version"
     value = "v1.3.0"
   }
   set {
-    name  = "experimental.plugins.crowdsec-bouncer-traefik-plugin.moduleName"
+    name  = "experimental.plugins.crowdsec-bouncer.moduleName"
     value = "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
   }
   set {
-    name  = "experimental.plugins.crowdsec-bouncer-traefik-plugin.version"
+    name  = "experimental.plugins.crowdsec-bouncer.version"
     value = "v1.3.3"
   }
   # set {

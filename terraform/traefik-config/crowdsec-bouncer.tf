@@ -20,10 +20,12 @@ resource "kubernetes_manifest" "crowdsec_bouncer_traefik_plugin_middleware" {
           CrowdsecAppsecEnabled = "false"
           # CrowdsecAppsecHost = "crowdsec:7422" # *****
           CrowdsecLapiScheme         = "http"
-          CrowdsecLapiHost           = "${data.terraform_remote_state.crowdsec.outputs.crowdsec_helm_release_name}-service:8080" # *****
+          CrowdsecLapiHost           = "${data.terraform_remote_state.crowdsec.outputs.crowdsec_helm_release_name}-service.${data.terraform_remote_state.crowdsec.outputs.crowdsec_namespace}:8080" # *****
           CrowdsecLapiKey            = data.terraform_remote_state.crowdsec.outputs.traefik_api_key
-          ClientTrustedIPs           = [] # wildcard for local IPs?
-          ForwardedHeadersTrustedIPs = data.cloudflare_ip_ranges.cloudflare.cidr_blocks
+          ClientTrustedIPs           = [
+            "192.168.1.0/24",
+          ]
+          ForwardedHeadersTrustedIPs = flatten(data.cloudflare_ip_ranges.cloudflare.cidr_blocks) # flatten is required to prevent an error for some reason...
         }
       }
     }
