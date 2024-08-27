@@ -18,6 +18,7 @@ This system requires that some setup is completed on the first:
 * TAILSCALE_CLIENT_SECRET
 * CLOUDFLARE_ACME_TOKEN
 * CLOUDFLARE_DDNS_TOKEN
+* CLOUDFLARE_LIST_IPS_TOKEN
 * GH_ORG_RUNNERS_APP_PRIVATE_KEY
 * IDRAC_PASSWORD
 * IDRAC_USERNAME
@@ -30,6 +31,7 @@ This system requires that some setup is completed on the first:
 * K3S_IP_ADDRESS
 * VAULTWARDEN_PUSH_INSTALLATION_ID
 * VAULTWARDEN_PUSH_INSTALLATION_KEY
+* CROWDSEC_ENROLL_KEY
 
 ### Variables
 

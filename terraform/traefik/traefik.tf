@@ -76,14 +76,14 @@ resource "helm_release" "traefik" {
     name  = "experimental.plugins.cloudflarewarp.version"
     value = "v1.3.0"
   }
-  # set {
-  #   name  = "experimental.plugins."
-  #   value = ""
-  # }
-  # set {
-  #   name  = "experimental.plugins."
-  #   value = ""
-  # }
+  set {
+    name  = "experimental.plugins.crowdsec-bouncer-traefik-plugin.moduleName"
+    value = "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
+  }
+  set {
+    name  = "experimental.plugins.crowdsec-bouncer-traefik-plugin.version"
+    value = "v1.3.3"
+  }
   # set {
   #   name  = "experimental.plugins."
   #   value = ""

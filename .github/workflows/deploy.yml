@@ -142,9 +142,19 @@ jobs:
     with:
       terraform-dir: ./terraform/drawio
 
-  deploy-traefik-config:
+  deploy-crowdsec:
     needs: [
       deploy-traefik,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/crowdsec
+
+  deploy-traefik-config:
+    needs: [
+      deploy-crowdsec,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit

@@ -39,6 +39,7 @@ env:
   TF_VAR_github_org_runners_app_private_key: ${{ secrets.GH_ORG_RUNNERS_APP_PRIVATE_KEY }}
   TF_VAR_cloudflare_acme_token: ${{ secrets.CLOUDFLARE_ACME_TOKEN }}
   TF_VAR_cloudflare_ddns_token: ${{ secrets.CLOUDFLARE_DDNS_TOKEN }}
+  TF_VAR_cloudflare_list_ips_token: ${{ secrets.CLOUDFLARE_LIST_IPS_TOKEN }}
   TF_VAR_idrac_username: ${{ secrets.IDRAC_USERNAME }}
   TF_VAR_idrac_password: ${{ secrets.IDRAC_PASSWORD }}
   TF_VAR_smtp_host: ${{ vars.SMTP_SERVER }}
@@ -55,6 +56,7 @@ env:
   TF_VAR_k3s_ip_address: ${{ secrets.K3S_IP_ADDRESS }}
   TF_VAR_vaultwarden_push_installation_id: ${{ secrets.VAULTWARDEN_PUSH_INSTALLATION_ID }}
   TF_VAR_vaultwarden_push_installation_key: ${{ secrets.VAULTWARDEN_PUSH_INSTALLATION_KEY }}
+  TF_VAR_crowdsec_enroll_key: ${{ secrets.CROWDSEC_ENROLL_KEY }}
 
 jobs:
   deploy-kubernetes-terraform:
