@@ -64,7 +64,7 @@ resource "helm_release" "crowdsec" {
   }
   set {
     name  = "agent.acquisition[0].podName"
-    value = "traefik-*" # "${data.terraform_remote_state.traefik.outputs.traefik_helm_release_name}-*" # ***** double check this naming scheme is correct
+    value = "${data.terraform_remote_state.traefik.outputs.traefik_helm_release_name}-*"
   }
   set {
     name  = "agent.acquisition[0].program"
