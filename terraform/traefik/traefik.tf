@@ -84,14 +84,14 @@ resource "helm_release" "traefik" {
     name  = "experimental.plugins.crowdsec-bouncer.version"
     value = "v1.3.3"
   }
-  # set {
-  #   name  = "experimental.plugins."
-  #   value = ""
-  # }
-  # set {
-  #   name  = "experimental.plugins."
-  #   value = ""
-  # }
+  set {
+    name  = "experimental.plugins.geoblock.moduleName"
+    value = "github.com/PascalMinder/geoblock"
+  }
+  set {
+    name  = "experimental.plugins.geoblock.moduleName"
+    value = "v0.2.8"
+  }
 
   set {
     name  = "ingressRoute.dashboard.enabled"
