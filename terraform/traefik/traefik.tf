@@ -89,7 +89,7 @@ resource "helm_release" "traefik" {
     value = "github.com/PascalMinder/geoblock"
   }
   set {
-    name  = "experimental.plugins.geoblock.moduleName"
+    name  = "experimental.plugins.geoblock.version"
     value = "v0.2.8"
   }
 
