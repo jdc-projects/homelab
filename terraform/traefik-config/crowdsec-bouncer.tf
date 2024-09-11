@@ -16,7 +16,9 @@ resource "kubernetes_manifest" "crowdsec_bouncer_traefik_plugin_middleware" {
           Enabled      = "true"
           LogLevel     = "INFO"
           CrowdsecMode = "live"
-          # currently the helm chart doesn't support appsec - see https://github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin/issues/150 - enable when it does
+          # currently the helm chart doesn't support appsec - see:
+          # https://github.com/crowdsecurity/helm-charts/issues/170
+          # https://github.com/crowdsecurity/helm-charts/pull/189
           CrowdsecAppsecEnabled = "false"
           # CrowdsecAppsecHost = "crowdsec:7422" # *****
           CrowdsecLapiScheme = "http"
