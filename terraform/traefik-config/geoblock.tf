@@ -4,7 +4,7 @@ resource "kubernetes_manifest" "geoblock_traefik_plugin_middleware" {
     kind       = "Middleware"
 
     metadata = {
-      name      = "geoblock-traefik-plugin"
+      name      = "geoblock"
       namespace = data.terraform_remote_state.traefik.outputs.traefik_namespace
     }
 
@@ -13,9 +13,9 @@ resource "kubernetes_manifest" "geoblock_traefik_plugin_middleware" {
         geoblock = {
           silentStartUp             = "false"
           allowLocalRequests        = "true"
-          logLocalRequests          = "false"
-          logAllowedRequests        = "false"
-          logApiRequests            = "false"
+          logLocalRequests          = "true"
+          logAllowedRequests        = "true"
+          logApiRequests            = "true"
           api                       = "https://get.geojs.io/v1/ip/country/{ip}"
           apiTimeoutMs              = 750
           cacheSize                 = 15

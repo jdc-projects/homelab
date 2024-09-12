@@ -6,7 +6,7 @@ resource "kubernetes_manifest" "crowdsec_bouncer_traefik_plugin_middleware" {
     kind       = "Middleware"
 
     metadata = {
-      name      = "crowdsec-bouncer-traefik-plugin"
+      name      = "crowdsec-bouncer"
       namespace = data.terraform_remote_state.traefik.outputs.traefik_namespace
     }
 
