@@ -48,6 +48,10 @@ resource "kubernetes_manifest" "whoami_ingress" {
             name      = "geoblock"
             namespace = "traefik"
           },
+          {
+            name      = "crowdsec-bouncer"
+            namespace = "traefik"
+          },
         ]
       }]
     }
