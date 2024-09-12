@@ -4,6 +4,8 @@ resource "null_resource" "traefik_version" {
   }
 }
 
+data "cloudflare_ip_ranges" "cloudflare" {}
+
 resource "helm_release" "traefik" {
   name = "traefik"
 
@@ -125,6 +127,10 @@ resource "helm_release" "traefik" {
     name  = "ports.web.redirectTo.port"
     value = "websecure"
   }
+  set {
+    name  = "ports.web.redirectTo.permanent"
+    value = "true"
+  }
 
   set {
     name  = "ports.websecure.tls.certResolver"
@@ -210,6 +216,24 @@ resource "helm_release" "traefik" {
   set {
     name  = "certResolvers.letsencrypt.storage"
     value = "/data/acme.json"
+  }
+
+  # trusted proxy / headers stuff
+  set_list {
+    name  = "ports.web.forwardedHeaders.trustedIPs"
+    value = data.cloudflare_ip_ranges.cloudflare.cidr_blocks
+  }
+  set_list {
+    name  = "ports.web.proxyProtocol.trustedIPs"
+    value = data.cloudflare_ip_ranges.cloudflare.cidr_blocks
+  }
+  set_list {
+    name  = "ports.websecure.forwardedHeaders.trustedIPs"
+    value = data.cloudflare_ip_ranges.cloudflare.cidr_blocks
+  }
+  set_list {
+    name  = "ports.websecure.proxyProtocol.trustedIPs"
+    value = data.cloudflare_ip_ranges.cloudflare.cidr_blocks
   }
 
   lifecycle {
