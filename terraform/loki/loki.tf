@@ -1,59 +1,9 @@
-resource "kubernetes_job" "loki_chown" {
-  metadata {
-    name      = "loki-chown"
-    namespace = kubernetes_namespace.loki.metadata[0].name
-  }
-
-  spec {
-    template {
-      metadata {}
-
-      spec {
-        container {
-          image = "alpine:3.20.0"
-          name  = "loki-chown"
-
-          command = ["sh", "-c", "chown -R 1000:1000 /export"]
-
-          security_context {
-            run_as_user = 0
-          }
-
-          volume_mount {
-            mount_path = "/export"
-            name       = "loki-data"
-          }
-        }
-
-        volume {
-          name = "loki-data"
-
-          persistent_volume_claim {
-            claim_name = kubernetes_persistent_volume_claim.loki["minio"].metadata[0].name
-          }
-        }
-
-        restart_policy = "Never"
-      }
-    }
-
-    backoff_limit = 0
-  }
-
-  wait_for_completion = true
-
-  timeouts {
-    create = "5m"
-    update = "5m"
-  }
-}
-
 resource "helm_release" "loki" {
   name = "loki"
 
   repository = "https://grafana.github.io/helm-charts"
   chart      = "loki"
-  version    = "5.47.2"
+  version    = "6.12.0"
 
   namespace = kubernetes_namespace.loki.metadata[0].name
 
@@ -63,6 +13,22 @@ resource "helm_release" "loki" {
     name  = "loki.auth_enabled"
     value = "false"
   }
+
+  # this is the neatest way to put in the schema_config(s)
+  values = [
+    <<-EOF
+      loki:
+        schemaConfig:
+          configs:
+            - from: 2024-04-01
+              object_store: s3
+              store: tsdb
+              schema: v13
+              index:
+                prefix: index_
+                period: 24h
+    EOF
+  ]
 
   set {
     name  = "loki.commonConfig.replication_factor"
@@ -155,18 +121,6 @@ resource "helm_release" "loki" {
     name  = "minio.rootPassword"
     value = random_password.minio_root_password.result
   }
-  set {
-    name  = "minio.persistence.enabled"
-    value = "true"
-  }
-  set {
-    name  = "minio.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.loki["minio"].metadata[0].name
-  }
-  set {
-    name  = "minio.persistence.size"
-    value = kubernetes_persistent_volume_claim.loki["minio"].spec[0].resources[0].requests.storage
-  }
 
   set {
     name  = "write.persistence.storageClass"
@@ -184,8 +138,12 @@ resource "helm_release" "loki" {
     name  = "singleBinary.persistence.storageClass"
     value = "openebs-zfs-localpv-random-no-backup"
   }
-
-  depends_on = [
-    kubernetes_job.loki_chown
-  ]
+  set {
+    name  = "minio.persistence.enabled"
+    value = "true"
+  }
+  set {
+    name  = "minio.persistence.storageClass"
+    value = "openebs-zfs-localpv-random-no-backup"
+  }
 }

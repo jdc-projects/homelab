@@ -3,7 +3,7 @@ resource "helm_release" "promtail" {
 
   repository = "https://grafana.github.io/helm-charts"
   chart      = "promtail"
-  version    = "6.15.5"
+  version    = "6.16.5"
 
   namespace = kubernetes_namespace.loki.metadata[0].name
 
@@ -77,7 +77,7 @@ resource "helm_release" "promtail" {
   }
   set {
     name  = "config.clients[0].url"
-    value = "http://loki-gateway/loki/api/v1/push"
+    value = "http://${helm_release.loki.name}-gateway/loki/api/v1/push"
   }
   set_sensitive {
     name  = "config.clients[0].basic_auth.username"
@@ -87,8 +87,4 @@ resource "helm_release" "promtail" {
     name  = "config.clients[0].basic_auth.password"
     value = random_password.gateway_password.result
   }
-
-  depends_on = [
-    helm_release.loki
-  ]
 }
