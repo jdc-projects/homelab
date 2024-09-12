@@ -25,7 +25,7 @@ resource "kubernetes_manifest" "geoblock_traefik_plugin_middleware" {
           blackListMode             = "false"
           addCountryHeader          = "false"
           countries = [
-            "UK",
+            "GB",
           ]
         }
       }
