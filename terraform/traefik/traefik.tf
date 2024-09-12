@@ -4,8 +4,6 @@ resource "null_resource" "traefik_version" {
   }
 }
 
-data "cloudflare_ip_ranges" "cloudflare" {}
-
 resource "helm_release" "traefik" {
   name = "traefik"
 
@@ -19,7 +17,7 @@ resource "helm_release" "traefik" {
 
   set {
     name  = "logs.general.level"
-    value = "DEBUG"
+    value = "INFO"
   }
 
   set {
@@ -27,7 +25,6 @@ resource "helm_release" "traefik" {
     value = "DaemonSet"
   }
 
-  # hack for acme.json permissions problem
   set {
     name  = "deployment.initContainers[0].name"
     value = "volume-permissions"
@@ -46,7 +43,7 @@ resource "helm_release" "traefik" {
   }
   set {
     name  = "deployment.initContainers[0].command[2]"
-    value = "touch /data/acme.json; chmod -v 600 /data/acme.json; chown -R 65532:65532 /data"
+    value = "touch /data/acme.json; chmod -v 600 /data/acme.json; chown -R 0:0 /data"
   }
   set {
     name  = "deployment.initContainers[0].securityContext.runAsNonRoot"
@@ -68,7 +65,20 @@ resource "helm_release" "traefik" {
     name  = "deployment.initContainers[0].volumeMounts[0].mountPath"
     value = "/data"
   }
-  # end of hack
+
+  set {
+    name  = "deployment.dnsPolicy"
+    value = "ClusterFirstWithHostNet"
+  }
+
+  set {
+    name  = "updateStrategy.rollingUpdate.maxUnavailable"
+    value = "1"
+  }
+  set {
+    name  = "updateStrategy.rollingUpdate.maxSurge"
+    value = "0"
+  }
 
   set {
     name  = "experimental.plugins.cloudflare-real-ip.moduleName"
@@ -119,10 +129,14 @@ resource "helm_release" "traefik" {
   }
 
   set {
-    name  = "ports.traefik.expose.default"
-    value = "true"
+    name  = "ports.traefik.port"
+    value = "9000"
   }
 
+  set {
+    name  = "ports.web.port"
+    value = "80"
+  }
   set {
     name  = "ports.web.redirectTo.port"
     value = "websecure"
@@ -132,6 +146,10 @@ resource "helm_release" "traefik" {
     value = "true"
   }
 
+  set {
+    name  = "ports.websecure.port"
+    value = "443"
+  }
   set {
     name  = "ports.websecure.tls.certResolver"
     value = "letsencrypt"
@@ -143,14 +161,6 @@ resource "helm_release" "traefik" {
 
   set {
     name  = "ports.ldaps.port"
-    value = "8636"
-  }
-  set {
-    name  = "ports.ldaps.expose.default"
-    value = "true"
-  }
-  set {
-    name  = "ports.ldaps.exposedPort"
     value = "636"
   }
   set {
@@ -163,12 +173,22 @@ resource "helm_release" "traefik" {
   }
 
   set {
+    name  = "ports.metrics.port"
+    value = "9500"
+  }
+
+  set {
     name  = "tlsStore.default.defaultGeneratedCert.resolver"
     value = "letsencrypt"
   }
   set {
     name  = "tlsStore.default.defaultGeneratedCert.domain.main"
     value = "*.${var.server_base_domain}"
+  }
+
+  set {
+    name  = "service.enabled"
+    value = "false"
   }
 
   set {
@@ -218,22 +238,38 @@ resource "helm_release" "traefik" {
     value = "/data/acme.json"
   }
 
-  # trusted proxy / headers stuff
+  set {
+    name  = "hostNetwork"
+    value = "true"
+  }
+
   set_list {
-    name  = "ports.web.forwardedHeaders.trustedIPs"
-    value = data.cloudflare_ip_ranges.cloudflare.cidr_blocks
+    name  = "securityContext.capabilities.drop"
+    value = [
+      "ALL"
+    ]
   }
   set_list {
-    name  = "ports.web.proxyProtocol.trustedIPs"
-    value = data.cloudflare_ip_ranges.cloudflare.cidr_blocks
+    name  = "securityContext.capabilities.add"
+    value = [
+      "NET_BIND_SERVICE"
+    ]
   }
-  set_list {
-    name  = "ports.websecure.forwardedHeaders.trustedIPs"
-    value = data.cloudflare_ip_ranges.cloudflare.cidr_blocks
+  set {
+    name  = "securityContext.readOnlyRootFilesystem"
+    value = "true"
   }
-  set_list {
-    name  = "ports.websecure.proxyProtocol.trustedIPs"
-    value = data.cloudflare_ip_ranges.cloudflare.cidr_blocks
+  set {
+    name  = "securityContext.runAsGroup"
+    value = "0"
+  }
+  set {
+    name  = "securityContext.runAsNonRoot"
+    value = "false"
+  }
+  set {
+    name  = "securityContext.runAsUser"
+    value = "0"
   }
 
   lifecycle {

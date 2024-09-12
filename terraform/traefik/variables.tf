@@ -8,9 +8,3 @@ variable "cloudflare_acme_token" {
   sensitive   = true
   description = ""
 }
-
-variable "cloudflare_list_ips_token" {
-  type        = string
-  sensitive   = true
-  description = ""
-}
