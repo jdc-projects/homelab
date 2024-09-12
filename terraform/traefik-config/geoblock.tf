@@ -13,9 +13,9 @@ resource "kubernetes_manifest" "geoblock_traefik_plugin_middleware" {
         geoblock = {
           silentStartUp             = "false"
           allowLocalRequests        = "true"
-          logLocalRequests          = "true"
-          logAllowedRequests        = "true"
-          logApiRequests            = "true"
+          logLocalRequests          = "false"
+          logAllowedRequests        = "false"
+          logApiRequests            = "false"
           api                       = "https://get.geojs.io/v1/ip/country/{ip}"
           apiTimeoutMs              = 750
           cacheSize                 = 15
