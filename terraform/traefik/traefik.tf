@@ -104,6 +104,22 @@ resource "helm_release" "traefik" {
     name  = "experimental.plugins.geoblock.version"
     value = "v0.2.8"
   }
+  set {
+    name  = "experimental.plugins.traefik-api-key-middleware.moduleName"
+    value = "github.com/dtomlinson91/traefik-api-key-middleware"
+  }
+  set {
+    name  = "experimental.plugins.traefik-api-key-middleware.version"
+    value = "v0.1.2"
+  }
+  set {
+    name  = "experimental.plugins.keycloakopenid.moduleName"
+    value = "github.com/Gwojda/keycloakopenid"
+  }
+  set {
+    name  = "experimental.plugins.keycloakopenid.version"
+    value = "v0.1.35"
+  }
 
   set {
     name  = "ingressRoute.dashboard.enabled"

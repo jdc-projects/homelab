@@ -22,7 +22,7 @@ resource "kubernetes_manifest" "crowdsec_bouncer_traefik_plugin_middleware" {
           CrowdsecAppsecEnabled = "false"
           # CrowdsecAppsecHost = "crowdsec:7422" # *****
           CrowdsecLapiScheme = "http"
-          CrowdsecLapiHost   = "${data.terraform_remote_state.crowdsec.outputs.crowdsec_helm_release_name}-service.${data.terraform_remote_state.crowdsec.outputs.crowdsec_namespace}:8080" # *****
+          CrowdsecLapiHost   = "${data.terraform_remote_state.crowdsec.outputs.crowdsec_helm_release_name}-service.${data.terraform_remote_state.crowdsec.outputs.crowdsec_namespace}:8080"
           CrowdsecLapiKey    = data.terraform_remote_state.crowdsec.outputs.traefik_api_key
           ClientTrustedIPs = [
             "192.168.1.0/24",
