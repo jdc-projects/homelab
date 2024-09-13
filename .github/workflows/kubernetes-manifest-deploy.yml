@@ -38,12 +38,12 @@ jobs:
       - name: "Setup kubectl"
         uses: azure/setup-kubectl@v4
         with:
-          version: 'v1.30.3'
+          version: 'v1.30.4'
       - name: "Connect to Tailnet"
         if: "${{ ('self-hosted' != inputs.runner-type) }}"
         uses: tailscale/github-action@v2
         with:
-          version: '1.70.0'
+          version: '1.74.0'
           oauth-client-id: ${{ secrets.TAILSCALE_CLIENT_ID }}
           oauth-secret: ${{ secrets.TAILSCALE_CLIENT_SECRET }}
           tags: tag:github-org-runner

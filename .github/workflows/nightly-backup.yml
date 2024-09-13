@@ -84,7 +84,7 @@ jobs:
       - name: "Setup kubectl"
         uses: azure/setup-kubectl@v4
         with:
-          version: 'v1.30.3'
+          version: 'v1.30.4'
       - name: "Install Velero CLI"
         env:
           VELERO_VERSION: 'v1.13.2'
