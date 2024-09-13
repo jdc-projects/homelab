@@ -105,19 +105,19 @@ resource "helm_release" "traefik" {
     value = "v0.2.8"
   }
   set {
-    name  = "experimental.plugins.traefik-api-key-middleware.moduleName"
+    name  = "experimental.plugins.api-key.moduleName"
     value = "github.com/dtomlinson91/traefik-api-key-middleware"
   }
   set {
-    name  = "experimental.plugins.traefik-api-key-middleware.version"
+    name  = "experimental.plugins.api-key.version"
     value = "v0.1.2"
   }
   set {
-    name  = "experimental.plugins.keycloakopenid.moduleName"
+    name  = "experimental.plugins.keycloak-auth.moduleName"
     value = "github.com/Gwojda/keycloakopenid"
   }
   set {
-    name  = "experimental.plugins.keycloakopenid.version"
+    name  = "experimental.plugins.keycloak-auth.version"
     value = "v0.1.35"
   }
 
