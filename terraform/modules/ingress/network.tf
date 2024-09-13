@@ -1,6 +1,8 @@
-resource "kubernetes_service" "service" {
+resource "kubernetes_service" "internal" {
+  count = local.is_endpoint_internal ? 1 : 0
+
   metadata {
-    name      = var.name
+    name      = "${var.name}-internal"
     namespace = var.namespace
   }
 
@@ -14,13 +16,29 @@ resource "kubernetes_service" "service" {
   }
 }
 
-resource "kubernetes_manifest" "ingress" {
+resource "kubernetes_service" "external" {
+  count = local.is_endpoint_internal ? 0 : 1
+
+  metadata {
+    name      = "${var.name}-external"
+    namespace = var.namespace
+  }
+
+  spec {
+    external_name = var.external_name
+    type          = "ExternalName"
+  }
+}
+
+resource "kubernetes_manifest" "internal_ingress" {
+  count = local.is_endpoint_internal ? 1 : 0
+
   manifest = {
     apiVersion = "traefik.io/v1alpha1"
     kind       = "IngressRoute"
 
     metadata = {
-      name      = var.name
+      name      = "${var.name}-internal"
       namespace = var.namespace
     }
 
@@ -32,9 +50,41 @@ resource "kubernetes_manifest" "ingress" {
         match = "Host(`${var.domain}`)${"" != var.path ? " && PathPrefix(`/${var.path}`)" : ""}"
 
         services = [{
-          name      = kubernetes_service.service.metadata[0].name
+          name      = one(kubernetes_service.internal[*].metadata[0].name)
           namespace = var.namespace
-          port      = kubernetes_service.service.spec[0].port[0].port
+          port      = one(kubernetes_service.internal[*].spec[0].port[0].port)
+        }]
+
+        middlewares = local.middlewares
+      }]
+    }
+  }
+}
+
+resource "kubernetes_manifest" "external_ingress" {
+  count = local.is_endpoint_internal ? 0 : 1
+
+  manifest = {
+    apiVersion = "traefik.io/v1alpha1"
+    kind       = "IngressRoute"
+
+    metadata = {
+      name      = "${var.name}-external"
+      namespace = var.namespace
+    }
+
+    spec = {
+      entryPoints = ["websecure"]
+
+      routes = [{
+        kind  = "Rule"
+        match = "Host(`${var.domain}`)${"" != var.path ? " && PathPrefix(`/${var.path}`)" : ""}"
+
+        services = [{
+          name      = one(kubernetes_service.external[*].metadata[0].name)
+          namespace = var.namespace
+          scheme    = var.is_external_scheme_http ? "http" : "https"
+          port      = var.target_port
         }]
 
         middlewares = local.middlewares
@@ -44,6 +94,8 @@ resource "kubernetes_manifest" "ingress" {
 }
 
 locals {
+  is_endpoint_internal = null != var.selector
+
   middlewares = concat(
     var.do_enable_cloudflare_real_ip_middleware ? [{
       name      = "cloudflare-real-ip"

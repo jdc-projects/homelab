@@ -26,7 +26,25 @@ variable "target_port" {
 
 variable "selector" {
   type        = map(string)
-  description = "Selector that the service should use."
+  description = "Selector that the service should use. Not used if external."
+  default     = null
+
+  validation {
+    condition     = !((null == var.selector && "" == var.external_name) || (null != var.selector && "" != var.external_name))
+    error_message = "Either 'selector' or 'external_name' must be set."
+  }
+}
+
+variable "external_name" {
+  type        = string
+  description = "External domain or IP for to expose. Not used if internal."
+  default     = ""
+}
+
+variable "is_external_scheme_http" {
+  type        = string
+  description = "True if scheme for external endpoint is http. False if HTTPS. Not used if internal."
+  default     = true
 }
 
 variable "do_enable_cloudflare_real_ip_middleware" {
