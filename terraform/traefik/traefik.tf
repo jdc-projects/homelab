@@ -244,13 +244,13 @@ resource "helm_release" "traefik" {
   }
 
   set_list {
-    name  = "securityContext.capabilities.drop"
+    name = "securityContext.capabilities.drop"
     value = [
       "ALL"
     ]
   }
   set_list {
-    name  = "securityContext.capabilities.add"
+    name = "securityContext.capabilities.add"
     value = [
       "NET_BIND_SERVICE"
     ]
