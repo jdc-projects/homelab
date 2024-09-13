@@ -53,6 +53,18 @@ variable "do_enable_api_key_auth" {
   default     = false
 }
 
+variable "do_enable_keycloak_auth" {
+  type        = bool
+  description = "True to enable Keycloak authentication middleware."
+  default     = false
+}
+
+variable "is_keycloak_auth_admin_mode" {
+  type        = bool
+  description = "True for admin-only (system_admins) auth. False for all users."
+  default     = false
+}
+
 variable "extra_middlewares" {
   type        = list(map(string))
   description = "Extra middlewares to use."

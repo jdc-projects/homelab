@@ -61,6 +61,10 @@ locals {
       name      = one(kubernetes_manifest.api_key_auth_plugin_middleware[*].manifest.metadata.name)
       namespace = var.namespace
     }] : [],
+    var.do_enable_keycloak_auth ? [{
+      name      = one(kubernetes_manifest.keycloak_auth_plugin_middleware[*].manifest.metadata.name)
+      namespace = var.namespace
+    }] : [],
     var.extra_middlewares
   )
 }
