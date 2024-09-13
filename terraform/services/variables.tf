@@ -20,3 +20,9 @@ variable "idrac_password" {
   sensitive   = true
   description = "Password for server idrac."
 }
+
+variable "k3s_ip_address" {
+  type        = string
+  sensitive   = true
+  description = "IP address of the K3s server."
+}
