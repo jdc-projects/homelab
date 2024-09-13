@@ -28,3 +28,27 @@ variable "selector" {
   type        = map(string)
   description = "Selector that the service should use."
 }
+
+variable "do_enable_cloudflare_real_ip_middleware" {
+  type        = bool
+  description = "True to enable Cloudflare Real IP middleware."
+  default     = true
+}
+
+variable "do_enable_geoblock" {
+  type        = bool
+  description = "True to enable Geoblock middleware."
+  default     = true
+}
+
+variable "do_enable_crowdsec_bouncer" {
+  type        = bool
+  description = "True to enable Crowdsec Bouncer middleware."
+  default     = true
+}
+
+variable "extra_middlewares" {
+  type = list(map(string))
+  description = "Extra middlewares to use."
+  default = []
+}

@@ -37,21 +37,26 @@ resource "kubernetes_manifest" "ingress" {
           port      = kubernetes_service.service.spec[0].port[0].port
         }]
 
-        middlewares = [
-          {
-            name      = "cloudflare-real-ip"
-            namespace = "traefik"
-          },
-          {
-            name      = "geoblock"
-            namespace = "traefik"
-          },
-          {
-            name      = "crowdsec-bouncer"
-            namespace = "traefik"
-          },
-        ]
+        middlewares = local.middlewares
       }]
     }
   }
+}
+
+locals {
+  middlewares = concat(
+    var.do_enable_cloudflare_real_ip_middleware ? [{
+      name      = "cloudflare-real-ip"
+      namespace = data.terraform_remote_state.traefik.outputs.traefik_namespace
+    }] : [],
+    var.do_enable_geoblock ? [{
+      name      = "geoblock"
+      namespace = data.terraform_remote_state.traefik.outputs.traefik_namespace
+    }] : [],
+    var.do_enable_crowdsec_bouncer ? [{
+      name      = "crowdsec-bouncer"
+      namespace = data.terraform_remote_state.traefik.outputs.traefik_namespace
+    }] : [],
+    var.extra_middlewares
+  )
 }
