@@ -41,6 +41,12 @@ variable "external_name" {
   default     = ""
 }
 
+variable "priority" {
+  type        = number
+  description = "Priority for the ingress. Larger number = higher priority. 0 uses built-in priority management."
+  default     = 0
+}
+
 variable "is_external_scheme_http" {
   type        = string
   description = "True if scheme for external endpoint is http. False if HTTPS. Not used if internal."

@@ -22,7 +22,7 @@ module "traefik_dashboard_ingress" {
 
   external_name = "192.168.1.190"
 
-  do_enable_keycloak_auth = true
+  do_enable_keycloak_auth     = true
   is_keycloak_auth_admin_mode = true
 
   # extra_middlewares = [{

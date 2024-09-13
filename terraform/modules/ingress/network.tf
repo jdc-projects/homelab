@@ -49,6 +49,8 @@ resource "kubernetes_manifest" "internal_ingress" {
         kind  = "Rule"
         match = "Host(`${var.domain}`)${"" != var.path ? " && PathPrefix(`/${var.path}`)" : ""}"
 
+        priority = var.priority
+
         services = [{
           name      = one(kubernetes_service.internal[*].metadata[0].name)
           namespace = var.namespace
@@ -79,6 +81,8 @@ resource "kubernetes_manifest" "external_ingress" {
       routes = [{
         kind  = "Rule"
         match = "Host(`${var.domain}`)${"" != var.path ? " && PathPrefix(`/${var.path}`)" : ""}"
+
+        priority = var.priority
 
         services = [{
           name      = one(kubernetes_service.external[*].metadata[0].name)
