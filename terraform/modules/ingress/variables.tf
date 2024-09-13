@@ -15,7 +15,7 @@ variable "domain" {
 
 variable "path" {
   type        = string
-  description = "Path for the URL ($domain/$path/)"
+  description = "Path for the URL ($domain/$path)"
   default     = ""
 }
 

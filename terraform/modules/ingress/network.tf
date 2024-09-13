@@ -29,7 +29,7 @@ resource "kubernetes_manifest" "ingress" {
 
       routes = [{
         kind  = "Rule"
-        match = "Host(`${var.domain}`)${"" != var.path ? " && PathPrefix(`/${var.path}/`)" : ""}"
+        match = "Host(`${var.domain}`)${"" != var.path ? " && PathPrefix(`/${var.path}`)" : ""}"
 
         services = [{
           name      = kubernetes_service.service.metadata[0].name
