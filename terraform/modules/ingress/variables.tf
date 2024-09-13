@@ -47,8 +47,16 @@ variable "do_enable_crowdsec_bouncer" {
   default     = true
 }
 
+
+
+variable "do_enable_api_key_auth" {
+  type        = bool
+  description = "True to enable API key authentication middleware."
+  default     = false
+}
+
 variable "extra_middlewares" {
-  type = list(map(string))
+  type        = list(map(string))
   description = "Extra middlewares to use."
-  default = []
+  default     = []
 }
