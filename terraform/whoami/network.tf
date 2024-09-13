@@ -22,13 +22,32 @@ module "traefik_dashboard_ingress" {
 
   external_name = "192.168.1.190"
 
+  priority = 900
+
   do_enable_keycloak_auth     = true
   is_keycloak_auth_admin_mode = true
 
-  # extra_middlewares = [{
-  #   name = kubernetes_manifest.traefik_dashboard_add_prefix_middleware.manifest.metadata.name
-  #   namespace = kubernetes_manifest.traefik_dashboard_add_prefix_middleware.manifest.metadata.namespace
-  # }]
+  extra_middlewares = [{
+    name      = kubernetes_manifest.traefik_dashboard_add_prefix_middleware.manifest.metadata.name
+    namespace = kubernetes_manifest.traefik_dashboard_add_prefix_middleware.manifest.metadata.namespace
+  }]
+}
+
+module "traefik_dashboard_api_ingress" {
+  source = "../modules/ingress"
+
+  name        = "traefik-dashboard-api"
+  namespace   = kubernetes_namespace.whoami.metadata[0].name
+  domain      = "test.${var.server_base_domain}"
+  path        = "api"
+  target_port = 9000
+
+  external_name = "192.168.1.190"
+
+  priority = 1000
+
+  do_enable_keycloak_auth     = true
+  is_keycloak_auth_admin_mode = true
 }
 
 resource "kubernetes_manifest" "traefik_dashboard_add_prefix_middleware" {
