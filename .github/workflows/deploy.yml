@@ -194,16 +194,6 @@ jobs:
     with:
       terraform-dir: ./terraform/ocis
 
-  deploy-oauth2-proxy:
-    needs: [
-      deploy-keycloak-config,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/oauth2-proxy
-
   deploy-outline:
     needs: [
       deploy-keycloak-config,
@@ -226,7 +216,6 @@ jobs:
 
   deploy-services:
     needs: [
-      deploy-oauth2-proxy,
       deploy-velero,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
