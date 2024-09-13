@@ -24,6 +24,8 @@ resource "keycloak_ldap_user_federation" "openldap" {
   bind_dn         = "uid=${data.terraform_remote_state.openldap.outputs.admin_username},ou=people,dc=idm,dc=homelab"
   bind_credential = data.terraform_remote_state.openldap.outputs.admin_password
 
+  custom_user_search_filter = each.value.id == data.keycloak_realm.master.id ? "(&(objectClass=inetOrgPerson)(memberOf=cn=system_admins,ou=groups,dc=idm,dc=homelab))" : ""
+
   use_password_modify_extended_op = false
 
   trust_email = true
