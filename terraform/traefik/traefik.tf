@@ -105,11 +105,11 @@ resource "helm_release" "traefik" {
     value = "v0.2.8"
   }
   set {
-    name  = "experimental.plugins.api-key.moduleName"
+    name  = "experimental.plugins.api-key-auth.moduleName"
     value = "github.com/dtomlinson91/traefik-api-key-middleware"
   }
   set {
-    name  = "experimental.plugins.api-key.version"
+    name  = "experimental.plugins.api-key-auth.version"
     value = "v0.1.2"
   }
   set {

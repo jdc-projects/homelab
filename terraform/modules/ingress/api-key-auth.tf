@@ -5,7 +5,7 @@ resource "random_password" "api_key" {
   upper   = true
 }
 
-resource "kubernetes_manifest" "api_key_plugin_middleware" {
+resource "kubernetes_manifest" "api_key_auth_plugin_middleware" {
   count = var.do_enable_api_key_auth ? 1 : 0
 
   manifest = {
@@ -13,13 +13,13 @@ resource "kubernetes_manifest" "api_key_plugin_middleware" {
     kind       = "Middleware"
 
     metadata = {
-      name      = "api-key"
+      name      = "api-key-auth"
       namespace = var.namespace
     }
 
     spec = {
       plugin = {
-        api-key = {
+        api-key-auth = {
           authenticationHeader     = "true"
           authenticationheaderName = "X-API-KEY"
           bearerHeader             = "true"
