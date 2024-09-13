@@ -13,7 +13,7 @@ resource "kubernetes_manifest" "api_key_auth_plugin_middleware" {
     kind       = "Middleware"
 
     metadata = {
-      name      = "api-key-auth"
+      name      = "${var.name}-api-key-auth"
       namespace = var.namespace
     }
 

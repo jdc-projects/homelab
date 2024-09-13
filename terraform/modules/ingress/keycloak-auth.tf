@@ -42,35 +42,19 @@ resource "kubernetes_manifest" "keycloak_auth_plugin_middleware" {
     kind       = "Middleware"
 
     metadata = {
-      name      = "keycloak-auth"
+      name      = "${var.name}-keycloak-auth"
       namespace = var.namespace
     }
 
     spec = {
       plugin = {
         keycloak-auth = {
-          KeycloakURL = data.terraform_remote_state.keycloak_config.outputs.keycloak_url
-          ClientID = one(keycloak_openid_client.keycloak_auth[*].client_id)
-          ClientSecret = one(keycloak_openid_client.keycloak_auth[*].client_secret)
+          KeycloakURL   = data.terraform_remote_state.keycloak_config.outputs.keycloak_url
+          ClientID      = one(keycloak_openid_client.keycloak_auth[*].client_id)
+          ClientSecret  = one(keycloak_openid_client.keycloak_auth[*].client_secret)
           KeycloakRealm = one(keycloak_openid_client.keycloak_auth[*].realm_id)
         }
       }
     }
   }
 }
-
-# http:
-#   middlewares:
-#     my-keycloakopenid:
-#       plugin:
-#         keycloakopenid:
-#           KeycloakURL: "my-keycloak-url.com" # <- Also supports complete URL, e.g. https://my-keycloak-url.com/auth
-#           ClientID: "<CLIENT_ID"
-#           ClientSecret: "<CLIENT_SECRET"
-#           KeycloakRealm: "<REALM"
-#           Scope: "<Scope [space deliminated] (default: 'openid', example: 'openid profile email')"
-#           TokenCookieName: "<TOKEN_COOKIE_NAME (default: 'AUTH_TOKEN')"
-#           UseAuthHeader: "<true|false (default: false)"
-#           IgnorePathPrefixes: "/api,/favicon.ico [comma deliminated] (optional)"
-
-# configs need to be dynamic to allow for configuration for admins, or just general users
