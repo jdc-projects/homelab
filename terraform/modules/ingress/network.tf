@@ -58,7 +58,7 @@ locals {
       namespace = data.terraform_remote_state.traefik.outputs.traefik_namespace
     }] : [],
     var.do_enable_api_key_auth ? [{
-      name      = one(kubernetes_manifest.api_key_plugin_middleware[*].manifest.metadata.name)
+      name      = one(kubernetes_manifest.api_key_auth_plugin_middleware[*].manifest.metadata.name)
       namespace = var.namespace
     }] : [],
     var.extra_middlewares
