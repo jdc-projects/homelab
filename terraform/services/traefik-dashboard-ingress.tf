@@ -1,6 +1,6 @@
 locals {
   traefik_dashboard_domain = "traefik.${var.server_base_domain}"
-  traefik_dashboard_port = 9000
+  traefik_dashboard_port   = 9000
 }
 
 resource "kubernetes_namespace" "traefik_dashboard" {
