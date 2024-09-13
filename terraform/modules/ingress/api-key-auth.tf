@@ -14,7 +14,7 @@ resource "kubernetes_manifest" "api_key_plugin_middleware" {
 
     metadata = {
       name      = "api-key"
-      namespace = data.terraform_remote_state.traefik.outputs.traefik_namespace
+      namespace = var.namespace
     }
 
     spec = {
