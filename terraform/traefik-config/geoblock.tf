@@ -11,7 +11,7 @@ resource "kubernetes_manifest" "geoblock_traefik_plugin_middleware" {
     spec = {
       plugin = {
         geoblock = {
-          silentStartUp             = "false"
+          silentStartUp             = "true"
           allowLocalRequests        = "true"
           logLocalRequests          = "false"
           logAllowedRequests        = "false"
