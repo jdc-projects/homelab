@@ -5,7 +5,7 @@ module "whoami_ingress" {
   namespace   = kubernetes_namespace.whoami.metadata[0].name
   domain      = "whoami.${var.server_base_domain}"
   target_port = 80
-  selector    = {
+  selector = {
     app = "whoami"
   }
 }

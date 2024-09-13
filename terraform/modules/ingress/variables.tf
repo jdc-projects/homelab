@@ -47,8 +47,6 @@ variable "do_enable_crowdsec_bouncer" {
   default     = true
 }
 
-
-
 variable "do_enable_api_key_auth" {
   type        = bool
   description = "True to enable API key authentication middleware."
