@@ -8,4 +8,6 @@ module "whoami_ingress" {
   selector = {
     app = "whoami"
   }
+
+  do_enable_keycloak_auth = true
 }
