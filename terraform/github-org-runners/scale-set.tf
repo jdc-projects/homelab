@@ -102,7 +102,7 @@ resource "helm_release" "runner_scale_set" {
     name = "template.spec.containers[0].command"
     value = [
       "/bin/sh", "-c",
-      "sudo apt update && sudo apt install -y unzip curl git nodejs && /home/runner/run.sh",
+      "sudo apt update && sudo apt install -y unzip curl git && /home/runner/run.sh",
     ]
   }
   set {
