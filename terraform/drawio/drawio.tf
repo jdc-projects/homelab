@@ -70,3 +70,19 @@ resource "kubernetes_deployment" "drawio" {
     ]
   }
 }
+
+module "drawio_ingress" {
+  source = "../modules/ingress"
+
+  name      = "drawio"
+  namespace = kubernetes_namespace.drawio.metadata[0].name
+  domain    = local.drawio_domain
+
+  target_port = 8080
+
+  selector = {
+    app = "drawio"
+  }
+
+  do_enable_keycloak_auth = true
+}
