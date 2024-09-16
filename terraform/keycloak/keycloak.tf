@@ -88,19 +88,7 @@ resource "helm_release" "keycloak" {
 
   set {
     name  = "ingress.enabled"
-    value = "true"
-  }
-  set {
-    name  = "ingress.hostname"
-    value = data.terraform_remote_state.prometheus_operator.outputs.oauth_domain
-  }
-  set {
-    name  = "ingress.servicePort"
-    value = "https"
-  }
-  set {
-    name  = "ingress.annotations"
-    value = "traefik.ingress.kubernetes.io/router.entrypoints: websecure"
+    value = "false"
   }
 
   set {
@@ -142,6 +130,19 @@ resource "helm_release" "keycloak" {
   }
 }
 
+module "keycloak_ingress" {
+  source = "../modules/ingress"
+
+  name      = "keycloak"
+  namespace = kubernetes_namespace.keycloak.metadata[0].name
+  domain    = "idp.${var.server_base_domain}"
+
+  target_port = 443
+
+  existing_service_name      = helm_release.keycloak.name
+  existing_service_namespace = helm_release.keycloak.namespace
+}
+
 resource "null_resource" "keycloak_liveness_check" {
   provisioner "local-exec" {
     # sometimes, even though Keycloak is available, it doesn't respond to API requests correctly, so we wait for a bit after seeing it's up, just in case
@@ -151,7 +152,9 @@ resource "null_resource" "keycloak_liveness_check" {
     EOF
   }
 
-  depends_on = [helm_release.keycloak]
+  depends_on = [
+    module.keycloak_ingress,
+  ]
 
   lifecycle {
     replace_triggered_by = [
