@@ -142,7 +142,7 @@ jobs:
 
   deploy-drawio:
     needs: [
-      deploy-traefik-config,
+      deploy-keycloak,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
