@@ -47,6 +47,16 @@ jobs:
     with:
       terraform-dir: ./terraform/openebs
 
+  deploy-grafana-operator:
+    needs: [
+      deploy-github-org-runner,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/grafana-operator
+
   deploy-traefik:
     needs: [
       deploy-openebs,
@@ -150,6 +160,17 @@ jobs:
 
     with:
       terraform-dir: ./terraform/vaultwarden
+
+  deploy-grafana:
+    needs: [
+      deploy-grafana-operator,
+      deploy-keycloak,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/grafana
 
   deploy-ocis:
     needs: [
