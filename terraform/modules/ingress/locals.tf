@@ -1,5 +1,5 @@
 locals {
-  is_existing_service = "" != var.existing_service_name
+  is_existing_service  = "" != var.existing_service_name
   is_endpoint_internal = "" == var.external_name
 
   middlewares = concat(

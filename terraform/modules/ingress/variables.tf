@@ -32,9 +32,9 @@ variable "selector" {
   validation {
     condition = !(
       (null == var.selector && "" == var.external_name && "" == var.existing_service_name) || # if they're all unset
-      (null != var.selector && "" != var.external_name) || # if two are set v1
-      (null != var.selector && "" != var.existing_service_name) || # if two are set v2
-      ("" != var.external_name && "" != var.existing_service_name) # if two are set v3
+      (null != var.selector && "" != var.external_name) ||                                    # if two are set v1
+      (null != var.selector && "" != var.existing_service_name) ||                            # if two are set v2
+      ("" != var.external_name && "" != var.existing_service_name)                            # if two are set v3
     )
     error_message = "Exactly one of 'selector', 'external_name', 'existing_service_name' must be set."
   }
@@ -58,7 +58,7 @@ variable "existing_service_namespace" {
   default     = ""
 
   validation {
-    condition = ("" == var.existing_service_namespace && "" == var.existing_service_name) || ("" != var.existing_service_namespace && "" != var.existing_service_name)
+    condition     = ("" == var.existing_service_namespace && "" == var.existing_service_name) || ("" != var.existing_service_namespace && "" != var.existing_service_name)
     error_message = "If 'existing_service_name' is set, 'existing_service_namespace' must also be set."
   }
 }

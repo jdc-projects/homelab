@@ -1,4 +1,6 @@
 resource "random_password" "keycloak_auth_client_secret" {
+  count = var.do_enable_keycloak_auth ? 1 : 0
+
   length  = 50
   numeric = true
   special = false
@@ -23,7 +25,7 @@ resource "keycloak_openid_client" "keycloak_auth" {
   ]
 
   client_authenticator_type = "client-secret"
-  client_secret             = random_password.keycloak_auth_client_secret.result
+  client_secret             = one(random_password.keycloak_auth_client_secret[*].result)
 
   standard_flow_enabled        = true
   direct_access_grants_enabled = true

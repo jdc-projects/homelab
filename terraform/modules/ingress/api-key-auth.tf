@@ -1,4 +1,6 @@
 resource "random_password" "api_key" {
+  count = var.do_enable_api_key_auth ? 1 : 0
+
   length  = 50
   numeric = true
   special = false
@@ -25,7 +27,7 @@ resource "kubernetes_manifest" "api_key_auth_plugin_middleware" {
           bearerHeader             = "true"
           bearerHeaderName         = "Authorization"
           keys = [
-            random_password.api_key.result,
+            one(random_password.api_key[*].result),
           ]
           removeHeadersOnSuccess = "true"
         }
