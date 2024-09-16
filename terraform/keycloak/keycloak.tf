@@ -144,7 +144,11 @@ resource "helm_release" "keycloak" {
 
 resource "null_resource" "keycloak_liveness_check" {
   provisioner "local-exec" {
-    command = "timeout 300 bash -c 'while ! curl -sfI https://${data.terraform_remote_state.prometheus_operator.outputs.oauth_domain}; do echo \"Waiting for Keycloak to be live.\" && sleep 1; done'"
+    # sometimes, even though Keycloak is available, it doesn't respond to API requests correctly, so we wait for a bit after seeing it's up, just in case
+    command = <<-EOF
+      timeout 300 bash -c 'while ! curl -sfI https://${data.terraform_remote_state.prometheus_operator.outputs.oauth_domain}; do echo "Waiting for Keycloak to be live." && sleep 1; done'
+      sleep 30
+    EOF
   }
 
   depends_on = [helm_release.keycloak]

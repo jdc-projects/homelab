@@ -1,9 +1,13 @@
 data "keycloak_realm" "master" {
   realm = "master"
+
+  depends_on = [
+    null_resource.keycloak_liveness_check,
+  ]
 }
 
 resource "keycloak_realm" "primary" {
-  realm   = data.terraform_remote_state.keycloak.outputs.keycloak_realm_name
+  realm   = data.terraform_remote_state.prometheus_operator.outputs.oauth_realm_name
   enabled = true
 
   registration_email_as_username = false
@@ -12,4 +16,8 @@ resource "keycloak_realm" "primary" {
 
   sso_session_idle_timeout = "24h"
   sso_session_max_lifespan = "24h"
+
+  depends_on = [
+    null_resource.keycloak_liveness_check,
+  ]
 }
