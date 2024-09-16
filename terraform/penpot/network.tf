@@ -1,21 +1,3 @@
-resource "kubernetes_service" "penpot_frontend" {
-  metadata {
-    name      = "penpot-frontend"
-    namespace = kubernetes_namespace.penpot.metadata[0].name
-  }
-
-  spec {
-    selector = {
-      app = "penpot-frontend"
-    }
-
-    port {
-      port        = 80
-      target_port = 80
-    }
-  }
-}
-
 resource "kubernetes_service" "penpot_backend" {
   metadata {
     name      = "penpot-backend"
@@ -52,28 +34,16 @@ resource "kubernetes_service" "penpot_exporter" {
   }
 }
 
-resource "kubernetes_manifest" "penpot_ingress" {
-  manifest = {
-    apiVersion = "traefik.io/v1alpha1"
-    kind       = "IngressRoute"
+module "penpot_frontend_ingress" {
+  source = "../modules/ingress"
 
-    metadata = {
-      name      = "penpot"
-      namespace = kubernetes_namespace.penpot.metadata[0].name
-    }
+  name      = "penpot-frontend"
+  namespace = kubernetes_namespace.penpot.metadata[0].name
+  domain    = local.penpot_domain
 
-    spec = {
-      entryPoints = ["websecure"]
+  target_port = 80
 
-      routes = [{
-        kind  = "Rule"
-        match = "Host(`${local.penpot_domain}`)"
-        services = [{
-          name      = kubernetes_service.penpot_frontend.metadata[0].name
-          namespace = kubernetes_namespace.penpot.metadata[0].name
-          port      = kubernetes_service.penpot_frontend.spec[0].port[0].port
-        }]
-      }]
-    }
+  selector = {
+    app = "penpot-frontend"
   }
 }
