@@ -51,7 +51,7 @@ jobs:
       matrix:
         # it would be nice to dynamically find these
         database: [
-          harbor,
+          # harbor,
           keycloak,
           vaultwarden,
         ]
@@ -110,7 +110,7 @@ jobs:
       matrix:
         # it would be nice to dynamically find these
         database: [
-          harbor,
+          # harbor,
           keycloak,
           vaultwarden,
         ]
