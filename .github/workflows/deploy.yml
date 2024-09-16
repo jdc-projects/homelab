@@ -47,18 +47,6 @@ jobs:
     with:
       terraform-dir: ./terraform/openebs
 
-  deploy-prometheus-operator:
-    needs: [
-      deploy-github-org-runner,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/prometheus-operator
-      needs-kubectl: true
-      needs-helm: true
-
   deploy-traefik:
     needs: [
       deploy-openebs,
@@ -110,20 +98,9 @@ jobs:
     with:
       terraform-dir: ./terraform/velero
 
-  deploy-loki:
-    needs: [
-      deploy-openebs,
-      deploy-prometheus-operator,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/loki
-
   deploy-openldap:
     needs: [
-      deploy-traefik-config, # *****
+      deploy-traefik-config,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
