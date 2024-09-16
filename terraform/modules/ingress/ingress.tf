@@ -20,9 +20,9 @@ resource "kubernetes_manifest" "internal_ingress" {
         priority = var.priority
 
         services = [{
-          name      = one(kubernetes_service.internal[*].metadata[0].name)
-          namespace = var.namespace
-          port      = one(kubernetes_service.internal[*].spec[0].port[0].port)
+          name      = local.is_existing_service ? var.existing_service_name : one(kubernetes_service.internal[*].metadata[0].name)
+          namespace = local.is_existing_service ? var.existing_service_namespace : var.namespace
+          port      = local.is_existing_service ? var.target_port : one(kubernetes_service.internal[*].spec[0].port[0].port)
         }]
 
         middlewares = local.middlewares
@@ -32,7 +32,7 @@ resource "kubernetes_manifest" "internal_ingress" {
 }
 
 resource "kubernetes_manifest" "external_ingress" {
-  count = local.is_endpoint_internal ? 0 : 1
+  count = local.is_endpoint_internal && !local.is_existing_service ? 0 : 1
 
   manifest = {
     apiVersion = "traefik.io/v1alpha1"

@@ -21,7 +21,7 @@ variable "path" {
 
 variable "target_port" {
   type        = number
-  description = "Port on the application / endpoint that the service should connect to."
+  description = "Port on the application / endpoint that the service should connect to. If using an existing service, this should be the port on the service."
 }
 
 variable "selector" {
@@ -30,8 +30,8 @@ variable "selector" {
   default     = null
 
   validation {
-    condition     = !((null == var.selector && "" == var.external_name) || (null != var.selector && "" != var.external_name))
-    error_message = "Either 'selector' or 'external_name' must be set."
+    condition     = !((null == var.selector && "" == var.external_name) || (null != var.selector && "" != var.external_name)) # *****
+    error_message = "Exactly one of 'selector', 'external_name', 'existing_service' must be set."
   }
 }
 
@@ -39,6 +39,23 @@ variable "external_name" {
   type        = string
   description = "External domain or IP for to expose. Not used if internal."
   default     = ""
+}
+
+variable "existing_service_name" {
+  type        = string
+  description = "Name of existing service to be used. Must be pointing to an internal endpoint."
+  default     = ""
+}
+
+variable "existing_service_namespace" {
+  type        = string
+  description = "Namespace of existing service to be used. Must be pointing to an internal endpoint."
+  default     = ""
+
+  validation {
+    condition = ("" == var.existing_service_namespace && "" == var.existing_service_name) || ("" != var.existing_service_namespace && "" != var.existing_service_name)
+    error_message = "If 'existing_service_name' is set, 'existing_service_namespace' must also be set."
+  }
 }
 
 variable "priority" {

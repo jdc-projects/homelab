@@ -1,5 +1,6 @@
 locals {
-  is_endpoint_internal = null != var.selector
+  is_existing_service = "" != var.existing_service_name
+  is_endpoint_internal = "" == var.external_name
 
   middlewares = concat(
     var.do_enable_cloudflare_real_ip_middleware ? [{
