@@ -66,7 +66,7 @@ resource "kubernetes_deployment" "ldap_user_manager" {
       spec {
         container {
           image = "wheelybird/ldap-user-manager:v1.11"
-          name  = "phpldapadmin"
+          name  = "ldap-user-manager"
 
           env_from {
             config_map_ref {

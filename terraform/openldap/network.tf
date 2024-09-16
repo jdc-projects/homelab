@@ -16,26 +16,6 @@ resource "kubernetes_service" "openldap" {
   }
 }
 
-resource "kubernetes_service" "phpldapadmin" {
-  count = var.enable_phpldapadmin ? 1 : 0
-
-  metadata {
-    name      = "phpldapadmin"
-    namespace = kubernetes_namespace.openldap.metadata[0].name
-  }
-
-  spec {
-    selector = {
-      app = "phpldapadmin"
-    }
-
-    port {
-      port        = "443"
-      target_port = "443"
-    }
-  }
-}
-
 resource "kubernetes_service" "ldap_user_manager" {
   metadata {
     name      = "ldap-user-manager"
@@ -78,34 +58,6 @@ resource "kubernetes_manifest" "openldap_ingress" {
 
       tls = {
       }
-    }
-  }
-}
-
-resource "kubernetes_manifest" "phpldapadmin_ingress" {
-  count = var.enable_phpldapadmin ? 1 : 0
-
-  manifest = {
-    apiVersion = "traefik.io/v1alpha1"
-    kind       = "IngressRoute"
-
-    metadata = {
-      name      = "phpldapadmin"
-      namespace = kubernetes_namespace.openldap.metadata[0].name
-    }
-
-    spec = {
-      entryPoints = ["websecure"]
-
-      routes = [{
-        kind  = "Rule"
-        match = "Host(`phpldapadmin.${var.server_base_domain}`)"
-        services = [{
-          name      = kubernetes_service.phpldapadmin[0].metadata[0].name
-          namespace = kubernetes_namespace.openldap.metadata[0].name
-          port      = kubernetes_service.phpldapadmin[0].spec[0].port[0].port
-        }]
-      }]
     }
   }
 }
