@@ -150,6 +150,16 @@ jobs:
     with:
       terraform-dir: ./terraform/drawio
 
+  deploy-whoami:
+    needs: [
+      deploy-keycloak,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/whoami
+
   deploy-vaultwarden:
     needs: [
       deploy-cloudnative-pg,
