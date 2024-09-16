@@ -11,6 +11,10 @@ resource "kubernetes_manifest" "grafana_deployment" {
     metadata = {
       name      = "grafana"
       namespace = kubernetes_namespace.grafana.metadata[0].name
+
+      labels = {
+        dashboards = "grafana"
+      }
     }
 
     spec = {
