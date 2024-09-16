@@ -120,8 +120,8 @@ jobs:
 
   deploy-keycloak:
     needs: [
-      deploy-traefik-config,
       deploy-cloudnative-pg,
+      deploy-openldap,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
