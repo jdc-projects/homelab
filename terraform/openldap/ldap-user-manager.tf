@@ -103,3 +103,17 @@ resource "kubernetes_deployment" "ldap_user_manager" {
     ]
   }
 }
+
+module "ldap_user_manager_ingress" {
+  source = "../modules/ingress"
+
+  name      = "ldap-user-manager"
+  namespace = kubernetes_namespace.openldap.metadata[0].name
+  domain    = "idm.${var.server_base_domain}"
+
+  target_port = kubernetes_config_map.ldap_user_manager_env.data.SERVER_PORT
+
+  selector = {
+    app = "ldap-user-manager"
+  }
+}

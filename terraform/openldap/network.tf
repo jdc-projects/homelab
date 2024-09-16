@@ -16,24 +16,6 @@ resource "kubernetes_service" "openldap" {
   }
 }
 
-resource "kubernetes_service" "ldap_user_manager" {
-  metadata {
-    name      = "ldap-user-manager"
-    namespace = kubernetes_namespace.openldap.metadata[0].name
-  }
-
-  spec {
-    selector = {
-      app = "ldap-user-manager"
-    }
-
-    port {
-      port        = "80"
-      target_port = kubernetes_config_map.ldap_user_manager_env.data.SERVER_PORT
-    }
-  }
-}
-
 resource "kubernetes_manifest" "openldap_ingress" {
   manifest = {
     apiVersion = "traefik.io/v1alpha1"
@@ -58,32 +40,6 @@ resource "kubernetes_manifest" "openldap_ingress" {
 
       tls = {
       }
-    }
-  }
-}
-
-resource "kubernetes_manifest" "ldap_user_manager_ingress" {
-  manifest = {
-    apiVersion = "traefik.io/v1alpha1"
-    kind       = "IngressRoute"
-
-    metadata = {
-      name      = "ldap-user-manager"
-      namespace = kubernetes_namespace.openldap.metadata[0].name
-    }
-
-    spec = {
-      entryPoints = ["websecure"]
-
-      routes = [{
-        kind  = "Rule"
-        match = "Host(`idm.${var.server_base_domain}`)"
-        services = [{
-          name      = kubernetes_service.ldap_user_manager.metadata[0].name
-          namespace = kubernetes_namespace.openldap.metadata[0].name
-          port      = kubernetes_service.ldap_user_manager.spec[0].port[0].port
-        }]
-      }]
     }
   }
 }
