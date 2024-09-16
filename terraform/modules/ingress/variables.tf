@@ -30,8 +30,13 @@ variable "selector" {
   default     = null
 
   validation {
-    condition     = !((null == var.selector && "" == var.external_name) || (null != var.selector && "" != var.external_name)) # *****
-    error_message = "Exactly one of 'selector', 'external_name', 'existing_service' must be set."
+    condition = !(
+      (null == var.selector && "" == var.external_name && "" == var.existing_service_name) || # if they're all unset
+      (null != var.selector && "" != var.external_name) || # if two are set v1
+      (null != var.selector && "" != var.existing_service_name) || # if two are set v2
+      ("" != var.external_name && "" != var.existing_service_name) # if two are set v3
+    )
+    error_message = "Exactly one of 'selector', 'external_name', 'existing_service_name' must be set."
   }
 }
 
