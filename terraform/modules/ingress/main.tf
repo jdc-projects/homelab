@@ -20,11 +20,11 @@ data "terraform_remote_state" "traefik" {
   }
 }
 
-data "terraform_remote_state" "keycloak_config" {
+data "terraform_remote_state" "keycloak" {
   backend = "kubernetes"
 
   config = {
-    secret_suffix = "keycloak-config"
+    secret_suffix = "keycloak"
     config_path   = "../cluster.yml"
     namespace     = "tf-state"
   }

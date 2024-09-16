@@ -22,10 +22,10 @@ resource "kubernetes_config_map" "outline_env" {
     FILE_STORAGE_LOCAL_ROOT_DIR  = "/var/lib/outline/data" # shouldn't be needed since we're using S3 (minio), but set it just in case
     FILE_STORAGE_UPLOAD_MAX_SIZE = 1000000000              # 1G
     OIDC_CLIENT_ID               = keycloak_openid_client.outline.client_id
-    OIDC_AUTH_URI                = data.terraform_remote_state.keycloak_config.outputs.keycloak_auth_url
-    OIDC_TOKEN_URI               = data.terraform_remote_state.keycloak_config.outputs.keycloak_token_url
-    OIDC_USERINFO_URI            = data.terraform_remote_state.keycloak_config.outputs.keycloak_api_url
-    OIDC_LOGOUT_URI              = data.terraform_remote_state.keycloak_config.outputs.keycloak_logout_url
+    OIDC_AUTH_URI                = data.terraform_remote_state.keycloak.outputs.keycloak_auth_url
+    OIDC_TOKEN_URI               = data.terraform_remote_state.keycloak.outputs.keycloak_token_url
+    OIDC_USERINFO_URI            = data.terraform_remote_state.keycloak.outputs.keycloak_api_url
+    OIDC_LOGOUT_URI              = data.terraform_remote_state.keycloak.outputs.keycloak_logout_url
     OIDC_USERNAME_CLAIM          = "preferred_username"
     OIDC_DISPLAY_NAME            = "Keycloak"
     OIDC_SCOPES                  = "openid"

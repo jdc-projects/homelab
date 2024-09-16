@@ -1,5 +1,5 @@
 resource "keycloak_openid_client" "ocis_web" {
-  realm_id  = data.terraform_remote_state.keycloak_config.outputs.primary_realm_id
+  realm_id  = data.terraform_remote_state.keycloak.outputs.primary_realm_id
   client_id = "ocis-web"
 
   name    = "ocis-web"
@@ -25,7 +25,7 @@ resource "keycloak_openid_client" "ocis_web" {
 }
 
 resource "keycloak_openid_client" "ocis_desktop" {
-  realm_id  = data.terraform_remote_state.keycloak_config.outputs.primary_realm_id
+  realm_id  = data.terraform_remote_state.keycloak.outputs.primary_realm_id
   client_id = "xdXOt13JKxym1B1QcEncf2XDkLAexMBFwiT9j6EfhhHFJhs2KM9jbjTmf8JBXE69"
 
   name    = "ocis-desktop"
@@ -49,7 +49,7 @@ resource "keycloak_openid_client" "ocis_desktop" {
 }
 
 resource "keycloak_openid_client" "ocis_android" {
-  realm_id  = data.terraform_remote_state.keycloak_config.outputs.primary_realm_id
+  realm_id  = data.terraform_remote_state.keycloak.outputs.primary_realm_id
   client_id = "e4rAsNUSIUs0lF4nbv9FmCeUkTlV9GdgTLDH1b5uie7syb90SzEVrbN7HIpmWJeD"
 
   name    = "ocis-android"
@@ -72,7 +72,7 @@ resource "keycloak_openid_client" "ocis_android" {
 }
 
 resource "keycloak_openid_client" "ocis_ios" {
-  realm_id  = data.terraform_remote_state.keycloak_config.outputs.primary_realm_id
+  realm_id  = data.terraform_remote_state.keycloak.outputs.primary_realm_id
   client_id = "mxd5OQDk6es5LzOzRvidJNfXLUZS2oN3oUFeXPP8LpPrhx3UroJFduGEYIBOxkY1"
 
   name    = "ocis-ios"

@@ -7,7 +7,7 @@ resource "kubernetes_config_map" "penpot_backend_env" {
   data = {
     PENPOT_FLAGS                       = local.penpot_shared_flags
     PENPOT_OIDC_CLIENT_ID              = keycloak_openid_client.penpot.client_id
-    PENPOT_OIDC_BASE_URI               = "${data.terraform_remote_state.keycloak_config.outputs.keycloak_issuer_url}/"
+    PENPOT_OIDC_BASE_URI               = "${data.terraform_remote_state.keycloak.outputs.keycloak_issuer_url}/"
     PENPOT_OIDC_SCOPES                 = "openid"
     PENPOT_OIDC_NAME_ATTR              = "name"
     PENPOT_OIDC_EMAIL_ATTR             = "email"

@@ -123,7 +123,7 @@ jobs:
 
   deploy-openldap:
     needs: [
-      deploy-traefik-config,
+      deploy-traefik-config, # *****
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -163,17 +163,6 @@ jobs:
     with:
       terraform-dir: ./terraform/drawio
 
-  deploy-keycloak-config:
-    needs: [
-      deploy-openldap,
-      deploy-keycloak,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/keycloak-config
-
   deploy-vaultwarden:
     needs: [
       deploy-cloudnative-pg,
@@ -187,7 +176,7 @@ jobs:
 
   deploy-ocis:
     needs: [
-      deploy-keycloak-config,
+      deploy-keycloak,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -197,7 +186,7 @@ jobs:
 
   deploy-outline:
     needs: [
-      deploy-keycloak-config,
+      deploy-keycloak,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -207,7 +196,7 @@ jobs:
 
   deploy-penpot:
     needs: [
-      deploy-keycloak-config,
+      deploy-keycloak,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -218,7 +207,7 @@ jobs:
   deploy-services:
     needs: [
       deploy-velero,
-      deploy-keycloak-config,
+      deploy-keycloak,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -228,7 +217,7 @@ jobs:
 
   deploy-harbor-config:
     needs: [
-      deploy-keycloak-config,
+      deploy-keycloak,
       deploy-harbor,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml

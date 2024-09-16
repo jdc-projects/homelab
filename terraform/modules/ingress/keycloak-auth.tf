@@ -8,7 +8,7 @@ resource "random_password" "keycloak_auth_client_secret" {
 resource "keycloak_openid_client" "keycloak_auth" {
   count = var.do_enable_keycloak_auth ? 1 : 0
 
-  realm_id  = var.is_keycloak_auth_admin_mode ? data.terraform_remote_state.keycloak_config.outputs.master_realm_id : data.terraform_remote_state.keycloak_config.outputs.primary_realm_id
+  realm_id  = var.is_keycloak_auth_admin_mode ? data.terraform_remote_state.keycloak.outputs.master_realm_id : data.terraform_remote_state.keycloak.outputs.primary_realm_id
   client_id = var.name
 
   name    = var.name
@@ -49,7 +49,7 @@ resource "kubernetes_manifest" "keycloak_auth_plugin_middleware" {
     spec = {
       plugin = {
         keycloak-auth = {
-          KeycloakURL   = data.terraform_remote_state.keycloak_config.outputs.keycloak_url
+          KeycloakURL   = data.terraform_remote_state.keycloak.outputs.keycloak_url
           ClientID      = one(keycloak_openid_client.keycloak_auth[*].client_id)
           ClientSecret  = one(keycloak_openid_client.keycloak_auth[*].client_secret)
           KeycloakRealm = one(keycloak_openid_client.keycloak_auth[*].realm_id)

@@ -1,5 +1,5 @@
 resource "keycloak_openid_client" "penpot" {
-  realm_id  = data.terraform_remote_state.keycloak_config.outputs.primary_realm_id
+  realm_id  = data.terraform_remote_state.keycloak.outputs.primary_realm_id
   client_id = "penpot"
 
   name    = "penpot"
