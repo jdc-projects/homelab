@@ -129,16 +129,16 @@ jobs:
     with:
       terraform-dir: ./terraform/keycloak
 
-  deploy-harbor:
-    needs: [
-      deploy-traefik-config,
-      deploy-cloudnative-pg,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
+  # deploy-harbor:
+  #   needs: [
+  #     deploy-traefik-config,
+  #     deploy-cloudnative-pg,
+  #   ]
+  #   uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+  #   secrets: inherit
 
-    with:
-      terraform-dir: ./terraform/harbor
+  #   with:
+  #     terraform-dir: ./terraform/harbor
 
   deploy-drawio:
     needs: [
@@ -223,13 +223,13 @@ jobs:
     with:
       terraform-dir: ./terraform/services
 
-  deploy-harbor-config:
-    needs: [
-      deploy-keycloak,
-      deploy-harbor,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
+  # deploy-harbor-config:
+  #   needs: [
+  #     deploy-keycloak,
+  #     deploy-harbor,
+  #   ]
+  #   uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+  #   secrets: inherit
 
-    with:
-      terraform-dir: ./terraform/harbor-config
+  #   with:
+  #     terraform-dir: ./terraform/harbor-config
