@@ -240,6 +240,6 @@ module "harbor_ingress" {
 
   target_port = 443
 
-  existing_service_name = "harbor"
+  existing_service_name      = "harbor"
   existing_service_namespace = helm_release.harbor.namespace
 }
