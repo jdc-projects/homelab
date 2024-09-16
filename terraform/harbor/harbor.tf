@@ -72,6 +72,10 @@ resource "kubernetes_job" "harbor_chown" {
   }
 }
 
+locals {
+  harbor_domain = "harbor.${var.server_base_domain}"
+}
+
 resource "helm_release" "harbor" {
   name = "harbor"
 
@@ -85,25 +89,12 @@ resource "helm_release" "harbor" {
 
   set {
     name  = "expose.type"
-    value = "ingress"
-  }
-  set {
-    name  = "expose.tls.enabled"
-    value = "false"
-  }
-
-  set {
-    name  = "expose.ingress.hosts.core"
-    value = "harbor.${var.server_base_domain}"
-  }
-  set {
-    name  = "expose.ingress.annotations"
-    value = "null"
+    value = "clusterIP"
   }
 
   set {
     name  = "externalURL"
-    value = "https://harbor.${var.server_base_domain}"
+    value = "https://${local.harbor_domain}"
   }
 
   set {
@@ -238,4 +229,17 @@ resource "helm_release" "harbor" {
       kubernetes_persistent_volume_claim.harbor,
     ]
   }
+}
+
+module "harbor_ingress" {
+  source = "../modules/ingress"
+
+  name      = "harbor"
+  namespace = kubernetes_namespace.harbor.metadata[0].name
+  domain    = local.harbor_domain
+
+  target_port = 443
+
+  existing_service_name = "harbor"
+  existing_service_namespace = helm_release.harbor.namespace
 }
