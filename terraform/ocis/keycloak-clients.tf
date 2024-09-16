@@ -7,10 +7,10 @@ resource "keycloak_openid_client" "ocis_web" {
 
   access_type = "PUBLIC"
   valid_redirect_uris = [
-    "https://${var.ocis_domain}/*"
+    "https://${local.ocis_domain}/*"
   ]
   web_origins = [
-    "https://${var.ocis_domain}"
+    "https://${local.ocis_domain}"
   ]
 
   client_authenticator_type = "client-jwt"
