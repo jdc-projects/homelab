@@ -147,7 +147,7 @@ resource "null_resource" "keycloak_liveness_check" {
   provisioner "local-exec" {
     # sometimes, even though Keycloak is available, it doesn't respond to API requests correctly, so we wait for a bit after seeing it's up, just in case
     command = <<-EOF
-      timeout 300 bash -c 'while ! curl -sfI https://${data.terraform_remote_state.prometheus_operator.outputs.oauth_domain}; do echo "Waiting for Keycloak to be live." && sleep 1; done'
+      timeout 300 bash -c 'while ! curl -sfI https://${local.keycloak_domain}; do echo "Waiting for Keycloak to be live." && sleep 1; done'
       sleep 30
     EOF
   }

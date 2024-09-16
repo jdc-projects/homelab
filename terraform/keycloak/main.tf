@@ -33,22 +33,16 @@ provider "kubernetes" {
   config_path = "../cluster.yml"
 }
 
+locals {
+  keycloak_domain = "idp.${var.server_base_domain}"
+}
+
 provider "keycloak" {
   client_id     = "admin-cli"
   username      = random_password.keycloak_admin_username.result
   password      = random_password.keycloak_admin_password.result
-  url           = "https://${data.terraform_remote_state.prometheus_operator.outputs.oauth_domain}"
+  url           = "https://${local.keycloak_domain}"
   initial_login = false
-}
-
-data "terraform_remote_state" "prometheus_operator" {
-  backend = "kubernetes"
-
-  config = {
-    secret_suffix = "prometheus-operator"
-    config_path   = "../cluster.yml"
-    namespace     = "tf-state"
-  }
 }
 
 data "terraform_remote_state" "openldap" {

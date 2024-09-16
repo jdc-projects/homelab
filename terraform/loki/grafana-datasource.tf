@@ -1,13 +1,15 @@
-resource "grafana_data_source" "loki" {
-  name = "Loki"
-  type = "loki"
+# ***** replace with CRD
 
-  url = "http://loki-gateway.${kubernetes_namespace.loki.metadata[0].name}"
+# resource "grafana_data_source" "loki" {
+#   name = "Loki"
+#   type = "loki"
 
-  basic_auth_enabled  = true
-  basic_auth_username = random_password.gateway_username.result
+#   url = "http://loki-gateway.${kubernetes_namespace.loki.metadata[0].name}"
 
-  secure_json_data_encoded = jsonencode({
-    basicAuthPassword = random_password.gateway_password.result
-  })
-}
+#   basic_auth_enabled  = true
+#   basic_auth_username = random_password.gateway_username.result
+
+#   secure_json_data_encoded = jsonencode({
+#     basicAuthPassword = random_password.gateway_password.result
+#   })
+# }

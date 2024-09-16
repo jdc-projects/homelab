@@ -9,7 +9,7 @@ output "keycloak_admin_password" {
 }
 
 output "keycloak_url" {
-  value = "https://${data.terraform_remote_state.prometheus_operator.outputs.oauth_domain}"
+  value = "https://${local.keycloak_domain}"
 }
 
 output "primary_realm_id" {
@@ -21,21 +21,25 @@ output "master_realm_id" {
 }
 
 output "keycloak_issuer_url" {
-  value = "https://${data.terraform_remote_state.prometheus_operator.outputs.oauth_domain}/realms/${data.terraform_remote_state.prometheus_operator.outputs.oauth_realm_name}"
+  value = "https://${local.keycloak_domain}/realms/${keycloak_realm.primary.realm}"
+}
+
+locals {
+  keycloak_auth_url_base = "https://${local.keycloak_domain}/realms/${keycloak_realm.primary.realm}/protocol/openid-connect"
 }
 
 output "keycloak_auth_url" {
-  value = data.terraform_remote_state.prometheus_operator.outputs.oauth_auth_url
+  value = "${local.keycloak_auth_url_base}/auth"
 }
 
 output "keycloak_token_url" {
-  value = data.terraform_remote_state.prometheus_operator.outputs.oauth_token_url
+  value = "${local.keycloak_auth_url_base}/token"
 }
 
 output "keycloak_api_url" {
-  value = data.terraform_remote_state.prometheus_operator.outputs.oauth_api_url
+  value = "${local.keycloak_auth_url_base}/userinfo"
 }
 
 output "keycloak_logout_url" {
-  value = data.terraform_remote_state.prometheus_operator.outputs.oauth_logout_url
+  value = "${local.keycloak_auth_url_base}/logout"
 }

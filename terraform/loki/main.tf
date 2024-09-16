@@ -33,21 +33,6 @@ provider "kubernetes" {
   config_path = "../cluster.yml"
 }
 
-data "terraform_remote_state" "prometheus_operator" {
-  backend = "kubernetes"
-
-  config = {
-    secret_suffix = "prometheus-operator"
-    config_path   = "../cluster.yml"
-    namespace     = "tf-state"
-  }
-}
-
-provider "grafana" {
-  url  = data.terraform_remote_state.prometheus_operator.outputs.grafana_url
-  auth = "${data.terraform_remote_state.prometheus_operator.outputs.grafana_admin_username}:${data.terraform_remote_state.prometheus_operator.outputs.grafana_admin_password}"
-}
-
 resource "kubernetes_namespace" "loki" {
   metadata {
     name = "loki"
