@@ -34,13 +34,7 @@ resource "helm_release" "prometheus_operator" {
   }
   set {
     name  = "grafana.ingress.enabled"
-    value = "true"
-  }
-  set_list {
-    name = "grafana.ingress.hosts"
-    value = [
-      local.grafana_domain,
-    ]
+    value = "false"
   }
 
   set {

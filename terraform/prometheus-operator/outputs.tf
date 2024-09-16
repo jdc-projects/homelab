@@ -1,3 +1,11 @@
+output "prometheus_operator_helm_release_name" {
+  value = helm_release.prometheus_operator.name
+}
+
+output "prometheus_operator_helm_release_namespace" {
+  value = helm_release.prometheus_operator.namespace
+}
+
 output "grafana_admin_username" {
   value     = "admin"
   sensitive = true
@@ -6,6 +14,10 @@ output "grafana_admin_username" {
 output "grafana_admin_password" {
   value     = random_password.grafana_admin_password.result
   sensitive = true
+}
+
+output "grafana_domain" {
+  value = local.grafana_domain
 }
 
 output "grafana_url" {
