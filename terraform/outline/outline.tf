@@ -128,3 +128,17 @@ resource "kubernetes_deployment" "outline" {
     ]
   }
 }
+
+module "outline_ingress" {
+  source = "../modules/ingress"
+
+  name      = "outline"
+  namespace = kubernetes_namespace.outline.metadata[0].name
+  domain    = local.outline_domain
+
+  target_port = kubernetes_config_map.outline_env.data.PORT
+
+  selector = {
+    app = "outline"
+  }
+}
