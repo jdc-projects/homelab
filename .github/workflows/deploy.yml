@@ -172,6 +172,16 @@ jobs:
     with:
       terraform-dir: ./terraform/grafana
 
+  deploy-loki:
+    needs: [
+      deploy-grafana,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/loki
+
   deploy-ocis:
     needs: [
       deploy-keycloak,
