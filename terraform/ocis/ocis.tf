@@ -9,6 +9,10 @@ resource "null_resource" "ocis_helm_repo_clone" {
   }
 }
 
+locals {
+  ocis_domain = "files.${var.server_base_domain}"
+}
+
 resource "helm_release" "ocis" {
   name  = "ocis"
   chart = "./ocis-charts/charts/ocis"
@@ -39,7 +43,7 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "externalDomain"
-    value = "files.${var.server_base_domain}"
+    value = local.ocis_domain
   }
 
   set {
@@ -173,11 +177,7 @@ resource "helm_release" "ocis" {
 
   set {
     name  = "ingress.enabled"
-    value = "true"
-  }
-  set {
-    name  = "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/router\\.entrypoints"
-    value = "websecure"
+    value = "false"
   }
 
   set {
@@ -318,4 +318,17 @@ resource "helm_release" "ocis" {
   lifecycle {
     replace_triggered_by = [null_resource.ocis_helm_repo_clone]
   }
+}
+
+module "ocis_ingress" {
+  source = "../modules/ingress"
+
+  name      = "ocis"
+  namespace = kubernetes_namespace.ocis.metadata[0].name
+  domain    = local.ocis_domain
+
+  target_port = 9200
+
+  existing_service_name      = "proxy"
+  existing_service_namespace = helm_release.ocis.namespace
 }
