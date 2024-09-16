@@ -1,3 +1,7 @@
+locals {
+  vaultwarden_domain = "vault.${var.server_base_domain}"
+}
+
 resource "kubernetes_config_map" "vaultwarden_env" {
   metadata {
     name      = "vaultwarden"
@@ -11,7 +15,7 @@ resource "kubernetes_config_map" "vaultwarden_env" {
     SIGNUPS_VERIFY           = "false"
     INVITATIONS_ALLOWED      = "true"
     PASSWORD_HINTS_ALLOWED   = "true"
-    DOMAIN                   = "https://vault.${var.server_base_domain}"
+    DOMAIN                   = "https://${local.vaultwarden_domain}"
     ROCKET_PORT              = "80"
     SMTP_HOST                = var.smtp_host
     SMTP_FROM                = "noreply@${var.server_base_domain}"
@@ -112,5 +116,19 @@ resource "kubernetes_deployment" "vaultwarden_deployment" {
       kubernetes_config_map.vaultwarden_env,
       kubernetes_secret.vaultwarden_env
     ]
+  }
+}
+
+module "vaultwarden_ingress" {
+  source = "../modules/ingress"
+
+  name      = "vaultwarden"
+  namespace = kubernetes_namespace.vaultwarden.metadata[0].name
+  domain    = local.vaultwarden_domain
+
+  target_port = kubernetes_config_map.vaultwarden_env.data.ROCKET_PORT
+
+  selector = {
+    app = "vaultwarden"
   }
 }
