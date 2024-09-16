@@ -102,15 +102,7 @@ resource "helm_release" "minio" {
 
   set {
     name  = "ingress.enabled"
-    value = "true"
-  }
-  set {
-    name  = "ingress.annotations.traefik\\.ingress\\.kubernetes\\.io/router\\.entrypoints"
-    value = "websecure"
-  }
-  set {
-    name  = "ingress.hosts[0]"
-    value = local.minio_domain
+    value = "false"
   }
 
   set {
@@ -172,4 +164,17 @@ resource "helm_release" "minio" {
   depends_on = [
     kubernetes_job.minio_chown
   ]
+}
+
+module "minio_ingress" {
+  source = "../modules/ingress"
+
+  name      = "minio"
+  namespace = kubernetes_namespace.outline.metadata[0].name
+  domain    = local.minio_domain
+
+  target_port = 9000
+
+  existing_service_name      = helm_release.minio.name
+  existing_service_namespace = helm_release.minio.namespace
 }
