@@ -33,6 +33,16 @@ provider "kubernetes" {
   config_path = "../cluster.yml"
 }
 
+data "terraform_remote_state" "grafana" {
+  backend = "kubernetes"
+
+  config = {
+    secret_suffix = "grafana"
+    config_path   = "../cluster.yml"
+    namespace     = "tf-state"
+  }
+}
+
 resource "kubernetes_namespace" "loki" {
   metadata {
     name = "loki"

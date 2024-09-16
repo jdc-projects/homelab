@@ -1,15 +1,35 @@
-# ***** replace with CRD
+resource "kubernetes_manifest" "loki_grafana_datasource" {
+  manifest = {
+    apiVersion = "grafana.integreatly.org/v1beta1"
+    kind       = "GrafanaDatasource"
 
-# resource "grafana_data_source" "loki" {
-#   name = "Loki"
-#   type = "loki"
+    metadata = {
+      name      = "loki"
+      namespace = kubernetes_namespace.loki.metadata[0].name
+    }
 
-#   url = "http://loki-gateway.${kubernetes_namespace.loki.metadata[0].name}"
+    spec = {
+      allowCrossNamespaceImport = "true"
 
-#   basic_auth_enabled  = true
-#   basic_auth_username = random_password.gateway_username.result
+      instanceSelector = {
+        matchLabels = data.terraform_remote_state.grafana.outputs.grafana_deployment_labels
+      }
 
-#   secure_json_data_encoded = jsonencode({
-#     basicAuthPassword = random_password.gateway_password.result
-#   })
-# }
+      datasource = {
+        name = "Loki"
+        type = "loki"
+
+        access = "proxy"
+
+        url = "http://${helm_release.loki.name}-gateway.${kubernetes_namespace.loki.metadata[0].name}"
+
+        basicAuth     = "true"
+        basicAuthUser = random_password.gateway_username.result
+
+        secureJsonData = {
+          basicAuthPassword = random_password.gateway_password.result
+        }
+      }
+    }
+  }
+}

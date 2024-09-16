@@ -1,5 +1,5 @@
 locals {
-  grafana_domain = "grafana.${var.server_base_domain}"
+  grafana_domain  = "grafana.${var.server_base_domain}"
   grafana_version = "11.1.5"
 }
 
@@ -27,6 +27,10 @@ resource "kubernetes_manifest" "grafana_deployment" {
 
         server = {
           root_url = "https://${local.grafana_domain}"
+        }
+
+        users = {
+          viewers_can_edit = "true"
         }
 
         auth = {
