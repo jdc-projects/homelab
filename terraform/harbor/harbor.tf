@@ -91,6 +91,10 @@ resource "helm_release" "harbor" {
     name  = "expose.type"
     value = "clusterIP"
   }
+  set {
+    name  = "expose.tls.enabled"
+    value = "false"
+  }
 
   set {
     name  = "externalURL"
