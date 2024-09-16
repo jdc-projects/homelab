@@ -242,7 +242,7 @@ module "harbor_ingress" {
   namespace = kubernetes_namespace.harbor.metadata[0].name
   domain    = local.harbor_domain
 
-  target_port = 443
+  target_port = 80
 
   existing_service_name      = "harbor"
   existing_service_namespace = helm_release.harbor.namespace
