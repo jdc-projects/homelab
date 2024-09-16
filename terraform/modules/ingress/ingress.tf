@@ -32,7 +32,7 @@ resource "kubernetes_manifest" "internal_ingress" {
 }
 
 resource "kubernetes_manifest" "external_ingress" {
-  count = local.is_endpoint_internal && !local.is_existing_service ? 0 : 1
+  count = local.is_endpoint_internal || local.is_existing_service ? 0 : 1
 
   manifest = {
     apiVersion = "traefik.io/v1alpha1"

@@ -17,7 +17,7 @@ resource "kubernetes_service" "internal" {
 }
 
 resource "kubernetes_service" "external" {
-  count = local.is_endpoint_internal && !local.is_existing_service ? 0 : 1
+  count = local.is_endpoint_internal || local.is_existing_service ? 0 : 1
 
   metadata {
     name      = "${var.name}-external"
