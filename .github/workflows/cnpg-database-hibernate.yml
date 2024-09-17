@@ -1,0 +1,58 @@
+on:
+  workflow_call:
+    inputs:
+      runner-type:
+        required: false
+        type: string
+        default: self-hosted
+      do-hibernate:
+        required: true
+        type: boolean
+      database-name:
+        required: true
+        type: string
+      database-namespace:
+        required: true
+        type: string
+
+env:
+  CLIENT_CERT_DATA: ${{ secrets.KUBE_CLIENT_CERT_DATA }}
+  CLIENT_KEY_DATA: ${{ secrets.KUBE_CLIENT_KEY_DATA }}
+  CLUSTER_CA_CERT_DATA: ${{ secrets.KUBE_CLUSTER_CA_CERT_DATA }}
+  SERVER_KUBE_PORT: ${{ vars.SERVER_KUBE_PORT }}
+  SERVER_BASE_DOMAIN: ${{ vars.SERVER_BASE_DOMAIN }}
+
+jobs:
+  hibernate:
+    runs-on: ${{ inputs.runner-type }}
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v4
+      - name: "Add cluster CA certificate"
+        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
+      - name: "Setup node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: "Generate and install kubeconfig"
+        working-directory: ./terraform
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.30.4'
+      - name: "Setup CNPG Plugin"
+        env:
+          CNPG_VERSION: 'v1.24.0'
+        run: | # from https://cloudnative-pg.io/documentation/1.20/kubectl-plugin/#via-the-installation-script
+          curl -sSfL \
+          https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/${{ env.CNPG_VERSION }}/hack/install-cnpg-plugin.sh | \
+          sudo sh -s -- -b /usr/local/bin
+      - name: "Hibernate DB"
+        env:
+          HIBERNATE_CHOICE: ${{ inputs.do-hibernate && 'on' || 'off' }}
+        run: "kubectl cnpg -n ${{ inputs.database-namespace }} hibernate ${{ env.HIBERNATE_CHOICE }} ${{ inputs.database-name }}"
