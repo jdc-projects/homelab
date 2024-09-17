@@ -17,7 +17,7 @@ resource "kubernetes_manifest" "keycloak_db" {
 
       annotations = {
         # if I need to fix a broken hibernation:
-        # kubectl -n keycloak patch cluster keycloak-db -p '{"metadata":{"annotations":{"cnpg.io/hibernation":"off"}}}' --type merge
+        # kubectl -n keycloak annotate cluster keycloak-db --overwrite cnpg.io/hibernation=off
         "cnpg.io/hibernation" = var.is_db_hibernate ? "on" : "off"
       }
     }
