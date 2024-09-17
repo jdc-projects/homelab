@@ -60,7 +60,7 @@ jobs:
           version: 'v1.30.4'
       - name: "Setup CNPG Plugin"
         env:
-          VELERO_VERSION: 'v1.24.0'
+          CNPG_VERSION: 'v1.24.0'
         run: | # from https://cloudnative-pg.io/documentation/1.20/kubectl-plugin/#via-the-installation-script
           curl -sSfL \
           https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/${{ env.CNPG_VERSION }}/hack/install-cnpg-plugin.sh | \
@@ -147,7 +147,7 @@ jobs:
           version: 'v1.30.4'
       - name: "Setup CNPG Plugin"
         env:
-          VELERO_VERSION: 'v1.24.0'
+          CNPG_VERSION: 'v1.24.0'
         run: | # from https://cloudnative-pg.io/documentation/1.20/kubectl-plugin/#via-the-installation-script
           curl -sSfL \
           https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/${{ env.CNPG_VERSION }}/hack/install-cnpg-plugin.sh | \
