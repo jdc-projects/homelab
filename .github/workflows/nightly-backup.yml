@@ -85,7 +85,7 @@ jobs:
 
   restart-databases:
     needs: [
-      check-server-up,
+      start-velero-backup,
     ]
     uses: ./.github/workflows/cnpg-database-hibernate.yml
     secrets: inherit

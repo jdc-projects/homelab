@@ -5,15 +5,15 @@ on:
         required: false
         type: string
         default: self-hosted
-      do-hibernate:
-        required: true
-        type: boolean
       database-name:
         required: true
         type: string
       database-namespace:
         required: true
         type: string
+      do-hibernate:
+        required: true
+        type: boolean
 
 env:
   CLIENT_CERT_DATA: ${{ secrets.KUBE_CLIENT_CERT_DATA }}
