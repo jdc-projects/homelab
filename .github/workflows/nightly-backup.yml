@@ -19,50 +19,58 @@ jobs:
       - name: Get server status
         run: curl --max-time 5 https://ping.${{ vars.SERVER_BASE_DOMAIN }}
 
-  # if something depends on one of the services in 'hibernate-databases-2' it has to go here
-  hibernate-databases-1:
+  hibernate-databases:
     needs: [
       check-server-up,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
+    runs-on: self-hosted
 
     strategy:
       fail-fast: false
       matrix:
         # it would be nice to dynamically find these
-        database: [
-          outline,
-          penpot,
-        ]
+        database:
+          - name: "keycloak-db"
+            namespace: "keycloak"
+          - name: "vaultwarden-db"
+            namespace: "vaultwarden"
+          - name: "outline-db"
+            namespace: "outline"
+          - name: "penpot-db"
+            namespace: "penpot"
 
-    with:
-      terraform-dir: ./terraform/${{ matrix.database }}
-
-  hibernate-databases-2:
-    needs: [
-      hibernate-databases-1,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    strategy:
-      fail-fast: false
-      matrix:
-        # it would be nice to dynamically find these
-        database: [
-          # harbor,
-          keycloak,
-          vaultwarden,
-        ]
-
-    with:
-      terraform-dir: ./terraform/${{ matrix.database }}
-      extra-variable: is_db_hibernate=true
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v4
+      - name: "Add cluster CA certificate"
+        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
+      - name: "Setup node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: "Generate and install kubeconfig"
+        working-directory: ./terraform
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.30.4'
+      - name: "Setup CNPG Plugin"
+        env:
+          VELERO_VERSION: 'v1.24.0'
+        run: | # from https://cloudnative-pg.io/documentation/1.20/kubectl-plugin/#via-the-installation-script
+          curl -sSfL \
+          https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/${{ env.CNPG_VERSION }}/hack/install-cnpg-plugin.sh | \
+          sudo sh -s -- -b /usr/local/bin
+      - name: "Hibernate DB"
+        run: "kubectl cnpg -n ${{ matrix.database.namespace }} hibernate on ${{ matrix.database.name }}"
 
   start-velero-backup:
     needs: [
-      hibernate-databases-2,
+      hibernate-databases,
     ]
     runs-on: self-hosted
 
@@ -98,42 +106,51 @@ jobs:
       - name: "Wait some time for snapshots"
         run: sleep 300
 
-  restart-databases-1:
+  restart-databases:
     needs: [
       start-velero-backup,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
+    runs-on: self-hosted
 
     strategy:
       fail-fast: false
       matrix:
         # it would be nice to dynamically find these
-        database: [
-          # harbor,
-          keycloak,
-          vaultwarden,
-        ]
+        database:
+          - name: "keycloak-db"
+            namespace: "keycloak"
+          - name: "vaultwarden-db"
+            namespace: "vaultwarden"
+          - name: "outline-db"
+            namespace: "outline"
+          - name: "penpot-db"
+            namespace: "penpot"
 
-    with:
-      terraform-dir: ./terraform/${{ matrix.database }}
-
-  # if something depends on one of the services in 'restart-databases-1' it has to go here
-  restart-databases-2:
-    needs: [
-      restart-databases-1,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    strategy:
-      fail-fast: false
-      matrix:
-        # it would be nice to dynamically find these
-        database: [
-          outline,
-          penpot,
-        ]
-
-    with:
-      terraform-dir: ./terraform/${{ matrix.database }}
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v4
+      - name: "Add cluster CA certificate"
+        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
+      - name: "Setup node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: "Generate and install kubeconfig"
+        working-directory: ./terraform
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.30.4'
+      - name: "Setup CNPG Plugin"
+        env:
+          VELERO_VERSION: 'v1.24.0'
+        run: | # from https://cloudnative-pg.io/documentation/1.20/kubectl-plugin/#via-the-installation-script
+          curl -sSfL \
+          https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/${{ env.CNPG_VERSION }}/hack/install-cnpg-plugin.sh | \
+          sudo sh -s -- -b /usr/local/bin
+      - name: "Restart DB"
+        run: "kubectl cnpg -n ${{ matrix.database.namespace }} hibernate off ${{ matrix.database.name }}"
