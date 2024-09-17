@@ -73,15 +73,10 @@ resource "helm_release" "crowdsec" {
 
   set {
     name  = "lapi.persistentVolume.data.existingClaim"
-    value = kubernetes_persistent_volume_claim.crowdsec_lapi_data.metadata[0].name
-  }
-  # force the config definition here to be the one used
-  set {
-    name  = "lapi.persistentVolume.config.enabled"
-    value = "false"
+    value = kubernetes_persistent_volume_claim.crowdsec["lapi-data"].metadata[0].name
   }
   set {
-    name  = "agent.persistentVolume.config.enabled"
-    value = "false"
+    name  = "lapi.persistentVolume.config.existingClaim"
+    value = kubernetes_persistent_volume_claim.crowdsec["lapi-config"].metadata[0].name
   }
 }
