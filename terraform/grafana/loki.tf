@@ -63,11 +63,11 @@ resource "helm_release" "loki" {
   }
   set_sensitive {
     name  = "gateway.basicAuth.username"
-    value = random_password.gateway_username.result
+    value = random_password.loki_gateway_username.result
   }
   set_sensitive {
     name  = "gateway.basicAuth.password"
-    value = random_password.gateway_password.result
+    value = random_password.loki_gateway_password.result
   }
 
   # disable affinity, since it can break updates
@@ -115,11 +115,11 @@ resource "helm_release" "loki" {
   }
   set_sensitive {
     name  = "minio.rootUser"
-    value = random_password.minio_root_username.result
+    value = random_password.loki_minio_root_username.result
   }
   set_sensitive {
     name  = "minio.rootPassword"
-    value = random_password.minio_root_password.result
+    value = random_password.loki_minio_root_password.result
   }
 
   set {

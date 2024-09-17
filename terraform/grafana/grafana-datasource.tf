@@ -12,7 +12,7 @@ resource "kubernetes_manifest" "loki_grafana_datasource" {
       allowCrossNamespaceImport = "true"
 
       instanceSelector = {
-        matchLabels = data.terraform_remote_state.grafana.outputs.grafana_deployment_labels
+        matchLabels = kubernetes_manifest.grafana_deployment.manifest.metadata.labels
       }
 
       datasource = {
@@ -24,10 +24,10 @@ resource "kubernetes_manifest" "loki_grafana_datasource" {
         url = "http://${helm_release.loki.name}-gateway.${kubernetes_namespace.loki.metadata[0].name}"
 
         basicAuth     = "true"
-        basicAuthUser = random_password.gateway_username.result
+        basicAuthUser = random_password.loki_gateway_username.result
 
         secureJsonData = {
-          basicAuthPassword = random_password.gateway_password.result
+          basicAuthPassword = random_password.loki_gateway_password.result
         }
       }
     }

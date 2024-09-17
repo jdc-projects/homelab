@@ -81,10 +81,10 @@ resource "helm_release" "promtail" {
   }
   set_sensitive {
     name  = "config.clients[0].basic_auth.username"
-    value = random_password.gateway_username.result
+    value = random_password.loki_gateway_username.result
   }
   set_sensitive {
     name  = "config.clients[0].basic_auth.password"
-    value = random_password.gateway_password.result
+    value = random_password.loki_gateway_password.result
   }
 }

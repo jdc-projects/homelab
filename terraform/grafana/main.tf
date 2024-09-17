@@ -6,6 +6,11 @@ terraform {
   }
 
   required_providers {
+    helm = {
+      source  = "hashicorp/helm"
+      version = "2.13.2"
+    }
+
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = "2.30.0"
@@ -15,6 +20,12 @@ terraform {
       source  = "mrparkers/keycloak"
       version = "4.4.0"
     }
+  }
+}
+
+provider "helm" {
+  kubernetes {
+    config_path = "../cluster.yml"
   }
 }
 
@@ -42,5 +53,11 @@ provider "keycloak" {
 resource "kubernetes_namespace" "grafana" {
   metadata {
     name = "grafana"
+  }
+}
+
+resource "kubernetes_namespace" "loki" {
+  metadata {
+    name = "loki"
   }
 }
