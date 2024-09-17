@@ -17,7 +17,7 @@ resource "helm_release" "traefik" {
 
   set {
     name  = "logs.general.level"
-    value = "INFO"
+    value = "DEBUG"
   }
 
   set {
