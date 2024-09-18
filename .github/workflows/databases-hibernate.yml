@@ -85,4 +85,4 @@ jobs:
       - name: "Wait for completion"
         env:
           FOR_CONDITION: ${{ inputs.do-hibernate && 'jsonpath={.status.conditions[?(.type==\"cnpg.io/hibernation\")].status}=True' || 'jsonpath={.status.readyInstances}=$(kubectl -n keycloak get cluster keycloak-db -o "jsonpath={.status.instances}")' }}
-        run: kubectl -n ${{ matrix.database.namespace }} wait clusters.postgresql.cnpg.io ${{ matrix.database.name }} --timeout 30m --for "${{ env.FOR_CONDITION }}""
+        run: kubectl -n ${{ matrix.database.namespace }} wait clusters.postgresql.cnpg.io ${{ matrix.database.name }} --timeout 30m --for "${{ env.FOR_CONDITION }}"
