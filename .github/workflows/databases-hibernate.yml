@@ -48,10 +48,10 @@ jobs:
           yq '.items[].metadata | pick(["name", "namespace"])' clusters.yml | tee dbs.yml
           sed -i '{:q;N;s/\n/, /g;t q}' dbs.yml
           sed -i 's#, name:#}, {name:#g' dbs.yml
-          truncate -s -1 dbs.yml
           sed -i 's#^#[{#' dbs.yml
           sed -i 's#$#}]#' dbs.yml
-          yq dbs.yml -o json | tee dbs.json
+          yq dbs.yml -o json -I 0 | tee dbs.json
+          truncate -s -1 dbs.json
           echo "databases=$(cat dbs.json)" >> "$GITHUB_OUTPUT"
           echo "databases=$(cat dbs.json)"
           cat dbs.json
