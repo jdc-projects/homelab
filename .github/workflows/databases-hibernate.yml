@@ -78,7 +78,7 @@ jobs:
         uses: azure/setup-kubectl@v4
         with:
           version: 'v1.30.4'
-      - name: "Hibernate DB"
+      - name: "Hibernate / restart DB"
         env:
           HIBERNATE_CHOICE: ${{ inputs.do-hibernate && 'on' || 'off' }}
         run: "kubectl -n ${{ matrix.database.namespace }} annotate clusters.postgresql.cnpg.io ${{ matrix.database.name }} --overwrite cnpg.io/hibernation=${{ env.HIBERNATE_CHOICE }}"
