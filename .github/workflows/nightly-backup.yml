@@ -65,7 +65,7 @@ jobs:
 
   restart-databases:
     needs: [
-      check-server-up,
+      start-velero-backup,
     ]
     uses: ./.github/workflows/databases-hibernate.yml
     secrets: inherit
