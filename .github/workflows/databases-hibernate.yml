@@ -45,12 +45,10 @@ jobs:
         id: "get-databases"
         run: |
           kubectl get clusters.postgresql.cnpg.io -A -o yaml > clusters.yml
-          yq '.items[].metadata | pick(["name", "namespace"])' clusters.yml > dbs.yml
-          sed -i '{:q;N;s/\n/, /g;t q}' dbs.yml
-          sed -i 's#, name:#}, {name:#g' dbs.yml
-          sed -i 's#^#[{#' dbs.yml
-          sed -i 's#$#}]#' dbs.yml
-          yq dbs.yml -o json -I 0 > dbs.json
+          yq '.items[].metadata | pick(["name", "namespace"])' clusters.yml -o json -I 0 > dbs.json
+          sed -i '{:q;N;s/\n/, /g;t q}' dbs.json
+          sed -i 's#^#[#' dbs.json
+          sed -i 's#$#]#' dbs.json
           truncate -s -1 dbs.json
           echo "databases=$(cat dbs.json)" >> "$GITHUB_OUTPUT"
 
