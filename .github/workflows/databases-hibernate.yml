@@ -80,14 +80,7 @@ jobs:
         uses: azure/setup-kubectl@v4
         with:
           version: 'v1.30.4'
-      - name: "Setup CNPG Plugin"
-        env:
-          CNPG_VERSION: 'v1.24.0'
-        run: | # from https://cloudnative-pg.io/documentation/1.20/kubectl-plugin/#via-the-installation-script
-          curl -sSfL \
-          https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/${{ env.CNPG_VERSION }}/hack/install-cnpg-plugin.sh | \
-          sudo sh -s -- -b /usr/local/bin
       - name: "Hibernate DB"
         env:
           HIBERNATE_CHOICE: ${{ inputs.do-hibernate && 'on' || 'off' }}
-        run: "kubectl cnpg -n ${{ matrix.database.namespace }} hibernate ${{ env.HIBERNATE_CHOICE }} ${{ matrix.database.name }}"
+        run: "kubectl -n ${{ matrix.database.namespace }} annotate clusters.postgresql.cnpg.io ${{ matrix.database.name }} --overwrite cnpg.io/hibernation=${{ env.HIBERNATE_CHOICE }}"
