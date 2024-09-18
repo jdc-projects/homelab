@@ -52,6 +52,9 @@ jobs:
           sed -i 's#^#[{#' dbs.yml
           sed -i 's#$#}]#' dbs.yml
           echo "databases=$(cat dbs.yml)" >> "$GITHUB_OUTPUT"
+          echo "databases=$(cat dbs.yml)"
+          cat dbs.yml
+          echo $GITHUB_OUTPUT
 
   hibernate:
     needs: [
