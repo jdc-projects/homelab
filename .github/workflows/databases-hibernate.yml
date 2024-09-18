@@ -82,3 +82,7 @@ jobs:
         env:
           HIBERNATE_CHOICE: ${{ inputs.do-hibernate && 'on' || 'off' }}
         run: "kubectl -n ${{ matrix.database.namespace }} annotate clusters.postgresql.cnpg.io ${{ matrix.database.name }} --overwrite cnpg.io/hibernation=${{ env.HIBERNATE_CHOICE }}"
+      - name: "Wait for completion"
+        env:
+          FOR_CONDITION: ${{ inputs.do-hibernate && 'jsonpath={.status.conditions[?(.type==\"cnpg.io/hibernation\")].status}=True' || 'jsonpath={.status.readyInstances}=$(kubectl -n keycloak get cluster keycloak-db -o "jsonpath={.status.instances}")' }}
+        run: kubectl -n ${{ matrix.database.namespace }} wait clusters.postgresql.cnpg.io ${{ matrix.database.name }} --timeout 30m --for "${{ env.FOR_CONDITION }}""
