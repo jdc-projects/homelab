@@ -102,7 +102,7 @@ resource "helm_release" "runner_scale_set" {
     name = "template.spec.containers[0].command"
     value = [
       "/bin/sh", "-c",
-      "sudo add-apt-repository ppa:rmescandon/yq && sudo apt update && sudo apt install -y unzip curl git yq && /home/runner/run.sh",
+      "sudo add-apt-repository ppa:rmescandon/yq && sudo apt update && sudo apt install -y --no-install-recommends unzip curl git yq && /home/runner/run.sh",
     ]
   }
   set {
