@@ -63,26 +63,10 @@ jobs:
     needs: [
       do-velero-restore,
     ]
-    uses: ./.github/workflows/cnpg-database-hibernate.yml
+    uses: ./.github/workflows/databases-hibernate.yml
     secrets: inherit
 
-    strategy:
-      fail-fast: false
-      matrix:
-        # it would be nice to dynamically find these
-        database:
-          - name: "keycloak-db"
-            namespace: "keycloak"
-          - name: "vaultwarden-db"
-            namespace: "vaultwarden"
-          - name: "outline-db"
-            namespace: "outline"
-          - name: "penpot-db"
-            namespace: "penpot"
-
     with:
-      database-name: ${{ matrix.database.name }}
-      database-namespace: ${{ matrix.database.namespace }}
       do-hibernate: false
 
   run-deploy:
