@@ -62,7 +62,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        database: [{name: keycloak-db, namespace: keycloak}, {name: outline-db, namespace: outline}, {name: penpot-db, namespace: penpot}, {name: vaultwarden-db, namespace: vaultwarden}]
+        database: ${{ needs.get-databases.outputs.databases }}
 
     steps:
       - name: "Repo checkout"
