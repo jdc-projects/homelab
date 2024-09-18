@@ -96,13 +96,13 @@ resource "helm_release" "runner_scale_set" {
   }
   set {
     name  = "template.spec.containers[0].image"
-    value = "ghcr.io/actions/actions-runner:${local.runner_version}"
+    value = "ghcr.io/jdc-projects/runner:${local.runner_version}"
   }
   set_list {
     name = "template.spec.containers[0].command"
     value = [
       "/bin/sh", "-c",
-      "sudo add-apt-repository ppa:rmescandon/yq && sudo apt update && sudo apt install -y --no-install-recommends unzip curl git yq && /home/runner/run.sh",
+      "/home/runner/run.sh",
     ]
   }
   set {
