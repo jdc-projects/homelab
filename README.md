@@ -2,7 +2,7 @@
 
 Infrastructure and code for deploying my Homelab.
 
-## Prequisites
+## Prerequisites
 
 This system requires that some setup is completed on the first:
 
