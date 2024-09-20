@@ -87,6 +87,17 @@ jobs:
     with:
       terraform-dir: ./terraform/cloudnative-pg
 
+  deploy-fission:
+    needs: [
+      deploy-openebs,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/fission
+      needs-kubectl: true
+
   deploy-velero:
     needs: [
       deploy-openebs,
