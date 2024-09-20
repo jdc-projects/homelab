@@ -1,5 +1,6 @@
 locals {
   keycloak_features_enable = [
+    "persistent-user-sessions",
   ]
   keycloak_features_disable = [
   ]
