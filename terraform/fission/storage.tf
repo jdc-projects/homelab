@@ -7,7 +7,7 @@ resource "kubernetes_persistent_volume_claim" "fission" {
 
   spec {
     access_modes       = ["ReadWriteOnce"]
-    storage_class_name = "openebs-zfs-localpv-general-no-backup"
+    storage_class_name = "openebs-zfs-localpv-general"
 
     resources {
       requests = {
@@ -17,7 +17,7 @@ resource "kubernetes_persistent_volume_claim" "fission" {
   }
 
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = true
 
     ignore_changes = [spec[0].selector]
   }
