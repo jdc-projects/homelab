@@ -27,6 +27,9 @@ resource "kubernetes_manifest" "geoblock_traefik_plugin_middleware" {
           countries = [
             "GB",
           ]
+          allowedIPAddresses = [
+            "100.64.0.0/10", # tailscale: https://tailscale.com/kb/1015/100.x-addresses
+          ]
         }
       }
     }
