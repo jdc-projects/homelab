@@ -4,22 +4,6 @@ resource "kubernetes_namespace" "idrac" {
   }
 }
 
-module "idrac_ingress" {
-  source = "../modules/ingress"
-
-  name        = "idrac"
-  namespace   = kubernetes_namespace.idrac.metadata[0].name
-  domain      = "idrac.${var.server_base_domain}"
-  target_port = 443
-
-  is_external_scheme_http = false
-
-  external_name = "192.168.1.180"
-
-  do_enable_keycloak_auth     = true
-  is_keycloak_auth_admin_mode = true
-}
-
 resource "kubernetes_secret" "idrac_fan_controller_env" {
   metadata {
     name      = "idrac-fan-controller-access"
