@@ -87,6 +87,16 @@ jobs:
     with:
       terraform-dir: ./terraform/cloudnative-pg
 
+  deploy-velero:
+    needs: [
+      deploy-openebs,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/velero
+
   deploy-fission:
     needs: [
       deploy-openebs,
@@ -98,15 +108,15 @@ jobs:
       terraform-dir: ./terraform/fission
       needs-kubectl: true
 
-  deploy-velero:
+  deploy-fission-setup:
     needs: [
-      deploy-openebs,
+      deploy-fission,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/velero
+      terraform-dir: ./terraform/fission-setup
 
   deploy-traefik-config:
     needs: [
