@@ -31,11 +31,18 @@ resource "kubernetes_manifest" "openldap_ingress" {
 
       routes = [{
         match = "HostSNI(`*`)"
+
         services = [{
           name      = kubernetes_service.openldap.metadata[0].name
           namespace = kubernetes_namespace.openldap.metadata[0].name
           port      = kubernetes_service.openldap.spec[0].port[0].port
         }]
+
+        middleware = [
+          "cloudflare-real-ip",
+          "geoblock",
+          "crowdsec-bouncer",
+        ]
       }]
 
       tls = {
