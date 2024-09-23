@@ -57,9 +57,20 @@ jobs:
     with:
       terraform-dir: ./terraform/grafana-operator
 
+  deploy-cert-manager:
+    needs: [
+      deploy-github-org-runner,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/openebs
+
   deploy-traefik:
     needs: [
       deploy-openebs,
+      deploy-cert-manager,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
