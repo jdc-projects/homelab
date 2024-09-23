@@ -108,10 +108,6 @@ resource "helm_release" "traefik" {
     value = 80
   }
   set {
-    name  = "gateway.listeners.web.namespacePolicy"
-    value = "All"
-  }
-  set {
     name  = "gateway.listeners.websecure.port"
     value = 443
   }
