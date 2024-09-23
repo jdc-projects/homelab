@@ -140,18 +140,32 @@ resource "helm_release" "traefik" {
   }
 
   set {
+    name  = "providers.kubernetesGateway.enabled"
+    value = "true"
+  }
+
+  set {
+    name  = "gateway.listeners.web.port"
+    value = 80
+  }
+  set {
+    name  = "gateway.listeners.web.namespacePolicy"
+    value = "All"
+  }
+
+  set {
     name  = "additionalArguments[0]"
     value = "--serverstransport.insecureskipverify=true"
   }
 
   set {
     name  = "ports.traefik.port"
-    value = "9000"
+    value = 9000
   }
 
   set {
     name  = "ports.web.port"
-    value = "80"
+    value = 80
   }
   set {
     name  = "ports.web.redirectTo.port"
@@ -164,7 +178,7 @@ resource "helm_release" "traefik" {
 
   set {
     name  = "ports.websecure.port"
-    value = "443"
+    value = 443
   }
   set {
     name  = "ports.websecure.tls.certResolver"
@@ -177,7 +191,7 @@ resource "helm_release" "traefik" {
 
   set {
     name  = "ports.ldaps.port"
-    value = "636"
+    value = 636
   }
   set {
     name  = "ports.ldaps.protocol"
@@ -190,7 +204,7 @@ resource "helm_release" "traefik" {
 
   set {
     name  = "ports.metrics.port"
-    value = "9500"
+    value = 9500
   }
 
   set {
