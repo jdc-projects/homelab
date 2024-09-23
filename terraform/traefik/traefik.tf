@@ -152,6 +152,26 @@ resource "helm_release" "traefik" {
     name  = "gateway.listeners.web.namespacePolicy"
     value = "All"
   }
+  set {
+    name  = "gateway.listeners.websecure.port"
+    value = 443
+  }
+  set {
+    name  = "gateway.listeners.websecure.protocol"
+    value = "HTTPS"
+  }
+  set {
+    name  = "gateway.listeners.websecure.namespacePolicy"
+    value = "All"
+  }
+  set {
+    name  = "gateway.listeners.websecure.certificateRefs[0].name"
+    value = kubernetes_manifest.cert_manager_certificate_wilcard.manifest.spec.secretName
+  }
+  set {
+    name  = "gateway.listeners.websecure.mode"
+    value = "Terminate"
+  }
 
   set {
     name  = "additionalArguments[0]"
@@ -180,14 +200,6 @@ resource "helm_release" "traefik" {
     name  = "ports.websecure.port"
     value = 443
   }
-  set {
-    name  = "ports.websecure.tls.certResolver"
-    value = "letsencrypt"
-  }
-  set {
-    name  = "ports.websecure.tls.domains[0].main"
-    value = "*.${var.server_base_domain}"
-  }
 
   set {
     name  = "ports.ldaps.port"
@@ -208,64 +220,13 @@ resource "helm_release" "traefik" {
   }
 
   set {
-    name  = "tlsStore.default.defaultGeneratedCert.resolver"
-    value = "letsencrypt"
-  }
-  set {
-    name  = "tlsStore.default.defaultGeneratedCert.domain.main"
-    value = "*.${var.server_base_domain}"
+    name  = "tlsStore.default.defaultCertificate.secretName"
+    value = kubernetes_manifest.cert_manager_certificate_wilcard.manifest.spec.secretName
   }
 
   set {
     name  = "service.enabled"
     value = "false"
-  }
-
-  set {
-    name  = "persistence.enabled"
-    value = "true"
-  }
-  set {
-    name  = "persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.traefik.metadata[0].name
-  }
-
-  set {
-    name  = "certResolvers.letsencrypt.email"
-    value = "jack.chapman@sky.com"
-  }
-  set {
-    name  = "certResolvers.letsencrypt.caServer"
-    value = "https://acme-v02.api.letsencrypt.org/directory"
-    # value = "https://acme-staging-v02.api.letsencrypt.org/directory"
-  }
-  set {
-    name  = "certResolvers.letsencrypt.dnsChallenge.provider"
-    value = "cloudflare"
-  }
-  set {
-    name  = "env[0].name"
-    value = "CF_DNS_API_TOKEN"
-  }
-  set_sensitive {
-    name  = "env[0].value"
-    value = var.cloudflare_acme_token
-  }
-  set {
-    name  = "certResolvers.letsencrypt.dnsChallenge.delayBeforeCheck"
-    value = "30"
-  }
-  set {
-    name  = "certResolvers.letsencrypt.dnsChallenge.resolvers[0]"
-    value = "sonia.ns.cloudflare.com"
-  }
-  set {
-    name  = "certResolvers.letsencrypt.dnsChallenge.resolvers[1]"
-    value = "sonny.ns.cloudflare.com"
-  }
-  set {
-    name  = "certResolvers.letsencrypt.storage"
-    value = "/data/acme.json"
   }
 
   set {
