@@ -97,27 +97,6 @@ jobs:
     with:
       terraform-dir: ./terraform/velero
 
-  deploy-fission:
-    needs: [
-      deploy-openebs,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/fission
-      needs-kubectl: true
-
-  deploy-fission-setup:
-    needs: [
-      deploy-fission,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/fission-setup
-
   deploy-traefik-config:
     needs: [
       deploy-traefik,
