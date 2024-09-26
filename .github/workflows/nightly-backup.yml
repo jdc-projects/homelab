@@ -60,7 +60,7 @@ jobs:
           sudo cp ./velero/velero /usr/local/bin/velero
       - name: "Start backup"
         run: velero create backup --from-schedule nightly
-      - name: "Wait some time for snapshots"
+      - name: "Wait for snapshots"
         run: |
           velero get backups -o yaml > backups.yml
           kubectl -n velero wait backups.velero.io $(yq '.items[-1].metadata.name' backups.yml) --timeout 10m --for "jsonpath={.status.phase}=WaitingForPluginOperations"
