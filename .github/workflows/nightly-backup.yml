@@ -63,7 +63,7 @@ jobs:
       - name: "Wait for snapshots"
         run: |
           velero get backups -o yaml > backups.yml
-          kubectl -n velero wait backups.velero.io $(yq '.items[-1].metadata.name' backups.yml) --timeout 10m --for "jsonpath={.status.phase}=WaitingForPluginOperations"
+          kubectl -n $(yq '.items[-1].metadata.namespace' backups.yml) wait backups.velero.io $(yq '.items[-1].metadata.name' backups.yml) --timeout 10m --for "jsonpath={.status.phase}=WaitingForPluginOperations"
       - name: "Clean up old backups"
         env:
           MAX_NUM_BACKUPS: 30
@@ -110,7 +110,7 @@ jobs:
         timeout-minutes: 1380
         run: |
           velero get backups -o yaml > backups.yml
-          kubectl -n velero wait backups.velero.io $(yq '.items[-1].metadata.name' backups.yml) --timeout 23h --for "jsonpath={.status.phase}=Completed"
+          kubectl -n $(yq '.items[-1].metadata.namespace' backups.yml) wait backups.velero.io $(yq '.items[-1].metadata.name' backups.yml) --timeout 23h --for "jsonpath={.status.phase}=Completed"
 
   restart-databases:
     needs: [
