@@ -65,7 +65,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/openebs
+      terraform-dir: ./terraform/cert-manager
 
   deploy-traefik:
     needs: [
