@@ -78,16 +78,6 @@ jobs:
     with:
       terraform-dir: ./terraform/traefik
 
-  deploy-crowdsec:
-    needs: [
-      deploy-openebs,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
-
-    with:
-      terraform-dir: ./terraform/crowdsec
-
   deploy-cloudnative-pg:
     needs: [
       deploy-openebs,
@@ -107,6 +97,16 @@ jobs:
 
     with:
       terraform-dir: ./terraform/velero
+
+  deploy-crowdsec:
+    needs: [
+      deploy-traefik,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/crowdsec
 
   deploy-traefik-config:
     needs: [
