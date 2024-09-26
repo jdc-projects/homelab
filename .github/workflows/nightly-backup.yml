@@ -67,7 +67,7 @@ jobs:
           MAX_NUM_BACKUPS: 30
         run: |
           velero get backups -o yaml > backups.yml
-          yq '.items[].metadata.name' backups.yml -I 0 > backups.txt
+          yq '.items[].metadata.name' backups.yml > backups.txt
           head -n -${{ env.MAX_NUM_BACKUPS }} backups.txt > backups-to-delete.txt
           truncate -s -1 backups-to-delete.txt
           sed -i '{:q;N;s/\n/ /g;t q}' backups-to-delete.txt
