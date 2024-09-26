@@ -73,10 +73,7 @@ jobs:
           head -n -${{ env.MAX_NUM_BACKUPS }} backups.txt > backups-to-delete.txt
           truncate -s -1 backups-to-delete.txt
           sed -i '{:q;N;s/\n/ /g;t q}' backups-to-delete.txt
-          cat backups-to-delete.txt
-        # velero backup delete $(cat backups-to-delete.txt)
-        # for now, just output the backups it wants to delete to confirm they're correct
-        # once confirmed, the 'cat backups-to-delete.txt' line can be removed and the 'velero backup delete...' line uncommented
+          velero backup delete $(cat backups-to-delete.txt)
 
   restart-databases:
     needs: [
