@@ -67,11 +67,10 @@ jobs:
           MAX_NUM_BACKUPS: 30
         run: |
           velero get backups -o yaml > backups.yml
-          yq '.items[].metadata.name' backups.yml -o json -I 0 > backups.txt
-          truncate -s -1 dbs.json
+          yq '.items[].metadata.name' backups.yml -I 0 > backups.txt
           head -n -${{ env.MAX_NUM_BACKUPS }} backups.txt > backups-to-delete.txt
+          truncate -s -1 backups-to-delete.txt
           sed -i '{:q;N;s/\n/ /g;t q}' backups-to-delete.txt
-          sed -i 's#"##g' backups-to-delete.txt
           cat backups-to-delete.txt
         # velero backup delete $(cat backups-to-delete.txt)
         # for now, just output the backups it wants to delete to confirm they're correct
