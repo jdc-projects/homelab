@@ -21,6 +21,10 @@ resource "kubernetes_manifest" "knative_serving" {
         network = {
           ingress-class = "gateway-api.ingress.networking.knative.dev"
         }
+
+        domain = {
+          "${var.server_base_domain}" = ""
+        }
       }
     }
   }

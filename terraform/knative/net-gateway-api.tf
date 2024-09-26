@@ -13,7 +13,7 @@ resource "kubernetes_config_map" "config_gateway" {
   }
 
   data = {
-    # ***** class may need defining
+    # ***** should get these values from traefik deployment
     external-gateways = <<-EOF
       - class: traefik
         gateway: traefik/traefik-gateway
