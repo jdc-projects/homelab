@@ -61,7 +61,9 @@ jobs:
       - name: "Start backup"
         run: velero create backup --from-schedule nightly
       - name: "Wait some time for snapshots"
-        run: sleep 300
+        run: |
+          velero get backups -o yaml > backups.yml
+          kubectl -n velero wait backups.velero.io $(yq '.items[-1].metadata.name' backups.yml) --timeout 10m --for "jsonpath={.status.phase}=WaitingForPluginOperations"
       - name: "Clean up old backups"
         env:
           MAX_NUM_BACKUPS: 30
