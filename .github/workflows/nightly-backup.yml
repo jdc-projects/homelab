@@ -75,6 +75,43 @@ jobs:
           sed -i '{:q;N;s/\n/ /g;t q}' backups-to-delete.txt
           velero backup delete $(cat backups-to-delete.txt)
 
+  check-backup-success:
+    needs: [
+      start-velero-backup,
+    ]
+    runs-on: self-hosted
+
+    timeout-minutes: 1380
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v4
+      - name: "Add cluster CA certificate"
+        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
+      - name: "Generate and install kubeconfig"
+        working-directory: ./terraform
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.30.4'
+      - name: "Install Velero CLI"
+        env:
+          VELERO_VERSION: 'v1.14.1'
+        run: |
+          mkdir velero
+          curl https://github.com/vmware-tanzu/velero/releases/download/${{ env.VELERO_VERSION }}/velero-${{ env.VELERO_VERSION }}-linux-amd64.tar.gz -Lo velero.tar.gz
+          tar -xvf velero.tar.gz -C ./velero --strip-components=1
+          sudo cp ./velero/velero /usr/local/bin/velero
+      - name: "Wait for backup to complete"
+        timeout-minutes: 1380
+        run: |
+          velero get backups -o yaml > backups.yml
+          kubectl -n velero wait backups.velero.io $(yq '.items[-1].metadata.name' backups.yml) --timeout 10m --for "jsonpath={.status.phase}=Completed"
+
   restart-databases:
     needs: [
       start-velero-backup,
