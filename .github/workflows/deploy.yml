@@ -169,7 +169,6 @@ jobs:
           grafana,
           ocis,
           outline,
-          penpot,
           services,
         ]
 
