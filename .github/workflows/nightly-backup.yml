@@ -23,9 +23,7 @@ jobs:
     steps:
       - name: Get server status
         id: "get-server-status"
-        run: |
-          curl --max-time 5 https://ping.${{ vars.SERVER_BASE_DOMAIN }}
-          echo "curl-code=$?" >> "$GITHUB_OUTPUT"
+        run: curl --max-time 5 https://ping.${{ vars.SERVER_BASE_DOMAIN }}
 
   hibernate-databases:
     needs: [
@@ -34,7 +32,7 @@ jobs:
     uses: ./.github/workflows/databases-hibernate.yml
     secrets: inherit
 
-    if: needs.check-server-up.outputs.curl-code == '0'
+    if: needs.check-server-up.result == 'success'
 
     with:
       do-hibernate: true
