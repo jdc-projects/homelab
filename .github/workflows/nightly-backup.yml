@@ -18,6 +18,8 @@ jobs:
     outputs:
       curl-code: ${{ steps.get-server-status.outputs.databases}}
 
+    continue-on-error: true
+
     steps:
       - name: Get server status
         id: "get-server-status"
