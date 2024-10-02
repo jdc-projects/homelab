@@ -15,9 +15,15 @@ jobs:
   check-server-up:
     runs-on: ubuntu-latest
 
+    outputs:
+      curl-code: ${{ steps.get-server-status.outputs.databases}}
+
     steps:
       - name: Get server status
-        run: curl --max-time 5 https://ping.${{ vars.SERVER_BASE_DOMAIN }}
+        id: "get-server-status"
+        run: |
+          curl --max-time 5 https://ping.${{ vars.SERVER_BASE_DOMAIN }}
+          echo "curl-code=$?" >> "$GITHUB_OUTPUT"
 
   hibernate-databases:
     needs: [
@@ -25,6 +31,8 @@ jobs:
     ]
     uses: ./.github/workflows/databases-hibernate.yml
     secrets: inherit
+
+    if: needs.check-server-up.outputs.curl-code == 0
 
     with:
       do-hibernate: true
