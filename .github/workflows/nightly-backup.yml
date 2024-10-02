@@ -15,14 +15,8 @@ jobs:
   check-server-up:
     runs-on: ubuntu-latest
 
-    outputs:
-      curl-code: ${{ steps.get-server-status.outputs.databases}}
-
-    continue-on-error: true
-
     steps:
       - name: Get server status
-        id: "get-server-status"
         run: curl --max-time 5 https://ping.${{ vars.SERVER_BASE_DOMAIN }}
 
   hibernate-databases:
@@ -31,8 +25,6 @@ jobs:
     ]
     uses: ./.github/workflows/databases-hibernate.yml
     secrets: inherit
-
-    if: needs.check-server-up.result == 'success'
 
     with:
       do-hibernate: true
