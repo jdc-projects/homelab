@@ -34,7 +34,7 @@ jobs:
     uses: ./.github/workflows/databases-hibernate.yml
     secrets: inherit
 
-    if: needs.check-server-up.outputs.curl-code == 0
+    if: needs.check-server-up.outputs.curl-code == '0'
 
     with:
       do-hibernate: true
