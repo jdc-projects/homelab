@@ -78,6 +78,10 @@ resource "kubernetes_manifest" "outline_db" {
     }
   }
 
+  field_manager {
+    force_conflicts = true
+  }
+
   computed_fields = [
     "metadata.labels",
     "metadata.annotations",
