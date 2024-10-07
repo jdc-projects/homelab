@@ -24,7 +24,7 @@ resource "helm_release" "keycloak" {
 
   repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "keycloak"
-  version    = "22.0.0"
+  version    = "23.0.0"
 
   timeout = 600
 
