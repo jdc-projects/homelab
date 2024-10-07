@@ -45,7 +45,7 @@ resource "helm_release" "traefik" {
   }
   set {
     name  = "experimental.plugins.cloudflare-real-ip.version"
-    value = "v1.3.0"
+    value = "v1.3.3"
   }
   set {
     name  = "experimental.plugins.crowdsec-bouncer.moduleName"
@@ -53,7 +53,7 @@ resource "helm_release" "traefik" {
   }
   set {
     name  = "experimental.plugins.crowdsec-bouncer.version"
-    value = "v1.3.3"
+    value = "v1.3.4"
   }
   set {
     name  = "experimental.plugins.geoblock.moduleName"
