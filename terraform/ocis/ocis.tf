@@ -1,11 +1,19 @@
 resource "null_resource" "ocis_helm_repo_clone" {
   triggers = {
     always_run = timestamp()
-    version    = "v0.5.0"
+    # get commit SHA from https://github.com/owncloud/ocis-charts/commits/stable-5/
+    commit_sha = "12fb37837f0caba49990ff3d29845151e400a2cc"
   }
 
   provisioner "local-exec" {
-    command = "git clone --depth 1 -b ${self.triggers.version} https://github.com/owncloud/ocis-charts.git"
+    command = <<-EOF
+      mkdir ./ocis-charts
+      cd ./ocis-charts
+      git init
+      git remote add origin https://github.com/owncloud/ocis-charts.git
+      git fetch origin ${self.triggers.commit_sha}
+      git reset --hard FETCH_HEAD
+    EOF
   }
 }
 
@@ -20,13 +28,6 @@ resource "helm_release" "ocis" {
   namespace = kubernetes_namespace.ocis.metadata[0].name
 
   timeout = 600
-
-  # the default image tag is 4.0.1 and seems to have a bug with OIDC that prevents login
-  # remove this when next upgrading
-  set {
-    name  = "image.tag"
-    value = "4.0.7"
-  }
 
   set {
     name  = "logging.level"
