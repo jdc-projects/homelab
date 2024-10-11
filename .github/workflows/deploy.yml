@@ -164,7 +164,6 @@ jobs:
       fail-fast: false
       matrix:
         application: [
-          whoami,
           grafana,
           ocis,
           outline,

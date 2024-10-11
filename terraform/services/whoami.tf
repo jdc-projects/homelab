@@ -1,3 +1,9 @@
+resource "kubernetes_namespace" "whoami" {
+  metadata {
+    name = "whoami"
+  }
+}
+
 resource "kubernetes_deployment" "whoami" {
   metadata {
     name      = "whoami"
