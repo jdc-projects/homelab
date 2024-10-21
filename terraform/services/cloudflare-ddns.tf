@@ -11,7 +11,7 @@ resource "kubernetes_secret" "cloudflare_ddns_env" {
   }
 
   data = {
-    API_KEY = var.cloudflare_ddns_token
+    CLOUDFLARE_API_TOKEN = var.cloudflare_ddns_token
   }
 }
 
@@ -22,8 +22,9 @@ resource "kubernetes_config_map" "cloudflare_ddns_env" {
   }
 
   data = {
-    ZONE      = var.server_base_domain
-    SUBDOMAIN = "*"
+    DOMAINS      = "*.${var.server_base_domain}"
+    PROXIED      = "true"
+    IP6_PROVIDER = "none"
   }
 }
 
@@ -51,7 +52,7 @@ resource "kubernetes_deployment" "cloudflare_ddns_deployment" {
 
       spec {
         container {
-          image = "oznu/cloudflare-ddns:latest"
+          image = "favonia/cloudflare-ddns:1.15.0"
           name  = "cloudflare-ddns"
 
           env_from {
