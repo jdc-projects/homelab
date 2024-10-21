@@ -55,7 +55,8 @@ resource "kubernetes_deployment" "idrac_fan_controller_deployment" {
 
       spec {
         container {
-          image = "tigerblue77/dell_idrac_fan_controller:latest"
+          # open issue for versioning on image tag: https://github.com/tigerblue77/Dell_iDRAC_fan_controller_Docker/issues/77
+          image = "ghcr.io/tigerblue77/dell_idrac_fan_controller:latest"
           name  = "idrac-fan-controller"
 
           env_from {
