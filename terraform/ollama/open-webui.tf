@@ -99,14 +99,6 @@ resource "kubernetes_deployment" "open_webui" {
               memory = "512Mi"
             }
           }
-
-          # liveness_probe {
-          #   http_get {
-          #     # *****
-          #   }
-
-          #   initial_delay_seconds =
-          # }
         }
 
         volume {
