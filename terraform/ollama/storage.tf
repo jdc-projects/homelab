@@ -31,7 +31,7 @@ resource "kubernetes_persistent_volume_claim" "ollama" {
   }
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
 
     ignore_changes = [spec[0].selector]
   }

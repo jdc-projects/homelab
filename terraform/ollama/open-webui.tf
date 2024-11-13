@@ -13,7 +13,6 @@ resource "kubernetes_config_map" "open_webui_env" {
     WEBUI_URL                    = "https://${local.open_webui_domain}"
     PORT                         = 8080
     OLLAMA_BASE_URL              = "http://${kubernetes_service.ollama.metadata[0].name}:11434"
-    RESET_CONFIG_ON_START        = "True"
     OPENAI_API_BASE_URL          = "http://${kubernetes_service.pipelines.metadata[0].name}:9099"
     ENABLE_SIGNUP                = "False"
     ENABLE_LOGIN_FORM            = "False"
@@ -100,6 +99,14 @@ resource "kubernetes_deployment" "open_webui" {
               memory = "512Mi"
             }
           }
+
+          # liveness_probe {
+          #   http_get {
+          #     # *****
+          #   }
+
+          #   initial_delay_seconds =
+          # }
         }
 
         volume {
