@@ -100,6 +100,6 @@ resource "kubernetes_manifest" "open_webui_db" {
   }
 
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = true
   }
 }
