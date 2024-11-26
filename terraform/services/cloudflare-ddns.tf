@@ -82,4 +82,11 @@ resource "kubernetes_deployment" "cloudflare_ddns_deployment" {
       }
     }
   }
+
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_secret.cloudflare_ddns_env,
+      kubernetes_config_map.cloudflare_ddns_env,
+    ]
+  }
 }
