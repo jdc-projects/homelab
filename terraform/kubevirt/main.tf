@@ -10,6 +10,16 @@ terraform {
       source = "alekc/kubectl"
       version = "2.0.4"
     }
+
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "2.30.0"
+    }
+
+    keycloak = {
+      source  = "mrparkers/keycloak"
+      version = "4.4.0"
+    }
   }
 }
 
@@ -17,6 +27,20 @@ provider "kubectl" {
   config_path = "../cluster.yml"
 }
 
+provider "kubernetes" {
+  config_path = "../cluster.yml"
+}
+
+# provider is required by the ingress module, but not used, so values don't matter
+provider "keycloak" {
+  client_id     = "admin-cli"
+  username      = ""
+  password      = ""
+  url           = ""
+  initial_login = false
+}
+
 locals {
   kubevirt_version = "v1.4.0"
+  cdi_version = "v1.60.4"
 }
