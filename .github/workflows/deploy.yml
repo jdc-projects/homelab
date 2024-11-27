@@ -67,7 +67,7 @@ jobs:
     with:
       terraform-dir: ./terraform/cert-manager
 
-  deploy-kubevirt:
+  deploy-kubevirt-operator:
     needs: [
       deploy-github-org-runner,
     ]
@@ -75,7 +75,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/kubevirt
+      terraform-dir: ./terraform/kubevirt-operator
 
   deploy-traefik:
     needs: [
@@ -107,6 +107,17 @@ jobs:
 
     with:
       terraform-dir: ./terraform/velero
+
+  deploy-kubevirt:
+    needs: [
+      deploy-openebs,
+      deploy-kubevirt-operator,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/kubevirt
 
   deploy-crowdsec:
     needs: [

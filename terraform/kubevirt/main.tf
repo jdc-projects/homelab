@@ -6,11 +6,6 @@ terraform {
   }
 
   required_providers {
-    kubectl = {
-      source = "alekc/kubectl"
-      version = "2.0.4"
-    }
-
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = "2.30.0"
@@ -21,10 +16,6 @@ terraform {
       version = "4.4.0"
     }
   }
-}
-
-provider "kubectl" {
-  config_path = "../cluster.yml"
 }
 
 provider "kubernetes" {
@@ -43,4 +34,16 @@ provider "keycloak" {
 locals {
   kubevirt_version = "v1.4.0"
   cdi_version = "v1.60.4"
+}
+
+data "kubernetes_namespace" "kubevirt" {
+  metadata {
+    name = "kubevirt"
+  }
+}
+
+data "kubernetes_namespace" "cdi" {
+  metadata {
+    name = "cdi"
+  }
 }
