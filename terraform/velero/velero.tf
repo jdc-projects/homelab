@@ -73,6 +73,27 @@ resource "helm_release" "velero" {
   }
 
   set {
+    name  = "initContainers[1].name"
+    value = "kubevirt-velero-plugin"
+  }
+  set {
+    name  = "initContainers[1].image"
+    value = "quay.io/kubevirt/kubevirt-velero-plugin:v0.7.0"
+  }
+  set {
+    name  = "initContainers[1].imagePullPolicy"
+    value = "IfNotPresent"
+  }
+  set {
+    name  = "initContainers[1].volumeMounts[0].mountPath"
+    value = "/target"
+  }
+  set {
+    name  = "initContainers[1].volumeMounts[0].name"
+    value = "plugins"
+  }
+
+  set {
     name  = "cleanUpCRDs"
     value = "true"
   }
