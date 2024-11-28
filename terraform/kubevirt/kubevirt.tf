@@ -1,10 +1,10 @@
 resource "kubernetes_manifest" "kubevirt_instance" {
   manifest = {
     apiVersion = "kubevirt.io/v1"
-    kind = "KubeVirt"
+    kind       = "KubeVirt"
 
     metadata = {
-      name = "kubevirt"
+      name      = "kubevirt"
       namespace = data.kubernetes_namespace.kubevirt.metadata[0].name
     }
 
@@ -15,8 +15,8 @@ resource "kubernetes_manifest" "kubevirt_instance" {
           featureGates = []
         }
       }
-      customizeComponents = {}
-      imagePullPolicy = "IfNotPresent"
+      customizeComponents    = {}
+      imagePullPolicy        = "IfNotPresent"
       workloadUpdateStrategy = {}
     }
   }

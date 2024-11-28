@@ -1,7 +1,7 @@
 resource "kubernetes_manifest" "cdi_instance" {
   manifest = {
     apiVersion = "cdi.kubevirt.io/v1beta1"
-    kind = "CDI"
+    kind       = "CDI"
 
     metadata = {
       name = "cdi"
@@ -21,7 +21,7 @@ resource "kubernetes_manifest" "cdi_instance" {
         }
         tolerations = [
           {
-            key = "CriticalAddonsOnly"
+            key      = "CriticalAddonsOnly"
             operator = "Exists"
           },
         ]

@@ -33,7 +33,7 @@ provider "keycloak" {
 
 locals {
   kubevirt_version = "v1.4.0"
-  cdi_version = "v1.60.4"
+  cdi_version      = "v1.60.4"
 }
 
 data "kubernetes_namespace" "kubevirt" {
