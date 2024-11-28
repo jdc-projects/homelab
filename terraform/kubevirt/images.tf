@@ -11,6 +11,11 @@ resource "kubernetes_persistent_volume_claim" "opnsense" {
       storage_class_name = "openebs-zfs-localpv-bulk-no-backup"
       endpoint           = "https://www.mirrorservice.org/sites/opnsense.org/releases/24.7/OPNsense-24.7-nano-amd64.img.bz2"
     })
+    fedora-cloud-base-generic-41-1-4-x86-64 = tomap({
+      storage            = "6Gi"
+      storage_class_name = "openebs-zfs-localpv-bulk-no-backup"
+      endpoint           = "https://download.fedoraproject.org/pub/fedora/linux/releases/41/Cloud/x86_64/images/Fedora-Cloud-Base-Generic-41-1.4.x86_64.qcow2"
+    })
   })
 
   metadata {
