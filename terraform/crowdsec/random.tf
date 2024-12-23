@@ -18,3 +18,17 @@ resource "random_password" "traefik_api_key" {
   special = false
   upper   = true
 }
+
+resource "random_password" "crowdsec_lapi_secret" {
+  length  = 100
+  numeric = true
+  special = false
+  upper   = true
+}
+
+resource "random_password" "crowdsec_registration_token" {
+  length  = 50
+  numeric = true
+  special = false
+  upper   = true
+}
