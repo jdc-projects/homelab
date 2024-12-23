@@ -23,7 +23,7 @@ resource "kubernetes_config_map" "idrac_fan_controller_env" {
   }
 
   data = {
-    IDRAC_HOST                                                  = "192.168.1.180"
+    IDRAC_HOST                                                  = "192.168.100.180"
     FAN_SPEED                                                   = "5"
     CPU_TEMPERATURE_THRESHOLD                                   = "60"
     CHECK_INTERVAL                                              = "60"
