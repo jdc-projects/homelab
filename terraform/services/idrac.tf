@@ -86,4 +86,11 @@ resource "kubernetes_deployment" "idrac_fan_controller_deployment" {
       }
     }
   }
+
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_secret.idrac_fan_controller_env,
+      kubernetes_config_map.idrac_fan_controller_env,
+    ]
+  }
 }
