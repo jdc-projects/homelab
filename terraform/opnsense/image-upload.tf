@@ -1,14 +1,14 @@
 # the PVC download method doesn't work, so we have to use the CLI to upload the OPNsense image
 resource "null_resource" "image_upload" {
   triggers = {
-    opnsense_version = "24.7"
-    image_size = "4Gi"
+    opnsense_version  = "24.7"
+    image_size        = "4Gi"
     image_upload_name = "opnsense-24-7-nano-amd64"
-    image_namespace = kubernetes_namespace.opnsense.metadata[0].name
+    image_namespace   = kubernetes_namespace.opnsense.metadata[0].name
   }
 
   provisioner "local-exec" {
-    when = create
+    when    = create
     command = <<-EOF
       curl -Lo opnsense.img.bz2 https://www.mirrorservice.org/sites/opnsense.org/releases/${self.triggers.opnsense_version}/OPNsense-${self.triggers.opnsense_version}-nano-amd64.img.bz2
       bzip2 -d opnsense.img.bz2
@@ -18,7 +18,7 @@ resource "null_resource" "image_upload" {
   }
 
   provisioner "local-exec" {
-    when = destroy
+    when    = destroy
     command = <<-EOF
       kubectl -n ${self.triggers.image_namespace} delete dv ${self.triggers.image_upload_name}
     EOF
