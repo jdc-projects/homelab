@@ -50,7 +50,7 @@ resource "null_resource" "cdi_readiness_check" {
 }
 
 resource "kubernetes_service" "cdi_uploadproxy_nodeport" {
-    metadata {
+  metadata {
     name      = "cdi-uploadproxy-nodeport"
     namespace = "cdi"
 

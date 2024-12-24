@@ -14,6 +14,15 @@ resource "kubernetes_manifest" "kubevirt_instance" {
         developerConfiguration = {
           featureGates = []
         }
+
+        permittedHostDevices = {
+          pciHostDevices = [
+            {
+              pciVendorSelector = "${var.opnsense_nic_vendor_id}:${var.opnsense_nic_product_id}"
+              resourceName      = "opnsense_nic"
+            },
+          ]
+        }
       }
       customizeComponents    = {}
       imagePullPolicy        = "IfNotPresent"

@@ -15,6 +15,11 @@ terraform {
       source  = "mrparkers/keycloak"
       version = "4.4.0"
     }
+
+    ssh = {
+      source  = "loafoe/ssh"
+      version = "2.6.0"
+    }
   }
 }
 
