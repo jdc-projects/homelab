@@ -22,7 +22,7 @@ resource "kubernetes_manifest" "open_webui_db" {
 
     spec = {
       # https://github.com/cloudnative-pg/postgres-containers/pkgs/container/postgresql
-      imageName = "ghcr.io/cloudnative-pg/postgresql:16.4-31"
+      imageName = "ghcr.io/cloudnative-pg/postgresql:16.6-23"
 
       instances = local.open_webui_db_instances
 

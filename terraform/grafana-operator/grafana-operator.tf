@@ -4,7 +4,7 @@ resource "helm_release" "grafana_operator" {
 
   repository = "oci://ghcr.io/grafana/helm-charts"
   chart      = "grafana-operator"
-  version    = "v5.13.0"
+  version    = "v5.15.1"
 
   timeout = 300
 }

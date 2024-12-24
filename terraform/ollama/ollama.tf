@@ -33,7 +33,7 @@ resource "kubernetes_deployment" "ollama" {
 
       spec {
         container {
-          image = "ollama/ollama:0.4.1"
+          image = "ollama/ollama:0.5.4"
           name  = "ollama"
 
           env_from {

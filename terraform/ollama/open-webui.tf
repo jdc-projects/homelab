@@ -68,7 +68,7 @@ resource "kubernetes_deployment" "open_webui" {
 
       spec {
         container {
-          image = "ghcr.io/open-webui/open-webui:0.3.35"
+          image = "ghcr.io/open-webui/open-webui:0.4.8"
           name  = "open-webui"
 
           env_from {

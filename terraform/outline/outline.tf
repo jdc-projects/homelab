@@ -90,7 +90,7 @@ resource "kubernetes_deployment" "outline" {
 
       spec {
         container {
-          image = "outlinewiki/outline:0.76.1"
+          image = "outlinewiki/outline:0.81.1"
           name  = "outline"
 
           env_from {

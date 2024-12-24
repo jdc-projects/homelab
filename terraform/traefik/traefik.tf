@@ -1,6 +1,6 @@
 resource "null_resource" "traefik_version" {
   triggers = {
-    traefik_version = "31.1.1"
+    traefik_version = "33.2.1"
   }
 }
 
@@ -53,7 +53,7 @@ resource "helm_release" "traefik" {
   }
   set {
     name  = "experimental.plugins.crowdsec-bouncer.version"
-    value = "v1.3.4"
+    value = "v1.3.5"
   }
   set {
     name  = "experimental.plugins.geoblock.moduleName"

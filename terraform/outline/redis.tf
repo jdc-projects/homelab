@@ -4,7 +4,7 @@ resource "helm_release" "redis" {
 
   repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "redis"
-  version    = "19.5.1"
+  version    = "20.6.1"
 
   timeout = 300
 

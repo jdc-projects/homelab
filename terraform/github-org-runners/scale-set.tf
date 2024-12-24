@@ -69,7 +69,7 @@ resource "helm_release" "runner_scale_set" {
   }
   set {
     name  = "template.spec.initContainers[0].image"
-    value = "alpine:3.20.0"
+    value = "alpine:3.21.0"
   }
   set_list {
     name = "template.spec.initContainers[0].command"
