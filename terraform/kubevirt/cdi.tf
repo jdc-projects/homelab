@@ -49,19 +49,28 @@ resource "null_resource" "cdi_readiness_check" {
   }
 }
 
-locals {
-  cdi_uploadproxy_name = "${kubernetes_manifest.cdi_instance.manifest.metadata.name}-uploadproxy"
-}
+resource "kubernetes_service" "cdi_uploadproxy_nodeport" {
+    metadata {
+    name      = "cdi-uploadproxy-nodeport"
+    namespace = "cdi"
 
-module "cdi_uploadproxy_ingress" {
-  source = "../modules/ingress"
+    labels = {
+      "cdi.kubevirt.io" = "cdi-uploadproxy"
+    }
+  }
 
-  name      = local.cdi_uploadproxy_name
-  namespace = data.kubernetes_namespace.cdi.metadata[0].name
-  domain    = "${local.cdi_uploadproxy_name}.${var.server_base_domain}"
+  spec {
+    type = "NodePort"
 
-  target_port = 443
+    selector = {
+      "cdi.kubevirt.io" = "cdi-uploadproxy"
+    }
 
-  existing_service_name      = local.cdi_uploadproxy_name
-  existing_service_namespace = data.kubernetes_namespace.cdi.metadata[0].name
+    port {
+      port        = 443
+      target_port = 8443
+      node_port   = 31001
+      protocol    = "TCP"
+    }
+  }
 }
