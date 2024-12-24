@@ -35,6 +35,15 @@ resource "kubectl_manifest" "opnsense_kubevirt_vm" {
                   name = "datavolumedisk1"
                 },
               ]
+
+              autoattachPodInterface = false
+
+              hostDevices = [
+                {
+                  deviceName = "opnsense_nic"
+                  name       = "opnsense_nic"
+                },
+              ]
             }
 
             machine = {
@@ -64,6 +73,8 @@ resource "kubectl_manifest" "opnsense_kubevirt_vm" {
             },
           ]
         }
+
+        networks = []
       }
 
       dataVolumeTemplates = [
@@ -109,4 +120,8 @@ resource "kubectl_manifest" "opnsense_kubevirt_vm" {
   depends_on = [
     null_resource.image_upload,
   ]
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
