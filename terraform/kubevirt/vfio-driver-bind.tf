@@ -34,7 +34,7 @@ resource "ssh_resource" "opnsense_nic_vfio_driver_binding" {
       TAG=="vfio-pci-bind", RUN+="vfio-pci-bind.sh $kernel"
       LABEL="vfio_pci_bind_rules_end"
     EOF
-    destination = "/lib/udev/rules.d/25-vfio-pci-bind.rules"
+    destination = "~/25-vfio-pci-bind.rules"
   }
 
   file {
@@ -65,10 +65,12 @@ resource "ssh_resource" "opnsense_nic_vfio_driver_binding" {
       TAG=="vfio-pci-bind", RUN+="vfio-pci-bind.sh $kernel"
       LABEL="vfio_pci_bind_rules_end"
     EOF
-    destination = "/lib/udev/vfio-pci-bind.sh"
+    destination = "~/vfio-pci-bind.sh"
   }
 
   commands = [
+    "sudo mv ~/25-vfio-pci-bind.rules /lib/udev/rules.d/25-vfio-pci-bind.rules",
+    "sudo mv ~/vfio-pci-bind.sh /lib/udev/vfio-pci-bind.sh",
     "sudo chmod +x /lib/udev/vfio-pci-bind.sh",
     "sudo /lib/udev/vfio-pci-bind.sh ${var.opnsense_nic_vendor_id}:${var.opnsense_nic_product_id}",
   ]
