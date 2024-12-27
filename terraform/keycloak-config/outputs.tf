@@ -25,7 +25,7 @@ output "master_realm_id" {
 }
 
 locals {
-  keycloak_issuer_url = "${data.terraform_remote_state.keycloak.outputs.keycloak_url}/realms/${keycloak_realm.primary.realm}"
+  keycloak_issuer_url    = "${data.terraform_remote_state.keycloak.outputs.keycloak_url}/realms/${keycloak_realm.primary.realm}"
   keycloak_auth_url_base = "${local.keycloak_issuer_url}/protocol/openid-connect"
 }
 

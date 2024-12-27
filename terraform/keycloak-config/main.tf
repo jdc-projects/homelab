@@ -14,10 +14,10 @@ terraform {
 }
 
 provider "keycloak" {
-  client_id     = "admin-cli"
-  username      = data.terraform_remote_state.keycloak.outputs.keycloak_admin_username
-  password      = data.terraform_remote_state.keycloak.outputs.keycloak_admin_password
-  url           = data.terraform_remote_state.keycloak.outputs.keycloak_url
+  client_id = "admin-cli"
+  username  = data.terraform_remote_state.keycloak.outputs.keycloak_admin_username
+  password  = data.terraform_remote_state.keycloak.outputs.keycloak_admin_password
+  url       = data.terraform_remote_state.keycloak.outputs.keycloak_url
 }
 
 data "terraform_remote_state" "keycloak" {
