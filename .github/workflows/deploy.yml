@@ -108,17 +108,17 @@ jobs:
     with:
       terraform-dir: ./terraform/velero
 
-  deploy-kubevirt:
-    needs: [
-      deploy-openebs,
-      deploy-kubevirt-operator,
-    ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
-    secrets: inherit
+  # deploy-kubevirt:
+  #   needs: [
+  #     deploy-openebs,
+  #     deploy-kubevirt-operator,
+  #   ]
+  #   uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+  #   secrets: inherit
 
-    with:
-      needs-kubectl: true
-      terraform-dir: ./terraform/kubevirt
+  #   with:
+  #     needs-kubectl: true
+  #     terraform-dir: ./terraform/kubevirt
 
   deploy-crowdsec:
     needs: [
