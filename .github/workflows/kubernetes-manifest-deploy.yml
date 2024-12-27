@@ -31,7 +31,6 @@ jobs:
           ./cluster-config-write.sh
           mkdir ~/.kube
           cp cluster.yml ~/.kube/config
-          cat ~/.kube/config
       - name: "Setup kubectl"
         uses: azure/setup-kubectl@v4
         with:
