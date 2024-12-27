@@ -56,6 +56,32 @@ resource "kubernetes_manifest" "grafana_deployment" {
           allow_assign_grafana_admin = "true"
         }
       }
+
+      deployment = {
+        metadata = {
+          labels = {
+            "velero.io/exclude-from-backup" = "true"
+          }
+        }
+
+        spec = {
+          template = {
+            metadata = {
+              labels = {
+                "velero.io/exclude-from-backup" = "true"
+              }
+            }
+          }
+        }
+      }
+
+      service = {
+        metadata = {
+          labels = {
+            "velero.io/exclude-from-backup" = "true"
+          }
+        }
+      }
     }
   }
 
