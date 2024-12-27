@@ -2,7 +2,7 @@ apiVersion: v1
 clusters:
 - cluster:
     certificate-authority-data: {certificate-authority-data}
-    server: https://k3s:{server-port}
+    server: https://1{server-ip}:{server-port}
   name: default
 contexts:
 - context:
