@@ -12,7 +12,9 @@ resource "kubernetes_manifest" "kubevirt_instance" {
       certificateRotateStrategy = {}
       configuration = {
         developerConfiguration = {
-          featureGates = []
+          featureGates = [
+            "HostDevices",
+          ]
         }
 
         permittedHostDevices = {
