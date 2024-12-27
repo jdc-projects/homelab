@@ -67,27 +67,6 @@ resource "helm_release" "keycloak" {
   }
 
   set {
-    name  = "extraVolumes[0].name"
-    value = "scripts-jar"
-  }
-  set {
-    name  = "extraVolumes[0].configMap.name"
-    value = kubernetes_config_map.keycloak_custom_scripts.metadata[0].name
-  }
-  set {
-    name  = "extraVolumes[0].readOnly"
-    value = "true"
-  }
-  set {
-    name  = "extraVolumeMounts[0].name"
-    value = "scripts-jar"
-  }
-  set {
-    name  = "extraVolumeMounts[0].mountPath"
-    value = "/opt/bitnami/keycloak/providers"
-  }
-
-  set {
     name  = "ingress.enabled"
     value = "false"
   }
@@ -126,7 +105,6 @@ resource "helm_release" "keycloak" {
   lifecycle {
     replace_triggered_by = [
       kubernetes_config_map.keycloak_extra_env_vars,
-      kubernetes_config_map.keycloak_custom_scripts,
     ]
   }
 }
