@@ -58,19 +58,9 @@ jobs:
     with:
       terraform-dir: ./terraform/velero-restore
 
-  restart-databases:
-    needs: [
-      do-velero-restore,
-    ]
-    uses: ./.github/workflows/databases-hibernate.yml
-    secrets: inherit
-
-    with:
-      do-hibernate: false
-
   run-deploy:
     needs: [
-      restart-databases,
+      do-velero-restore,
     ]
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
