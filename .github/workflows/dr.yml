@@ -28,7 +28,7 @@ jobs:
 
   deploy-github-org-runner:
     needs: [
-      deploy-tf-state-namespace,
+      deploy-openebs,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -39,14 +39,13 @@ jobs:
 
   deploy-velero:
     needs: [
-      deploy-tf-state-namespace,
+      deploy-github-org-runner,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
 
     with:
       terraform-dir: ./terraform/velero
-      runner-type: ubuntu-latest
       extra-variable: is_restore_mode=true
 
   do-velero-restore:
