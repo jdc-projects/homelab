@@ -24,7 +24,7 @@ data "terraform_remote_state" "keycloak" {
   backend = "kubernetes"
 
   config = {
-    secret_suffix = "keycloak"
+    secret_suffix = "keycloak-config"
     config_path   = "../cluster.yml"
     namespace     = "tf-state"
   }

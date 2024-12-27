@@ -162,6 +162,16 @@ jobs:
     with:
       terraform-dir: ./terraform/keycloak
 
+  deploy-keycloak-config:
+    needs: [
+      deploy-keycloak,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/keycloak-config
+
   deploy-vaultwarden:
     needs: [
       deploy-cloudnative-pg,
@@ -175,7 +185,7 @@ jobs:
 
   deploy-keycloak-dependants:
     needs: [
-      deploy-keycloak,
+      deploy-keycloak-config,
       deploy-grafana-operator, # only needed for grafana
       deploy-velero, # only needed for services
     ]

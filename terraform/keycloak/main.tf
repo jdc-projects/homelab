@@ -33,26 +33,17 @@ provider "kubernetes" {
   config_path = "../cluster.yml"
 }
 
-locals {
-  keycloak_domain = "idp.${var.server_base_domain}"
-}
-
+# provider is required by the ingress module, but not used, so values don't matter
 provider "keycloak" {
   client_id     = "admin-cli"
-  username      = random_password.keycloak_admin_username.result
-  password      = random_password.keycloak_admin_password.result
-  url           = "https://${local.keycloak_domain}"
+  username      = ""
+  password      = ""
+  url           = ""
   initial_login = false
 }
 
-data "terraform_remote_state" "openldap" {
-  backend = "kubernetes"
-
-  config = {
-    secret_suffix = "openldap"
-    config_path   = "../cluster.yml"
-    namespace     = "tf-state"
-  }
+locals {
+  keycloak_domain = "idp.${var.server_base_domain}"
 }
 
 resource "kubernetes_namespace" "keycloak" {

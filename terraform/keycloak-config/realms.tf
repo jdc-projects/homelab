@@ -1,9 +1,5 @@
 data "keycloak_realm" "master" {
   realm = "master"
-
-  depends_on = [
-    null_resource.keycloak_liveness_check,
-  ]
 }
 
 resource "keycloak_realm" "primary" {
@@ -20,8 +16,4 @@ resource "keycloak_realm" "primary" {
   offline_session_idle_timeout         = "720h" # 30 days
   offline_session_max_lifespan_enabled = true
   offline_session_max_lifespan         = "2160h" # 90 days
-
-  depends_on = [
-    null_resource.keycloak_liveness_check,
-  ]
 }
