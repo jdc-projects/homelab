@@ -10,3 +10,4 @@ cluster.yml
 *.key
 *.pem
 *.jar
+temp.json
