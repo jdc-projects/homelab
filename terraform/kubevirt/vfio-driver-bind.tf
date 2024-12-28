@@ -238,7 +238,7 @@ resource "ssh_resource" "opnsense_nic_vfio_driver_binding" {
     "sudo mv ~/25-vfio-pci-bind.rules /lib/udev/rules.d/25-vfio-pci-bind.rules",
     "sudo mv ~/vfio-pci-bind.sh /lib/udev/vfio-pci-bind.sh",
     "sudo chmod +x /lib/udev/vfio-pci-bind.sh",
-    "sudo /lib/udev/vfio-pci-bind.sh ${var.opnsense_nic_vendor_id}:${var.opnsense_nic_product_id}",
+    # "sudo /lib/udev/vfio-pci-bind.sh ${var.opnsense_nic_vendor_id}:${var.opnsense_nic_product_id}",
   ]
 
   timeout = "1m"
