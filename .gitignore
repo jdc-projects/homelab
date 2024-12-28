@@ -11,3 +11,4 @@ cluster.yml
 *.pem
 *.jar
 temp.json
+*.img*
