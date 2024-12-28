@@ -120,8 +120,8 @@ resource "ssh_resource" "opnsense_nic_vfio_driver_binding" {
           elif [[ $arg =~ $DBDF_REGEX ]]; then
               BDF=$arg
           elif [[ $arg =~ $BDF_REGEX ]]; then
-              BDF="0000:${arg}"
-              echo "Warning: You did not supply a PCI domain, assuming ${BDF}" 1>&2
+              BDF="0000:$${arg}"
+              echo "Warning: You did not supply a PCI domain, assuming $${BDF}" 1>&2
           else
               echo "Error: Please provide Vendor:Device (vvvv:dddd) and/or Domain:Bus:Device.Function (dddd:bb:dd.f)" 1>&2
               exit 1
@@ -130,19 +130,19 @@ resource "ssh_resource" "opnsense_nic_vfio_driver_binding" {
 
       # BDF not provided, find BDF for Vendor:Device
       if [[ -z $BDF ]]; then
-          COUNT=$(lspci -n -d ${VD} 2>/dev/null | wc -l)
+          COUNT=$(lspci -n -d $${VD} 2>/dev/null | wc -l)
           if [[ $COUNT -eq 0 ]]; then
-              echo "Error: Vendor:Device ${VD} not found" 1>&2
+              echo "Error: Vendor:Device $$VD} not found" 1>&2
               exit 1
           elif [[ $COUNT -gt 1 ]]; then
-              echo "Error: Multiple results for Vendor:Device ${VD}, please provide Domain:Bus:Device.Function (dddd:bb:dd.f) as well" 1>&2
+              echo "Error: Multiple results for Vendor:Device $${VD}, please provide Domain:Bus:Device.Function (dddd:bb:dd.f) as well" 1>&2
               exit 1
           fi
-          BDF=$(lspci -n -d ${VD} 2>/dev/null | cut -d " " -f1)
+          BDF=$(lspci -n -d $${VD} 2>/dev/null | cut -d " " -f1)
           if [[ $BDF =~ $BDF_REGEX ]]; then
-              BDF="0000:${BDF}"
+              BDF="0000:$${BDF}"
           elif [[ ! $BDF =~ $DBDF_REGEX ]]; then
-              echo "Error: Unable to find Domain:Bus:Device.Function for Vendor:Device ${VD}" 1>&2
+              echo "Error: Unable to find Domain:Bus:Device.Function for Vendor:Device $${VD}" 1>&2
               exit 1
           fi
       fi
@@ -150,7 +150,7 @@ resource "ssh_resource" "opnsense_nic_vfio_driver_binding" {
       TARGET_DEV_SYSFS_PATH="/sys/bus/pci/devices/$BDF"
 
       if [[ ! -d $TARGET_DEV_SYSFS_PATH ]]; then
-          echo "Error: Device ${BDF} does not exist, unable to bind device" 1>&2
+          echo "Error: Device $${BDF} does not exist, unable to bind device" 1>&2
           exit 1
       fi
 
@@ -161,27 +161,27 @@ resource "ssh_resource" "opnsense_nic_vfio_driver_binding" {
 
       # validate that the correct Vendor:Device was found for this BDF
       if [[ ! -z $VD ]]; then
-          if [[ $(lspci -n -s ${BDF} -d ${VD} 2>/dev/null | wc -l) -eq 0 ]]; then
-              echo "Error: Vendor:Device ${VD} not found at ${BDF}, unable to bind device" 1>&2
+          if [[ $(lspci -n -s $${BDF} -d $${VD} 2>/dev/null | wc -l) -eq 0 ]]; then
+              echo "Error: Vendor:Device $${VD} not found at $${BDF}, unable to bind device" 1>&2
               exit 1
           else
-              echo "Vendor:Device ${VD} found at ${BDF}"
+              echo "Vendor:Device $${VD} found at $${BDF}"
           fi
       else
-          echo "Warning: You did not specify a Vendor:Device (vvvv:dddd), unable to validate ${BDF}" 1>&2
+          echo "Warning: You did not specify a Vendor:Device (vvvv:dddd), unable to validate $${BDF}" 1>&2
       fi
 
       unset dev_sysfs_paths
       for dsp in $TARGET_DEV_SYSFS_PATH/iommu_group/devices/*
       do
-          dbdf=${dsp##*/}
+          dbdf=$${dsp##*/}
           if [[ $(( 0x$(setpci -s $dbdf 0e.b) & 0x7f )) -eq 0 ]]; then
               dev_sysfs_paths+=( $dsp )
           fi
       done
 
       printf "\nIOMMU group members (sans bridges):\n"
-      for dsp in ${dev_sysfs_paths[@]}; do echo $dsp; done
+      for dsp in $${dev_sysfs_paths[@]}; do echo $dsp; done
 
       modprobe -i vfio-pci
       if [[ $? -ne 0 ]]; then
@@ -190,16 +190,16 @@ resource "ssh_resource" "opnsense_nic_vfio_driver_binding" {
       fi
 
       printf "\nBinding...\n"
-      for dsp in ${dev_sysfs_paths[@]}
+      for dsp in $${dev_sysfs_paths[@]}
       do
           dpath="$dsp/driver"
-          dbdf=${dsp##*/}
+          dbdf=$${dsp##*/}
 
           echo "vfio-pci" > "$dsp/driver_override"
 
           if [[ -d $dpath ]]; then
               curr_driver=$(readlink $dpath)
-              curr_driver=${curr_driver##*/}
+              curr_driver=$${curr_driver##*/}
 
               if [[ "$curr_driver" == "vfio-pci" ]]; then
                   echo "$dbdf already bound to vfio-pci"
@@ -217,15 +217,15 @@ resource "ssh_resource" "opnsense_nic_vfio_driver_binding" {
 
       # Adjust group ownership
       iommu_group=$(readlink $TARGET_DEV_SYSFS_PATH/iommu_group)
-      iommu_group=${iommu_group##*/}
+      iommu_group=$${iommu_group##*/}
       chown $SUDO_UID:$SUDO_GID "/dev/vfio/$iommu_group"
       if [[ $? -ne 0 ]]; then
-          echo "Error: unable to adjust group ownership of /dev/vfio/${iommu_group}" 1>&2
+          echo "Error: unable to adjust group ownership of /dev/vfio/$${iommu_group}" 1>&2
           exit 1
       fi
 
       printf "success...\n\n"
-      echo "Device ${VD} at ${BDF} bound to vfio-pci"
+      echo "Device $${VD} at $${BDF} bound to vfio-pci"
       echo 'Devices listed in /sys/bus/pci/drivers/vfio-pci:'
       ls -l /sys/bus/pci/drivers/vfio-pci | egrep [[:xdigit:]]{4}:
       printf "\nls -l /dev/vfio/\n"
