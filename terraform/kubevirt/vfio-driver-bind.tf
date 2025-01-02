@@ -238,7 +238,8 @@ resource "ssh_resource" "opnsense_nic_vfio_driver_binding" {
     "sudo mv ~/25-vfio-pci-bind.rules /lib/udev/rules.d/25-vfio-pci-bind.rules",
     "sudo mv ~/vfio-pci-bind.sh /lib/udev/vfio-pci-bind.sh",
     "sudo chmod +x /lib/udev/vfio-pci-bind.sh",
-    "sudo udevadm trigger",
+    "sudo /lib/udev/vfio-pci-bind.sh $(sudo lspci -d 8086:154d | awk '{print $1}' | sed '1!d')",
+    "sudo /lib/udev/vfio-pci-bind.sh $(sudo lspci -d 8086:154d | awk '{print $1}' | sed '2!d')",
   ]
 
   timeout = "1m"
