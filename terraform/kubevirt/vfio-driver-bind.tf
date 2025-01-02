@@ -26,7 +26,7 @@ resource "ssh_resource" "opnsense_nic_vfio_driver_binding" {
       # Example: Match the PCI device with <Domain:Bus:Device.Function> 0000:0b:00.0
       #  KERNEL=="0000:0b:00.0", TAG="vfio-pci-bind"
       #
-      ATTR{vendor}=="0x${var.opnsense_nic_vendor_id}", ATTR{device}=="0x${var.opnsense_nic_product_id}", TAG="vfio-pci-bind"
+      # ATTR{vendor}=="{VENDOR_ID}", ATTR{device}=="{PRODUCT_ID}", TAG="vfio-pci-bind"
 
 
       # Any device tagged by a rule above is bound to vfio-pci.
@@ -238,8 +238,7 @@ resource "ssh_resource" "opnsense_nic_vfio_driver_binding" {
     "sudo mv ~/25-vfio-pci-bind.rules /lib/udev/rules.d/25-vfio-pci-bind.rules",
     "sudo mv ~/vfio-pci-bind.sh /lib/udev/vfio-pci-bind.sh",
     "sudo chmod +x /lib/udev/vfio-pci-bind.sh",
-    "sudo /lib/udev/vfio-pci-bind.sh $(sudo lspci -d 8086:154d | awk '{print $1}' | sed '1!d')",
-    "sudo /lib/udev/vfio-pci-bind.sh $(sudo lspci -d 8086:154d | awk '{print $1}' | sed '2!d')",
+    # "sudo /lib/udev/vfio-pci-bind.sh $(sudo lspci -d {VENDOR_ID}:{PRODUCT_ID} | awk '{print $1}' | sed '1!d')", # repeat for devices with multiple addresses
   ]
 
   timeout = "1m"
