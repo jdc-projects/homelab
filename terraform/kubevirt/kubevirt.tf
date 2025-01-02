@@ -21,7 +21,7 @@ resource "kubernetes_manifest" "kubevirt_instance" {
           pciHostDevices = [
             {
               pciVendorSelector = "${var.opnsense_nic_vendor_id}:${var.opnsense_nic_product_id}"
-              resourceName      = "opnsense_nic"
+              resourceName      = "${var.server_base_domain}/opnsense_nic"
             },
           ]
         }

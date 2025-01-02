@@ -8,3 +8,5 @@ For this reason, it isn't included in the deployment pipeline.
 - Normal requirements for any other deployment in this repo (e.g. Kubeconfig)
 - `kubectl` installed
 - `virtctl` installed
+- It may also be necessary to enable any SFP modules, depending on the NIC (example [here](https://nickcharlton.net/posts/unsupported-sfp-modules-intel-x520-debian-freebsd
+))

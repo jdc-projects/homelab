@@ -40,7 +40,7 @@ resource "kubectl_manifest" "opnsense_kubevirt_vm" {
 
               hostDevices = [
                 {
-                  deviceName = "opnsense_nic"
+                  deviceName = "${var.server_base_domain}/opnsense_nic"
                   name       = "opnsense_nic"
                 },
               ]
