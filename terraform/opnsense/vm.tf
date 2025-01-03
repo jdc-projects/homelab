@@ -39,9 +39,14 @@ resource "kubectl_manifest" "opnsense_kubevirt_vm" {
               autoattachPodInterface = false
 
               hostDevices = [
+                # the two ports are in different IOMMU groups, so they have to be passed in separately
                 {
                   deviceName = "${var.server_base_domain}/opnsense_nic"
-                  name       = "opnsense_nic"
+                  name       = "opnsense_nic_port_1"
+                },
+                {
+                  deviceName = "${var.server_base_domain}/opnsense_nic"
+                  name       = "opnsense_nic_port_2"
                 },
               ]
             }
