@@ -16,7 +16,7 @@ resource "ssh_resource" "tailscale_setup" {
   commands = [
     "sudo mv 99-tailscale.conf /etc/sysctl.d/99-tailscale.conf",
     "sudo sysctl -p /etc/sysctl.d/99-tailscale.conf",
-    "sudo tailscale up --advertise-exit-node --advertise-routes ${var.k3s_subnet} --authkey ${var.tailscale_auth_key}",
+    "sudo tailscale up --advertise-exit-node --advertise-routes ${var.gateway_ip}/${var.k3s_subnet_cidr} --authkey ${var.tailscale_auth_key}",
   ]
 
   depends_on = [

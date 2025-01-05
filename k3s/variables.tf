@@ -21,10 +21,16 @@ variable "k3s_ip_address" {
   description = "IP address for the k3s server."
 }
 
-variable "k3s_subnet" {
+variable "k3s_subnet_cidr" {
   type        = string
   sensitive   = true
-  description = "Subnet that the k3s server is in. (e.g. 192.168.1.0/24)"
+  description = "CIDR for the subnet that the k3s server is in. (e.g. 24 for 192.168.100.0/24)"
+}
+
+variable "gateway_ip" {
+  type        = string
+  sensitive   = true
+  description = "Gateway IP for the LAN (e.g. 192.168.100.1)"
 }
 
 variable "tailscale_auth_key" {
