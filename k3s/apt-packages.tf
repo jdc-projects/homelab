@@ -1,5 +1,5 @@
 locals {
-  ubuntu_version_name = "jammy"
+  ubuntu_version_name = "noble"
 }
 
 resource "ssh_resource" "apt_packages" {
@@ -11,6 +11,6 @@ resource "ssh_resource" "apt_packages" {
     "curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/${local.ubuntu_version_name}.noarmor.gpg | sudo tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null",
     "curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/${local.ubuntu_version_name}.tailscale-keyring.list | sudo tee /etc/apt/sources.list.d/tailscale.list",
     "sudo apt update",
-    "sudo apt install -y cron zfsutils-linux git cockpit cockpit-pcp tailscale at htop net-tools vim",
+    "sudo apt install -y cron zfsutils-linux git cockpit cockpit-pcp tailscale htop net-tools iputils-ping vim",
   ]
 }
