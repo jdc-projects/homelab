@@ -28,11 +28,17 @@ resource "kubectl_manifest" "opnsense_kubevirt_vm" {
           domain = {
             devices = {
               disks = [
+                # {
+                #   disk = {
+                #     bus = "virtio"
+                #   }
+                #   name      = "datavolumedisk1"
+                # },
                 {
                   disk = {
                     bus = "virtio"
                   }
-                  name = "datavolumedisk1"
+                  name = "datavolumedisk2"
                 },
               ]
 
@@ -51,18 +57,26 @@ resource "kubectl_manifest" "opnsense_kubevirt_vm" {
               ]
             }
 
+            firmware = {
+              bootloader = {
+                efi = {
+                  secureBoot = false
+                }
+              }
+            }
+
             machine = {
               type = "q35"
             }
 
             resources = {
               requests = {
-                memory = "8Gi"
-                cpu    = 4
+                memory = "16Gi"
+                cpu    = 8
               }
               limits = {
-                memory = "8Gi"
-                cpu    = 4
+                memory = "16Gi"
+                cpu    = 8
               }
             }
           }
@@ -70,48 +84,23 @@ resource "kubectl_manifest" "opnsense_kubevirt_vm" {
           terminationGracePeriodSeconds = 60
 
           volumes = [
+            # {
+            #   persistentVolumeClaim = {
+            #     claimName = null_resource.image_upload.triggers.image_upload_name
+            #   }
+            #   name = "datavolumedisk1"
+            # },
             {
-              dataVolume = {
-                name = "opnsense-disk"
+              persistentVolumeClaim = {
+                claimName = kubernetes_persistent_volume_claim.opnsense.metadata[0].name
               }
-              name = "datavolumedisk1"
+              name = "datavolumedisk2"
             },
           ]
         }
 
         networks = []
       }
-
-      dataVolumeTemplates = [
-        {
-          metadata = {
-            name = "opnsense-disk"
-          }
-
-          spec = {
-            pvc = {
-              accessModes = [
-                "ReadWriteOnce"
-              ]
-
-              storageClassName = "openebs-zfs-localpv-general"
-
-              resources = {
-                requests = {
-                  storage = "10Gi"
-                }
-              }
-            }
-
-            source = {
-              pvc = {
-                namespace = kubernetes_namespace.opnsense.metadata[0].name
-                name      = null_resource.image_upload.triggers.image_upload_name
-              }
-            }
-          }
-        },
-      ]
     }
   })
 
@@ -125,8 +114,4 @@ resource "kubectl_manifest" "opnsense_kubevirt_vm" {
   depends_on = [
     null_resource.image_upload,
   ]
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
