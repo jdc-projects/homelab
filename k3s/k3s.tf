@@ -4,7 +4,7 @@ locals {
   kubelet_config_location = "${local.k3s_directory}/kubelet.config"
 }
 
-resource "ssh_resource" "k3s_kubelet_config" {
+resource "ssh_resource" "k3s_provisioning" {
   host        = var.k3s_ip_address
   user        = var.k3s_username
   private_key = var.k3s_ssh_private_key
@@ -17,19 +17,6 @@ resource "ssh_resource" "k3s_kubelet_config" {
     EOF
     destination = local.kubelet_config_location
   }
-
-  pre_commands = [
-    "sudo mkdir -p ${local.k3s_directory}",
-    "sudo chown -R k3s ${local.rancher_directory}",
-  ]
-
-  timeout = "30s"
-}
-
-resource "ssh_resource" "k3s_provisioning" {
-  host        = var.k3s_ip_address
-  user        = var.k3s_username
-  private_key = var.k3s_ssh_private_key
 
   file {
     content     = <<-EOF
@@ -49,6 +36,11 @@ resource "ssh_resource" "k3s_provisioning" {
     EOF
     destination = "${local.k3s_directory}/config.yaml"
   }
+
+  pre_commands = [
+    "sudo mkdir -p ${local.k3s_directory}",
+    "sudo chown -R k3s ${local.rancher_directory}",
+  ]
 
   commands = [
     "curl -sfL https://get.k3s.io | sh -",
