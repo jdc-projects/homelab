@@ -61,7 +61,7 @@ resource "helm_release" "traefik" {
   }
   set {
     name  = "experimental.plugins.geoblock.version"
-    value = "v0.2.8"
+    value = "v0.3.1"
   }
   set {
     name  = "experimental.plugins.api-key-auth.moduleName"
