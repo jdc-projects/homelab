@@ -33,7 +33,7 @@ resource "kubernetes_deployment" "ollama" {
 
       spec {
         container {
-          image = "ollama/ollama:0.5.4"
+          image = "ollama/ollama:0.5.7"
           name  = "ollama"
 
           env_from {
@@ -49,13 +49,13 @@ resource "kubernetes_deployment" "ollama" {
 
           resources {
             requests = {
-              cpu    = "5"
-              memory = "32Gi"
+              cpu    = "10"
+              memory = "64Gi"
             }
 
             limits = {
-              cpu    = "20"
-              memory = "128Gi"
+              cpu    = "10"
+              memory = "64Gi"
             }
           }
         }

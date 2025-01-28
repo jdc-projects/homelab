@@ -68,7 +68,7 @@ resource "kubernetes_deployment" "open_webui" {
 
       spec {
         container {
-          image = "ghcr.io/open-webui/open-webui:0.4.8"
+          image = "ghcr.io/open-webui/open-webui:0.5.7"
           name  = "open-webui"
 
           env_from {
@@ -91,12 +91,12 @@ resource "kubernetes_deployment" "open_webui" {
           resources {
             requests = {
               cpu    = "200m"
-              memory = "256Mi"
+              memory = "512Mi"
             }
 
             limits = {
               cpu    = "500m"
-              memory = "512Mi"
+              memory = "1Gi"
             }
           }
         }

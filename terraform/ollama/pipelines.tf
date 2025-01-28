@@ -33,7 +33,7 @@ resource "kubernetes_deployment" "pipelines" {
 
       spec {
         container {
-          image = "ghcr.io/open-webui/pipelines:git-1367d95" # pipelines currently doesn't do releases / versions
+          image = "ghcr.io/open-webui/pipelines:git-db29eb2" # pipelines currently doesn't do releases / versions
           name  = "pipelines"
 
           env_from {
