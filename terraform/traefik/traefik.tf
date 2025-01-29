@@ -1,6 +1,6 @@
 resource "null_resource" "traefik_version" {
   triggers = {
-    traefik_version = "33.2.1"
+    traefik_version = "34.2.0"
   }
 }
 
@@ -143,11 +143,15 @@ resource "helm_release" "traefik" {
     value = 80
   }
   set {
-    name  = "ports.web.redirectTo.port"
+    name  = "ports.web.redirections.entryPoint.to"
     value = "websecure"
   }
   set {
-    name  = "ports.web.redirectTo.permanent"
+    name  = "ports.web.redirections.entryPoint.scheme"
+    value = "https"
+  }
+  set {
+    name  = "ports.web.redirections.entryPoint.permanent"
     value = "true"
   }
 
