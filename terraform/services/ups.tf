@@ -12,7 +12,7 @@ module "ups_ingress" {
   domain      = "ups.${var.server_base_domain}"
   target_port = 443
 
-  external_name = "192.168.1.160"
+  external_name = "192.168.100.160"
 
   is_external_scheme_http = false
 

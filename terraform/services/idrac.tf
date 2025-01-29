@@ -94,3 +94,19 @@ resource "kubernetes_deployment" "idrac_fan_controller_deployment" {
     ]
   }
 }
+
+module "idrac_ingress" {
+  source = "../modules/ingress"
+
+  name        = "idrac"
+  namespace   = kubernetes_namespace.idrac.metadata[0].name
+  domain      = "idrac.${var.server_base_domain}"
+  target_port = 443
+
+  external_name = "192.168.100.180"
+
+  is_external_scheme_http = false
+
+  do_enable_keycloak_auth     = true
+  is_keycloak_auth_admin_mode = true
+}

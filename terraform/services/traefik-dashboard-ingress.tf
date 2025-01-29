@@ -47,6 +47,23 @@ module "traefik_dashboard_api_ingress" {
   is_keycloak_auth_admin_mode = true
 }
 
+module "traefik_dashboard_ping_ingress" {
+  source = "../modules/ingress"
+
+  name        = "traefik-dashboard-ping"
+  namespace   = kubernetes_namespace.traefik_dashboard.metadata[0].name
+  domain      = local.traefik_dashboard_domain
+  path        = "ping"
+  target_port = local.traefik_dashboard_port
+
+  external_name = var.k3s_ip_address
+
+  priority = 1000
+
+  do_enable_keycloak_auth     = true
+  is_keycloak_auth_admin_mode = true
+}
+
 resource "kubernetes_manifest" "traefik_dashboard_add_prefix_middleware" {
   manifest = {
     apiVersion = "traefik.io/v1alpha1"
