@@ -38,3 +38,9 @@ variable "tailscale_auth_key" {
   sensitive   = true
   description = "Auth key for the tailscale client."
 }
+
+variable "ghcr_package_read_token" {
+  type        = string
+  sensitive   = true
+  description = "PAT for reading Github packages."
+}

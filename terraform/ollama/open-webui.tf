@@ -90,13 +90,13 @@ resource "kubernetes_deployment" "open_webui" {
 
           resources {
             requests = {
-              cpu    = "200m"
-              memory = "512Mi"
+              cpu    = "500m"
+              memory = "1Gi"
             }
 
             limits = {
-              cpu    = "500m"
-              memory = "1Gi"
+              cpu    = "1"
+              memory = "2Gi"
             }
           }
         }

@@ -2,6 +2,8 @@ resource "null_resource" "ocis_helm_repo_clone" {
   triggers = {
     always_run = timestamp()
     # get commit SHA from https://github.com/owncloud/ocis-charts/commits/stable-5/
+    # this is terribly out of date, probably have to switch to main: https://github.com/owncloud/ocis-charts/commits/main/
+    # bit of a pain there aren't releases or at least a 'production-ready' branch, given main includes RC releases
     commit_sha = "12fb37837f0caba49990ff3d29845151e400a2cc"
   }
 

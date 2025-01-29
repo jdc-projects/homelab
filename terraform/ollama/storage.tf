@@ -5,7 +5,7 @@ resource "kubernetes_persistent_volume_claim" "ollama" {
       storage_class_name = "openebs-zfs-localpv-general"
     })
     ollama = tomap({
-      storage            = "50Gi"
+      storage            = "100Gi"
       storage_class_name = "openebs-zfs-localpv-bulk-no-backup"
     })
     pipelines = tomap({

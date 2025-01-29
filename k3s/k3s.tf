@@ -37,6 +37,20 @@ resource "ssh_resource" "k3s_provisioning" {
     destination = "${local.k3s_directory}/config.yaml"
   }
 
+  file {
+    content     = <<-EOF
+      mirrors:
+        ghcr.io:
+          endpoint:
+            - https://ghcr.io
+      configs:
+        ghcr.io:
+          auth:
+            token: ${var.ghcr_package_read_token}
+    EOF
+    destination = "${local.k3s_directory}/registries.yaml"
+  }
+
   pre_commands = [
     "sudo mkdir -p ${local.k3s_directory}",
     "sudo chown -R k3s ${local.rancher_directory}",
