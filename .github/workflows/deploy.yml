@@ -77,6 +77,16 @@ jobs:
     with:
       terraform-dir: ./terraform/kubevirt-operator
 
+  deploy-clickhouse-operator:
+    needs: [
+      deploy-github-org-runner,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/clickhouse-operator
+
   deploy-traefik:
     needs: [
       deploy-openebs,
