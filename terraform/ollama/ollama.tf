@@ -49,13 +49,13 @@ resource "kubernetes_deployment" "ollama" {
 
           resources {
             requests = {
-              cpu    = "10"
-              memory = "64Gi"
+              cpu    = "5"
+              memory = "32Gi"
             }
 
             limits = {
-              cpu    = "10"
-              memory = "64Gi"
+              cpu    = "18"
+              memory = "150Gi"
             }
           }
         }
