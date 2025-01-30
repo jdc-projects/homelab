@@ -35,4 +35,9 @@ resource "helm_release" "clickhouse_operator" {
   version    = null_resource.clickhouse_operator_crds.triggers.version
 
   timeout = 300
+
+  set {
+    name  = "configs.files.config\\.yaml.watch.namespaces[0]"
+    value = ".*"
+  }
 }
