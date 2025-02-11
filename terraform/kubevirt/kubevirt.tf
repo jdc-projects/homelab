@@ -14,6 +14,7 @@ resource "kubernetes_manifest" "kubevirt_instance" {
         developerConfiguration = {
           featureGates = [
             "HostDevices",
+            "ExpandDisks",
           ]
         }
 
