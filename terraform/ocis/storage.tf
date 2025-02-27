@@ -43,7 +43,7 @@ resource "kubernetes_persistent_volume_claim" "ocis" {
   }
 
   lifecycle {
-    prevent_destroy = false # ***** true
+    prevent_destroy = true
 
     ignore_changes = [spec[0].selector]
   }
