@@ -4,7 +4,7 @@ resource "null_resource" "ocis_helm_repo_clone" {
     # get commit SHA from https://github.com/owncloud/ocis-charts/commits/stable-5/
     # this is terribly out of date, probably have to switch to main: https://github.com/owncloud/ocis-charts/commits/main/
     # bit of a pain there aren't releases or at least a 'production-ready' branch, given main includes RC releases
-    commit_sha = "12fb37837f0caba49990ff3d29845151e400a2cc"
+    commit_sha = "61dbfb61ab2a7b07ce2bb58df96eae0b84b77bac"
   }
 
   provisioner "local-exec" {
@@ -80,11 +80,7 @@ resource "helm_release" "ocis" {
   }
 
   set {
-    name  = "features.sharing.users.resharing"
-    value = "false"
-  }
-  set {
-    name  = "features.sharing.publicLink.writeableShareMustHavePassword"
+    name  = "features.sharing.publiclink.writeableShareMustHavePassword"
     value = "true"
   }
 
@@ -97,16 +93,12 @@ resource "helm_release" "ocis" {
     value = data.terraform_remote_state.keycloak.outputs.keycloak_issuer_url
   }
   set {
-    name  = "features.externalUserManagement.sessionManagementLink"
+    name  = "features.externalUserManagement.oidc.sessionManagementLink"
     value = "${data.terraform_remote_state.keycloak.outputs.keycloak_issuer_url}/account/"
   }
   set {
-    name  = "features.externalUserManagement.editAccountLink"
+    name  = "features.externalUserManagement.oidc.editAccountLink"
     value = "${data.terraform_remote_state.keycloak.outputs.keycloak_issuer_url}/account/"
-  }
-  set {
-    name  = "features.externalUserManagement.oidc.webClientID"
-    value = keycloak_openid_client.ocis_web.client_id
   }
   set {
     name  = "features.externalUserManagement.oidc.userIDClaim"
@@ -278,19 +270,6 @@ resource "helm_release" "ocis" {
   }
 
   set {
-    name  = "services.store.persistence.enabled"
-    value = "true"
-  }
-  set {
-    name  = "services.store.persistence.chownInitContainer"
-    value = "true"
-  }
-  set {
-    name  = "services.store.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.ocis["store"].metadata[0].name
-  }
-
-  set {
     name  = "services.thumbnails.persistence.enabled"
     value = "true"
   }
@@ -303,6 +282,10 @@ resource "helm_release" "ocis" {
     value = kubernetes_persistent_volume_claim.ocis["thumbnails"].metadata[0].name
   }
 
+  set {
+    name  = "services.web.config.oidc.webClientID"
+    value = keycloak_openid_client.ocis_web.client_id
+  }
   set {
     name  = "services.web.persistence.enabled"
     value = "true"

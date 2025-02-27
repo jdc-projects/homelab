@@ -16,10 +16,6 @@ resource "kubernetes_persistent_volume_claim" "ocis" {
       storage            = "200Gi"
       storage_class_name = "openebs-zfs-localpv-bulk"
     })
-    store = tomap({
-      storage            = "5Gi"
-      storage_class_name = "openebs-zfs-localpv-random"
-    })
     thumbnails = tomap({
       storage            = "10Gi"
       storage_class_name = "openebs-zfs-localpv-random"
@@ -47,7 +43,7 @@ resource "kubernetes_persistent_volume_claim" "ocis" {
   }
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false # ***** true
 
     ignore_changes = [spec[0].selector]
   }
