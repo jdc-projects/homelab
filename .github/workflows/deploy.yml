@@ -211,6 +211,7 @@ jobs:
           outline,
           services,
           ollama,
+          minio,
         ]
 
     with:
