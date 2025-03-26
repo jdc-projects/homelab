@@ -3,8 +3,7 @@ variable "server_base_domain" {
   description = "Domain for applications."
 }
 
-variable "is_db_hibernate" {
-  type        = bool
-  description = "Whether the DB should be in hibernate mode."
-  default     = false
+variable "prowler_compliance_standards" {
+  type        = list(string)
+  description = "List of standards that Prowler should scan for compliance to. Must be supported by Prowler."
 }
