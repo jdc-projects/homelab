@@ -212,6 +212,7 @@ jobs:
           services,
           minio,
           prowler,
+          13ft,
         ]
 
     with:
