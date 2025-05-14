@@ -5,7 +5,7 @@ resource "kubernetes_config_map" "homepage_env" {
   }
 
   data = {
-    NODE_ENV = "production"
+    NODE_ENV    = "production"
     LOG_TARGETS = "stdout"
   }
 }

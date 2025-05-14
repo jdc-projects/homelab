@@ -5,7 +5,7 @@ resource "kubernetes_config_map" "homepage_config_yamls" {
   }
 
   data = {
-    "settings.yaml" = <<-EOF
+    "settings.yaml"   = <<-EOF
       # https://gethomepage.dev/configs/settings/
       title: ${var.server_base_domain} apps
       description: Apps and services on ${var.server_base_domain}
@@ -44,20 +44,20 @@ resource "kubernetes_config_map" "homepage_config_yamls" {
       # instanceName: homepage # *****
       hideErrors: false
     EOF
-    "bookmarks.yaml" = <<-EOF
+    "bookmarks.yaml"  = <<-EOF
     EOF
-    "widgets.yaml" = <<-EOF
+    "widgets.yaml"    = <<-EOF
     EOF
-    "services.yaml" = <<-EOF
+    "services.yaml"   = <<-EOF
     EOF
     "kubernetes.yaml" = <<-EOF
       mode: disabled
     EOF
-    "docker.yaml" = <<-EOF
+    "docker.yaml"     = <<-EOF
     EOF
-    "custom.css" = <<-EOF
+    "custom.css"      = <<-EOF
     EOF
-    "custom.js" = <<-EOF
+    "custom.js"       = <<-EOF
     EOF
   }
 }

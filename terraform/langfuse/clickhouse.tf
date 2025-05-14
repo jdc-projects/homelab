@@ -2,10 +2,10 @@
 resource "kubectl_manifest" "clickhouse_installation" {
   yaml_body = yaml_encode({
     apiVersion = ""
-    kind = ""
+    kind       = ""
 
     metadata = {
-      name = ""
+      name      = ""
       namespace = ""
     }
 

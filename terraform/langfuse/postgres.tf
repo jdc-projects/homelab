@@ -90,11 +90,11 @@ resource "kubernetes_manifest" "langfuse_db" {
 
   wait {
     fields = var.is_db_hibernate ? {
-      "status.phase"                                             = "Cluster in healthy state"
+      "status.phase"                                           = "Cluster in healthy state"
       "status.danglingPVC[${local.langfuse_db_instances - 1}]" = "*"
       } : {
-      "status.phase"                                            = "Cluster in healthy state"
-      "status.readyInstances"                                   = local.langfuse_db_instances
+      "status.phase"                                          = "Cluster in healthy state"
+      "status.readyInstances"                                 = local.langfuse_db_instances
       "status.healthyPVC[${local.langfuse_db_instances - 1}]" = "*"
     }
   }
