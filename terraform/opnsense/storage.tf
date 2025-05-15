@@ -10,7 +10,7 @@ resource "kubernetes_persistent_volume_claim" "opnsense" {
 
     resources {
       requests = {
-        storage = "25Gi"
+        storage = "30Gi"
       }
     }
   }
