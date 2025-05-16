@@ -9,14 +9,14 @@ resource "kubernetes_config_map" "omada_env" {
     MANAGE_HTTPS_PORT  = 30043
     PORTAL_HTTP_PORT   = 30088
     PORTAL_HTTPS_PORT  = 30843
-    PORT_ADOPT_V1      = 30812
-    PORT_APP_DISCOVERY = 30001
-    PORT_DISCOVERY     = 30810
-    PORT_MANAGER_V1    = 30811
-    PORT_MANAGER_V2    = 30814
-    PORT_TRANSFER_V2   = 30815
-    PORT_RTTY          = 30816
-    PORT_UPGRADE_V1    = 30813
+    PORT_ADOPT_V1      = 29812
+    PORT_APP_DISCOVERY = 27001
+    PORT_DISCOVERY     = 29810
+    PORT_MANAGER_V1    = 29811
+    PORT_MANAGER_V2    = 29814
+    PORT_TRANSFER_V2   = 29815
+    PORT_RTTY          = 29816
+    PORT_UPGRADE_V1    = 29813
     TZ                 = "Europe/London"
   }
 }
