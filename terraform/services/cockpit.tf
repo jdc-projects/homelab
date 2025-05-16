@@ -15,7 +15,7 @@ module "cockpit_ingress" {
 
   external_name = "192.168.100.190"
 
-  is_external_scheme_http = false
+  is_scheme_http = false
 
   do_enable_keycloak_auth     = true
   is_keycloak_auth_admin_mode = true

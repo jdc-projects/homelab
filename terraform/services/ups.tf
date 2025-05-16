@@ -14,7 +14,7 @@ module "ups_ingress" {
 
   external_name = "192.168.100.160"
 
-  is_external_scheme_http = false
+  is_scheme_http = false
 
   do_enable_keycloak_auth     = true
   is_keycloak_auth_admin_mode = true

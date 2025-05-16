@@ -23,6 +23,7 @@ resource "kubernetes_manifest" "internal_ingress" {
           name      = local.is_existing_service ? var.existing_service_name : one(kubernetes_service.internal[*].metadata[0].name)
           namespace = local.is_existing_service ? var.existing_service_namespace : var.namespace
           port      = local.is_existing_service ? var.target_port : one(kubernetes_service.internal[*].spec[0].port[0].port)
+          scheme    = var.is_scheme_http ? "http" : "https"
         }]
 
         middlewares = local.middlewares
@@ -55,7 +56,7 @@ resource "kubernetes_manifest" "external_ingress" {
         services = [{
           name      = one(kubernetes_service.external[*].metadata[0].name)
           namespace = var.namespace
-          scheme    = var.is_external_scheme_http ? "http" : "https"
+          scheme    = var.is_scheme_http ? "http" : "https"
           port      = var.target_port
         }]
 

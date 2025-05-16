@@ -69,7 +69,7 @@ variable "priority" {
   default     = 0
 }
 
-variable "is_external_scheme_http" {
+variable "is_scheme_http" {
   type        = string
   description = "True if scheme for external endpoint is http. False if HTTPS. Not used if internal."
   default     = true
