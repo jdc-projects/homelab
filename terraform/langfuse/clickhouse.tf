@@ -1,22 +1,22 @@
 # ***** https://doc.crds.dev/github.com/Altinity/clickhouse-operator/clickhouse.altinity.com/ClickHouseInstallation/v1@release-0.20.0
-resource "kubectl_manifest" "clickhouse_installation" {
-  yaml_body = yaml_encode({
-    apiVersion = ""
-    kind       = ""
+# resource "kubectl_manifest" "clickhouse_installation" {
+#   yaml_body = yamlencode({
+#     apiVersion = ""
+#     kind = ""
 
-    metadata = {
-      name      = ""
-      namespace = ""
-    }
+#     metadata = {
+#       name = ""
+#       namespace = ""
+#     }
 
-    spec = {
-      configuration = {
+#     spec = {
+#       configuration = {
 
-      }
+#       }
 
-      templates = {
+#       templates = {
 
-      }
-    }
-  })
-}
+#       }
+#     }
+#   })
+# }
