@@ -213,6 +213,7 @@ jobs:
           minio,
           prowler,
           13ft,
+          omada,
         ]
 
     with:
