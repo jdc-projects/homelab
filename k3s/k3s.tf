@@ -27,12 +27,12 @@ resource "ssh_resource" "k3s_provisioning" {
         - "local-storage"
       cluster-cidr: "10.42.0.0/16"
       service-cidr: "10.43.0.0/16"
+      service-node-port-range: "27000-32767"
       cluster-dns: "10.43.0.10"
       cluster-domain: "cluster.local"
       advertise-address: "${var.k3s_ip_address}"
       cluster-init: true
       kubelet-arg: "config=${local.kubelet_config_location}"
-      node-label: "node-role.kubernetes.io/worker="
     EOF
     destination = "${local.k3s_directory}/config.yaml"
   }
