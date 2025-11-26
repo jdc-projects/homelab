@@ -36,8 +36,10 @@ resource "helm_release" "clickhouse_operator" {
 
   timeout = 300
 
-  set {
-    name  = "configs.files.config\\.yaml.watch.namespaces[0]"
-    value = ".*"
-  }
+  set = [
+    {
+      name  = "configs.files.config\\.yaml.watch.namespaces[0]"
+      value = ".*"
+    },
+  ]
 }

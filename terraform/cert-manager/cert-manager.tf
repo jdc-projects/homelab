@@ -9,8 +9,10 @@ resource "helm_release" "cert_manager" {
 
   timeout = 300
 
-  set {
-    name  = "crds.enabled"
-    value = "true"
-  }
+  set = [
+    {
+      name  = "crds.enabled"
+      value = "true"
+    },
+  ]
 }

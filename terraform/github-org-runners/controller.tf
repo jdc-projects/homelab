@@ -9,8 +9,10 @@ resource "helm_release" "actions_runner_controller" {
 
   timeout = 300
 
-  set {
-    name  = "flags.logLevel"
-    value = "info"
-  }
+  set = [
+    {
+      name  = "flags.logLevel"
+      value = "info"
+    },
+  ]
 }
