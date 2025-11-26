@@ -7,7 +7,7 @@ resource "helm_release" "loki" {
 
   namespace = kubernetes_namespace.loki.metadata[0].name
 
-  timeout = 300 # *****
+  timeout = 600
 
   set = [
     {
