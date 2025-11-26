@@ -5,7 +5,7 @@ terraform {
     }
 
     keycloak = {
-      source = "mrparkers/keycloak"
+      source = "keycloak/keycloak"
     }
   }
 }
