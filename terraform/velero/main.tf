@@ -12,18 +12,18 @@ terraform {
   required_providers {
     helm = {
       source  = "hashicorp/helm"
-      version = "2.13.2"
+      version = "3.1.1"
     }
 
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "2.30.0"
+      version = "2.38.0"
     }
   }
 }
 
 provider "helm" {
-  kubernetes {
+  kubernetes = {
     config_path = "../cluster.yml"
   }
 }

@@ -15,212 +15,199 @@ resource "helm_release" "traefik" {
 
   timeout = 300
 
-  set {
-    name  = "logs.general.level"
-    value = "DEBUG"
-  }
+  set = [
+    {
+      name  = "logs.general.level"
+      value = "DEBUG"
+    },
+    {
+      name  = "deployment.kind"
+      value = "DaemonSet"
+    },
+    {
+      name  = "deployment.dnsPolicy"
+      value = "ClusterFirstWithHostNet"
+    },
+    {
+      name  = "updateStrategy.rollingUpdate.maxUnavailable"
+      value = "1"
+    },
+    {
+      name  = "updateStrategy.rollingUpdate.maxSurge"
+      value = "0"
+    },
+    {
+      name  = "experimental.plugins.cloudflare-real-ip.moduleName"
+      value = "github.com/BetterCorp/cloudflarewarp"
+    },
+    {
+      name  = "experimental.plugins.cloudflare-real-ip.version"
+      value = "v1.3.3"
+    },
+    {
+      name  = "experimental.plugins.crowdsec-bouncer.moduleName"
+      value = "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
+    },
+    {
+      name  = "experimental.plugins.crowdsec-bouncer.version"
+      value = "v1.3.5"
+    },
+    {
+      name  = "experimental.plugins.geoblock.moduleName"
+      value = "github.com/PascalMinder/geoblock"
+    },
+    {
+      name  = "experimental.plugins.geoblock.version"
+      value = "v0.3.1"
+    },
+    {
+      name  = "experimental.plugins.api-key-auth.moduleName"
+      value = "github.com/dtomlinson91/traefik-api-key-middleware"
+    },
+    {
+      name  = "experimental.plugins.api-key-auth.version"
+      value = "v0.1.2"
+    },
+    {
+      name  = "experimental.plugins.keycloak-auth.moduleName"
+      value = "github.com/Gwojda/keycloakopenid"
+    },
+    {
+      name  = "experimental.plugins.keycloak-auth.version"
+      value = "v0.1.35"
+    },
+    {
+      name  = "ingressRoute.dashboard.enabled"
+      value = "true"
+    },
+    {
+      name  = "providers.kubernetesCRD.allowCrossNamespace"
+      value = "true"
+    },
+    {
+      name  = "providers.kubernetesCRD.allowExternalNameServices"
+      value = "true"
+    },
+    {
+      name  = "providers.kubernetesIngress.allowExternalNameServices"
+      value = "true"
+    },
+    {
+      name  = "providers.kubernetesGateway.enabled"
+      value = "true"
+    },
+    {
+      name  = "gateway.listeners.web.port"
+      value = 80
+    },
+    {
+      name  = "gateway.listeners.websecure.port"
+      value = 443
+    },
+    {
+      name  = "gateway.listeners.websecure.protocol"
+      value = "HTTPS"
+    },
+    {
+      name  = "gateway.listeners.websecure.namespacePolicy"
+      value = "All"
+    },
+    {
+      name  = "gateway.listeners.websecure.certificateRefs[0].name"
+      value = kubernetes_manifest.cert_manager_certificate_wilcard.manifest.spec.secretName
+    },
+    {
+      name  = "gateway.listeners.websecure.mode"
+      value = "Terminate"
+    },
+    {
+      name  = "additionalArguments[0]"
+      value = "--serverstransport.insecureskipverify=true"
+    },
+    {
+      name  = "ports.traefik.port"
+      value = 9000
+    },
+    {
+      name  = "ports.web.port"
+      value = 80
+    },
+    {
+      name  = "ports.web.redirections.entryPoint.to"
+      value = "websecure"
+    },
+    {
+      name  = "ports.web.redirections.entryPoint.scheme"
+      value = "https"
+    },
+    {
+      name  = "ports.web.redirections.entryPoint.permanent"
+      value = "true"
+    },
+    {
+      name  = "ports.websecure.port"
+      value = 443
+    },
+    {
+      name  = "ports.ldaps.port"
+      value = 636
+    },
+    {
+      name  = "ports.ldaps.protocol"
+      value = "TCP"
+    },
+    {
+      name  = "ports.ldaps.http3.enabled"
+      value = "false"
+    },
+    {
+      name  = "ports.metrics.port"
+      value = 9500
+    },
+    {
+      name  = "tlsStore.default.defaultCertificate.secretName"
+      value = kubernetes_manifest.cert_manager_certificate_wilcard.manifest.spec.secretName
+    },
+    {
+      name  = "service.enabled"
+      value = "false"
+    },
+    {
+      name  = "hostNetwork"
+      value = "true"
+    },
+    {
+      name  = "securityContext.readOnlyRootFilesystem"
+      value = "true"
+    },
+    {
+      name  = "securityContext.runAsGroup"
+      value = "0"
+    },
+    {
+      name  = "securityContext.runAsNonRoot"
+      value = "false"
+    },
+    {
+      name  = "securityContext.runAsUser"
+      value = "0"
+    },
+  ]
 
-  set {
-    name  = "deployment.kind"
-    value = "DaemonSet"
-  }
-
-  set {
-    name  = "deployment.dnsPolicy"
-    value = "ClusterFirstWithHostNet"
-  }
-
-  set {
-    name  = "updateStrategy.rollingUpdate.maxUnavailable"
-    value = "1"
-  }
-  set {
-    name  = "updateStrategy.rollingUpdate.maxSurge"
-    value = "0"
-  }
-
-  set {
-    name  = "experimental.plugins.cloudflare-real-ip.moduleName"
-    value = "github.com/BetterCorp/cloudflarewarp"
-  }
-  set {
-    name  = "experimental.plugins.cloudflare-real-ip.version"
-    value = "v1.3.3"
-  }
-  set {
-    name  = "experimental.plugins.crowdsec-bouncer.moduleName"
-    value = "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
-  }
-  set {
-    name  = "experimental.plugins.crowdsec-bouncer.version"
-    value = "v1.3.5"
-  }
-  set {
-    name  = "experimental.plugins.geoblock.moduleName"
-    value = "github.com/PascalMinder/geoblock"
-  }
-  set {
-    name  = "experimental.plugins.geoblock.version"
-    value = "v0.3.1"
-  }
-  set {
-    name  = "experimental.plugins.api-key-auth.moduleName"
-    value = "github.com/dtomlinson91/traefik-api-key-middleware"
-  }
-  set {
-    name  = "experimental.plugins.api-key-auth.version"
-    value = "v0.1.2"
-  }
-  set {
-    name  = "experimental.plugins.keycloak-auth.moduleName"
-    value = "github.com/Gwojda/keycloakopenid"
-  }
-  set {
-    name  = "experimental.plugins.keycloak-auth.version"
-    value = "v0.1.35"
-  }
-
-  set {
-    name  = "ingressRoute.dashboard.enabled"
-    value = "true"
-  }
-
-  set {
-    name  = "providers.kubernetesCRD.allowCrossNamespace"
-    value = "true"
-  }
-  set {
-    name  = "providers.kubernetesCRD.allowExternalNameServices"
-    value = "true"
-  }
-  set {
-    name  = "providers.kubernetesIngress.allowExternalNameServices"
-    value = "true"
-  }
-
-  set {
-    name  = "providers.kubernetesGateway.enabled"
-    value = "true"
-  }
-
-  set {
-    name  = "gateway.listeners.web.port"
-    value = 80
-  }
-  set {
-    name  = "gateway.listeners.websecure.port"
-    value = 443
-  }
-  set {
-    name  = "gateway.listeners.websecure.protocol"
-    value = "HTTPS"
-  }
-  set {
-    name  = "gateway.listeners.websecure.namespacePolicy"
-    value = "All"
-  }
-  set {
-    name  = "gateway.listeners.websecure.certificateRefs[0].name"
-    value = kubernetes_manifest.cert_manager_certificate_wilcard.manifest.spec.secretName
-  }
-  set {
-    name  = "gateway.listeners.websecure.mode"
-    value = "Terminate"
-  }
-
-  set {
-    name  = "additionalArguments[0]"
-    value = "--serverstransport.insecureskipverify=true"
-  }
-
-  set {
-    name  = "ports.traefik.port"
-    value = 9000
-  }
-
-  set {
-    name  = "ports.web.port"
-    value = 80
-  }
-  set {
-    name  = "ports.web.redirections.entryPoint.to"
-    value = "websecure"
-  }
-  set {
-    name  = "ports.web.redirections.entryPoint.scheme"
-    value = "https"
-  }
-  set {
-    name  = "ports.web.redirections.entryPoint.permanent"
-    value = "true"
-  }
-
-  set {
-    name  = "ports.websecure.port"
-    value = 443
-  }
-
-  set {
-    name  = "ports.ldaps.port"
-    value = 636
-  }
-  set {
-    name  = "ports.ldaps.protocol"
-    value = "TCP"
-  }
-  set {
-    name  = "ports.ldaps.http3.enabled"
-    value = "false"
-  }
-
-  set {
-    name  = "ports.metrics.port"
-    value = 9500
-  }
-
-  set {
-    name  = "tlsStore.default.defaultCertificate.secretName"
-    value = kubernetes_manifest.cert_manager_certificate_wilcard.manifest.spec.secretName
-  }
-
-  set {
-    name  = "service.enabled"
-    value = "false"
-  }
-
-  set {
-    name  = "hostNetwork"
-    value = "true"
-  }
-
-  set_list {
-    name = "securityContext.capabilities.drop"
-    value = [
-      "ALL"
-    ]
-  }
-  set_list {
-    name = "securityContext.capabilities.add"
-    value = [
-      "NET_BIND_SERVICE"
-    ]
-  }
-  set {
-    name  = "securityContext.readOnlyRootFilesystem"
-    value = "true"
-  }
-  set {
-    name  = "securityContext.runAsGroup"
-    value = "0"
-  }
-  set {
-    name  = "securityContext.runAsNonRoot"
-    value = "false"
-  }
-  set {
-    name  = "securityContext.runAsUser"
-    value = "0"
-  }
+  set_list = [
+    {
+      name = "securityContext.capabilities.drop"
+      value = [
+        "ALL"
+      ]
+    },
+    {
+      name = "securityContext.capabilities.add"
+      value = [
+        "NET_BIND_SERVICE"
+      ]
+    },
+  ]
 
   lifecycle {
     replace_triggered_by  = [null_resource.traefik_version]

@@ -8,12 +8,12 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "2.30.0"
+      version = "2.38.0"
     }
 
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "4.40.0"
+      version = "5.13.0"
     }
   }
 }

@@ -64,102 +64,99 @@ resource "helm_release" "minio" {
 
   timeout = 300
 
-  set {
-    name  = "mode"
-    value = "standalone"
-  }
+  set = [
+    {
+      name  = "mode"
+      value = "standalone"
+    },
+    {
+      name  = "replicas"
+      value = "1"
+    },
+    {
+      name  = "drivesPerNode"
+      value = "1"
+    },
+    {
+      name  = "persistence.enabled"
+      value = "true"
+    },
+    {
+      name  = "persistence.existingClaim"
+      value = kubernetes_persistent_volume_claim.minio.metadata[0].name
+    },
+    {
+      name  = "persistence.size"
+      value = kubernetes_persistent_volume_claim.minio.spec[0].resources[0].requests.storage
+    },
+    {
+      name  = "ingress.enabled"
+      value = "false"
+    },
+    {
+      name  = "resources.requests.cpu"
+      value = "100m"
+    },
+    {
+      name  = "resources.requests.memory"
+      value = "1G"
+    },
+    {
+      name  = "resources.limits.cpu"
+      value = "200m"
+    },
+    {
+      name  = "resources.limits.memory"
+      value = "2G"
+    },
+    {
+      name  = "users[0].policy"
+      value = "readwrite"
+    },
+    {
+      name  = "buckets[0].name"
+      value = local.minio_bucket_name
+    },
+    {
+      name  = "buckets[0].policy"
+      value = "none"
+    },
+    {
+      name  = "buckets[0].purge"
+      value = "false"
+    },
+    {
+      name  = "buckets[0].versioning"
+      value = "false"
+    },
+    {
+      name  = "buckets[0].objectlocking"
+      value = "false"
+    },
+    {
+      name  = "customCommands[0].command"
+      value = "anonymous set download myminio/${local.minio_bucket_name}/public/*"
+    },
+  ]
 
-  set {
-    name  = "replicas"
-    value = "1"
-  }
-  set {
-    name  = "drivesPerNode"
-    value = "1"
-  }
-
-  set_sensitive {
-    name  = "rootUser"
-    value = random_password.minio_root_username.result
-  }
-  set_sensitive {
-    name  = "rootPassword"
-    value = random_password.minio_root_password.result
-  }
-
-  set {
-    name  = "persistence.enabled"
-    value = "true"
-  }
-  set {
-    name  = "persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.minio.metadata[0].name
-  }
-  set {
-    name  = "persistence.size"
-    value = kubernetes_persistent_volume_claim.minio.spec[0].resources[0].requests.storage
-  }
-
-  set {
-    name  = "ingress.enabled"
-    value = "false"
-  }
-
-  set {
-    name  = "resources.requests.cpu"
-    value = "100m"
-  }
-  set {
-    name  = "resources.requests.memory"
-    value = "1G"
-  }
-  set {
-    name  = "resources.limits.cpu"
-    value = "200m"
-  }
-  set {
-    name  = "resources.limits.memory"
-    value = "2G"
-  }
-
-  set_sensitive {
-    name  = "users[0].accessKey"
-    value = random_password.minio_access_key.result
-  }
-  set_sensitive {
-    name  = "users[0].secretKey"
-    value = random_password.minio_secret_key.result
-  }
-  set {
-    name  = "users[0].policy"
-    value = "readwrite"
-  }
-
-  set {
-    name  = "buckets[0].name"
-    value = local.minio_bucket_name
-  }
-  set {
-    name  = "buckets[0].policy"
-    value = "none"
-  }
-  set {
-    name  = "buckets[0].purge"
-    value = "false"
-  }
-  set {
-    name  = "buckets[0].versioning"
-    value = "false"
-  }
-  set {
-    name  = "buckets[0].objectlocking"
-    value = "false"
-  }
-
-  set {
-    name  = "customCommands[0].command"
-    value = "anonymous set download myminio/${local.minio_bucket_name}/public/*"
-  }
+  set_sensitive = [
+    {
+      name  = "rootUser"
+      value = random_password.minio_root_username.result
+    },
+    {
+      name  = "rootPassword"
+      value = random_password.minio_root_password.result
+    },
+    {
+      name  = "users[0].accessKey"
+      value = random_password.minio_access_key.result
+    },
+    {
+      name  = "users[0].secretKey"
+      value = random_password.minio_secret_key.result
+    },
+  ]
 
   depends_on = [
     kubernetes_job.minio_chown

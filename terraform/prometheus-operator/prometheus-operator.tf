@@ -33,23 +33,24 @@ resource "helm_release" "prometheus_operator" {
 
   timeout = 300
 
-  set {
-    name  = "grafana.enabled"
-    value = "false"
-  }
-
-  set {
-    name  = "prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues"
-    value = "false"
-  }
-  set {
-    name  = "prometheus.prometheusSpec.podMonitorSelectorNilUsesHelmValues"
-    value = "false"
-  }
-  set {
-    name  = "prometheus.prometheusSpec.probeSelectorNilUsesHelmValues"
-    value = "false"
-  }
+  set = [
+    {
+      name  = "grafana.enabled"
+      value = "false"
+    },
+    {
+      name  = "prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues"
+      value = "false"
+    },
+    {
+      name  = "prometheus.prometheusSpec.podMonitorSelectorNilUsesHelmValues"
+      value = "false"
+    },
+    {
+      name  = "prometheus.prometheusSpec.probeSelectorNilUsesHelmValues"
+      value = "false"
+    },
+  ]
 
   depends_on = [
     null_resource.crd_updates,

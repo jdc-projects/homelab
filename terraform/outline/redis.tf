@@ -8,18 +8,21 @@ resource "helm_release" "redis" {
 
   timeout = 300
 
-  set {
-    name  = "architecture"
-    value = "standalone"
-  }
+  set = [
+    {
+      name  = "architecture"
+      value = "standalone"
+    },
+    {
+      name  = "master.persistence.existingClaim"
+      value = kubernetes_persistent_volume_claim.redis.metadata[0].name
+    },
+  ]
 
-  set_sensitive {
-    name  = "auth.password"
-    value = random_password.outline_redis_password.result
-  }
-
-  set {
-    name  = "master.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.redis.metadata[0].name
-  }
+  set_sensitive = [
+    {
+      name  = "auth.password"
+      value = random_password.outline_redis_password.result
+    },
+  ]
 }
