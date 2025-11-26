@@ -8,12 +8,12 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "2.30.0"
+      version = "2.38.0"
     }
 
     keycloak = {
-      source  = "mrparkers/keycloak"
-      version = "4.4.0"
+      source  = "keycloak/keycloak"
+      version = "5.5.0"
     }
   }
 }

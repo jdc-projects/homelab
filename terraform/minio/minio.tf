@@ -64,101 +64,99 @@ resource "helm_release" "minio" {
 
   timeout = 300
 
-  set {
-    name  = "mode"
-    value = "standalone"
-  }
+  set = [
+    {
+      name  = "mode"
+      value = "standalone"
+    },
+    {
+      name  = "replicas"
+      value = "1"
+    },
+    {
+      name  = "drivesPerNode"
+      value = "1"
+    },
+    {
+      name  = "persistence.enabled"
+      value = "true"
+    },
+    {
+      name  = "persistence.existingClaim"
+      value = kubernetes_persistent_volume_claim.minio.metadata[0].name
+    },
+    {
+      name  = "persistence.size"
+      value = kubernetes_persistent_volume_claim.minio.spec[0].resources[0].requests.storage
+    },
+    {
+      name  = "ingress.enabled"
+      value = "false"
+    },
+    {
+      name  = "resources.requests.cpu"
+      value = "100m"
+    },
+    {
+      name  = "resources.requests.memory"
+      value = "1G"
+    },
+    {
+      name  = "resources.limits.cpu"
+      value = "200m"
+    },
+    {
+      name  = "resources.limits.memory"
+      value = "2G"
+    },
+    {
+      name  = "environment.MINIO_DOMAIN"
+      value = local.minio_domain
+    },
+    {
+      name  = "environment.MINIO_BROWSER_REDIRECT_URL"
+      value = "https://${local.minio_console_domain}"
+    },
+    {
+      name  = "oidc.enabled"
+      value = "true"
+    },
+    {
+      name  = "oidc.configUrl"
+      value = "${data.terraform_remote_state.keycloak.outputs.keycloak_issuer_url}/.well-known/openid-configuration"
+    },
+    {
+      name  = "oidc.clientId"
+      value = keycloak_openid_client.minio.name
+    },
+    {
+      name  = "oidc.claimName"
+      value = keycloak_openid_user_client_role_protocol_mapper.minio_claim_mapper.claim_name # the values in this claim need to match up to policy names
+    },
+    {
+      name  = "oidc.redirectUri"
+      value = "https://${local.minio_console_domain}/oauth_callback"
+    },
+    {
+      name  = "oidc.displayName"
+      value = "Keycloak"
+    },
+  ]
 
-  set {
-    name  = "replicas"
-    value = "1"
-  }
-  set {
-    name  = "drivesPerNode"
-    value = "1"
-  }
-
-  set_sensitive {
-    name  = "rootUser"
-    value = random_password.minio_root_username.result
-  }
-  set_sensitive {
-    name  = "rootPassword"
-    value = random_password.minio_root_password.result
-  }
-
-  set {
-    name  = "persistence.enabled"
-    value = "true"
-  }
-  set {
-    name  = "persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.minio.metadata[0].name
-  }
-  set {
-    name  = "persistence.size"
-    value = kubernetes_persistent_volume_claim.minio.spec[0].resources[0].requests.storage
-  }
-
-  set {
-    name  = "ingress.enabled"
-    value = "false"
-  }
-
-  set {
-    name  = "resources.requests.cpu"
-    value = "100m"
-  }
-  set {
-    name  = "resources.requests.memory"
-    value = "1G"
-  }
-  set {
-    name  = "resources.limits.cpu"
-    value = "200m"
-  }
-  set {
-    name  = "resources.limits.memory"
-    value = "2G"
-  }
-
-  set {
-    name  = "environment.MINIO_DOMAIN"
-    value = local.minio_domain
-  }
-  set {
-    name  = "environment.MINIO_BROWSER_REDIRECT_URL"
-    value = "https://${local.minio_console_domain}"
-  }
-
-  set {
-    name  = "oidc.enabled"
-    value = "true"
-  }
-  set {
-    name  = "oidc.configUrl"
-    value = "${data.terraform_remote_state.keycloak.outputs.keycloak_issuer_url}/.well-known/openid-configuration"
-  }
-  set {
-    name  = "oidc.clientId"
-    value = keycloak_openid_client.minio.name
-  }
-  set_sensitive {
-    name  = "oidc.clientSecret"
-    value = random_password.keycloak_client_secret.result
-  }
-  set {
-    name  = "oidc.claimName"
-    value = keycloak_openid_user_client_role_protocol_mapper.minio_claim_mapper.claim_name # the values in this claim need to match up to policy names
-  }
-  set {
-    name  = "oidc.redirectUri"
-    value = "https://${local.minio_console_domain}/oauth_callback"
-  }
-  set {
-    name  = "oidc.displayName"
-    value = "Keycloak"
-  }
+  set_sensitive = [
+    {
+      name  = "rootUser"
+      value = random_password.minio_root_username.result
+    },
+    {
+      name  = "rootPassword"
+      value = random_password.minio_root_password.result
+    },
+    {
+      name  = "oidc.clientSecret"
+      value = random_password.keycloak_client_secret.result
+    },
+  ]
 
   depends_on = [
     kubernetes_job.minio_chown

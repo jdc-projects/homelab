@@ -31,273 +31,275 @@ resource "helm_release" "ocis" {
 
   timeout = 600
 
-  set {
-    name  = "logging.level"
-    value = "info"
-  }
-  set {
-    name  = "logging.color"
-    value = "false"
-  }
-  set {
-    name  = "logging.pretty"
-    value = "false"
-  }
+  set = [
+    {
+      name  = "logging.level"
+      value = "info"
+    },
+    {
+      name  = "logging.color"
+      value = "false"
+    },
+    {
+      name  = "logging.pretty"
+      value = "false"
+    },
 
-  set {
-    name  = "externalDomain"
-    value = local.ocis_domain
-  }
+    {
+      name  = "externalDomain"
+      value = local.ocis_domain
+    },
 
-  set {
-    name  = "cache.type"
-    value = "noop"
-  }
+    {
+      name  = "cache.type"
+      value = "noop"
+    },
 
-  set {
-    name  = "features.emailNotifications.enabled"
-    value = "true"
-  }
-  set {
-    name  = "features.emailNotifications.smtp.host"
-    value = var.smtp_host
-  }
-  set {
-    name  = "features.emailNotifications.smtp.port"
-    value = var.smtp_port
-  }
-  set {
-    name  = "features.emailNotifications.smtp.sender"
-    value = "noreply@${var.server_base_domain}"
-  }
-  set {
-    name  = "features.emailNotifications.smtp.authentication"
-    value = "login"
-  }
-  set {
-    name  = "features.emailNotifications.smtp.encryption"
-    value = "tls"
-  }
+    {
+      name  = "features.emailNotifications.enabled"
+      value = "true"
+    },
+    {
+      name  = "features.emailNotifications.smtp.host"
+      value = var.smtp_host
+    },
+    {
+      name  = "features.emailNotifications.smtp.port"
+      value = var.smtp_port
+    },
+    {
+      name  = "features.emailNotifications.smtp.sender"
+      value = "noreply@${var.server_base_domain}"
+    },
+    {
+      name  = "features.emailNotifications.smtp.authentication"
+      value = "login"
+    },
+    {
+      name  = "features.emailNotifications.smtp.encryption"
+      value = "tls"
+    },
 
-  set {
-    name  = "features.sharing.publiclink.writeableShareMustHavePassword"
-    value = "true"
-  }
+    {
+      name  = "features.sharing.publiclink.writeableShareMustHavePassword"
+      value = "true"
+    },
 
-  set {
-    name  = "features.externalUserManagement.enabled"
-    value = "true"
-  }
-  set {
-    name  = "features.externalUserManagement.oidc.issuerURI"
-    value = data.terraform_remote_state.keycloak.outputs.keycloak_issuer_url
-  }
-  set {
-    name  = "features.externalUserManagement.oidc.sessionManagementLink"
-    value = "${data.terraform_remote_state.keycloak.outputs.keycloak_issuer_url}/account/"
-  }
-  set {
-    name  = "features.externalUserManagement.oidc.editAccountLink"
-    value = "${data.terraform_remote_state.keycloak.outputs.keycloak_issuer_url}/account/"
-  }
-  set {
-    name  = "features.externalUserManagement.oidc.userIDClaim"
-    value = "preferred_username"
-  }
-  set {
-    name  = "features.externalUserManagement.oidc.userIDClaimAttributeMapping"
-    value = "userid"
-  }
-  set {
-    name  = "features.externalUserManagement.oidc.accessTokenVerifyMethod"
-    value = "jwt"
-  }
-  set {
-    name  = "features.externalUserManagement.oidc.roleAssignment.enabled"
-    value = "true"
-  }
-  set {
-    name  = "features.externalUserManagement.oidc.roleAssignment.claim"
-    value = "roles"
-  }
+    {
+      name  = "features.externalUserManagement.enabled"
+      value = "true"
+    },
+    {
+      name  = "features.externalUserManagement.oidc.issuerURI"
+      value = data.terraform_remote_state.keycloak.outputs.keycloak_issuer_url
+    },
+    {
+      name  = "features.externalUserManagement.oidc.sessionManagementLink"
+      value = "${data.terraform_remote_state.keycloak.outputs.keycloak_issuer_url}/account/"
+    },
+    {
+      name  = "features.externalUserManagement.oidc.editAccountLink"
+      value = "${data.terraform_remote_state.keycloak.outputs.keycloak_issuer_url}/account/"
+    },
+    {
+      name  = "features.externalUserManagement.oidc.userIDClaim"
+      value = "preferred_username"
+    },
+    {
+      name  = "features.externalUserManagement.oidc.userIDClaimAttributeMapping"
+      value = "userid"
+    },
+    {
+      name  = "features.externalUserManagement.oidc.accessTokenVerifyMethod"
+      value = "jwt"
+    },
+    {
+      name  = "features.externalUserManagement.oidc.roleAssignment.enabled"
+      value = "true"
+    },
+    {
+      name  = "features.externalUserManagement.oidc.roleAssignment.claim"
+      value = "roles"
+    },
 
-  set {
-    name  = "features.externalUserManagement.ldap.writeable"
-    value = "false"
-  }
-  set {
-    name  = "features.externalUserManagement.ldap.uri"
-    value = "ldaps://idm.${var.server_base_domain}"
-  }
-  set {
-    name  = "features.externalUserManagement.ldap.bindDN"
-    value = "uid=${data.terraform_remote_state.openldap.outputs.admin_username}\\,ou=people\\,dc=idm\\,dc=homelab"
-  }
-  set {
-    name  = "features.externalUserManagement.ldap.useServerUUID"
-    value = "true"
-  }
-  set {
-    name  = "features.externalUserManagement.ldap.user.schema.id"
-    value = "uid"
-  }
-  set {
-    name  = "features.externalUserManagement.ldap.user.baseDN"
-    value = "ou=people\\,dc=idm\\,dc=homelab"
-  }
-  set {
-    name  = "features.externalUserManagement.ldap.group.schema.id"
-    value = "cn"
-  }
-  set {
-    name  = "features.externalUserManagement.ldap.group.schema.member"
-    value = "member"
-  }
-  set {
-    name  = "features.externalUserManagement.ldap.group.baseDN"
-    value = "ou=groups\\,dc=idm\\,dc=homelab"
-  }
-  set {
-    name  = "features.externalUserManagement.ldap.group.objectClass"
-    value = "groupOfNames"
-  }
-  set {
-    name  = "features.externalUserManagement.ldap.disableUsers.disableMechanism"
-    value = "group"
-  }
-  set {
-    name  = "features.externalUserManagement.ldap.disableUsers.disabledUsersGroupDN"
-    value = "cn=app_disabled\\,ou=groups\\,dc=idm\\,dc=homelab"
-  }
+    {
+      name  = "features.externalUserManagement.ldap.writeable"
+      value = "false"
+    },
+    {
+      name  = "features.externalUserManagement.ldap.uri"
+      value = "ldaps://idm.${var.server_base_domain}"
+    },
+    {
+      name  = "features.externalUserManagement.ldap.bindDN"
+      value = "uid=${data.terraform_remote_state.openldap.outputs.admin_username}\\,ou=people\\,dc=idm\\,dc=homelab"
+    },
+    {
+      name  = "features.externalUserManagement.ldap.useServerUUID"
+      value = "true"
+    },
+    {
+      name  = "features.externalUserManagement.ldap.user.schema.id"
+      value = "uid"
+    },
+    {
+      name  = "features.externalUserManagement.ldap.user.baseDN"
+      value = "ou=people\\,dc=idm\\,dc=homelab"
+    },
+    {
+      name  = "features.externalUserManagement.ldap.group.schema.id"
+      value = "cn"
+    },
+    {
+      name  = "features.externalUserManagement.ldap.group.schema.member"
+      value = "member"
+    },
+    {
+      name  = "features.externalUserManagement.ldap.group.baseDN"
+      value = "ou=groups\\,dc=idm\\,dc=homelab"
+    },
+    {
+      name  = "features.externalUserManagement.ldap.group.objectClass"
+      value = "groupOfNames"
+    },
+    {
+      name  = "features.externalUserManagement.ldap.disableUsers.disableMechanism"
+      value = "group"
+    },
+    {
+      name  = "features.externalUserManagement.ldap.disableUsers.disabledUsersGroupDN"
+      value = "cn=app_disabled\\,ou=groups\\,dc=idm\\,dc=homelab"
+    },
 
-  set {
-    name  = "ingress.enabled"
-    value = "false"
-  }
+    {
+      name  = "ingress.enabled"
+      value = "false"
+    },
 
-  set {
-    name  = "configRefs.storageusersConfigRef"
-    value = kubernetes_config_map.storage_users.metadata[0].name
-  }
-  set {
-    name  = "configRefs.graphConfigRef"
-    value = kubernetes_config_map.graph.metadata[0].name
-  }
+    {
+      name  = "configRefs.storageusersConfigRef"
+      value = kubernetes_config_map.storage_users.metadata[0].name
+    },
+    {
+      name  = "configRefs.graphConfigRef"
+      value = kubernetes_config_map.graph.metadata[0].name
+    },
 
-  set {
-    name  = "secretRefs.jwtSecretRef"
-    value = kubernetes_secret.jwt_secret.metadata[0].name
-  }
-  set {
-    name  = "secretRefs.ldapSecretRef"
-    value = kubernetes_secret.ldap_bind_secrets.metadata[0].name
-  }
-  set {
-    name  = "secretRefs.machineAuthApiKeySecretRef"
-    value = kubernetes_secret.machine_auth_api_key.metadata[0].name
-  }
-  set {
-    name  = "secretRefs.notificationsSmtpSecretRef"
-    value = kubernetes_secret.notifications_smtp_secret.metadata[0].name
-  }
-  set {
-    name  = "secretRefs.storagesystemJwtSecretRef"
-    value = kubernetes_secret.storage_system_jwt_secret.metadata[0].name
-  }
-  set {
-    name  = "secretRefs.storagesystemSecretRef"
-    value = kubernetes_secret.storage_system.metadata[0].name
-  }
-  set {
-    name  = "secretRefs.thumbnailsSecretRef"
-    value = kubernetes_secret.thumbnails_transfer_secret.metadata[0].name
-  }
-  set {
-    name  = "secretRefs.transferSecretSecretRef"
-    value = kubernetes_secret.transfer_secret.metadata[0].name
-  }
+    {
+      name  = "secretRefs.jwtSecretRef"
+      value = kubernetes_secret.jwt_secret.metadata[0].name
+    },
+    {
+      name  = "secretRefs.ldapSecretRef"
+      value = kubernetes_secret.ldap_bind_secrets.metadata[0].name
+    },
+    {
+      name  = "secretRefs.machineAuthApiKeySecretRef"
+      value = kubernetes_secret.machine_auth_api_key.metadata[0].name
+    },
+    {
+      name  = "secretRefs.notificationsSmtpSecretRef"
+      value = kubernetes_secret.notifications_smtp_secret.metadata[0].name
+    },
+    {
+      name  = "secretRefs.storagesystemJwtSecretRef"
+      value = kubernetes_secret.storage_system_jwt_secret.metadata[0].name
+    },
+    {
+      name  = "secretRefs.storagesystemSecretRef"
+      value = kubernetes_secret.storage_system.metadata[0].name
+    },
+    {
+      name  = "secretRefs.thumbnailsSecretRef"
+      value = kubernetes_secret.thumbnails_transfer_secret.metadata[0].name
+    },
+    {
+      name  = "secretRefs.transferSecretSecretRef"
+      value = kubernetes_secret.transfer_secret.metadata[0].name
+    },
 
-  set {
-    name  = "services.nats.persistence.enabled"
-    value = "true"
-  }
-  set {
-    name  = "services.nats.persistence.chownInitContainer"
-    value = "true"
-  }
-  set {
-    name  = "services.nats.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.ocis["nats"].metadata[0].name
-  }
+    {
+      name  = "services.nats.persistence.enabled"
+      value = "true"
+    },
+    {
+      name  = "services.nats.persistence.chownInitContainer"
+      value = "true"
+    },
+    {
+      name  = "services.nats.persistence.existingClaim"
+      value = kubernetes_persistent_volume_claim.ocis["nats"].metadata[0].name
+    },
 
-  set {
-    name  = "services.search.persistence.enabled"
-    value = "true"
-  }
-  set {
-    name  = "services.search.persistence.chownInitContainer"
-    value = "true"
-  }
-  set {
-    name  = "services.search.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.ocis["search"].metadata[0].name
-  }
+    {
+      name  = "services.search.persistence.enabled"
+      value = "true"
+    },
+    {
+      name  = "services.search.persistence.chownInitContainer"
+      value = "true"
+    },
+    {
+      name  = "services.search.persistence.existingClaim"
+      value = kubernetes_persistent_volume_claim.ocis["search"].metadata[0].name
+    },
 
-  set {
-    name  = "services.storagesystem.persistence.enabled"
-    value = "true"
-  }
-  set {
-    name  = "services.storagesystem.persistence.chownInitContainer"
-    value = "true"
-  }
-  set {
-    name  = "services.storagesystem.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.ocis["storagesystem"].metadata[0].name
-  }
+    {
+      name  = "services.storagesystem.persistence.enabled"
+      value = "true"
+    },
+    {
+      name  = "services.storagesystem.persistence.chownInitContainer"
+      value = "true"
+    },
+    {
+      name  = "services.storagesystem.persistence.existingClaim"
+      value = kubernetes_persistent_volume_claim.ocis["storagesystem"].metadata[0].name
+    },
 
-  set {
-    name  = "services.storageusers.persistence.enabled"
-    value = "true"
-  }
-  set {
-    name  = "services.storageusers.persistence.chownInitContainer"
-    value = "true"
-  }
-  set {
-    name  = "services.storageusers.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.ocis["storageusers"].metadata[0].name
-  }
+    {
+      name  = "services.storageusers.persistence.enabled"
+      value = "true"
+    },
+    {
+      name  = "services.storageusers.persistence.chownInitContainer"
+      value = "true"
+    },
+    {
+      name  = "services.storageusers.persistence.existingClaim"
+      value = kubernetes_persistent_volume_claim.ocis["storageusers"].metadata[0].name
+    },
 
-  set {
-    name  = "services.thumbnails.persistence.enabled"
-    value = "true"
-  }
-  set {
-    name  = "services.thumbnails.persistence.chownInitContainer"
-    value = "true"
-  }
-  set {
-    name  = "services.thumbnails.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.ocis["thumbnails"].metadata[0].name
-  }
+    {
+      name  = "services.thumbnails.persistence.enabled"
+      value = "true"
+    },
+    {
+      name  = "services.thumbnails.persistence.chownInitContainer"
+      value = "true"
+    },
+    {
+      name  = "services.thumbnails.persistence.existingClaim"
+      value = kubernetes_persistent_volume_claim.ocis["thumbnails"].metadata[0].name
+    },
 
-  set {
-    name  = "services.web.config.oidc.webClientID"
-    value = keycloak_openid_client.ocis_web.client_id
-  }
-  set {
-    name  = "services.web.persistence.enabled"
-    value = "true"
-  }
-  set {
-    name  = "services.web.persistence.chownInitContainer"
-    value = "true"
-  }
-  set {
-    name  = "services.web.persistence.existingClaim"
-    value = kubernetes_persistent_volume_claim.ocis["web"].metadata[0].name
-  }
+    {
+      name  = "services.web.config.oidc.webClientID"
+      value = keycloak_openid_client.ocis_web.client_id
+    },
+    {
+      name  = "services.web.persistence.enabled"
+      value = "true"
+    },
+    {
+      name  = "services.web.persistence.chownInitContainer"
+      value = "true"
+    },
+    {
+      name  = "services.web.persistence.existingClaim"
+      value = kubernetes_persistent_volume_claim.ocis["web"].metadata[0].name
+    },
+  ]
 
   depends_on = [null_resource.ocis_helm_repo_clone]
 
