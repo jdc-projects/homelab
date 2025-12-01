@@ -37,8 +37,12 @@ resource "helm_release" "traefik" {
       value = "0"
     },
     {
+      name  = "experimental.abortOnPluginFailure"
+      value = "true"
+    },
+    {
       name  = "experimental.plugins.cloudflare.moduleName"
-      value = "https://github.com/agence-gaya/traefik-plugin-cloudflare"
+      value = "github.com/agence-gaya/traefik-plugin-cloudflare"
     },
     {
       name  = "experimental.plugins.cloudflare.version"
@@ -50,7 +54,7 @@ resource "helm_release" "traefik" {
     },
     {
       name  = "experimental.plugins.crowdsec-bouncer.version"
-      value = "v1.3.5"
+      value = "v1.4.6"
     },
     {
       name  = "experimental.plugins.geoblock.moduleName"
@@ -58,7 +62,7 @@ resource "helm_release" "traefik" {
     },
     {
       name  = "experimental.plugins.geoblock.version"
-      value = "v0.3.1"
+      value = "v0.3.3"
     },
     {
       name  = "experimental.plugins.api-key-auth.moduleName"
