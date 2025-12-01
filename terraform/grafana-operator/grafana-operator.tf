@@ -6,5 +6,12 @@ resource "helm_release" "grafana_operator" {
   chart      = "grafana-operator"
   version    = "v5.20.0"
 
+  set = [
+    {
+      name  = "crds.immutable"
+      value = "false"
+    },
+  ]
+
   timeout = 300
 }
