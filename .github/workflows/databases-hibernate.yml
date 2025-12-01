@@ -40,7 +40,7 @@ jobs:
       - name: "Setup kubectl"
         uses: azure/setup-kubectl@v4
         with:
-          version: 'v1.30.4'
+          version: 'v1.33.6'
       - name: "Get Databases"
         id: "get-databases"
         run: |
@@ -77,7 +77,7 @@ jobs:
       - name: "Setup kubectl"
         uses: azure/setup-kubectl@v4
         with:
-          version: 'v1.30.4'
+          version: 'v1.33.6'
       - name: "Hibernate / restart DB"
         env:
           HIBERNATE_CHOICE: ${{ inputs.do-hibernate && 'on' || 'off' }}
