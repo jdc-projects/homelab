@@ -193,6 +193,18 @@ jobs:
     with:
       terraform-dir: ./terraform/vaultwarden
 
+  deploy-ocis:
+    needs: [
+      deploy-keycloak-config,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/ocis
+      resource-name: null_resource.ocis_helm_repo_clone
+      force-apply-all: true
+
   deploy-keycloak-dependants:
     needs: [
       deploy-keycloak-config,
