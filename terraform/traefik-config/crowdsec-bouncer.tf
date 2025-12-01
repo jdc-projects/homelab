@@ -24,7 +24,7 @@ resource "kubernetes_manifest" "crowdsec_bouncer_traefik_plugin_middleware" {
           ClientTrustedIPs = [
             "192.168.100.0/24",
           ]
-          ForwardedHeadersTrustedIPs = flatten(data.cloudflare_ip_ranges.cloudflare.cidr_blocks) # flatten is required to prevent an error for some reason...
+          ForwardedHeadersTrustedIPs = flatten(data.cloudflare_ip_ranges.cloudflare.ipv4_cidrs) # flatten is required to prevent an error for some reason...
         }
       }
     }
