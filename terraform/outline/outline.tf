@@ -90,7 +90,7 @@ resource "kubernetes_deployment" "outline" {
 
       spec {
         container {
-          image = "outlinewiki/outline:0.81.1"
+          image = "outlinewiki/outline:1.1.0"
           name  = "outline"
 
           env_from {
@@ -137,6 +137,8 @@ module "outline_ingress" {
   domain    = local.outline_domain
 
   target_port = kubernetes_config_map.outline_env.data.PORT
+
+  is_scheme_http = false
 
   selector = {
     app = "outline"

@@ -18,6 +18,6 @@ provider "kubectl" {
 }
 
 locals {
-  kubevirt_version = "v1.4.0"
-  cdi_version      = "v1.61.0"
+  kubevirt_version = "v1.6.3"
+  cdi_version      = "v1.63.1"
 }

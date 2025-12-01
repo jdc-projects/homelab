@@ -4,7 +4,7 @@ resource "null_resource" "ocis_helm_repo_clone" {
     # get commit SHA from https://github.com/owncloud/ocis-charts/commits/stable-5/
     # this is terribly out of date, probably have to switch to main: https://github.com/owncloud/ocis-charts/commits/main/
     # bit of a pain there aren't releases or at least a 'production-ready' branch, given main includes RC releases
-    commit_sha = "61dbfb61ab2a7b07ce2bb58df96eae0b84b77bac"
+    commit_sha = "f0e0a22eecdae52f9bb007e91db772ff5121ca30"
   }
 
   provisioner "local-exec" {

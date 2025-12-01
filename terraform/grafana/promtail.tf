@@ -3,7 +3,7 @@ resource "helm_release" "promtail" {
 
   repository = "https://grafana.github.io/helm-charts"
   chart      = "promtail"
-  version    = "6.16.6"
+  version    = "6.17.1"
 
   namespace = kubernetes_namespace.loki.metadata[0].name
 

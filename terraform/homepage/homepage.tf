@@ -5,8 +5,9 @@ resource "kubernetes_config_map" "homepage_env" {
   }
 
   data = {
-    NODE_ENV    = "production"
-    LOG_TARGETS = "stdout"
+    NODE_ENV               = "production"
+    LOG_TARGETS            = "stdout"
+    HOMEPAGE_ALLOWED_HOSTS = "apps.${var.server_base_domain}"
   }
 }
 
@@ -44,7 +45,7 @@ resource "kubernetes_deployment" "homepage" {
 
       spec {
         container {
-          image = "ghcr.io/gethomepage/homepage:v0.10.9"
+          image = "ghcr.io/gethomepage/homepage:v1.7.0"
           name  = "homepage"
 
           env_from {
@@ -100,7 +101,7 @@ module "homepage_ingress" {
 
   name        = "homepage"
   namespace   = kubernetes_namespace.homepage.metadata[0].name
-  domain      = "apps.${var.server_base_domain}"
+  domain      = kubernetes_config_map.homepage_env.data.HOMEPAGE_ALLOWED_HOSTS
   target_port = 3000
   selector = {
     app = "homepage"

@@ -71,7 +71,7 @@ resource "kubernetes_job" "prowler_chown" {
 
       spec {
         container {
-          image = "alpine:3.21.0"
+          image = "alpine:3.22.2"
           name  = "prowler-chown"
 
           command = ["sh", "-c", "chown -R 1000:1000 /export"]
@@ -133,7 +133,7 @@ resource "kubernetes_deployment" "prowler" {
 
       spec {
         container {
-          image = "public.ecr.aws/prowler-cloud/prowler:5.4.1"
+          image = "public.ecr.aws/prowler-cloud/prowler:5.14.0"
           name  = "prowler"
 
           command = [
