@@ -1,6 +1,6 @@
 resource "null_resource" "traefik_version" {
   triggers = {
-    traefik_version = "34.2.0"
+    traefik_version = "37.4.0"
   }
 }
 
@@ -35,6 +35,14 @@ resource "helm_release" "traefik" {
     {
       name  = "updateStrategy.rollingUpdate.maxSurge"
       value = "0"
+    },
+    {
+      name  = "experimental.plugins.cloudflare.moduleName"
+      value = "https://github.com/agence-gaya/traefik-plugin-cloudflare"
+    },
+    {
+      name  = "experimental.plugins.cloudflare.version"
+      value = "v1.2.0"
     },
     {
       name  = "experimental.plugins.cloudflare-real-ip.moduleName"
@@ -109,7 +117,7 @@ resource "helm_release" "traefik" {
       value = "HTTPS"
     },
     {
-      name  = "gateway.listeners.websecure.namespacePolicy"
+      name  = "gateway.listeners.websecure.namespacePolicy.from"
       value = "All"
     },
     {

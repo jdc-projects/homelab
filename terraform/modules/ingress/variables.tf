@@ -75,9 +75,9 @@ variable "is_scheme_http" {
   default     = true
 }
 
-variable "do_enable_cloudflare_real_ip_middleware" {
+variable "do_enable_cloudflare_middleware" {
   type        = bool
-  description = "True to enable Cloudflare Real IP middleware."
+  description = "True to enable Cloudflare middleware."
   default     = true
 }
 

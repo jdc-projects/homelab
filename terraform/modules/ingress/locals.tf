@@ -3,8 +3,8 @@ locals {
   is_endpoint_internal = "" == var.external_name
 
   middlewares = concat(
-    var.do_enable_cloudflare_real_ip_middleware ? [{
-      name      = "cloudflare-real-ip"
+    var.do_enable_cloudflare_middleware ? [{
+      name      = "cloudflare"
       namespace = data.terraform_remote_state.traefik.outputs.traefik_namespace
     }] : [],
     var.do_enable_geoblock ? [{
