@@ -86,6 +86,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/clickhouse-operator
+      needs-kubectl: true
 
   deploy-traefik:
     needs: [
