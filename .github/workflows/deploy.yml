@@ -209,7 +209,6 @@ jobs:
       matrix:
         application: [
           grafana,
-          ocis,
           outline,
           services,
           minio,
