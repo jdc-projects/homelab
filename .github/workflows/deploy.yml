@@ -212,7 +212,6 @@ jobs:
           outline,
           services,
           minio,
-          prowler,
           13ft,
         ]
 
