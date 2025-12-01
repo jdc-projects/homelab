@@ -32,13 +32,6 @@ resource "kubernetes_secret" "db_credentials" {
   }
 }
 
-resource "random_password" "outline_redis_password" {
-  length  = 16
-  numeric = true
-  special = false
-  upper   = true
-}
-
 resource "random_password" "keycloak_client_secret" {
   length  = 50
   numeric = true

@@ -46,6 +46,7 @@ resource "kubernetes_config_map" "outline_env" {
     RATE_LIMITER_ENABLED         = "true"
     RATE_LIMITER_REQUESTS        = 1000
     RATE_LIMITER_DURATION_WINDOW = 60
+    REDIS_URL                    = "valkey://${helm_release.valkey.name}:6379"
   }
 }
 
@@ -59,7 +60,6 @@ resource "kubernetes_secret" "outline_env" {
     SECRET_KEY            = random_id.outline_secret_key.hex
     UTILS_SECRET          = random_id.outline_utils_secret.hex
     DATABASE_URL          = "postgresql://${random_password.outline_db_username.result}:${random_password.outline_db_password.result}@${kubernetes_manifest.outline_db.manifest.metadata.name}-rw:5432/${kubernetes_manifest.outline_db.manifest.spec.bootstrap.initdb.database}"
-    REDIS_URL             = "redis://:${random_password.outline_redis_password.result}@${helm_release.redis.name}-master:6379"
     AWS_SECRET_ACCESS_KEY = random_password.minio_secret_key.result
     OIDC_CLIENT_SECRET    = random_password.keycloak_client_secret.result
     SMTP_PASSWORD         = var.smtp_password
@@ -108,12 +108,12 @@ resource "kubernetes_deployment" "outline" {
           resources {
             requests = {
               cpu    = "200m"
-              memory = "256Mi"
+              memory = "512Mi"
             }
 
             limits = {
               cpu    = "500m"
-              memory = "512Mi"
+              memory = "1Gi"
             }
           }
         }
