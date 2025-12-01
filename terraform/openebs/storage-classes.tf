@@ -10,10 +10,6 @@ resource "kubernetes_storage_class" "default" {
   storage_provisioner = "device.csi.openebs.io"
   reclaim_policy      = "Delete"
   volume_binding_mode = "WaitForFirstConsumer"
-
-  depends_on = [
-    helm_release.openebs,
-  ]
 }
 
 resource "kubernetes_storage_class" "openebs_zfs_localpv" {
@@ -64,8 +60,4 @@ resource "kubernetes_storage_class" "openebs_zfs_localpv" {
     recordsize  = each.value.recordsize
     dedup       = "off"
   }
-
-  depends_on = [
-    helm_release.openebs,
-  ]
 }
