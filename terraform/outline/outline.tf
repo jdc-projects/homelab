@@ -138,8 +138,6 @@ module "outline_ingress" {
 
   target_port = kubernetes_config_map.outline_env.data.PORT
 
-  is_scheme_http = false
-
   selector = {
     app = "outline"
   }
