@@ -57,5 +57,4 @@ This system requires that some setup is completed on the first:
 
 ## Currenty broken stuff
 
-- outline (503 error)
 - grafana (login broken)
