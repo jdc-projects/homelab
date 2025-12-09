@@ -124,10 +124,10 @@ jobs:
         if: steps.get-old-backups-to-delete.outputs.backups-to-delete != ''
         run: velero delete backup ${{ steps.get-old-backups-to-delete.outputs.old-backups-to-delete }} --confirm
       - name: "Wait for backup to complete"
-        timeout-minutes: 1380
+        timeout-minutes: 300
         run: |
           velero get backups -o yaml > backups.yml
-          kubectl -n $(yq '.items[-1].metadata.namespace' backups.yml) wait backups.velero.io $(yq '.items[-1].metadata.name' backups.yml) --timeout 23h --for "jsonpath={.status.phase}=Completed"
+          kubectl -n $(yq '.items[-1].metadata.namespace' backups.yml) wait backups.velero.io $(yq '.items[-1].metadata.name' backups.yml) --timeout 2h --for "jsonpath={.status.phase}=Completed"
 
   restart-databases:
     needs: [
