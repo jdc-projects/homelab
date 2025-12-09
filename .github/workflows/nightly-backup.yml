@@ -97,20 +97,32 @@ jobs:
           curl https://github.com/vmware-tanzu/velero/releases/download/${{ env.VELERO_VERSION }}/velero-${{ env.VELERO_VERSION }}-linux-amd64.tar.gz -Lo velero.tar.gz
           tar -xvf velero.tar.gz -C ./velero --strip-components=1
           sudo cp ./velero/velero /usr/local/bin/velero
-      - name: "Get backups to delete"
-        id: "get-backups-to-delete"
+      - name: "Get failed backups to delete"
+        id: "get-failed-backups-to-delete"
         env:
           MAX_NUM_BACKUPS: 30
         run: |
           velero get backups -o yaml > backups.yml
-          yq '.items[].metadata.name' backups.yml > backups.txt
+          yq '.items[] | select(.status.phase == "Failed" or .status.phase == "PartiallyFailed") | .metadata.name' backups.yml > backups-to-delete.txt
+          sed -i '{:q;N;s/\n/ /g;t q}' backups-to-delete.txt
+          echo "failed-backups-to-delete=$(cat backups-to-delete.txt)" >> "$GITHUB_OUTPUT"
+      - name: "Delete failed backups"
+        if: steps.get-failed-backups-to-delete.outputs.backups-to-delete != ''
+        run: velero delete backup ${{ steps.get-failed-backups-to-delete.outputs.failed-backups-to-delete }} --confirm
+      - name: "Get old backups to delete"
+        id: "get-old-backups-to-delete"
+        env:
+          MAX_NUM_BACKUPS: 30
+        run: |
+          velero get backups -o yaml > backups.yml
+          yq '.items[] | select(.status.phase == "Completed") | .metadata.name' backups.yml > backups.txt
           head -n -${{ env.MAX_NUM_BACKUPS }} backups.txt > backups-to-delete.txt
           truncate -s -1 backups-to-delete.txt
           sed -i '{:q;N;s/\n/ /g;t q}' backups-to-delete.txt
-          echo "backups-to-delete=$(cat backups-to-delete.txt)" >> "$GITHUB_OUTPUT"
+          echo "old-backups-to-delete=$(cat backups-to-delete.txt)" >> "$GITHUB_OUTPUT"
       - name: "Delete old backups"
-        if: steps.get-backups-to-delete.outputs.backups-to-delete != ''
-        run: velero delete backup ${{ steps.get-backups-to-delete.outputs.backups-to-delete }} --confirm
+        if: steps.get-old-backups-to-delete.outputs.backups-to-delete != ''
+        run: velero delete backup ${{ steps.get-old-backups-to-delete.outputs.old-backups-to-delete }} --confirm
       - name: "Wait for backup to complete"
         timeout-minutes: 1380
         run: |
