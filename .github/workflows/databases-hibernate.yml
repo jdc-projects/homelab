@@ -20,7 +20,7 @@ env:
   SERVER_KUBE_PORT: ${{ vars.SERVER_KUBE_PORT }}
 
 jobs:
-  get-databases:
+  get-postgres-databases:
     runs-on: self-hosted
 
     outputs:
@@ -52,16 +52,48 @@ jobs:
           truncate -s -1 dbs.json
           echo "databases=$(cat dbs.json)" >> "$GITHUB_OUTPUT"
 
-  hibernate:
+  get-clickhouse-databases:
+    runs-on: self-hosted
+
+    outputs:
+      databases: ${{ steps.get-databases.outputs.databases}}
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v4
+      - name: "Add cluster CA certificate"
+        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
+      - name: "Generate and install kubeconfig"
+        working-directory: ./terraform
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.33.6'
+      - name: "Get Databases"
+        id: "get-databases"
+        run: |
+          kubectl get clickhouseinstallations -A -o yaml > clusters.yml
+          yq '.items[] | {"name": .metadata.name, "namespace": .metadata.namespace, "replicas": (.spec.configuration.clusters[0].layout.replicasCount // 1)}' clusters.yml -o json -I 0 > dbs.json
+          sed -i '{:q;N;s/\n/, /g;t q}' dbs.json
+          sed -i 's#^#[#' dbs.json
+          sed -i 's#$#]#' dbs.json
+          truncate -s -1 dbs.json
+          echo "databases=$(cat dbs.json)" >> "$GITHUB_OUTPUT"
+
+  hibernate-postgres-databases:
     needs: [
-      get-databases,
+      get-postgres-databases,
     ]
     runs-on: self-hosted
 
     strategy:
       fail-fast: false
       matrix:
-        database: ${{ fromJson(needs.get-databases.outputs.databases) }}
+        database: ${{ fromJson(needs.get-postgres-databases.outputs.databases) }}
 
     steps:
       - name: "Repo checkout"
@@ -88,3 +120,42 @@ jobs:
       - name: "Wait for restart"
         if: ${{ !inputs.do-hibernate }}
         run: kubectl -n ${{ matrix.database.namespace }} wait clusters.postgresql.cnpg.io ${{ matrix.database.name }} --timeout 30m --for "jsonpath={.status.readyInstances}=$(kubectl -n ${{ matrix.database.namespace }} get clusters.postgresql.cnpg.io ${{ matrix.database.name }} -o "jsonpath={.status.instances}")"
+
+  hibernate-clickhouse-databases:
+    needs: [
+      get-clickhouse-databases,
+    ]
+    runs-on: self-hosted
+
+    strategy:
+      fail-fast: false
+      matrix:
+        clickhouse: ${{ fromJson(needs.get-clickhouse-databases.outputs.databases) }}
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v4
+      - name: "Add cluster CA certificate"
+        run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
+      - name: "Generate and install kubeconfig"
+        working-directory: ./terraform
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.33.6'
+      - name: "Scale ClickHouse"
+        env:
+          REPLICAS: ${{ inputs.do-hibernate && 0 || matrix.clickhouse.replicas }}
+        run: kubectl scale clickhouseinstallation ${{ matrix.clickhouse.name }} -n ${{ matrix.clickhouse.namespace }} --replicas=${{ env.REPLICAS }}
+      - name: "Wait for scale down"
+        if: ${{ inputs.do-hibernate }}
+        run: kubectl -n ${{ matrix.clickhouse.namespace }} wait clickhouseinstallation ${{ matrix.clickhouse.name }} --timeout 30m --for "jsonpath={.status.status}=Completed"
+      - name: "Wait for scale up"
+        if: ${{ !inputs.do-hibernate }}
+        run: kubectl -n ${{ matrix.clickhouse.namespace }} wait clickhouseinstallation ${{ matrix.clickhouse.name }} --timeout 30m --for "jsonpath={.status.status}=Completed"
+
+  # ***** other stateful apps hibernate
