@@ -54,7 +54,3 @@ This system requires that some setup is completed on the first:
 2. Run DR pipeline
 
 ***** Bitnami have broken everything :sad: *****
-
-## Currenty broken stuff
-
-- grafana (login broken)
