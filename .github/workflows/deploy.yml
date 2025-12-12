@@ -222,7 +222,6 @@ jobs:
           grafana,
           outline,
           services,
-          minio,
           13ft,
         ]
 
