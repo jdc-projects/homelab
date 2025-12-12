@@ -19,6 +19,10 @@ resource "helm_release" "loki" {
       value = "1"
     },
     {
+      name  = "loki.storage.bucketNames.chunks"
+      value = "chunks"
+    },
+    {
       name  = "read.replicas"
       value = "1"
     },
