@@ -11,10 +11,13 @@ locals {
       name      = "geoblock"
       namespace = data.terraform_remote_state.traefik.outputs.traefik_namespace
     }] : [],
-    var.do_enable_crowdsec_bouncer ? [{
+    var.do_enable_crowdsec_bouncer && var.do_enable_crowdsec_bouncer_appsec ? [{
       name      = "crowdsec-bouncer"
       namespace = data.terraform_remote_state.traefik.outputs.traefik_namespace
-    }] : [],
+    }] : var.do_enable_crowdsec_bouncer && !var.do_enable_crowdsec_bouncer_appsec ? [{
+      name      = "crowdsec-bouncer-without-appsec"
+      namespace = data.terraform_remote_state.traefik.outputs.traefik_namespace
+    }] : [], # *****
     var.do_enable_api_key_auth ? [{
       name      = one(kubernetes_manifest.api_key_auth_plugin_middleware[*].manifest.metadata.name)
       namespace = var.namespace

@@ -138,7 +138,7 @@ module "outline_ingress" {
 
   target_port = kubernetes_config_map.outline_env.data.PORT
 
-  do_enable_crowdsec_bouncer = false
+  do_enable_crowdsec_bouncer_appsec = false
 
   selector = {
     app = "outline"
