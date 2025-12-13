@@ -89,6 +89,7 @@ jobs:
       get-postgres-databases,
     ]
     runs-on: self-hosted
+    if: ${{ needs.get-postgres-databases.outputs.databases != '' }}
 
     strategy:
       fail-fast: false
@@ -126,6 +127,7 @@ jobs:
       get-clickhouse-databases,
     ]
     runs-on: self-hosted
+    if: ${{ needs.get-clickhouse-databases.outputs.databases != '' }}
 
     strategy:
       fail-fast: false
