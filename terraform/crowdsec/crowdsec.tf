@@ -10,7 +10,7 @@ resource "helm_release" "crowdsec" {
 
   repository = "https://crowdsecurity.github.io/helm-charts"
   chart      = "crowdsec"
-  version    = "0.20.1"
+  version    = "0.21.1"
 
   namespace = kubernetes_namespace.crowdsec.metadata[0].name
 
@@ -68,6 +68,14 @@ resource "helm_release" "crowdsec" {
     {
       name  = "agent.acquisition[0].program"
       value = "traefik"
+    },
+    {
+      name  = "agent.env[0].name"
+      value = "COLLECTIONS"
+    },
+    {
+      name  = "agent.env[0].value"
+      value = "crowdsecurity/traefik"
     },
     {
       name  = "appsec.enabled"
