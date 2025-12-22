@@ -32,13 +32,19 @@ resource "kubectl_manifest" "opnsense_kubevirt_vm" {
                 #   disk = {
                 #     bus = "virtio"
                 #   }
-                #   name      = "datavolumedisk1"
+                #   name = "install-image"
+                # },
+                # {
+                #   cdrom = {
+                #     bus = "sata"
+                #   }
+                #   name = "config-xml"
                 # },
                 {
                   disk = {
                     bus = "virtio"
                   }
-                  name = "datavolumedisk2"
+                  name = "os-disk"
                 },
               ]
 
@@ -85,16 +91,22 @@ resource "kubectl_manifest" "opnsense_kubevirt_vm" {
 
           volumes = [
             # {
-            #   persistentVolumeClaim = {
-            #     claimName = null_resource.image_upload.triggers.image_upload_name
+            #   dataVolume = {
+            #     name = null_resource.image_upload.triggers.image_upload_name
             #   }
-            #   name = "datavolumedisk1"
+            #   name = "install-image"
+            # },
+            # {
+            #   dataVolume = {
+            #     name = null_resource.config_xml.triggers.image_upload_name
+            #   }
+            #   name = "config-xml"
             # },
             {
               persistentVolumeClaim = {
                 claimName = kubernetes_persistent_volume_claim.opnsense.metadata[0].name
               }
-              name = "datavolumedisk2"
+              name = "os-disk"
             },
           ]
         }
