@@ -3,6 +3,10 @@ terraform {
     secret_suffix = "opnsense"
     config_path   = "../cluster.yml"
     namespace     = "tf-state"
+
+    labels = {
+      "velero.io/exclude-from-backup" = "true"
+    }
   }
 
   required_providers {
@@ -29,5 +33,9 @@ provider "kubectl" {
 resource "kubernetes_namespace" "opnsense" {
   metadata {
     name = "opnsense"
+
+    labels = {
+      "velero.io/exclude-from-backup" = "true"
+    }
   }
 }

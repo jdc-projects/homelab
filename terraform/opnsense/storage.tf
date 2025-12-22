@@ -6,11 +6,11 @@ resource "kubernetes_persistent_volume_claim" "opnsense" {
 
   spec {
     access_modes       = ["ReadWriteOnce"]
-    storage_class_name = "openebs-zfs-localpv-general"
+    storage_class_name = "openebs-zfs-localpv-general-no-backup"
 
     resources {
       requests = {
-        storage = "30Gi"
+        storage = "16Gi"
       }
     }
   }
