@@ -26,7 +26,36 @@ resource "helm_release" "crowdsec" {
               enabled: true
               token: "$${REGISTRATION_TOKEN}" # /!\ Do not modify this variable (auto-generated and handled by the chart)
               allowed_ranges:
-                - "10.0.0.8/8"
+                - "10.0.0.0/8"
+      EOF
+    },
+
+    {
+      name  = "config.parsers.s00-raw.custom-cri-logs\\.yaml"
+      # we have to set the filter to true to force it always to be used - some sort of mismatch between what k3s logging sets and what crowdsec expects
+      # it should be safe, since all logs should be in this format, and we're only expecting to get logs from Traefik anyway
+      # from: https://app.crowdsec.net/hub/author/crowdsecurity/log-parsers/cri-logs
+      # check for updates occasionally
+      value = <<-EOF
+        filter: true
+        onsuccess: next_stage
+        name: crowdsecurity/cri-logs
+        description: CRI logging format parser
+        nodes:
+          - grok:
+              pattern: "^%%{TIMESTAMP_ISO8601:cri_timestamp} %%{WORD:stream} %%{WORD:logtag} %%{GREEDYDATA:message}"
+              apply_on: Line.Raw
+        statics:
+          - parsed: "logsource"
+            value: "cri"
+          - target: evt.StrTime
+            expression: evt.Parsed.cri_timestamp
+          - parsed: program
+            expression: evt.Line.Labels.program
+          - meta: datasource_path
+            expression: evt.Line.Src
+          - meta: datasource_type
+            expression: evt.Line.Module
       EOF
     },
     {
@@ -68,6 +97,10 @@ resource "helm_release" "crowdsec" {
     {
       name  = "agent.acquisition[0].program"
       value = "traefik"
+    },
+    {
+      name  = "agent.acquisition[0].poll_without_inotify"
+      value = "true"
     },
     {
       name  = "agent.env[0].name"
@@ -137,7 +170,7 @@ resource "helm_release" "crowdsec" {
     {
       name  = "lapi.persistentVolume.config.existingClaim"
       value = kubernetes_persistent_volume_claim.crowdsec["lapi-config"].metadata[0].name
-    }
+    },
   ]
 
   set_sensitive = [

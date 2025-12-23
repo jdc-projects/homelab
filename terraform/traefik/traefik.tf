@@ -18,7 +18,15 @@ resource "helm_release" "traefik" {
   set = [
     {
       name  = "logs.general.level"
-      value = "DEBUG"
+      value = "INFO"
+    },
+    {
+      name  = "logs.access.enabled"
+      value = "true"
+    },
+    {
+      name  = "logs.access.format"
+      value = "json"
     },
     {
       name  = "deployment.kind"
