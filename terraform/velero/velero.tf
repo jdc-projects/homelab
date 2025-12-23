@@ -187,7 +187,7 @@ resource "helm_release" "velero" {
     },
     {
       name  = "configuration.defaultRepoMaintainFrequency"
-      value = "24h"
+      value = "8h"
     },
     {
       name  = "credentials.existingSecret"
