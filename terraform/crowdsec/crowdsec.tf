@@ -29,7 +29,6 @@ resource "helm_release" "crowdsec" {
                 - "10.0.0.0/8"
       EOF
     },
-
     {
       name  = "config.parsers.s00-raw.custom-cri-logs\\.yaml"
       # we have to set the filter to true to force it always to be used - some sort of mismatch between what k3s logging sets and what crowdsec expects
