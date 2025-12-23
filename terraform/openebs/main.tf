@@ -3,10 +3,6 @@ terraform {
     secret_suffix = "openebs"
     config_path   = "../cluster.yml"
     namespace     = "tf-state"
-
-    labels = {
-      "velero.io/exclude-from-backup" = "true"
-    }
   }
 
   required_providers {
