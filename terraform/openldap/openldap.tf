@@ -66,7 +66,9 @@ resource "kubernetes_deployment" "openldap" {
         }
 
         container {
-          image = "bitnami/openldap:2.6.9-debian-12-r0" # ***** BITNAMI
+          # this isn't yet a very popular project, so need to keep an eye on it
+          # there aren't any good *and* popular OpenLDAP images left though as far as I can see...
+          image = "ghcr.io/open-bitnami/containers/openldap:2.6.10"
           name  = "openldap"
 
           env_from {

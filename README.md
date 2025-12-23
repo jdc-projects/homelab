@@ -52,5 +52,3 @@ This system requires that some setup is completed on the first:
 
 1. Provision K3s server (see `k3s` directory)
 2. Run DR pipeline
-
-***** Bitnami have broken everything :sad: *****
