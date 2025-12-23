@@ -13,7 +13,6 @@ resource "kubernetes_manifest" "velero_restore" {
       scheduleName            = data.terraform_remote_state.velero.outputs.nightly_backup_name
       itemOperationTimeout    = "23h"
       includeClusterResources = true
-      existingResourcePolicy  = "update"
     }
   }
 
