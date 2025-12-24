@@ -52,6 +52,9 @@ resource "helm_release" "keycloak" {
   values = [
     yamlencode({
       args = ["start"]
+      http = {
+        relativePath = "/"
+      }
     })
   ]
 
