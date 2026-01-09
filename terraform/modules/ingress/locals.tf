@@ -14,7 +14,7 @@ locals {
     var.do_enable_crowdsec_bouncer && var.do_enable_crowdsec_bouncer_appsec ? [{
       name      = "crowdsec-bouncer"
       namespace = data.terraform_remote_state.traefik.outputs.traefik_namespace
-    }] : var.do_enable_crowdsec_bouncer && !var.do_enable_crowdsec_bouncer_appsec ? [{
+      }] : var.do_enable_crowdsec_bouncer && !var.do_enable_crowdsec_bouncer_appsec ? [{
       name      = "crowdsec-bouncer-without-appsec"
       namespace = data.terraform_remote_state.traefik.outputs.traefik_namespace
     }] : [], # *****
