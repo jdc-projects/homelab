@@ -223,6 +223,7 @@ jobs:
           outline,
           services,
           13ft,
+          n8n,
         ]
 
     with:
