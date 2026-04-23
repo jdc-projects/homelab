@@ -40,5 +40,5 @@ resource "kubernetes_namespace" "github_org_runners" {
 
 locals {
   arc_version    = "0.14.0"
-  runner_version = "2.333.1"
+  runner_version = "2.334.0"
 }
