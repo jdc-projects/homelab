@@ -319,4 +319,6 @@ module "ocis_ingress" {
 
   existing_service_name      = "proxy"
   existing_service_namespace = helm_release.ocis.namespace
+
+  do_enable_crowdsec_bouncer_appsec = false
 }
