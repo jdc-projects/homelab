@@ -11,6 +11,10 @@ on:
       do-hibernate:
         required: true
         type: boolean
+    outputs:
+      attempted:
+        description: "True if at least one hibernate/restart matrix leg actually executed"
+        value: ${{ jobs.report-hibernation-status.outputs.attempted }}
 
 env:
   CLIENT_CERT_DATA: ${{ secrets.KUBE_CLIENT_CERT_DATA }}
@@ -161,3 +165,16 @@ jobs:
         run: kubectl -n ${{ matrix.clickhouse.namespace }} wait clickhouseinstallation ${{ matrix.clickhouse.name }} --timeout 30m --for "jsonpath={.status.status}=Completed"
 
   # ***** other stateful apps hibernate
+
+  report-hibernation-status:
+    needs: [
+      hibernate-postgres-databases,
+      hibernate-clickhouse-databases,
+    ]
+    if: always() && !cancelled() && inputs.do-hibernate
+    runs-on: ubuntu-latest
+    outputs:
+      attempted: ${{ (needs.hibernate-postgres-databases.result != 'skipped') || (needs.hibernate-clickhouse-databases.result != 'skipped') }}
+    steps:
+      - name: "Report status"
+        run: "echo done"

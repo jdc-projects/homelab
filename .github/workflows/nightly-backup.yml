@@ -132,7 +132,9 @@ jobs:
   restart-databases:
     needs: [
       start-velero-backup,
+      hibernate-databases,
     ]
+    if: always() && !cancelled() && needs.hibernate-databases.outputs.attempted == 'true'
     uses: ./.github/workflows/databases-hibernate.yml
     secrets: inherit
 
