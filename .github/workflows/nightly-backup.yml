@@ -11,6 +11,8 @@ env:
   SERVER_IP_ADDRESS: ${{ secrets.K3S_IP_ADDRESS }}
   SERVER_KUBE_PORT: ${{ vars.SERVER_KUBE_PORT }}
   SERVER_BASE_DOMAIN: ${{ vars.SERVER_BASE_DOMAIN }}
+  BACKUP_START_MAX_RETRIES: 3
+  BACKUP_START_RETRY_DELAY: 30
 
 jobs:
   check-server-up:
@@ -60,7 +62,7 @@ jobs:
           tar -xvf velero.tar.gz -C ./velero --strip-components=1
           sudo cp ./velero/velero /usr/local/bin/velero
       - name: "Start backup"
-        run: velero create backup --from-schedule nightly
+        run: retry --times="$BACKUP_START_MAX_RETRIES" --delay="$BACKUP_START_RETRY_DELAY" -- velero create backup --from-schedule nightly
       - name: "Wait for snapshots"
         run: |
           velero get backups -o yaml > backups.yml
