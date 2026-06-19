@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - name: "Repo checkout"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: "Add cluster CA certificate"
         run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
       - name: "Generate and install kubeconfig"
@@ -50,7 +50,7 @@ jobs:
           mkdir ~/.kube
           cp cluster.yml ~/.kube/config
       - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v4
+        uses: azure/setup-kubectl@v5
         with:
           version: 'v1.33.6'
       - name: "Install Velero CLI"
@@ -78,7 +78,7 @@ jobs:
 
     steps:
       - name: "Repo checkout"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: "Add cluster CA certificate"
         run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
       - name: "Generate and install kubeconfig"
@@ -88,7 +88,7 @@ jobs:
           mkdir ~/.kube
           cp cluster.yml ~/.kube/config
       - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v4
+        uses: azure/setup-kubectl@v5
         with:
           version: 'v1.33.6'
       - name: "Install Velero CLI"

@@ -74,21 +74,21 @@ jobs:
 
     steps:
       - name: "Repo checkout"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: "Add cluster CA certificate"
         run: "echo $CLUSTER_CA_CERT_DATA > cluster.cert.pem && sudo mkdir /usr/local/share/ca-certificates/extra && sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt && sudo update-ca-certificates"
       - name: "Setup kubectl"
         if: inputs.needs-kubectl
-        uses: azure/setup-kubectl@v4
+        uses: azure/setup-kubectl@v5
         with:
           version: 'v1.33.6'
       - name: "Setup Helm"
         if: inputs.needs-helm
-        uses: azure/setup-helm@v4
+        uses: azure/setup-helm@v5
         with:
            version: 'v3.16.1'
       - name: "Terraform setup"
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v4
         with:
           terraform_version: 1.9.5
       - name: "Generate kubeconfig"
@@ -99,7 +99,7 @@ jobs:
           cp cluster.yml ~/.kube/config
       - name: "Connect to Tailnet"
         if: "${{ ('self-hosted' != inputs.runner-type) }}"
-        uses: tailscale/github-action@v3
+        uses: tailscale/github-action@v4
         with:
           version: '1.74.0'
           oauth-client-id: ${{ secrets.TAILSCALE_CLIENT_ID }}

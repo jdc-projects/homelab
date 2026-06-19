@@ -24,7 +24,7 @@ jobs:
 
     with:
       manifest-file: ./terraform/tf-state-namespace.yml
-      runner-type: ${{ github.event.inputs.runner-type }}
+      runner-type: ${{ inputs.runner-type }}
 
   deploy-github-org-runner:
     needs: [
@@ -35,7 +35,7 @@ jobs:
 
     with:
       terraform-dir: ./terraform/github-org-runners
-      runner-type: ${{ github.event.inputs.runner-type }}
+      runner-type: ${{ inputs.runner-type }}
 
   deploy-openebs:
     needs: [
