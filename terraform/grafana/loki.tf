@@ -70,6 +70,7 @@ resource "helm_release" "loki" {
       name  = "gateway.affinity"
       value = ""
     },
+    # NOTE: bundled minio subchart is unmaintained (charts.min.io frozen); see terraform/UPGRADE_NOTES.md
     {
       name  = "minio.enabled"
       value = "true"
