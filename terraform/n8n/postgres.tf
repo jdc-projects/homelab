@@ -21,7 +21,7 @@ resource "kubernetes_manifest" "n8n_db" {
     }
 
     spec = {
-      imageName = "ghcr.io/cloudnative-pg/postgresql:16.11-standard-trixie"
+      imageName = "ghcr.io/cloudnative-pg/postgresql:16.14-standard-trixie"
 
       instances = local.n8n_db_instances
 
