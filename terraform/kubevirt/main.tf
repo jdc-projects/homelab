@@ -8,12 +8,12 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "2.38.0"
+      version = "3.2.0"
     }
 
     keycloak = {
       source  = "keycloak/keycloak"
-      version = "5.5.0"
+      version = "5.8.0"
     }
 
     ssh = {
@@ -34,11 +34,6 @@ provider "keycloak" {
   password      = ""
   url           = ""
   initial_login = false
-}
-
-locals {
-  kubevirt_version = "v1.4.0"
-  cdi_version      = "v1.61.0"
 }
 
 data "kubernetes_namespace" "kubevirt" {
