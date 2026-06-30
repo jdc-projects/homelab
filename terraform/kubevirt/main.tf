@@ -8,17 +8,17 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "3.2.0"
+      version = "~> 3.0"
     }
 
     keycloak = {
       source  = "keycloak/keycloak"
-      version = "5.8.0"
+      version = "~> 5.0"
     }
 
     ssh = {
       source  = "loafoe/ssh"
-      version = "2.7.0"
+      version = "~> 2.0"
     }
   }
 }
