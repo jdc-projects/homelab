@@ -28,7 +28,7 @@ resource "kubernetes_deployment" "whoami" {
 
       spec {
         container {
-          image = "traefik/whoami:v1.10"
+          image = "traefik/whoami:v1.11.0"
           name  = "whoami"
 
           resources {
