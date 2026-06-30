@@ -17,15 +17,15 @@ resource "helm_release" "traefik" {
 
   set = [
     {
-      name  = "logs.general.level"
+      name  = "log.level"
       value = "INFO"
     },
     {
-      name  = "logs.access.enabled"
+      name  = "accessLog.enabled"
       value = "true"
     },
     {
-      name  = "logs.access.format"
+      name  = "accessLog.format"
       value = "json"
     },
     {
@@ -145,15 +145,15 @@ resource "helm_release" "traefik" {
       value = 80
     },
     {
-      name  = "ports.web.redirections.entryPoint.to"
+      name  = "ports.web.http.redirections.entryPoint.to"
       value = "websecure"
     },
     {
-      name  = "ports.web.redirections.entryPoint.scheme"
+      name  = "ports.web.http.redirections.entryPoint.scheme"
       value = "https"
     },
     {
-      name  = "ports.web.redirections.entryPoint.permanent"
+      name  = "ports.web.http.redirections.entryPoint.permanent"
       value = "true"
     },
     {
