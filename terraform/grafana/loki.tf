@@ -70,7 +70,12 @@ resource "helm_release" "loki" {
       name  = "gateway.affinity"
       value = ""
     },
-    # NOTE: bundled minio subchart is unmaintained (charts.min.io frozen); see terraform/UPGRADE_NOTES.md
+    # The bundled minio subchart is unmaintained: minio/minio is archived (charts.min.io
+    # is frozen at a Dec-2024 image). The community-maintained Loki chart will deprecate
+    # and remove this built-in subchart (render-time guard on minio.enabled in chart 14.0.0;
+    # migration is to external object storage, or a self-hosted RustFS/Garage). Track:
+    #   https://github.com/grafana/loki/issues/19563
+    #   https://github.com/grafana-community/helm-charts/issues/366
     {
       name  = "minio.enabled"
       value = "true"

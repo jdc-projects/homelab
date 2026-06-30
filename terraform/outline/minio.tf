@@ -56,7 +56,6 @@ resource "kubernetes_job" "minio_chown" {
 resource "helm_release" "minio" {
   name = "minio"
 
-  # NOTE: charts.min.io is unmaintained (minio/minio archived); see terraform/UPGRADE_NOTES.md
   repository = "https://charts.min.io/"
   chart      = "minio"
   version    = "5.4.0"
