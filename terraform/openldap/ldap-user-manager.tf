@@ -65,7 +65,7 @@ resource "kubernetes_deployment" "ldap_user_manager" {
 
       spec {
         container {
-          image = "wheelybird/ldap-user-manager:v2.1.1"
+          image = "wheelybird/luminary:v2.1.1"
           name  = "ldap-user-manager"
 
           env_from {
