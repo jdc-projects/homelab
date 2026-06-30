@@ -10,7 +10,7 @@ resource "helm_release" "crowdsec" {
 
   repository = "https://crowdsecurity.github.io/helm-charts"
   chart      = "crowdsec"
-  version    = "0.21.1"
+  version    = "0.24.0"
 
   namespace = kubernetes_namespace.crowdsec.metadata[0].name
 

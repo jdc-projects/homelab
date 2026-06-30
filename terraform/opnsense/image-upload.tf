@@ -1,7 +1,7 @@
 # the PVC download method doesn't work, so we have to use the CLI to upload the OPNsense image
 resource "null_resource" "image_upload" {
   triggers = {
-    opnsense_version  = "25.7"
+    opnsense_version  = "26.1"
     image_size        = "5Gi"
     image_upload_name = "opnsense-install-image"
     image_namespace   = kubernetes_namespace.opnsense.metadata[0].name

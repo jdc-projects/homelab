@@ -15,7 +15,7 @@ resource "kubernetes_job" "minio_chown" {
 
       spec {
         container {
-          image = "alpine:3.22.2"
+          image = "alpine:3.24.1"
           name  = "minio-chown"
 
           command = ["sh", "-c", "chown -R 1000:1000 /export"]

@@ -67,7 +67,7 @@ resource "kubernetes_deployment" "vaultwarden_deployment" {
 
       spec {
         container {
-          image = "vaultwarden/server:1.34.3-alpine"
+          image = "vaultwarden/server:1.36.0-alpine"
           name  = "vaultwarden"
 
           env_from {

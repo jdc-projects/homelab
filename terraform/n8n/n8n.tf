@@ -85,7 +85,7 @@ resource "kubernetes_deployment" "n8n" {
 
       spec {
         init_container {
-          image = "alpine:3.22.2"
+          image = "alpine:3.24.1"
           name  = "n8n-chown"
 
           command = ["sh", "-c", "chown -R 1000:1000 /home/node/.n8n"]
@@ -101,7 +101,7 @@ resource "kubernetes_deployment" "n8n" {
         }
 
         container {
-          image = "n8nio/n8n:2.7.5"
+          image = "n8nio/n8n:2.28.3"
           name  = "n8n"
 
           env_from {

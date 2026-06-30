@@ -13,7 +13,7 @@ resource "helm_release" "keycloak" {
 
   repository = "https://codecentric.github.io/helm-charts"
   chart      = "keycloakx"
-  version    = "7.1.5"
+  version    = "7.2.0"
 
   timeout = 300
 

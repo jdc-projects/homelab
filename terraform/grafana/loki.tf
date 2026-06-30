@@ -3,7 +3,7 @@ resource "helm_release" "loki" {
 
   repository = "https://grafana.github.io/helm-charts"
   chart      = "loki"
-  version    = "6.46.0"
+  version    = "7.0.0"
 
   namespace = kubernetes_namespace.loki.metadata[0].name
 
@@ -70,6 +70,12 @@ resource "helm_release" "loki" {
       name  = "gateway.affinity"
       value = ""
     },
+    # The bundled minio subchart is unmaintained: minio/minio is archived (charts.min.io
+    # is frozen at a Dec-2024 image). The community-maintained Loki chart will deprecate
+    # and remove this built-in subchart (render-time guard on minio.enabled in chart 14.0.0;
+    # migration is to external object storage, or a self-hosted RustFS/Garage). Track:
+    #   https://github.com/grafana/loki/issues/19563
+    #   https://github.com/grafana-community/helm-charts/issues/366
     {
       name  = "minio.enabled"
       value = "true"
@@ -116,7 +122,7 @@ resource "helm_release" "loki" {
     },
     {
       name  = "minio.persistence.size"
-      value = "5Gi"
+      value = "20Gi"
     },
     {
       name  = "minio.persistence.storageClass"

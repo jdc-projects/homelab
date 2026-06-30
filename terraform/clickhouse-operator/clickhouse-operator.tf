@@ -2,7 +2,7 @@
 
 resource "null_resource" "clickhouse_operator_crds" {
   triggers = {
-    version = "0.25.5"
+    version = "0.27.1"
   }
 
   provisioner "local-exec" {

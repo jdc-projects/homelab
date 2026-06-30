@@ -22,7 +22,7 @@ resource "kubernetes_manifest" "vaultwarden_db" {
 
     spec = {
       # https://github.com/cloudnative-pg/postgres-containers/pkgs/container/postgresql
-      imageName = "ghcr.io/cloudnative-pg/postgresql:16.11-standard-trixie"
+      imageName = "ghcr.io/cloudnative-pg/postgresql:16.14-standard-trixie"
 
       instances = local.vaultwarden_db_instances
 

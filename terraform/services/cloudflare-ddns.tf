@@ -52,7 +52,7 @@ resource "kubernetes_deployment" "cloudflare_ddns_deployment" {
 
       spec {
         container {
-          image = "favonia/cloudflare-ddns:1.15.1"
+          image = "favonia/cloudflare-ddns:1.16.2"
           name  = "cloudflare-ddns"
 
           env_from {

@@ -4,7 +4,7 @@ resource "helm_release" "valkey" {
 
   repository = "https://valkey.io/valkey-helm/"
   chart      = "valkey"
-  version    = "0.8.1"
+  version    = "0.10.0"
 
   timeout = 300
 }

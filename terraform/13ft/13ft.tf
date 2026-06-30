@@ -22,7 +22,7 @@ resource "kubernetes_deployment" "_13ft" {
 
       spec {
         container {
-          image = "ghcr.io/wasi-master/13ft:0.3.4"
+          image = "ghcr.io/wasi-master/13ft:0.4.0"
           name  = "13ft"
 
           resources {

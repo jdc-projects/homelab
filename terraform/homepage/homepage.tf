@@ -45,7 +45,7 @@ resource "kubernetes_deployment" "homepage" {
 
       spec {
         container {
-          image = "ghcr.io/gethomepage/homepage:v1.7.0"
+          image = "ghcr.io/gethomepage/homepage:v1.13.2"
           name  = "homepage"
 
           env_from {
