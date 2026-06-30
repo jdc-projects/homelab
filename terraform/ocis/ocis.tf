@@ -1,9 +1,11 @@
 resource "null_resource" "ocis_helm_repo_clone" {
   triggers = {
     always_run = timestamp()
-    # get commit SHA from https://github.com/owncloud/ocis-charts/commits/stable-5/
-    # this is terribly out of date, probably have to switch to main: https://github.com/owncloud/ocis-charts/commits/main/
-    # bit of a pain there aren't releases or at least a 'production-ready' branch, given main includes RC releases
+    # The owncloud/ocis-charts repo does not publish versioned releases and has no ocis 8.x branch/tag.
+    # As of the latest check, `main` is still pinned to chart appVersion 7.1.4 (same as stable-5),
+    # even though the ocis application itself is at 8.x. The chart therefore cannot be upgraded to
+    # ocis 8.x until the maintainers cut a newer chart. Pinned to a stable-5 commit SHA.
+    # Track: https://github.com/owncloud/ocis-charts/commits/main/
     commit_sha = "f0e0a22eecdae52f9bb007e91db772ff5121ca30"
   }
 
