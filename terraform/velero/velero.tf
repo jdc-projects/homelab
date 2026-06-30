@@ -22,7 +22,7 @@ resource "helm_release" "velero" {
 
   repository = "https://vmware-tanzu.github.io/helm-charts"
   chart      = "velero"
-  version    = "11.2.0"
+  version    = "12.1.0"
 
   namespace = kubernetes_namespace.velero.metadata[0].name
 
@@ -51,7 +51,7 @@ resource "helm_release" "velero" {
     },
     {
       name  = "initContainers[0].image"
-      value = "velero/velero-plugin-for-aws:v1.8.2"
+      value = "velero/velero-plugin-for-aws:v1.14.2"
     },
     {
       name  = "initContainers[0].imagePullPolicy"
@@ -71,7 +71,7 @@ resource "helm_release" "velero" {
     },
     {
       name  = "initContainers[1].image"
-      value = "quay.io/kubevirt/kubevirt-velero-plugin:v0.7.0"
+      value = "quay.io/kubevirt/kubevirt-velero-plugin:v0.9.0"
     },
     {
       name  = "initContainers[1].imagePullPolicy"
