@@ -68,6 +68,8 @@ resource "kubernetes_deployment" "openldap" {
         container {
           # this isn't yet a very popular project, so need to keep an eye on it
           # there aren't any good *and* popular OpenLDAP images left though as far as I can see...
+          # looks like the osixia image might be being revived, so maybe switch to that in the future:
+          # https://github.com/osixia/container-openldap
           image = "ghcr.io/open-bitnami/containers/openldap:2.6.10"
           name  = "openldap"
 
