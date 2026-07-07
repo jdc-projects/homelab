@@ -109,6 +109,16 @@ jobs:
     with:
       terraform-dir: ./terraform/cloudnative-pg
 
+  deploy-mariadb-operator:
+    needs: [
+      deploy-openebs,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/mariadb-operator
+
   deploy-velero:
     needs: [
       deploy-openebs,

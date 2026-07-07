@@ -96,6 +96,42 @@ jobs:
           truncate -s -1 dbs.json
           echo "databases=$(cat dbs.json)" >> "$GITHUB_OUTPUT"
 
+  get-mariadb-databases:
+    runs-on: self-hosted
+
+    outputs:
+      databases: ${{ steps.get-databases.outputs.databases}}
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v7
+      - name: "Add cluster CA certificate"
+        run: |
+          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
+          sudo mkdir /usr/local/share/ca-certificates/extra
+          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
+          sudo update-ca-certificates
+      - name: "Generate and install kubeconfig"
+        working-directory: ./terraform
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v5
+        with:
+          version: 'v1.33.6'
+      - name: "Get Databases"
+        id: "get-databases"
+        run: |
+          kubectl get mariadbs.k8s.mariadb.com -A -o yaml > clusters.yml
+          yq '.items[].metadata | pick(["name", "namespace"])' clusters.yml -o json -I 0 > dbs.json
+          sed -i '{:q;N;s/\n/, /g;t q}' dbs.json
+          sed -i 's#^#[#' dbs.json
+          sed -i 's#$#]#' dbs.json
+          truncate -s -1 dbs.json
+          echo "databases=$(cat dbs.json)" >> "$GITHUB_OUTPUT"
+
   hibernate-postgres-databases:
     needs: [
       get-postgres-databases,
@@ -180,17 +216,64 @@ jobs:
         if: ${{ !inputs.do-hibernate }}
         run: kubectl -n ${{ matrix.clickhouse.namespace }} wait clickhouseinstallation ${{ matrix.clickhouse.name }} --timeout 30m --for "jsonpath={.status.status}=Completed"
 
+  hibernate-mariadb-databases:
+    needs: [
+      get-mariadb-databases,
+    ]
+    runs-on: self-hosted
+    if: ${{ needs.get-mariadb-databases.outputs.databases != '' }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        database: ${{ fromJson(needs.get-mariadb-databases.outputs.databases) }}
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v7
+      - name: "Add cluster CA certificate"
+        run: |
+          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
+          sudo mkdir /usr/local/share/ca-certificates/extra
+          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
+          sudo update-ca-certificates
+      - name: "Generate and install kubeconfig"
+        working-directory: ./terraform
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v5
+        with:
+          version: 'v1.33.6'
+      - name: "Hibernate DB"
+        if: ${{ inputs.do-hibernate }}
+        run: |
+          kubectl -n ${{ matrix.database.namespace }} patch mariadbs.k8s.mariadb.com ${{ matrix.database.name }} --type=merge -p '{"spec":{"suspend":true}}'
+          kubectl -n ${{ matrix.database.namespace }} scale statefulset ${{ matrix.database.name }} --replicas=0
+      - name: "Wait for hibernate"
+        if: ${{ inputs.do-hibernate }}
+        run: kubectl -n ${{ matrix.database.namespace }} wait statefulset ${{ matrix.database.name }} --timeout 30m --for "jsonpath={.status.replicas}=0"
+      - name: "Restart DB"
+        if: ${{ !inputs.do-hibernate }}
+        run: kubectl -n ${{ matrix.database.namespace }} patch mariadbs.k8s.mariadb.com ${{ matrix.database.name }} --type=merge -p '{"spec":{"suspend":false}}'
+      - name: "Wait for restart"
+        if: ${{ !inputs.do-hibernate }}
+        run: kubectl -n ${{ matrix.database.namespace }} wait mariadbs.k8s.mariadb.com ${{ matrix.database.name }} --timeout 30m --for "jsonpath={.status.conditions[?(.type==\"Ready\")].status}=True"
+
   # ***** other stateful apps hibernate
 
   report-hibernation-status:
     needs: [
       hibernate-postgres-databases,
       hibernate-clickhouse-databases,
+      hibernate-mariadb-databases,
     ]
     if: always() && !cancelled() && inputs.do-hibernate
     runs-on: ubuntu-latest
     outputs:
-      attempted: ${{ (needs.hibernate-postgres-databases.result != 'skipped') || (needs.hibernate-clickhouse-databases.result != 'skipped') }}
+      attempted: ${{ (needs.hibernate-postgres-databases.result != 'skipped') || (needs.hibernate-clickhouse-databases.result != 'skipped') || (needs.hibernate-mariadb-databases.result != 'skipped') }}
     steps:
       - name: "Report status"
         run: echo "done"
