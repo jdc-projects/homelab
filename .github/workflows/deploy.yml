@@ -219,6 +219,7 @@ jobs:
   deploy-keycloak-dependants:
     needs: [
       deploy-keycloak-config,
+      deploy-mariadb-operator,
       deploy-grafana-operator, # only needed for grafana
       deploy-velero, # only needed for services
     ]
@@ -234,6 +235,7 @@ jobs:
           services,
           13ft,
           n8n,
+          erpnext,
         ]
 
     with:
