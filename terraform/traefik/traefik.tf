@@ -81,12 +81,12 @@ resource "helm_release" "traefik" {
       value = "v0.1.2"
     },
     {
-      name  = "experimental.plugins.keycloak-auth.moduleName"
-      value = "github.com/Gwojda/keycloakopenid"
+      name  = "experimental.plugins.traefik-oidc-auth.moduleName"
+      value = "github.com/sevensolutions/traefik-oidc-auth"
     },
     {
-      name  = "experimental.plugins.keycloak-auth.version"
-      value = "v0.1.35"
+      name  = "experimental.plugins.traefik-oidc-auth.version"
+      value = "v0.20.1"
     },
     {
       name  = "ingressRoute.dashboard.enabled"

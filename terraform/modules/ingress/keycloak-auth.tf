@@ -7,6 +7,13 @@ resource "random_password" "keycloak_auth_client_secret" {
   upper   = true
 }
 
+resource "random_password" "keycloak_auth_plugin_secret" {
+  count = var.do_enable_keycloak_auth ? 1 : 0
+
+  length  = 32
+  special = false
+}
+
 resource "keycloak_openid_client" "keycloak_auth" {
   count = var.do_enable_keycloak_auth ? 1 : 0
 
@@ -36,6 +43,13 @@ resource "keycloak_openid_client" "keycloak_auth" {
   login_theme = "keycloak"
 }
 
+# TokenValidation defaults to IdToken (local JWKS signature validation), deliberately
+# NOT Introspection. Keycloak 26 enforces that the introspecting client must be in the
+# access token's `aud` claim; these clients use full_scope_allowed=false with no audience
+# mapper, so introspection returns active:false and causes a redirect loop. IdToken
+# validation sidesteps this because the ID token's `aud` is always the client id.
+# If Introspection is ever needed, add a keycloak_openid_audience_protocol_mapper to
+# keycloak_openid_client.keycloak_auth first.
 resource "kubernetes_manifest" "keycloak_auth_plugin_middleware" {
   count = var.do_enable_keycloak_auth ? 1 : 0
 
@@ -50,11 +64,15 @@ resource "kubernetes_manifest" "keycloak_auth_plugin_middleware" {
 
     spec = {
       plugin = {
-        keycloak-auth = {
-          KeycloakURL   = data.terraform_remote_state.keycloak.outputs.keycloak_url
-          ClientID      = one(keycloak_openid_client.keycloak_auth[*].client_id)
-          ClientSecret  = one(keycloak_openid_client.keycloak_auth[*].client_secret)
-          KeycloakRealm = one(keycloak_openid_client.keycloak_auth[*].realm_id)
+        traefik-oidc-auth = {
+          Provider = {
+            Url          = "${data.terraform_remote_state.keycloak.outputs.keycloak_url}/realms/${one(keycloak_openid_client.keycloak_auth[*].realm_id)}"
+            ClientId     = one(keycloak_openid_client.keycloak_auth[*].client_id)
+            ClientSecret = one(keycloak_openid_client.keycloak_auth[*].client_secret)
+            UsePkce      = true
+          }
+          Scopes = ["openid", "profile", "email"]
+          Secret = one(random_password.keycloak_auth_plugin_secret[*].result)
         }
       }
     }

@@ -30,6 +30,10 @@ module "traefik_dashboard_ingress" {
   }]
 }
 
+# api and ping reuse the dashboard's keycloak-auth middleware (single client + plugin
+# Secret) so the session cookie set on /dashboard is valid for /api and /ping too.
+# Per-route middlewares would each generate their own Secret/client and the cookie
+# couldn't be decrypted cross-route, causing 401s on the dashboard's API calls.
 module "traefik_dashboard_api_ingress" {
   source = "../modules/ingress"
 
@@ -43,8 +47,12 @@ module "traefik_dashboard_api_ingress" {
 
   priority = 1000
 
-  do_enable_keycloak_auth     = true
-  is_keycloak_auth_admin_mode = true
+  do_enable_keycloak_auth = false
+
+  extra_middlewares = [{
+    name      = module.traefik_dashboard_ingress.keycloak_auth_middleware_name
+    namespace = module.traefik_dashboard_ingress.keycloak_auth_middleware_namespace
+  }]
 }
 
 module "traefik_dashboard_ping_ingress" {
@@ -60,8 +68,12 @@ module "traefik_dashboard_ping_ingress" {
 
   priority = 1000
 
-  do_enable_keycloak_auth     = true
-  is_keycloak_auth_admin_mode = true
+  do_enable_keycloak_auth = false
+
+  extra_middlewares = [{
+    name      = module.traefik_dashboard_ingress.keycloak_auth_middleware_name
+    namespace = module.traefik_dashboard_ingress.keycloak_auth_middleware_namespace
+  }]
 }
 
 resource "kubernetes_manifest" "traefik_dashboard_add_prefix_middleware" {
