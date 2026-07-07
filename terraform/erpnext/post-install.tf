@@ -103,9 +103,29 @@ resource "kubernetes_config_map" "configure_erpnext_script" {
               print("Company already exists, skipping setup")
 
           # --- Block unnecessary modules ---
-          # Block Module is a child table of Module Profile — we create a
-          # Module Profile with the blocked modules and assign it to all
-          # users via the OIDC group_module_mappings.
+          # Three mechanisms are needed because Frappe's desk sidebar is built
+          # from multiple data sources, each with its own filtering:
+          #
+          # 1. Module Profile "Default" — blocks modules in get_workspaces()
+          #    (filters by module NOT IN blocked_modules at the DB query level).
+          #    Only works for non-Workspace-Manager users.
+          #
+          # 2. Workspace Sidebar items cleared — the desk sidebar is built from
+          #    workspace_sidebar_item in the boot data (get_sidebar_items()).
+          #    This is populated from Workspace Sidebar records, NOT from
+          #    get_workspaces(). If a Workspace Sidebar has items, it survives
+          #    the filter at boot.py:490 and appears in the sidebar. We clear
+          #    items on existing records and create empty ones for modules
+          #    that don't have a record (to prevent auto-generation by
+          #    auto_generate_sidebar_from_module()).
+          #
+          # 3. Dashboards deleted — Dashboard records appear in the desk
+          #    sidebar separately from Workspaces. The Dashboard doctype has
+          #    no is_hidden field, so deletion is the only option.
+          #
+          # Workspace Manager role is NOT included in manager_roles because it
+          # bypasses module filtering in get_workspaces() (desktop.py sets
+          # filters=[] when the user has Workspace Manager).
           blocked_modules = [
               "Stock",
               "Manufacturing",
@@ -123,6 +143,7 @@ resource "kubernetes_config_map" "configure_erpnext_script" {
               "Utilities",
           ]
 
+          # 1. Module Profile (for non-Workspace-Manager users)
           mp_name = "Default"
           existing_mp = frappe.db.exists("Module Profile", mp_name)
           if existing_mp:
@@ -140,8 +161,61 @@ resource "kubernetes_config_map" "configure_erpnext_script" {
           else:
               mp.insert(ignore_permissions=True)
 
+          # 2. Clear Workspace Sidebar items for blocked modules.
+          # If a Workspace Sidebar already exists, clear its items. If not,
+          # create one with empty items to prevent auto-generation.
+          # Checks by both name AND module field — the Workspace Sidebar name
+          # may differ from the Module Def name (e.g. name="Quality" but
+          # module="Quality Management").
+          for module in blocked_modules:
+              # Collect all Workspace Sidebar names to check/clear
+              ws_names = set()
+              by_name = frappe.db.get_value("Workspace Sidebar", {"name": module, "for_user": None}, "name")
+              if by_name:
+                  ws_names.add(by_name)
+              for ws_name in frappe.get_all("Workspace Sidebar", filters={"module": module, "for_user": None}, pluck="name"):
+                  ws_names.add(ws_name)
+
+              if ws_names:
+                  for ws_name in ws_names:
+                      ws = frappe.get_doc("Workspace Sidebar", ws_name)
+                      ws.items = []
+                      ws.save(ignore_permissions=True)
+              else:
+                  ws = frappe.new_doc("Workspace Sidebar")
+                  ws.title = module
+                  ws.module = module
+                  ws.items = []
+                  ws.insert(ignore_permissions=True)
+
+          # 3. Delete Dashboards for blocked modules
+          for module in blocked_modules:
+              frappe.db.delete("Dashboard", {"module": module})
+
+          # 4. Set Desktop Icon hidden flags explicitly.
+          # The desk sidebar uses Desktop Icon records for top-level visibility.
+          # The `hidden` flag is checked client-side by the desk JavaScript.
+          # We set hidden=1 for blocked modules and hidden=0 for visible modules.
+          # Only touches icons with link_type="Workspace Sidebar" (module-level
+          # icons). Parent folder icons (Framework, Accounting, ERPNext, Home,
+          # My Workspaces) are left as-is — their hidden flag controls the
+          # sidebar hierarchy structure, not module visibility.
+          blocked_lower = {m.lower() for m in blocked_modules}
+
+          # Build a map of Workspace Sidebar name -> module for looking up
+          # which module a Desktop Icon belongs to
+          ws_module_map = {}
+          for ws in frappe.get_all("Workspace Sidebar", fields=["name", "module"]):
+              ws_module_map[ws.name.lower()] = ws.module or ""
+
+          for icon in frappe.get_all("Desktop Icon", filters={"link_type": "Workspace Sidebar"}, fields=["name", "label"]):
+              label_lower = (icon.label or "").lower()
+              ws_module = ws_module_map.get(label_lower, "")
+              should_hide = label_lower in blocked_lower or ws_module in blocked_modules
+              frappe.db.set_value("Desktop Icon", icon.name, "hidden", 1 if should_hide else 0, update_modified=False)
+
           frappe.db.commit()
-          print(f"Module Profile '{mp_name}' created with {len(blocked_modules)} blocked modules")
+          print(f"Blocked {len(blocked_modules)} modules (Module Profile + Workspace Sidebar + Dashboards + Desktop Icons)")
 
           # --- Create Role Profiles ---
           # System Manager alone is NOT a superuser in Frappe — many doctypes
@@ -179,7 +253,6 @@ resource "kubernetes_config_map" "configure_erpnext_script" {
               "Dashboard Manager",
               "Report Manager",
               "Script Manager",
-              "Workspace Manager",
           ]
 
           role_profiles = {
