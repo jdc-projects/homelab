@@ -5,22 +5,37 @@ resource "kubernetes_config_map" "configure_erpnext_script" {
   }
 
   data = {
-    "configure_erpnext.py" = <<-EOT
+    "configure_erpnext.py" = <<-EOF
       import frappe
       import os
+      import json
 
-      def install_presets():
-          country = "United Kingdom"
-          from erpnext.setup.setup_wizard.operations import install_fixtures
-          from frappe.desk.page.setup_wizard.setup_wizard import make_records
+      BLOCKED_MODULES = ${jsonencode(local.blocked_modules)}
 
-          try:
-              install_fixtures.install(country)
-          except Exception as e:
-              print("Warning: install_fixtures.install() failed: " + str(e))
-              print("Creating preset records manually (skipping supplier scorecard)...")
-              records = install_fixtures.get_preset_records(country)
-              make_records(records)
+
+      def upsert_doc(doctype, name, name_field="name", data=None, child_tables=None):
+          """Create or update a document by name."""
+          existing = frappe.db.exists(doctype, name)
+          if existing:
+              doc = frappe.get_doc(doctype, existing)
+              print(f"Updating {doctype}: {name}")
+          else:
+              doc = frappe.new_doc(doctype)
+              doc.set(name_field, name)
+              print(f"Creating {doctype}: {name}")
+          if data:
+              doc.update(data)
+          if child_tables:
+              for fieldname, items in child_tables.items():
+                  doc.set(fieldname, [])
+                  for item in items:
+                      doc.append(fieldname, item)
+          if existing:
+              doc.save(ignore_permissions=True)
+          else:
+              doc.insert(ignore_permissions=True)
+          return doc
+
 
       def clear_stale_locks():
           import glob
@@ -30,283 +45,116 @@ resource "kubernetes_config_map" "configure_erpnext_script" {
                   os.remove(lock_file)
                   print("Removed stale lock: " + os.path.basename(lock_file))
 
-      def configure():
-          company_name = "JDC Projects"
 
-          # Clear stale file locks from previous failed attempts.
-          # Frappe's queue_action() creates file locks on the PVC that persist
-          # across pod restarts. If a previous attempt failed after locking a
-          # document, the lock prevents retries with DocumentLockedError.
-          clear_stale_locks()
-
-          # --- Company setup ---
-          # We create the company manually instead of using ERPNext's setup_complete()
-          # because setup_complete() calls stage_fixtures() which imports
-          # frappe.core.doctype.supplier_scorecard_variable — a doctype removed
-          # from Frappe core. This is a bug in ERPNext v16.26.2 (latest v16 as of
-          # Jul 2026). See recent refactoring activity:
-          # https://github.com/frappe/erpnext/pull/55168
-          # https://github.com/frappe/erpnext/issues?q=supplier_scorecard_variable
-          #
-          # When this is fixed, replace this manual company creation with:
-          #   from erpnext.setup.setup_wizard.setup_wizard import setup_complete
-          #   setup_complete({
-          #       "company_name": company_name,
-          #       "country": "United Kingdom",
-          #       "currency": "GBP",
-          #       "fiscal_year_start_date": "2026-04-06",
-          #       "language": "en-GB",
-          #   })
-          if not frappe.db.exists("Company", company_name):
-              # Install preset fixtures (Warehouse Types, Item Groups, etc.)
-              # before creating the Company. Only runs on first setup, not on
-              # retries — avoids NestedSet errors from re-inserting existing
-              # records with stale NSM left/right values.
-              install_presets()
-
-              print("Creating company: " + company_name)
-              company = frappe.get_doc({
-                  "doctype": "Company",
-                  "company_name": company_name,
-                  "abbr": "JDC",
-                  "country": "United Kingdom",
-                  "default_currency": "GBP",
-                  "create_chart_of_accounts_based_on": "Standard Template",
-                  "chart_of_accounts": "Standard",
-                  "enable_perpetual_inventory": 1,
-              })
-              company.insert(ignore_permissions=True)
-
-              # Create fiscal year (UK tax year: April 6 - April 5)
-              # Compute the current UK tax year from today's date.
-              # If before April 6, the tax year started the previous year.
-              from datetime import date
-              today = date.today()
-              if today.month < 4 or (today.month == 4 and today.day < 6):
-                  fy_start_year = today.year - 1
-              else:
-                  fy_start_year = today.year
-
-              fy = frappe.get_doc({
-                  "doctype": "Fiscal Year",
-                  "year": f"{fy_start_year}-{fy_start_year + 1}",
-                  "year_start_date": f"{fy_start_year}-04-06",
-                  "year_end_date": f"{fy_start_year + 1}-04-05",
-              })
-              fy.insert(ignore_permissions=True)
-
-              # Mark setup as complete to skip the wizard
-              frappe.db.set_single_value("System Settings", "setup_complete", 1)
-              frappe.db.commit()
-              print("Company setup complete")
-          else:
+      def run_setup_complete():
+          if frappe.db.exists("Company", "${var.company_name}"):
               print("Company already exists, skipping setup")
+              return
 
-          # --- Block unnecessary modules ---
-          # Three mechanisms are needed because Frappe's desk sidebar is built
-          # from multiple data sources, each with its own filtering:
-          #
-          # 1. Module Profile "Default" — blocks modules in get_workspaces()
-          #    (filters by module NOT IN blocked_modules at the DB query level).
-          #    Only works for non-Workspace-Manager users.
-          #
-          # 2. Workspace Sidebar items cleared — the desk sidebar is built from
-          #    workspace_sidebar_item in the boot data (get_sidebar_items()).
-          #    This is populated from Workspace Sidebar records, NOT from
-          #    get_workspaces(). If a Workspace Sidebar has items, it survives
-          #    the filter at boot.py:490 and appears in the sidebar. We clear
-          #    items on existing records and create empty ones for modules
-          #    that don't have a record (to prevent auto-generation by
-          #    auto_generate_sidebar_from_module()).
-          #
-          # 3. Dashboards deleted — Dashboard records appear in the desk
-          #    sidebar separately from Workspaces. The Dashboard doctype has
-          #    no is_hidden field, so deletion is the only option.
-          #
-          # Workspace Manager role is NOT included in manager_roles because it
-          # bypasses module filtering in get_workspaces() (desktop.py sets
-          # filters=[] when the user has Workspace Manager).
-          blocked_modules = [
-              "Stock",
-              "Manufacturing",
-              "Subcontracting",
-              "Quality Management",
-              "EDI",
-              "Telephony",
-              "ERPNext Integrations",
-              "Regional",
-              "Geo",
-              "Maintenance",
-              "Portal",
-              "Bulk Transaction",
-              "Website",
-              "Utilities",
-          ]
-
-          # 1. Module Profile (for non-Workspace-Manager users)
-          mp_name = "Default"
-          existing_mp = frappe.db.exists("Module Profile", mp_name)
-          if existing_mp:
-              mp = frappe.get_doc("Module Profile", existing_mp)
+          from datetime import date
+          today = date.today()
+          if today.month < 4 or (today.month == 4 and today.day < 6):
+              fy_start_year = today.year - 1
           else:
-              mp = frappe.new_doc("Module Profile")
-              mp.module_profile_name = mp_name
+              fy_start_year = today.year
 
-          mp.block_modules = []
-          for module in blocked_modules:
-              mp.append("block_modules", {"module": module})
+          from erpnext.setup.setup_wizard.setup_wizard import setup_complete
+          setup_complete(frappe._dict({
+              "company_name": "${var.company_name}",
+              "company_abbr": "${var.company_abbr}",
+              "country": "${var.country}",
+              "currency": "${var.currency}",
+              "fy_start_date": f"{fy_start_year}-04-06",
+              "fy_end_date": f"{fy_start_year + 1}-04-05",
+              "chart_of_accounts": "Standard",
+              "language": "en-GB",
+          }))
+          print("Setup complete finished")
 
-          if existing_mp:
-              mp.save(ignore_permissions=True)
-          else:
-              mp.insert(ignore_permissions=True)
 
-          # 2. Clear Workspace Sidebar items for blocked modules.
-          # If a Workspace Sidebar already exists, clear its items. If not,
-          # create one with empty items to prevent auto-generation.
-          # Checks by both name AND module field — the Workspace Sidebar name
-          # may differ from the Module Def name (e.g. name="Quality" but
-          # module="Quality Management").
-          for module in blocked_modules:
-              # Collect all Workspace Sidebar names to check/clear
-              ws_names = set()
-              by_name = frappe.db.get_value("Workspace Sidebar", {"name": module, "for_user": None}, "name")
-              if by_name:
-                  ws_names.add(by_name)
-              for ws_name in frappe.get_all("Workspace Sidebar", filters={"module": module, "for_user": None}, pluck="name"):
-                  ws_names.add(ws_name)
+      def mark_setup_complete():
+          for app in frappe.get_all("Installed Application", pluck="name"):
+              frappe.db.set_value("Installed Application", app, "is_setup_complete", 1)
+          frappe.db.set_default("desktop:home_page", "home")
+          frappe.db.set_single_value("System Settings", "setup_complete", 1)
+          frappe.db.set_single_value("System Settings", "enable_scheduler", 1)
+          frappe.db.commit()
+          print("Installed apps marked as setup complete")
 
-              if ws_names:
-                  for ws_name in ws_names:
-                      ws = frappe.get_doc("Workspace Sidebar", ws_name)
-                      ws.items = []
-                      ws.save(ignore_permissions=True)
-              else:
-                  ws = frappe.new_doc("Workspace Sidebar")
-                  ws.title = module
-                  ws.module = module
+
+      def _clear_workspace_sidebar(module):
+          """Clear items on Workspace Sidebar records for a module (by name AND module field)."""
+          ws_names = set()
+          by_name = frappe.db.get_value("Workspace Sidebar", {"name": module, "for_user": None}, "name")
+          if by_name:
+              ws_names.add(by_name)
+          for ws_name in frappe.get_all("Workspace Sidebar", filters={"module": module, "for_user": None}, pluck="name"):
+              ws_names.add(ws_name)
+          if ws_names:
+              for ws_name in ws_names:
+                  ws = frappe.get_doc("Workspace Sidebar", ws_name)
                   ws.items = []
-                  ws.insert(ignore_permissions=True)
+                  ws.save(ignore_permissions=True)
+          else:
+              ws = frappe.new_doc("Workspace Sidebar")
+              ws.title = module
+              ws.module = module
+              ws.items = []
+              ws.insert(ignore_permissions=True)
 
-          # 3. Delete Dashboards for blocked modules
-          for module in blocked_modules:
+
+      def block_modules():
+          # 1. Module Profile — blocks modules in get_workspaces() DB query filter
+          upsert_doc("Module Profile", "Default", name_field="module_profile_name",
+              child_tables={"block_modules": [{"module": m} for m in BLOCKED_MODULES]})
+
+          # 2. Workspace Sidebar — clear items so they're filtered from the desk sidebar
+          for module in BLOCKED_MODULES:
+              _clear_workspace_sidebar(module)
+
+          # 3. Dashboards — no is_hidden field, deletion is the only option
+          for module in BLOCKED_MODULES:
               frappe.db.delete("Dashboard", {"module": module})
 
-          # 4. Set Desktop Icon hidden flags explicitly.
-          # The desk sidebar uses Desktop Icon records for top-level visibility.
-          # The `hidden` flag is checked client-side by the desk JavaScript.
-          # We set hidden=1 for blocked modules and hidden=0 for visible modules.
-          # Only touches icons with link_type="Workspace Sidebar" (module-level
-          # icons). Parent folder icons (Framework, Accounting, ERPNext, Home,
-          # My Workspaces) are left as-is — their hidden flag controls the
-          # sidebar hierarchy structure, not module visibility.
-          blocked_lower = {m.lower() for m in blocked_modules}
-
-          # Build a map of Workspace Sidebar name -> module for looking up
-          # which module a Desktop Icon belongs to
-          ws_module_map = {}
-          for ws in frappe.get_all("Workspace Sidebar", fields=["name", "module"]):
-              ws_module_map[ws.name.lower()] = ws.module or ""
-
+          # 4. Desktop Icons — set hidden flag (client-side visibility filter)
+          blocked_lower = {m.lower() for m in BLOCKED_MODULES}
+          ws_module_map = {ws.name.lower(): ws.module or "" for ws in frappe.get_all("Workspace Sidebar", fields=["name", "module"])}
           for icon in frappe.get_all("Desktop Icon", filters={"link_type": "Workspace Sidebar"}, fields=["name", "label"]):
               label_lower = (icon.label or "").lower()
               ws_module = ws_module_map.get(label_lower, "")
-              should_hide = label_lower in blocked_lower or ws_module in blocked_modules
+              should_hide = label_lower in blocked_lower or ws_module in BLOCKED_MODULES
               frappe.db.set_value("Desktop Icon", icon.name, "hidden", 1 if should_hide else 0, update_modified=False)
 
           frappe.db.commit()
-          print(f"Blocked {len(blocked_modules)} modules (Module Profile + Workspace Sidebar + Dashboards + Desktop Icons)")
+          print(f"Blocked {len(BLOCKED_MODULES)} modules")
 
-          # --- Create Role Profiles ---
-          # System Manager alone is NOT a superuser in Frappe — many doctypes
-          # (Sales Invoice, Website Theme, Work Order, etc.) only grant
-          # permissions to specific roles (Accounts Manager, Website Manager,
-          # Manufacturing User), not System Manager. We include all Manager
-          # roles so app_admins users have full module access.
-          #
-          # Additionally, we add System Manager to DocPerm for ALL doctypes
-          # below (see ensure_system_manager_permissions), which gives System
-          # Manager true admin-level access to every doctype.
-          #
-          # The Administrator role is NOT included because Frappe's get_roles()
-          # filters it out for non-Administrator users — it only works on the
-          # Administrator USER, not on regular SSO users.
+
+      def create_role_profiles():
           manager_roles = [
-              "System Manager",
-              "Accounts Manager",
-              "Sales Manager",
-              "Sales Master Manager",
-              "Purchase Manager",
-              "Purchase Master Manager",
-              "Stock Manager",
-              "Item Manager",
-              "Website Manager",
-              "Projects Manager",
-              "HR Manager",
-              "Manufacturing Manager",
-              "Maintenance Manager",
-              "Quality Manager",
-              "Fleet Manager",
-              "Delivery Manager",
-              "Marketing Manager",
-              "Newsletter Manager",
-              "Dashboard Manager",
-              "Report Manager",
-              "Script Manager",
+              r for r in frappe.get_all("Role", filters={"disabled": 0}, pluck="name")
+              if "Manager" in r and r not in ("Administrator", "Workspace Manager")
           ]
-
-          role_profiles = {
+          for profile_name, roles in {
               "ERPNext Admin": manager_roles,
               "ERPNext User": ["Accounts User", "Sales User", "Purchase User"],
-          }
+          }.items():
+              upsert_doc("Role Profile", profile_name, name_field="role_profile",
+                  child_tables={"roles": [{"role": r} for r in roles]})
 
-          for profile_name, roles in role_profiles.items():
-              existing = frappe.db.exists("Role Profile", profile_name)
-              if existing:
-                  doc = frappe.get_doc("Role Profile", existing)
-                  print("Updating Role Profile: " + profile_name)
-              else:
-                  doc = frappe.new_doc("Role Profile")
-                  print("Creating Role Profile: " + profile_name)
 
-              # The Role Profile doctype uses "role_profile" as its name field
-              # (autoname: role_profile), not "name".
-              doc.role_profile = profile_name
-
-              doc.roles = []
-              for role in roles:
-                  doc.append("roles", {"role": role})
-
-              if existing:
-                  doc.save(ignore_permissions=True)
-              else:
-                  doc.insert(ignore_permissions=True)
-
-          # --- Configure Social Login Key ---
-          client_id = os.environ["KEYCLOAK_CLIENT_ID"]
+      def configure_oidc():
           client_secret = os.environ["KEYCLOAK_CLIENT_SECRET"]
-          base_url = os.environ["KEYCLOAK_BASE_URL"]
-          userinfo_url = os.environ["KEYCLOAK_USERINFO_URL"]
 
-          existing = frappe.db.exists("Social Login Key", "keycloak")
-          if existing:
-              doc = frappe.get_doc("Social Login Key", existing)
-              print("Updating Social Login Key: keycloak")
-          else:
-              doc = frappe.new_doc("Social Login Key")
-              doc.name = "keycloak"
-              print("Creating Social Login Key: keycloak")
-
-          doc.update({
+          upsert_doc("Social Login Key", "keycloak", data={
               "provider_name": "Keycloak",
               "social_login_provider": "Custom",
-              "client_id": client_id,
+              "client_id": "${keycloak_openid_client.erpnext.client_id}",
               "client_secret": client_secret,
-              "base_url": base_url,
+              "base_url": "${data.terraform_remote_state.keycloak.outputs.keycloak_issuer_url}",
               "authorize_url": "/protocol/openid-connect/auth",
               "access_token_url": "/protocol/openid-connect/token",
               "redirect_url": "/api/method/oidc_extended.callback.custom/keycloak",
-              "api_endpoint": userinfo_url,
+              "api_endpoint": "${data.terraform_remote_state.keycloak.outputs.keycloak_api_url}",
               "custom_base_url": 1,
               "auth_url_data": '{"response_type": "code", "scope": "openid profile email"}',
               "user_id_property": "preferred_username",
@@ -314,78 +162,25 @@ resource "kubernetes_config_map" "configure_erpnext_script" {
               "enable_social_login": 1,
           })
 
-          if existing:
-              doc.save(ignore_permissions=True)
-          else:
-              doc.insert(ignore_permissions=True)
+          upsert_doc("OIDC Extended Configuration", "keycloak", name_field="provider", data={
+              "groups_claim_name": "groups",
+              "given_name_claim_name": "given_name",
+              "family_name_claim_name": "family_name",
+              "email_claim_name": "email",
+              "fallback_role_profiles": [],
+              "group_module_mappings": [],
+              "fallback_module_profile": "Default",
+          }, child_tables={
+              "group_role_mappings": [
+                  {"group": "app_admins", "role_profile": "ERPNext Admin"},
+                  {"group": "system_admins", "role_profile": "ERPNext Admin"},
+                  {"group": "app_users", "role_profile": "ERPNext User"},
+              ],
+          })
 
-          # --- Configure OIDC Extended Configuration ---
-          existing = frappe.db.exists("OIDC Extended Configuration", "keycloak")
-          if existing:
-              doc = frappe.get_doc("OIDC Extended Configuration", existing)
-              print("Updating OIDC Extended Configuration: keycloak")
-          else:
-              doc = frappe.new_doc("OIDC Extended Configuration")
-              print("Creating OIDC Extended Configuration: keycloak")
 
-          # The doctype uses autoname: format:{provider}, so the document name
-          # is derived from the provider field. Setting doc.name directly is
-          # silently overridden.
-          doc.provider = "keycloak"
-
-          doc.groups_claim_name = "groups"
-          doc.given_name_claim_name = "given_name"
-          doc.family_name_claim_name = "family_name"
-          doc.email_claim_name = "email"
-
-          doc.group_role_mappings = []
-          doc.append("group_role_mappings", {"group": "app_admins", "role_profile": "ERPNext Admin"})
-          doc.append("group_role_mappings", {"group": "system_admins", "role_profile": "ERPNext Admin"})
-          doc.append("group_role_mappings", {"group": "app_users", "role_profile": "ERPNext User"})
-
-          doc.fallback_role_profiles = []
-
-          doc.group_module_mappings = []
-          doc.fallback_module_profile = "Default"
-
-          if existing:
-              doc.save(ignore_permissions=True)
-          else:
-              doc.insert(ignore_permissions=True)
-
-          # --- Mark installed apps as setup complete ---
-          # frappe.is_setup_complete() checks the Installed Application doctype's
-          # is_setup_complete field, NOT System Settings.setup_complete. This is
-          # normally set by setup_complete() in the setup wizard, which we bypassed
-          # due to the supplier_scorecard_variable bug. Without this, the desk
-          # redirects to /desk/setup-wizard on every login.
-          for app in frappe.get_all("Installed Application", pluck="name"):
-              frappe.db.set_value("Installed Application", app, "is_setup_complete", 1)
-
-          # Set the desk home page to "home" instead of "setup-wizard".
-          # The setup wizard sets desktop:home_page to "setup-wizard" during
-          # site creation, and normally changes it to "home" in setup_complete().
-          # Since we bypassed setup_complete(), we must do this manually.
-          frappe.db.set_default("desktop:home_page", "home")
-
-          frappe.db.commit()
-          print("Installed apps marked as setup complete")
-
-          # --- Ensure System Manager has full permissions on all doctypes ---
-          # Many ERPNext doctypes (Work Order, Sales Invoice, Website Theme,
-          # etc.) don't include System Manager in their DocPerm entries — they
-          # only grant permissions to specific roles (Manufacturing User,
-          # Accounts Manager, Website Manager). This makes it impossible for
-          # System Manager users to access these doctypes.
-          #
-          # The Administrator USER bypasses all permission checks, but regular
-          # SSO users can't be the Administrator user. The Administrator ROLE
-          # is filtered out by get_roles() for non-Administrator users.
-          #
-          # We add System Manager with full permissions to all doctypes that
-          # don't already have it. This is idempotent — it only adds missing
-          # entries, never modifies or removes existing ones.
-          doctypes_without_sm = frappe.db.sql("""
+      def ensure_system_manager_permissions():
+          doctypes = frappe.db.sql("""
               SELECT DISTINCT dt.name FROM tabDocType dt
               WHERE dt.istable = 0 AND dt.issingle = 0
               AND NOT EXISTS (
@@ -393,99 +188,101 @@ resource "kubernetes_config_map" "configure_erpnext_script" {
                   WHERE dp.parent = dt.name AND dp.role = 'System Manager'
               )
           """, as_list=True)
-
-          for [dt] in doctypes_without_sm:
+          for [dt] in doctypes:
               perm = frappe.get_doc({
                   "doctype": "DocPerm",
                   "parent": dt,
                   "parenttype": "DocType",
                   "parentfield": "permissions",
                   "role": "System Manager",
-                  "read": 1,
-                  "write": 1,
-                  "create": 1,
-                  "delete": 1,
-                  "select": 1,
-                  "permlevel": 0,
-                  "if_owner": 0,
+                  "read": 1, "write": 1, "create": 1, "delete": 1, "select": 1,
+                  "permlevel": 0, "if_owner": 0,
               })
               perm.flags.ignore_permissions = True
               perm.flags.ignore_mandatory = True
               perm.db_insert()
-
           frappe.db.commit()
-          print(f"System Manager permissions added to {len(doctypes_without_sm)} doctypes")
+          print(f"System Manager permissions added to {len(doctypes)} doctypes")
 
-          # --- Lockdown settings ---
-          frappe.db.set_single_value("System Settings", "disable_user_pass_login", 1)
-          frappe.db.set_single_value("System Settings", "enable_scheduler", 1)
-          frappe.db.set_single_value("System Settings", "login_with_email_link", 0)
-          frappe.db.set_single_value("Website Settings", "disable_signup", 1)
 
-          # --- Create Server Script to suppress password prompt ---
-          # The frappe-oidc-extended plugin creates users with a random password.
-          # Frappe prompts new users to set their own password on first login.
-          # Since password login is disabled, the password is irrelevant.
-          # This Server Script sets last_password_reset_date on user creation
-          # to suppress the prompt. Requires server_script_enabled in common_site_config.
-          if frappe.db.exists("DocType", "Server Script"):
-              import json
-              config_path = os.path.join(frappe.local.sites_path, "common_site_config.json")
-              with open(config_path) as f:
-                  config = json.load(f)
-              if not config.get("server_script_enabled"):
-                  config["server_script_enabled"] = 1
-                  with open(config_path, "w") as f:
-                      json.dump(config, f, indent=1, sort_keys=True)
-                  frappe.clear_cache()
-                  print("Server Scripts enabled in common_site_config.json")
+      def create_server_script():
+          if not frappe.db.exists("DocType", "Server Script"):
+              print("Warning: Server Script doctype not found")
+              return
 
-              script_name = "suppress_password_prompt"
-              if not frappe.db.exists("Server Script", script_name):
-                  ss = frappe.new_doc("Server Script")
-                  ss.name = script_name
-                  ss.script_type = "DocType Event"
-                  ss.reference_doctype = "User"
-                  ss.doctype_event = "Before Insert"
-                  ss.script = 'doc.last_password_reset_date = "2000-01-01"'
-                  ss.disabled = 0
-                  ss.insert(ignore_permissions=True)
-                  frappe.db.commit()
-                  print("Server Script created: " + script_name)
-              else:
-                  print("Server Script already exists: " + script_name)
+          config_path = os.path.join(frappe.local.sites_path, "common_site_config.json")
+          with open(config_path) as f:
+              config = json.load(f)
+          if not config.get("server_script_enabled"):
+              config["server_script_enabled"] = 1
+              with open(config_path, "w") as f:
+                  json.dump(config, f, indent=1, sort_keys=True)
+              frappe.clear_cache()
+              print("Server Scripts enabled")
+
+          script_name = "suppress_password_prompt"
+          if not frappe.db.exists("Server Script", script_name):
+              ss = frappe.new_doc("Server Script")
+              ss.name = script_name
+              ss.script_type = "DocType Event"
+              ss.reference_doctype = "User"
+              ss.doctype_event = "Before Insert"
+              ss.script = 'doc.last_password_reset_date = "2000-01-01"'
+              ss.disabled = 0
+              ss.insert(ignore_permissions=True)
+              frappe.db.commit()
+              print("Server Script created: " + script_name)
           else:
-              print("Warning: Server Script doctype not found, cannot suppress password prompt")
+              print("Server Script already exists: " + script_name)
 
+
+      def apply_lockdown_settings():
+          settings = {
+              "System Settings": {
+                  "disable_user_pass_login": 1,
+                  "login_with_email_link": 0,
+              },
+              "Website Settings": {
+                  "disable_signup": 1,
+              },
+          }
+          for doctype, values in settings.items():
+              for field, value in values.items():
+                  frappe.db.set_single_value(doctype, field, value)
           frappe.db.commit()
+          print("Lockdown settings applied")
 
+
+      def configure():
+          clear_stale_locks()
+          run_setup_complete()
+          mark_setup_complete()
+          block_modules()
+          create_role_profiles()
+          configure_oidc()
+          ensure_system_manager_permissions()
+          create_server_script()
+          apply_lockdown_settings()
           print("ERPNext configuration complete")
 
-      if __name__ == "__main__":
-          site_name = os.environ["SITE_NAME"]
-          site_path = os.path.join("/home/frappe/frappe-bench/sites", site_name)
-          if not os.path.exists(site_path):
-              print("Site directory does not exist yet: " + site_path)
-              import sys
-              sys.exit(1)
 
-          frappe.init(site=site_name, sites_path="sites")
+      if __name__ == "__main__":
+          frappe.init(site="${local.erpnext_domain}")
           frappe.connect()
           configure()
-    EOT
+    EOF
 
-    "configure_erpnext.sh" = <<-EOT
+    "configure_erpnext.sh" = <<-EOF
       #!/bin/bash
+      cd /home/frappe/frappe-bench/sites
 
-      cd /home/frappe/frappe-bench
-
-      for i in $(seq 1 5); do
+      for i in $(seq 1 3); do
           echo "Attempting ERPNext configuration (attempt $i)..."
 
-          bench --site "$SITE_NAME" list-apps 2>/dev/null | grep -q oidc_extended || \
-              bench --site "$SITE_NAME" install-app oidc_extended 2>&1 || true
+          bench --site "${local.erpnext_domain}" list-apps 2>/dev/null | grep -q oidc_extended || \
+              bench --site "${local.erpnext_domain}" install-app oidc_extended 2>&1 || true
 
-          if ./env/bin/python /scripts/configure_erpnext.py 2>&1; then
+          if ../env/bin/python /scripts/configure_erpnext.py 2>&1; then
               echo "ERPNext configuration succeeded"
               exit 0
           fi
@@ -493,9 +290,9 @@ resource "kubernetes_config_map" "configure_erpnext_script" {
           sleep 5
       done
 
-      echo "ERPNext configuration failed after 5 attempts"
+      echo "ERPNext configuration failed after 3 attempts"
       exit 1
-    EOT
+    EOF
   }
 }
 
@@ -534,16 +331,6 @@ resource "kubernetes_job" "configure_erpnext" {
           command = ["/bin/bash", "/scripts/configure_erpnext.sh"]
 
           env {
-            name  = "SITE_NAME"
-            value = local.erpnext_domain
-          }
-
-          env {
-            name  = "KEYCLOAK_CLIENT_ID"
-            value = keycloak_openid_client.erpnext.client_id
-          }
-
-          env {
             name = "KEYCLOAK_CLIENT_SECRET"
             value_from {
               secret_key_ref {
@@ -551,21 +338,6 @@ resource "kubernetes_job" "configure_erpnext" {
                 key  = "client-secret"
               }
             }
-          }
-
-          env {
-            name  = "KEYCLOAK_BASE_URL"
-            value = data.terraform_remote_state.keycloak.outputs.keycloak_issuer_url
-          }
-
-          env {
-            name  = "KEYCLOAK_USERINFO_URL"
-            value = data.terraform_remote_state.keycloak.outputs.keycloak_api_url
-          }
-
-          env {
-            name  = "SITE_URL"
-            value = "https://${local.erpnext_domain}"
           }
 
           env {

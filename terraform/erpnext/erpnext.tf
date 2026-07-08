@@ -2,6 +2,23 @@ locals {
   erpnext_domain     = "erpnext.${var.server_base_domain}"
   erpnext_image_repo = "ghcr.io/jdc-projects/erpnext-extended"
   erpnext_image_tag  = "erpnext-v16.26.2-oidc-v0.4.0"
+
+  blocked_modules = [
+    "Stock",
+    "Manufacturing",
+    "Subcontracting",
+    "Quality Management",
+    "EDI",
+    "Telephony",
+    "ERPNext Integrations",
+    "Regional",
+    "Geo",
+    "Maintenance",
+    "Portal",
+    "Bulk Transaction",
+    "Website",
+    "Utilities",
+  ]
 }
 
 resource "helm_release" "erpnext" {
