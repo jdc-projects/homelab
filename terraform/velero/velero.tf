@@ -49,9 +49,17 @@ resource "helm_release" "velero" {
       name  = "initContainers[0].name"
       value = "velero-plugin-for-aws"
     },
+    # Pinned: velero-plugin-for-aws v1.14.x sends an empty `x-amz-tagging` header on
+    # PutObject, which Backblaze B2 (and other strict S3-compatible stores) reject with
+    # HTTP 400 -> every backup fails uploading velero-backup.json. Regression introduced
+    # in v1.14.1; v1.13.2 is the last known-good release.
+    # Upstream issue: https://github.com/velero-io/velero/issues/9931
+    # Fix PR (still open): https://github.com/velero-io/velero-plugin-for-aws/pull/304
+    #   (#299 is merged but incomplete and is NOT included in v1.14.2.)
+    # TODO: bump back to the latest release once a tag > v1.14.2 ships PR #304.
     {
       name  = "initContainers[0].image"
-      value = "velero/velero-plugin-for-aws:v1.14.2"
+      value = "velero/velero-plugin-for-aws:v1.13.2"
     },
     {
       name  = "initContainers[0].imagePullPolicy"
