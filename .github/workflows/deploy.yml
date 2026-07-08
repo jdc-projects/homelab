@@ -236,6 +236,7 @@ jobs:
           13ft,
           n8n,
           erpnext,
+          web-check,
         ]
 
     with:
