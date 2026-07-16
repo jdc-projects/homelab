@@ -1,11 +1,14 @@
 locals {
   rustfs_bucket_name = "data"
+  # Renamed from MinIO's `minio-notes.<base>` to `assets-notes.<base>`. Safe
+  # because Outline stores only the attachment id in document bodies and resolves
+  # the S3 host from this env at view-time. Covered by the *.<base> wildcard cert.
+  rustfs_domain = "assets-notes.${var.server_base_domain}"
 }
 
-# RustFS, deployed alongside MinIO during the transitional phase. The public
-# ingress (module "rustfs_ingress") is added in the cutover commit to avoid
-# colliding with MinIO on the shared notes-related hostname; until then RustFS
-# is reachable only in-cluster at rustfs-svc:9000 (used by the migrate job).
+# RustFS, the MinIO replacement. Outline uploads server-side over the public
+# assets-notes hostname (Traefik terminates TLS via the *.<base> wildcard cert);
+# browsers read public attachments directly from the same host.
 resource "helm_release" "rustfs" {
   name = "rustfs"
 
@@ -47,8 +50,8 @@ resource "helm_release" "rustfs" {
       name  = "config.rustfs.region"
       value = "us-east-1"
     },
-    # RustFS is reached in-cluster during the transitional phase, so disable the
-    # chart's own ingress (the shared Traefik ingress is wired up at cutover).
+    # Disable the chart's own ingress; RustFS is exposed via the shared Traefik
+    # IngressRoute module (rustfs_ingress below).
     {
       name  = "ingress.enabled"
       value = "false"
@@ -81,4 +84,17 @@ resource "helm_release" "rustfs" {
       value = random_password.rustfs_root_password.result
     },
   ]
+}
+
+module "rustfs_ingress" {
+  source = "../modules/ingress"
+
+  name      = "rustfs"
+  namespace = kubernetes_namespace.outline.metadata[0].name
+  domain    = local.rustfs_domain
+
+  target_port = 9000
+
+  existing_service_name      = "rustfs-svc" # fullnameOverride + chart's "-svc" suffix
+  existing_service_namespace = helm_release.rustfs.namespace
 }

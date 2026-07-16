@@ -12,14 +12,14 @@ resource "kubernetes_config_map" "outline_env" {
     NODE_ENV                     = "production"
     URL                          = "https://${local.outline_domain}"
     PORT                         = 3000
-    AWS_ACCESS_KEY_ID            = random_password.minio_access_key.result
+    AWS_ACCESS_KEY_ID            = random_password.rustfs_root_username.result
     AWS_REGION                   = "us-east-1"
-    AWS_S3_UPLOAD_BUCKET_URL     = "https://${local.minio_domain}/${local.minio_bucket_name}"
-    AWS_S3_ACCELERATE_URL        = "https://${local.minio_domain}/${local.minio_bucket_name}"
-    AWS_S3_UPLOAD_BUCKET_NAME    = local.minio_bucket_name
+    AWS_S3_UPLOAD_BUCKET_URL     = "https://${local.rustfs_domain}/${local.rustfs_bucket_name}"
+    AWS_S3_ACCELERATE_URL        = "https://${local.rustfs_domain}/${local.rustfs_bucket_name}"
+    AWS_S3_UPLOAD_BUCKET_NAME    = local.rustfs_bucket_name
     AWS_S3_FORCE_PATH_STYLE      = "true"
     FILE_STORAGE                 = "s3"
-    FILE_STORAGE_LOCAL_ROOT_DIR  = "/var/lib/outline/data" # shouldn't be needed since we're using S3 (minio), but set it just in case
+    FILE_STORAGE_LOCAL_ROOT_DIR  = "/var/lib/outline/data" # shouldn't be needed since we're using S3 (rustfs), but set it just in case
     FILE_STORAGE_UPLOAD_MAX_SIZE = 1000000000              # 1G
     OIDC_CLIENT_ID               = keycloak_openid_client.outline.client_id
     OIDC_AUTH_URI                = data.terraform_remote_state.keycloak.outputs.keycloak_auth_url
@@ -60,7 +60,7 @@ resource "kubernetes_secret" "outline_env" {
     SECRET_KEY            = random_id.outline_secret_key.hex
     UTILS_SECRET          = random_id.outline_utils_secret.hex
     DATABASE_URL          = "postgresql://${random_password.outline_db_username.result}:${random_password.outline_db_password.result}@${kubernetes_manifest.outline_db.manifest.metadata.name}-rw:5432/${kubernetes_manifest.outline_db.manifest.spec.bootstrap.initdb.database}"
-    AWS_SECRET_ACCESS_KEY = random_password.minio_secret_key.result
+    AWS_SECRET_ACCESS_KEY = random_password.rustfs_root_password.result
     OIDC_CLIENT_SECRET    = random_password.keycloak_client_secret.result
     SMTP_PASSWORD         = var.smtp_password
   }
