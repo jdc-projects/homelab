@@ -66,3 +66,20 @@ resource "random_password" "minio_secret_key" {
   special = false
   upper   = true
 }
+
+# RustFS root credentials. During the transitional phase these only run the
+# RustFS server + provisioning; at cutover Outline also uses them directly
+# (single-tenant homelab -> no separate readwrite app user).
+resource "random_password" "rustfs_root_username" {
+  length  = 16
+  numeric = false
+  special = false
+  upper   = false
+}
+
+resource "random_password" "rustfs_root_password" {
+  length  = 16
+  numeric = true
+  special = false
+  upper   = true
+}
