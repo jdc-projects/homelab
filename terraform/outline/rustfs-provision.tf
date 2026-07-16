@@ -1,10 +1,12 @@
-# One-shot provisioning: creates the `data` bucket and grants anonymous download
-# on the `public/*` prefix so browsers can read Outline attachments without auth
-# (Outline 302-redirects public attachments to a direct S3 URL). This replaces
-# the MinIO chart's buckets[]/customCommands[] hooks, which the RustFS chart does
-# not provide. Uses mc (RustFS's documented S3 client) since the rustfs binary
-# has no bucket/policy subcommands. Idempotent: alias set overwrites, mb uses
-# --ignore-existing, anonymous set re-applies the same policy - safe to re-run.
+# One-shot provisioning: creates the `data` bucket, grants anonymous download
+# on the `public/*` prefix (so browsers read Outline attachments without auth -
+# Outline 302-redirects public attachments to a direct S3 URL), and sets bucket
+# CORS for browser presigned-POST uploads. This replaces the MinIO chart's
+# buckets[]/customCommands[] hooks, which the RustFS chart does not provide.
+# Uses mc (RustFS's documented S3 client) since the rustfs binary has no
+# bucket/policy subcommands. Idempotent: alias set overwrites, mb uses
+# --ignore-existing, anonymous set re-applies the same policy, cors set
+# overwrites - safe to re-run.
 resource "kubernetes_job" "rustfs_provision" {
   metadata {
     name      = "rustfs-provision"
@@ -33,6 +35,11 @@ resource "kubernetes_job" "rustfs_provision" {
               done
               mc mb --ignore-existing rustfs/${local.rustfs_bucket_name}
               mc anonymous set download rustfs/${local.rustfs_bucket_name}/public/*
+              # Outline uploads via browser presigned POST (cross-origin from the
+              # notes host). MinIO enabled permissive CORS by default; RustFS
+              # requires explicit PutBucketCors or the browser preflight fails.
+              printf '%s' '<CORSConfiguration><CORSRule><AllowedOrigin>https://${local.outline_domain}</AllowedOrigin><AllowedMethod>GET</AllowedMethod><AllowedMethod>PUT</AllowedMethod><AllowedMethod>POST</AllowedMethod><AllowedMethod>HEAD</AllowedMethod><AllowedHeader>*</AllowedHeader><ExposeHeader>ETag</ExposeHeader><ExposeHeader>Content-Disposition</ExposeHeader><MaxAgeSeconds>3000</MaxAgeSeconds></CORSRule></CORSConfiguration>' > /tmp/cors.xml
+              mc cors set rustfs/${local.rustfs_bucket_name} /tmp/cors.xml
             EOT
           ]
 
