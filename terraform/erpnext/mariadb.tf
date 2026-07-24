@@ -48,6 +48,8 @@ resource "kubernetes_manifest" "erpnext_db" {
     }
 
     spec = {
+      image = "mariadb:12.3.2"
+
       replicas = local.mariadb_replicas
 
       rootPasswordSecretKeyRef = {

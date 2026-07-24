@@ -204,8 +204,6 @@ module "n8n_ingress" {
 
   target_port = 5678
 
-  do_enable_crowdsec_bouncer_appsec = false
-
   selector = {
     app = "n8n"
   }

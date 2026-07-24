@@ -129,6 +129,4 @@ module "erpnext_ingress" {
 
   existing_service_name      = helm_release.erpnext.name
   existing_service_namespace = kubernetes_namespace.erpnext.metadata[0].name
-
-  do_enable_crowdsec_bouncer_appsec = false
 }

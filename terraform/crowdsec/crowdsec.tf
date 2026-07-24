@@ -138,12 +138,33 @@ resource "helm_release" "crowdsec" {
       value = <<-EOF
       name: crowdsecurity/custom-appsec-config
       default_remediation: ban
-      outofband_rules:
-        - crowdsecurity/crs
       inband_rules:
         - crowdsecurity/base-config
         - crowdsecurity/vpatch-*
         - crowdsecurity/generic-*
+      outofband_rules:
+        - crowdsecurity/crs
+      on_load:
+        - apply:
+            # Truncate (don't block) oversized request bodies so large uploads
+            # never get auto-banned by the body-size guard.
+            - SetBodySizeExceededAction("partial")
+            - SetMaxBodySize(52428800)
+      pre_eval:
+        # OCIS native WebDAV (/dav/*) carries file content that trips CRS body
+        # rules. Legacy /remote.php/dav/* is handled by the Nextcloud exclusion
+        # plugin. Applies to both in-band and out-of-band phases.
+        - filter: req.URL.Path startsWith "/dav/"
+          apply:
+            - DisableBodyInspection()
+        # Outline: document/attachment/webhook bodies are user markdown/code/binary.
+        - filter: (req.URL.Path startsWith "/api/documents") || (req.URL.Path startsWith "/api/attachments") || (req.URL.Path startsWith "/api/hooks")
+          apply:
+            - DisableBodyInspection()
+        # RustFS (Outline's S3 attachment store): binary uploads/downloads.
+        - filter: req.Host == "assets-notes.${var.server_base_domain}"
+          apply:
+            - DisableBodyInspection()
     EOF
     },
     {
@@ -159,8 +180,12 @@ resource "helm_release" "crowdsec" {
       value = "APPSEC_RULES"
     },
     {
+      # base-config sets coraza body processors. The nextcloud CRS exclusion
+      # plugin suppresses the well-known WebDAV/file-upload CRS false positives
+      # on ownCloud/Nextcloud-style apps (OCIS shares the /remote.php/dav/*
+      # surface). It is path-scoped, so only OCIS is relaxed.
       name  = "appsec.env[1].value"
-      value = "crowdsecurity/base-config"
+      value = "crowdsecurity/base-config crowdsecurity/crs-exclusion-plugin-nextcloud"
     },
     {
       name  = "lapi.persistentVolume.data.existingClaim"
