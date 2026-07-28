@@ -88,6 +88,26 @@ jobs:
       terraform-dir: ./terraform/clickhouse-operator
       needs-kubectl: true
 
+  deploy-kafka-operator:
+    needs: [
+      deploy-github-org-runner,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/kafka-operator
+
+  deploy-opensearch-operator:
+    needs: [
+      deploy-cert-manager,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/opensearch-operator
+
   deploy-traefik:
     needs: [
       deploy-openebs,
