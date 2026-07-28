@@ -1,4 +1,7 @@
 # https://github.com/Altinity/clickhouse-operator/tree/master/deploy/helm/clickhouse-operator
+#
+# NOTE: any ClickHouseInstallation must use the compat image
+# (ghcr.io/jdc-projects/clickhouse-compat), not the official one - see README.md.
 
 resource "null_resource" "clickhouse_operator_crds" {
   triggers = {
