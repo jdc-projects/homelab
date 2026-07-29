@@ -1,0 +1,171 @@
+resource "kubernetes_deployment" "posthog_worker" {
+  metadata {
+    name      = "worker"
+    namespace = kubernetes_namespace.posthog.metadata[0].name
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = { app = "worker" }
+    }
+
+    template {
+      metadata {
+        labels = { app = "worker" }
+      }
+
+      spec {
+        container {
+          image   = local.posthog_image
+          name    = "worker"
+          command = ["sh", "-c", "./bin/docker-worker-celery --with-scheduler"]
+
+          env_from {
+            config_map_ref { name = kubernetes_config_map.posthog_env.metadata[0].name }
+          }
+
+          env_from {
+            secret_ref { name = kubernetes_secret.posthog_secrets.metadata[0].name }
+          }
+
+          resources {
+            requests = { cpu = "250m", memory = "1Gi" }
+            limits   = { cpu = "1", memory = "8Gi" }
+          }
+        }
+      }
+    }
+  }
+
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_config_map.posthog_env,
+      kubernetes_secret.posthog_secrets,
+    ]
+  }
+
+  depends_on = [
+    kubernetes_manifest.posthog_db,
+    kubernetes_manifest.posthog_clickhouse,
+    kubernetes_job.posthog_migrate,
+  ]
+}
+
+resource "kubernetes_deployment" "temporal_django_worker" {
+  metadata {
+    name      = "temporal-django-worker"
+    namespace = kubernetes_namespace.posthog.metadata[0].name
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = { app = "temporal-django-worker" }
+    }
+
+    template {
+      metadata {
+        labels = { app = "temporal-django-worker" }
+      }
+
+      spec {
+        container {
+          image   = local.posthog_image
+          name    = "temporal-django-worker"
+          command = ["sh", "-c", "./bin/temporal-django-worker"]
+
+          env_from {
+            config_map_ref { name = kubernetes_config_map.posthog_env.metadata[0].name }
+          }
+
+          env_from {
+            secret_ref { name = kubernetes_secret.posthog_secrets.metadata[0].name }
+          }
+
+          resources {
+            requests = { cpu = "250m", memory = "512Mi" }
+            limits   = { cpu = "500m", memory = "1Gi" }
+          }
+        }
+      }
+    }
+  }
+
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_config_map.posthog_env,
+      kubernetes_secret.posthog_secrets,
+    ]
+  }
+
+  depends_on = [
+    module.temporal,
+    kubernetes_job.posthog_migrate,
+  ]
+}
+
+resource "kubernetes_manifest" "asyncmigrationscheck" {
+  manifest = {
+    apiVersion = "batch/v1"
+    kind       = "CronJob"
+
+    metadata = {
+      name      = "asyncmigrationscheck"
+      namespace = kubernetes_namespace.posthog.metadata[0].name
+    }
+
+    spec = {
+      schedule                   = "0 */6 * * *"
+      concurrencyPolicy          = "Forbid"
+      successfulJobsHistoryLimit = 1
+      failedJobsHistoryLimit     = 1
+
+      jobTemplate = {
+        spec = {
+          template = {
+            spec = {
+              restartPolicy = "Never"
+
+              containers = [
+                {
+                  name    = "asyncmigrationscheck"
+                  image   = local.posthog_image
+                  command = ["python", "manage.py", "run_async_migrations", "--check"]
+
+                  envFrom = [
+                    {
+                      configMapRef = {
+                        name = kubernetes_config_map.posthog_env.metadata[0].name
+                      }
+                    },
+                    {
+                      secretRef = {
+                        name = kubernetes_secret.posthog_secrets.metadata[0].name
+                      }
+                    }
+                  ]
+
+                  resources = {
+                    requests = {
+                      cpu    = "100m"
+                      memory = "512Mi"
+                    }
+                    limits = {
+                      cpu    = "500m"
+                      memory = "1Gi"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+
+  depends_on = [kubernetes_job.posthog_migrate]
+}
