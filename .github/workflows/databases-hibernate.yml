@@ -568,8 +568,11 @@ jobs:
           for sts in $(kubectl get sts -n "$NS" -l opensearch.org/opensearch-cluster="$CLUSTER" -o jsonpath='{.items[*].metadata.name}'); do
             echo "Waiting for operator to restore replicas for $sts..."
             timeout 10m bash -c "while [ \$(kubectl get sts $sts -n $NS -o jsonpath='{.spec.replicas}') = '0' ]; do sleep 5; done"
-            kubectl -n "$NS" rollout status "sts/$sts" --timeout=30m
           done
+          echo "Waiting for pods to be created..."
+          timeout 5m bash -c "while [ -z \$(kubectl get pods -n $NS -l opensearch.org/opensearch-cluster=$CLUSTER -o jsonpath='{.items[*].metadata.name}' 2>/dev/null) ]; do sleep 5; done"
+          echo "Waiting for pods to be Ready..."
+          kubectl -n "$NS" wait pod -l opensearch.org/opensearch-cluster="$CLUSTER" --for=condition=Ready --timeout=30m
 
   report-hibernation-status:
     needs: [
