@@ -241,10 +241,10 @@ jobs:
         uses: azure/setup-kubectl@v5
         with:
           version: 'v1.33.6'
-      - name: "Scale ClickHouse"
+      - name: "Hibernate / restart ClickHouse"
         env:
-          REPLICAS: ${{ inputs.do-hibernate && 0 || matrix.clickhouse.replicas }}
-        run: kubectl scale clickhouseinstallation ${{ matrix.clickhouse.name }} -n ${{ matrix.clickhouse.namespace }} --replicas=${{ env.REPLICAS }}
+          STOP_VALUE: ${{ inputs.do-hibernate && '1' || '0' }}
+        run: kubectl -n ${{ matrix.clickhouse.namespace }} patch clickhouseinstallation ${{ matrix.clickhouse.name }} --type=merge -p '{"spec":{"stop":"${{ env.STOP_VALUE }}"}}'
       - name: "Wait for scale down"
         if: ${{ inputs.do-hibernate }}
         run: kubectl -n ${{ matrix.clickhouse.namespace }} wait clickhouseinstallation ${{ matrix.clickhouse.name }} --timeout 30m --for "jsonpath={.status.status}=Completed"
@@ -342,7 +342,43 @@ jobs:
 
   # ***** other stateful apps hibernate
 
-  hibernate-kafka:
+  get-kafka-clusters:
+    runs-on: self-hosted
+
+    outputs:
+      clusters: ${{ steps.get-clusters.outputs.clusters}}
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v7
+      - name: "Add cluster CA certificate"
+        run: |
+          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
+          sudo mkdir /usr/local/share/ca-certificates/extra
+          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
+          sudo update-ca-certificates
+      - name: "Generate and install kubeconfig"
+        working-directory: ./terraform
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v5
+        with:
+          version: 'v1.33.6'
+      - name: "Get Kafka clusters"
+        id: "get-clusters"
+        run: |
+          kubectl get kafkas.kafka.strimzi.io -A -o yaml > clusters.yml
+          yq '.items[].metadata | pick(["name", "namespace"])' clusters.yml -o json -I 0 > dbs.json
+          sed -i '{:q;N;s/\n/, /g;t q}' dbs.json
+          sed -i 's#^#[#' dbs.json
+          sed -i 's#$#]#' dbs.json
+          truncate -s -1 dbs.json
+          echo "clusters=$(cat dbs.json)" >> "$GITHUB_OUTPUT"
+
+  hibernate-kafka-operator:
     runs-on: self-hosted
 
     steps:
@@ -364,20 +400,93 @@ jobs:
         uses: azure/setup-kubectl@v5
         with:
           version: 'v1.33.6'
-      - name: "Hibernate Kafka"
+      - name: "Stop Kafka operator"
         if: ${{ inputs.do-hibernate }}
         run: |
           kubectl -n kafka-operator scale deploy strimzi-cluster-operator --replicas=0
-          kubectl -n kafka-operator wait deploy strimzi-cluster-operator --for=jsonpath='{.status.replicas}=0' --timeout=5m
-          kubectl delete pods -n posthog -l strimzi.io/cluster --timeout=10m
-      - name: "Restart Kafka"
+          kubectl -n kafka-operator wait pod -l strimzi.io/kind=cluster-operator --for=delete --timeout=5m
+      - name: "Start Kafka operator"
         if: ${{ !inputs.do-hibernate }}
         run: |
           kubectl -n kafka-operator scale deploy strimzi-cluster-operator --replicas=1
           kubectl -n kafka-operator wait deploy strimzi-cluster-operator --for=jsonpath='{.status.readyReplicas}=1' --timeout=5m
-          kubectl -n posthog wait kafka kafka --timeout 30m --for "jsonpath={.status.conditions[?(@.type==\"Ready\")].status}=True"
 
-  hibernate-opensearch:
+  hibernate-kafka-clusters:
+    needs: [
+      get-kafka-clusters,
+      hibernate-kafka-operator,
+    ]
+    runs-on: self-hosted
+    if: ${{ needs.get-kafka-clusters.outputs.clusters != '' }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        cluster: ${{ fromJson(needs.get-kafka-clusters.outputs.clusters) }}
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v7
+      - name: "Add cluster CA certificate"
+        run: |
+          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
+          sudo mkdir /usr/local/share/ca-certificates/extra
+          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
+          sudo update-ca-certificates
+      - name: "Generate and install kubeconfig"
+        working-directory: ./terraform
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v5
+        with:
+          version: 'v1.33.6'
+      - name: "Delete Kafka pods"
+        if: ${{ inputs.do-hibernate }}
+        run: kubectl delete pods -n ${{ matrix.cluster.namespace }} -l strimzi.io/cluster=${{ matrix.cluster.name }} --timeout=10m
+      - name: "Wait for Kafka Ready"
+        if: ${{ !inputs.do-hibernate }}
+        run: kubectl -n ${{ matrix.cluster.namespace }} wait kafka ${{ matrix.cluster.name }} --timeout 30m --for "jsonpath={.status.conditions[?(@.type==\"Ready\")].status}=True"
+
+  get-opensearch-clusters:
+    runs-on: self-hosted
+
+    outputs:
+      clusters: ${{ steps.get-clusters.outputs.clusters}}
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v7
+      - name: "Add cluster CA certificate"
+        run: |
+          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
+          sudo mkdir /usr/local/share/ca-certificates/extra
+          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
+          sudo update-ca-certificates
+      - name: "Generate and install kubeconfig"
+        working-directory: ./terraform
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v5
+        with:
+          version: 'v1.33.6'
+      - name: "Get OpenSearch clusters"
+        id: "get-clusters"
+        run: |
+          kubectl get opensearchclusters.opensearch.org -A -o yaml > clusters.yml
+          yq '.items[].metadata | pick(["name", "namespace"])' clusters.yml -o json -I 0 > dbs.json
+          sed -i '{:q;N;s/\n/, /g;t q}' dbs.json
+          sed -i 's#^#[#' dbs.json
+          sed -i 's#$#]#' dbs.json
+          truncate -s -1 dbs.json
+          echo "clusters=$(cat dbs.json)" >> "$GITHUB_OUTPUT"
+
+  hibernate-opensearch-operator:
     runs-on: self-hosted
 
     steps:
@@ -399,18 +508,55 @@ jobs:
         uses: azure/setup-kubectl@v5
         with:
           version: 'v1.33.6'
-      - name: "Hibernate OpenSearch"
+      - name: "Stop OpenSearch operator"
         if: ${{ inputs.do-hibernate }}
         run: |
           kubectl -n opensearch-operator scale deploy opensearch-operator --replicas=0
-          kubectl -n opensearch-operator wait deploy opensearch-operator --for=jsonpath='{.status.replicas}=0' --timeout=5m
-          kubectl -n posthog delete pods -l opensearch.cluster.name --timeout=10m
-      - name: "Restart OpenSearch"
+          kubectl -n opensearch-operator wait pod -l app.kubernetes.io/name=opensearch-operator --for=delete --timeout=5m
+      - name: "Start OpenSearch operator"
         if: ${{ !inputs.do-hibernate }}
         run: |
           kubectl -n opensearch-operator scale deploy opensearch-operator --replicas=1
           kubectl -n opensearch-operator wait deploy opensearch-operator --for=jsonpath='{.status.readyReplicas}=1' --timeout=5m
-          kubectl -n posthog wait pods -l opensearch.cluster.name --for=condition=Ready --timeout 30m
+
+  hibernate-opensearch-clusters:
+    needs: [
+      get-opensearch-clusters,
+      hibernate-opensearch-operator,
+    ]
+    runs-on: self-hosted
+    if: ${{ needs.get-opensearch-clusters.outputs.clusters != '' }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        cluster: ${{ fromJson(needs.get-opensearch-clusters.outputs.clusters) }}
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v7
+      - name: "Add cluster CA certificate"
+        run: |
+          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
+          sudo mkdir /usr/local/share/ca-certificates/extra
+          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
+          sudo update-ca-certificates
+      - name: "Generate and install kubeconfig"
+        working-directory: ./terraform
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v5
+        with:
+          version: 'v1.33.6'
+      - name: "Delete OpenSearch pods"
+        if: ${{ inputs.do-hibernate }}
+        run: kubectl delete pods -n ${{ matrix.cluster.namespace }} -l opensearch.cluster.name=${{ matrix.cluster.name }} --timeout=10m
+      - name: "Wait for OpenSearch Ready"
+        if: ${{ !inputs.do-hibernate }}
+        run: kubectl -n ${{ matrix.cluster.namespace }} wait pods -l opensearch.cluster.name=${{ matrix.cluster.name }} --for=condition=Ready --timeout 30m
 
   report-hibernation-status:
     needs: [
@@ -418,13 +564,13 @@ jobs:
       hibernate-clickhouse-databases,
       hibernate-clickhouse-keeper-databases,
       hibernate-mariadb-databases,
-      hibernate-kafka,
-      hibernate-opensearch,
+      hibernate-kafka-clusters,
+      hibernate-opensearch-clusters,
     ]
     if: always() && !cancelled() && inputs.do-hibernate
     runs-on: ubuntu-latest
     outputs:
-      attempted: ${{ (needs.hibernate-postgres-databases.result != 'skipped') || (needs.hibernate-clickhouse-databases.result != 'skipped') || (needs.hibernate-clickhouse-keeper-databases.result != 'skipped') || (needs.hibernate-mariadb-databases.result != 'skipped') || (needs.hibernate-kafka.result != 'skipped') || (needs.hibernate-opensearch.result != 'skipped') }}
+      attempted: ${{ (needs.hibernate-postgres-databases.result != 'skipped') || (needs.hibernate-clickhouse-databases.result != 'skipped') || (needs.hibernate-clickhouse-keeper-databases.result != 'skipped') || (needs.hibernate-mariadb-databases.result != 'skipped') || (needs.hibernate-kafka-clusters.result != 'skipped') || (needs.hibernate-opensearch-clusters.result != 'skipped') }}
     steps:
       - name: "Report status"
         run: echo "done"
