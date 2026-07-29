@@ -342,17 +342,89 @@ jobs:
 
   # ***** other stateful apps hibernate
 
+  hibernate-kafka:
+    runs-on: self-hosted
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v7
+      - name: "Add cluster CA certificate"
+        run: |
+          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
+          sudo mkdir /usr/local/share/ca-certificates/extra
+          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
+          sudo update-ca-certificates
+      - name: "Generate and install kubeconfig"
+        working-directory: ./terraform
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v5
+        with:
+          version: 'v1.33.6'
+      - name: "Hibernate Kafka"
+        if: ${{ inputs.do-hibernate }}
+        run: |
+          kubectl -n kafka-operator scale deploy strimzi-cluster-operator --replicas=0
+          kubectl -n kafka-operator wait deploy strimzi-cluster-operator --for=jsonpath='{.status.replicas}=0' --timeout=5m
+          kubectl delete pods -n posthog -l strimzi.io/cluster --timeout=10m
+      - name: "Restart Kafka"
+        if: ${{ !inputs.do-hibernate }}
+        run: |
+          kubectl -n kafka-operator scale deploy strimzi-cluster-operator --replicas=1
+          kubectl -n kafka-operator wait deploy strimzi-cluster-operator --for=jsonpath='{.status.readyReplicas}=1' --timeout=5m
+          kubectl -n posthog wait kafka kafka --timeout 30m --for "jsonpath={.status.conditions[?(@.type==\"Ready\")].status}=True"
+
+  hibernate-opensearch:
+    runs-on: self-hosted
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v7
+      - name: "Add cluster CA certificate"
+        run: |
+          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
+          sudo mkdir /usr/local/share/ca-certificates/extra
+          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
+          sudo update-ca-certificates
+      - name: "Generate and install kubeconfig"
+        working-directory: ./terraform
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v5
+        with:
+          version: 'v1.33.6'
+      - name: "Hibernate OpenSearch"
+        if: ${{ inputs.do-hibernate }}
+        run: |
+          kubectl -n opensearch-operator scale deploy opensearch-operator --replicas=0
+          kubectl -n opensearch-operator wait deploy opensearch-operator --for=jsonpath='{.status.replicas}=0' --timeout=5m
+          kubectl -n posthog delete pods -l opensearch.cluster.name --timeout=10m
+      - name: "Restart OpenSearch"
+        if: ${{ !inputs.do-hibernate }}
+        run: |
+          kubectl -n opensearch-operator scale deploy opensearch-operator --replicas=1
+          kubectl -n opensearch-operator wait deploy opensearch-operator --for=jsonpath='{.status.readyReplicas}=1' --timeout=5m
+          kubectl -n posthog wait pods -l opensearch.cluster.name --for=condition=Ready --timeout 30m
+
   report-hibernation-status:
     needs: [
       hibernate-postgres-databases,
       hibernate-clickhouse-databases,
       hibernate-clickhouse-keeper-databases,
       hibernate-mariadb-databases,
+      hibernate-kafka,
+      hibernate-opensearch,
     ]
     if: always() && !cancelled() && inputs.do-hibernate
     runs-on: ubuntu-latest
     outputs:
-      attempted: ${{ (needs.hibernate-postgres-databases.result != 'skipped') || (needs.hibernate-clickhouse-databases.result != 'skipped') || (needs.hibernate-clickhouse-keeper-databases.result != 'skipped') || (needs.hibernate-mariadb-databases.result != 'skipped') }}
+      attempted: ${{ (needs.hibernate-postgres-databases.result != 'skipped') || (needs.hibernate-clickhouse-databases.result != 'skipped') || (needs.hibernate-clickhouse-keeper-databases.result != 'skipped') || (needs.hibernate-mariadb-databases.result != 'skipped') || (needs.hibernate-kafka.result != 'skipped') || (needs.hibernate-opensearch.result != 'skipped') }}
     steps:
       - name: "Report status"
         run: echo "done"
