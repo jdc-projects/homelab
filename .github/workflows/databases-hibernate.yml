@@ -241,10 +241,10 @@ jobs:
         uses: azure/setup-kubectl@v5
         with:
           version: 'v1.33.6'
-      - name: "Scale ClickHouse"
+      - name: "Hibernate / restart ClickHouse"
         env:
-          REPLICAS: ${{ inputs.do-hibernate && 0 || matrix.clickhouse.replicas }}
-        run: kubectl scale clickhouseinstallation ${{ matrix.clickhouse.name }} -n ${{ matrix.clickhouse.namespace }} --replicas=${{ env.REPLICAS }}
+          STOP_VALUE: ${{ inputs.do-hibernate && '1' || '0' }}
+        run: kubectl -n ${{ matrix.clickhouse.namespace }} patch clickhouseinstallation ${{ matrix.clickhouse.name }} --type=merge -p '{"spec":{"stop":"${{ env.STOP_VALUE }}"}}'
       - name: "Wait for scale down"
         if: ${{ inputs.do-hibernate }}
         run: kubectl -n ${{ matrix.clickhouse.namespace }} wait clickhouseinstallation ${{ matrix.clickhouse.name }} --timeout 30m --for "jsonpath={.status.status}=Completed"
@@ -368,7 +368,7 @@ jobs:
         if: ${{ inputs.do-hibernate }}
         run: |
           kubectl -n kafka-operator scale deploy strimzi-cluster-operator --replicas=0
-          kubectl -n kafka-operator wait deploy strimzi-cluster-operator --for=jsonpath='{.status.replicas}=0' --timeout=5m
+          kubectl -n kafka-operator wait pod -l strimzi.io/kind=cluster-operator --for=delete --timeout=5m
           kubectl delete pods -n posthog -l strimzi.io/cluster --timeout=10m
       - name: "Restart Kafka"
         if: ${{ !inputs.do-hibernate }}
@@ -403,7 +403,7 @@ jobs:
         if: ${{ inputs.do-hibernate }}
         run: |
           kubectl -n opensearch-operator scale deploy opensearch-operator --replicas=0
-          kubectl -n opensearch-operator wait deploy opensearch-operator --for=jsonpath='{.status.replicas}=0' --timeout=5m
+          kubectl -n opensearch-operator wait pod -l app.kubernetes.io/name=opensearch-operator --for=delete --timeout=5m
           kubectl -n posthog delete pods -l opensearch.cluster.name --timeout=10m
       - name: "Restart OpenSearch"
         if: ${{ !inputs.do-hibernate }}
