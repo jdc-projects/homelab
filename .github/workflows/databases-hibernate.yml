@@ -551,12 +551,25 @@ jobs:
         uses: azure/setup-kubectl@v5
         with:
           version: 'v1.33.6'
-      - name: "Delete OpenSearch pods"
+      - name: "Scale OpenSearch StatefulSets to 0"
         if: ${{ inputs.do-hibernate }}
-        run: kubectl delete pods -n ${{ matrix.cluster.namespace }} -l opensearch.cluster.name=${{ matrix.cluster.name }} --timeout=10m
+        run: |
+          NS=${{ matrix.cluster.namespace }}
+          CLUSTER=${{ matrix.cluster.name }}
+          for sts in $(kubectl get sts -n "$NS" -l opensearch.org/opensearch-cluster="$CLUSTER" -o jsonpath='{.items[*].metadata.name}'); do
+            kubectl -n "$NS" scale sts "$sts" --replicas=0
+          done
+          kubectl -n "$NS" wait pod -l opensearch.org/opensearch-cluster="$CLUSTER" --for=delete --timeout=5m
       - name: "Wait for OpenSearch Ready"
         if: ${{ !inputs.do-hibernate }}
-        run: kubectl -n ${{ matrix.cluster.namespace }} wait pods -l opensearch.cluster.name=${{ matrix.cluster.name }} --for=condition=Ready --timeout 30m
+        run: |
+          NS=${{ matrix.cluster.namespace }}
+          CLUSTER=${{ matrix.cluster.name }}
+          for sts in $(kubectl get sts -n "$NS" -l opensearch.org/opensearch-cluster="$CLUSTER" -o jsonpath='{.items[*].metadata.name}'); do
+            echo "Waiting for operator to restore replicas for $sts..."
+            timeout 10m bash -c "while [ \$(kubectl get sts $sts -n $NS -o jsonpath='{.spec.replicas}') = '0' ]; do sleep 5; done"
+            kubectl -n "$NS" rollout status "sts/$sts" --timeout=30m
+          done
 
   report-hibernation-status:
     needs: [
