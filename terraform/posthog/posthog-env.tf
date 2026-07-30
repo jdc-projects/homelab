@@ -39,7 +39,7 @@ resource "kubernetes_config_map" "posthog_env" {
     PERSONS_DB_READER_URL              = local.database_url
     OTEL_SDK_DISABLED                  = "true"
     OPT_OUT_CAPTURE                    = "true"
-    SELF_CAPTURE                       = "false"
+    SELF_CAPTURE                       = "true"
     PGHOST                             = local.pg_host
     PGUSER                             = "posthog"
     LIVESTREAM_HOST                    = "https://${local.posthog_domain}/livestream"
