@@ -2,7 +2,6 @@ locals {
   posthog_db_instances = 2
 
   posthog_databases = [
-    "posthog_persons",
     "cyclotron",
     "cyclotron_node",
     "behavioral_cohorts",
