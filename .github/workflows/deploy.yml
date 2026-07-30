@@ -236,12 +236,15 @@ jobs:
       resource-name: null_resource.ocis_helm_repo_clone
       force-apply-all: true
 
-  deploy-keycloak-dependants:
+  deploy-bulk:
     needs: [
       deploy-keycloak-config,
       deploy-mariadb-operator,
-      deploy-grafana-operator, # only needed for grafana
-      deploy-velero, # only needed for services
+      deploy-grafana-operator,
+      deploy-velero,
+      deploy-kafka-operator,
+      deploy-opensearch-operator,
+      deploy-clickhouse-operator,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
@@ -258,6 +261,7 @@ jobs:
           erpnext,
           web-check,
           convertx,
+          posthog,
         ]
 
     with:

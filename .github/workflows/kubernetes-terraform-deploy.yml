@@ -50,6 +50,8 @@ env:
   TF_VAR_smtp_port: ${{ vars.SMTP_PORT }}
   TF_VAR_smtp_username: ${{ vars.SMTP_USERNAME }}
   TF_VAR_smtp_password: ${{ secrets.SMTP_PASSWORD }}
+  TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+  TF_VAR_anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
   TF_VAR_velero_s3_access_key_id: ${{ vars.VELERO_S3_ACCESS_KEY_ID }}
   TF_VAR_velero_s3_bucket_name: ${{ vars.VELERO_S3_BUCKET_NAME }}
   TF_VAR_velero_s3_region: ${{ vars.VELERO_S3_REGION }}

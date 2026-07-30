@@ -64,21 +64,6 @@ resource "kubernetes_deployment" "temporal_ui" {
             }
           }
         }
-
-        module "temporal_ui_ingress" {
-          count  = var.ui_domain != null ? 1 : 0
-          source = "../ingress"
-
-          name                       = "${var.name_prefix}-ui"
-          namespace                  = var.namespace
-          domain                     = var.ui_domain
-          existing_service_name      = kubernetes_service.temporal_ui.metadata[0].name
-          existing_service_namespace = var.namespace
-          target_port                = 8080
-
-          do_enable_keycloak_auth     = true
-          is_keycloak_auth_admin_mode = true
-        }
       }
     }
   }
@@ -100,4 +85,19 @@ resource "kubernetes_service" "temporal_ui" {
       target_port = 8080
     }
   }
+}
+
+module "temporal_ui_ingress" {
+  count  = var.ui_domain != null ? 1 : 0
+  source = "../ingress"
+
+  name                       = "${var.name_prefix}-ui"
+  namespace                  = var.namespace
+  domain                     = var.ui_domain
+  existing_service_name      = kubernetes_service.temporal_ui.metadata[0].name
+  existing_service_namespace = var.namespace
+  target_port                = 8080
+
+  do_enable_keycloak_auth     = true
+  is_keycloak_auth_admin_mode = true
 }
