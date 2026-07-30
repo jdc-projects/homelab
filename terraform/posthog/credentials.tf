@@ -76,5 +76,8 @@ resource "kubernetes_secret" "posthog_secrets" {
     HEATMAP_BROWSERLESS_URL                   = "http://browserless:3000"
     HEATMAP_BROWSERLESS_TOKEN                 = random_password.browserless_token.result
     OIDC_CLIENT_SECRET                        = random_password.posthog_oidc_client_secret.result
+    EMAIL_HOST_PASSWORD                       = var.smtp_password
+    OPENAI_API_KEY                            = var.openai_api_key != null ? var.openai_api_key : ""
+    ANTHROPIC_API_KEY                         = var.anthropic_api_key != null ? var.anthropic_api_key : ""
   }
 }

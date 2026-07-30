@@ -200,9 +200,15 @@ resource "kubernetes_config_map" "web_config" {
   }
 
   data = {
-    HOST_BIND      = "0.0.0.0"
-    OIDC_OP_URL    = data.terraform_remote_state.keycloak.outputs.keycloak_issuer_url
-    OIDC_CLIENT_ID = keycloak_openid_client.posthog.client_id
+    HOST_BIND         = "0.0.0.0"
+    OIDC_OP_URL       = data.terraform_remote_state.keycloak.outputs.keycloak_issuer_url
+    OIDC_CLIENT_ID    = keycloak_openid_client.posthog.client_id
+    EMAIL_HOST        = var.smtp_host
+    EMAIL_PORT        = var.smtp_port
+    EMAIL_USE_SSL     = "true"
+    EMAIL_USE_TLS     = "false"
+    EMAIL_DEFAULT_FROM = "posthog@${var.server_base_domain}"
+    EMAIL_HOST_USER   = var.smtp_username
   }
 }
 
