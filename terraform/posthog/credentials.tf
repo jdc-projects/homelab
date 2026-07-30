@@ -50,6 +50,11 @@ resource "random_password" "browserless_token" {
   special = false
 }
 
+resource "tls_private_key" "posthog_oidc" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
 resource "kubernetes_secret" "posthog_secrets" {
   metadata {
     name      = "posthog-secrets"
@@ -76,6 +81,7 @@ resource "kubernetes_secret" "posthog_secrets" {
     HEATMAP_BROWSERLESS_URL                   = "http://browserless:3000"
     HEATMAP_BROWSERLESS_TOKEN                 = random_password.browserless_token.result
     OIDC_CLIENT_SECRET                        = random_password.posthog_oidc_client_secret.result
+    OIDC_RSA_PRIVATE_KEY                      = tls_private_key.posthog_oidc.private_key_pem
     EMAIL_HOST_PASSWORD                       = var.smtp_password
     OPENAI_API_KEY                            = var.openai_api_key != null ? var.openai_api_key : ""
     ANTHROPIC_API_KEY                         = var.anthropic_api_key != null ? var.anthropic_api_key : ""
