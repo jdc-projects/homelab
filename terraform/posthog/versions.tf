@@ -4,9 +4,9 @@ locals {
   # =========================================================================
 
   # PostHog Django image.
-  # Tags:      https://hub.docker.com/r/posthog/posthog/tags  (sha-<short> tags)
-  # Changelog: https://github.com/PostHog/posthog/releases
-  posthog_image = "posthog/posthog:sha-9c93bdd"
+  # Custom image with OIDC SSO (Keycloak) + project creation patch.
+  # Source: https://github.com/jdc-projects/posthog-oidc
+  posthog_image = "ghcr.io/jdc-projects/posthog-oidc:posthog-sha-9c93bdd-oidc-1.4.0"
 
   # Node.js plugin-server image.  PostHog CI publishes this from a *different*
   # commit than the Django image, so the short SHA will not match

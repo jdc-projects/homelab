@@ -46,12 +46,14 @@ resource "kubernetes_deployment" "posthog_web" {
   lifecycle {
     replace_triggered_by = [
       kubernetes_config_map.posthog_env,
+      kubernetes_config_map.web_config,
       kubernetes_secret.posthog_secrets,
     ]
   }
 
   depends_on = [
     kubernetes_manifest.posthog_db,
+    kubernetes_manifest.posthog_db_pooler,
     kubernetes_manifest.posthog_clickhouse,
     kubernetes_job.rustfs_provision,
     kubernetes_job.rustfs_recordings_provision,

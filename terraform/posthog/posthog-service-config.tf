@@ -200,7 +200,9 @@ resource "kubernetes_config_map" "web_config" {
   }
 
   data = {
-    HOST_BIND = "0.0.0.0"
+    HOST_BIND      = "0.0.0.0"
+    OIDC_OP_URL    = data.terraform_remote_state.keycloak.outputs.keycloak_issuer_url
+    OIDC_CLIENT_ID = keycloak_openid_client.posthog.client_id
   }
 }
 

@@ -48,6 +48,7 @@ resource "kubernetes_deployment" "posthog_worker" {
 
   depends_on = [
     kubernetes_manifest.posthog_db,
+    kubernetes_manifest.posthog_db_pooler,
     kubernetes_manifest.posthog_clickhouse,
     kubernetes_job.posthog_migrate,
   ]
@@ -103,6 +104,7 @@ resource "kubernetes_deployment" "temporal_django_worker" {
 
   depends_on = [
     module.temporal,
+    kubernetes_manifest.posthog_db_pooler,
     kubernetes_job.posthog_migrate,
   ]
 }

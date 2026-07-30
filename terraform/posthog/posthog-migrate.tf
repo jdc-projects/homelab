@@ -27,6 +27,16 @@ resource "kubernetes_job" "posthog_migrate" {
             }
           }
 
+          # Bypass PgBouncer for DDL — connect directly to Postgres.
+          env {
+            name  = "DATABASE_URL"
+            value = local.database_url_direct
+          }
+          env {
+            name  = "PGHOST"
+            value = local.pg_host_direct
+          }
+
           # On a fresh database, Django app startup queries posthog_asyncmigration
           # before `manage.py migrate` creates it. The explicit env overrides the
           # shared ConfigMap's normal value of 0 for initial bootstrap only.

@@ -75,5 +75,6 @@ resource "kubernetes_secret" "posthog_secrets" {
     BROWSERLESS_TOKEN                         = random_password.browserless_token.result
     HEATMAP_BROWSERLESS_URL                   = "http://browserless:3000"
     HEATMAP_BROWSERLESS_TOKEN                 = random_password.browserless_token.result
+    OIDC_CLIENT_SECRET                        = random_password.posthog_oidc_client_secret.result
   }
 }

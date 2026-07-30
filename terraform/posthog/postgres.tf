@@ -11,9 +11,12 @@ locals {
     "ducklake",
   ]
 
-  pg_host      = "${kubernetes_manifest.posthog_db.manifest.metadata.name}-rw"
-  pg_base      = "postgres://posthog:${random_password.posthog_db_password.result}@${local.pg_host}:5432"
-  database_url = "${local.pg_base}/posthog"
+  pg_host        = kubernetes_manifest.posthog_db_pooler.manifest.metadata.name
+  pg_host_direct = "${kubernetes_manifest.posthog_db.manifest.metadata.name}-rw"
+  pg_base        = "postgres://posthog:${random_password.posthog_db_password.result}@${local.pg_host}:5432"
+  pg_base_direct = "postgres://posthog:${random_password.posthog_db_password.result}@${local.pg_host_direct}:5432"
+  database_url        = "${local.pg_base}/posthog"
+  database_url_direct = "${local.pg_base_direct}/posthog"
 }
 
 resource "kubernetes_manifest" "posthog_db" {
@@ -113,4 +116,52 @@ resource "kubernetes_manifest" "posthog_db" {
   lifecycle {
     prevent_destroy = true
   }
+}
+
+resource "kubernetes_manifest" "posthog_db_pooler" {
+  manifest = {
+    apiVersion = "postgresql.cnpg.io/v1"
+    kind       = "Pooler"
+
+    metadata = {
+      name      = "posthog-db-pooler"
+      namespace = kubernetes_namespace.posthog.metadata[0].name
+    }
+
+    spec = {
+      cluster = {
+        name = kubernetes_manifest.posthog_db.manifest.metadata.name
+      }
+
+      instances = 2
+
+      type = "rw"
+
+      pgbouncer = {
+        poolMode = "transaction"
+        parameters = {
+          max_client_conn   = "1000"
+          default_pool_size = "25"
+          reserve_pool_size = "5"
+        }
+      }
+    }
+  }
+
+  field_manager {
+    force_conflicts = true
+  }
+
+  computed_fields = [
+    "metadata.labels",
+    "metadata.annotations",
+  ]
+
+  wait {
+    fields = {
+      "status.instances" = 2
+    }
+  }
+
+  depends_on = [kubernetes_manifest.posthog_db]
 }
