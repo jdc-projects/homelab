@@ -14,6 +14,10 @@ resource "kubernetes_deployment" "posthog_worker" {
     template {
       metadata {
         labels = { app = "worker" }
+        annotations = {
+          "checksum/posthog-env"     = sha1(jsonencode(kubernetes_config_map.posthog_env.data))
+          "checksum/posthog-secrets" = sha1(jsonencode(kubernetes_secret.posthog_secrets.data))
+        }
       }
 
       spec {
@@ -37,13 +41,6 @@ resource "kubernetes_deployment" "posthog_worker" {
         }
       }
     }
-  }
-
-  lifecycle {
-    replace_triggered_by = [
-      kubernetes_config_map.posthog_env,
-      kubernetes_secret.posthog_secrets,
-    ]
   }
 
   depends_on = [
@@ -70,6 +67,10 @@ resource "kubernetes_deployment" "temporal_django_worker" {
     template {
       metadata {
         labels = { app = "temporal-django-worker" }
+        annotations = {
+          "checksum/posthog-env"     = sha1(jsonencode(kubernetes_config_map.posthog_env.data))
+          "checksum/posthog-secrets" = sha1(jsonencode(kubernetes_secret.posthog_secrets.data))
+        }
       }
 
       spec {
@@ -93,13 +94,6 @@ resource "kubernetes_deployment" "temporal_django_worker" {
         }
       }
     }
-  }
-
-  lifecycle {
-    replace_triggered_by = [
-      kubernetes_config_map.posthog_env,
-      kubernetes_secret.posthog_secrets,
-    ]
   }
 
   depends_on = [

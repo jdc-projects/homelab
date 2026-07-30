@@ -13,6 +13,10 @@ resource "kubernetes_deployment" "capture" {
     template {
       metadata {
         labels = { app = "capture" }
+        annotations = {
+          "checksum/posthog-env"     = sha1(jsonencode(kubernetes_config_map.posthog_env.data))
+          "checksum/posthog-secrets" = sha1(jsonencode(kubernetes_secret.posthog_secrets.data))
+        }
       }
       spec {
         container {
@@ -31,6 +35,14 @@ resource "kubernetes_deployment" "capture" {
 
           port { container_port = 3000 }
 
+          readiness_probe {
+            tcp_socket {
+              port = 3000
+            }
+            initial_delay_seconds = 5
+            period_seconds        = 5
+          }
+
           resources {
             requests = { cpu = "200m", memory = "256Mi" }
             limits   = { cpu = "500m", memory = "512Mi" }
@@ -38,12 +50,6 @@ resource "kubernetes_deployment" "capture" {
         }
       }
     }
-  }
-  lifecycle {
-    replace_triggered_by = [
-      kubernetes_config_map.posthog_env,
-      kubernetes_secret.posthog_secrets,
-    ]
   }
   depends_on = [kubernetes_job.posthog_migrate]
 }
@@ -75,6 +81,10 @@ resource "kubernetes_deployment" "replay_capture" {
     template {
       metadata {
         labels = { app = "replay-capture" }
+        annotations = {
+          "checksum/posthog-env"     = sha1(jsonencode(kubernetes_config_map.posthog_env.data))
+          "checksum/posthog-secrets" = sha1(jsonencode(kubernetes_secret.posthog_secrets.data))
+        }
       }
       spec {
         container {
@@ -93,6 +103,14 @@ resource "kubernetes_deployment" "replay_capture" {
 
           port { container_port = 3000 }
 
+          readiness_probe {
+            tcp_socket {
+              port = 3000
+            }
+            initial_delay_seconds = 5
+            period_seconds        = 5
+          }
+
           resources {
             requests = { cpu = "200m", memory = "256Mi" }
             limits   = { cpu = "500m", memory = "512Mi" }
@@ -100,12 +118,6 @@ resource "kubernetes_deployment" "replay_capture" {
         }
       }
     }
-  }
-  lifecycle {
-    replace_triggered_by = [
-      kubernetes_config_map.posthog_env,
-      kubernetes_secret.posthog_secrets,
-    ]
   }
   depends_on = [kubernetes_job.posthog_migrate]
 }
@@ -137,6 +149,10 @@ resource "kubernetes_deployment" "capture_ai" {
     template {
       metadata {
         labels = { app = "capture-ai" }
+        annotations = {
+          "checksum/posthog-env"     = sha1(jsonencode(kubernetes_config_map.posthog_env.data))
+          "checksum/posthog-secrets" = sha1(jsonencode(kubernetes_secret.posthog_secrets.data))
+        }
       }
       spec {
         container {
@@ -158,6 +174,14 @@ resource "kubernetes_deployment" "capture_ai" {
 
           port { container_port = 3000 }
 
+          readiness_probe {
+            tcp_socket {
+              port = 3000
+            }
+            initial_delay_seconds = 5
+            period_seconds        = 5
+          }
+
           resources {
             requests = { cpu = "200m", memory = "256Mi" }
             limits   = { cpu = "500m", memory = "512Mi" }
@@ -165,12 +189,6 @@ resource "kubernetes_deployment" "capture_ai" {
         }
       }
     }
-  }
-  lifecycle {
-    replace_triggered_by = [
-      kubernetes_config_map.posthog_env,
-      kubernetes_secret.posthog_secrets,
-    ]
   }
   depends_on = [kubernetes_job.posthog_migrate]
 }
@@ -202,6 +220,10 @@ resource "kubernetes_deployment" "capture_logs" {
     template {
       metadata {
         labels = { app = "capture-logs" }
+        annotations = {
+          "checksum/posthog-env"     = sha1(jsonencode(kubernetes_config_map.posthog_env.data))
+          "checksum/posthog-secrets" = sha1(jsonencode(kubernetes_secret.posthog_secrets.data))
+        }
       }
       spec {
         container {
@@ -223,6 +245,14 @@ resource "kubernetes_deployment" "capture_logs" {
 
           port { container_port = 4318 }
 
+          readiness_probe {
+            tcp_socket {
+              port = 4318
+            }
+            initial_delay_seconds = 5
+            period_seconds        = 5
+          }
+
           resources {
             requests = { cpu = "200m", memory = "256Mi" }
             limits   = { cpu = "500m", memory = "512Mi" }
@@ -230,12 +260,6 @@ resource "kubernetes_deployment" "capture_logs" {
         }
       }
     }
-  }
-  lifecycle {
-    replace_triggered_by = [
-      kubernetes_config_map.posthog_env,
-      kubernetes_secret.posthog_secrets,
-    ]
   }
   depends_on = [kubernetes_job.posthog_migrate]
 }
@@ -267,6 +291,10 @@ resource "kubernetes_deployment" "property_defs_rs" {
     template {
       metadata {
         labels = { app = "property-defs-rs" }
+        annotations = {
+          "checksum/posthog-env"     = sha1(jsonencode(kubernetes_config_map.posthog_env.data))
+          "checksum/posthog-secrets" = sha1(jsonencode(kubernetes_secret.posthog_secrets.data))
+        }
       }
       spec {
         container {
@@ -291,12 +319,6 @@ resource "kubernetes_deployment" "property_defs_rs" {
       }
     }
   }
-  lifecycle {
-    replace_triggered_by = [
-      kubernetes_config_map.posthog_env,
-      kubernetes_secret.posthog_secrets,
-    ]
-  }
   depends_on = [kubernetes_job.posthog_migrate]
 }
 
@@ -313,6 +335,10 @@ resource "kubernetes_deployment" "feature_flags" {
     template {
       metadata {
         labels = { app = "feature-flags" }
+        annotations = {
+          "checksum/posthog-env"     = sha1(jsonencode(kubernetes_config_map.posthog_env.data))
+          "checksum/posthog-secrets" = sha1(jsonencode(kubernetes_secret.posthog_secrets.data))
+        }
       }
       spec {
         container {
@@ -334,6 +360,14 @@ resource "kubernetes_deployment" "feature_flags" {
 
           port { container_port = 3001 }
 
+          readiness_probe {
+            tcp_socket {
+              port = 3001
+            }
+            initial_delay_seconds = 5
+            period_seconds        = 5
+          }
+
           resources {
             requests = { cpu = "100m", memory = "256Mi" }
             limits   = { cpu = "250m", memory = "512Mi" }
@@ -353,12 +387,6 @@ resource "kubernetes_deployment" "feature_flags" {
         }
       }
     }
-  }
-  lifecycle {
-    replace_triggered_by = [
-      kubernetes_config_map.posthog_env,
-      kubernetes_secret.posthog_secrets,
-    ]
   }
   depends_on = [kubernetes_job.posthog_migrate, kubernetes_job.geoip_download]
 }
@@ -390,6 +418,10 @@ resource "kubernetes_deployment" "personhog_replica" {
     template {
       metadata {
         labels = { app = "personhog-replica" }
+        annotations = {
+          "checksum/posthog-env"     = sha1(jsonencode(kubernetes_config_map.posthog_env.data))
+          "checksum/posthog-secrets" = sha1(jsonencode(kubernetes_secret.posthog_secrets.data))
+        }
       }
       spec {
         container {
@@ -408,6 +440,14 @@ resource "kubernetes_deployment" "personhog_replica" {
 
           port { container_port = 50051 }
 
+          readiness_probe {
+            tcp_socket {
+              port = 50051
+            }
+            initial_delay_seconds = 5
+            period_seconds        = 5
+          }
+
           resources {
             requests = { cpu = "100m", memory = "128Mi" }
             limits   = { cpu = "250m", memory = "256Mi" }
@@ -415,12 +455,6 @@ resource "kubernetes_deployment" "personhog_replica" {
         }
       }
     }
-  }
-  lifecycle {
-    replace_triggered_by = [
-      kubernetes_config_map.posthog_env,
-      kubernetes_secret.posthog_secrets,
-    ]
   }
   depends_on = [kubernetes_job.posthog_migrate]
 }
@@ -452,6 +486,10 @@ resource "kubernetes_deployment" "personhog_router" {
     template {
       metadata {
         labels = { app = "personhog-router" }
+        annotations = {
+          "checksum/posthog-env"     = sha1(jsonencode(kubernetes_config_map.posthog_env.data))
+          "checksum/posthog-secrets" = sha1(jsonencode(kubernetes_secret.posthog_secrets.data))
+        }
       }
       spec {
         container {
@@ -463,6 +501,14 @@ resource "kubernetes_deployment" "personhog_router" {
           }
 
           port { container_port = 50052 }
+
+          readiness_probe {
+            tcp_socket {
+              port = 50052
+            }
+            initial_delay_seconds = 5
+            period_seconds        = 5
+          }
 
           resources {
             requests = { cpu = "100m", memory = "128Mi" }
@@ -502,6 +548,10 @@ resource "kubernetes_deployment" "hypercache_server" {
     template {
       metadata {
         labels = { app = "hypercache-server" }
+        annotations = {
+          "checksum/posthog-env"     = sha1(jsonencode(kubernetes_config_map.posthog_env.data))
+          "checksum/posthog-secrets" = sha1(jsonencode(kubernetes_secret.posthog_secrets.data))
+        }
       }
       spec {
         container {
@@ -520,6 +570,14 @@ resource "kubernetes_deployment" "hypercache_server" {
 
           port { container_port = 3002 }
 
+          readiness_probe {
+            tcp_socket {
+              port = 3002
+            }
+            initial_delay_seconds = 5
+            period_seconds        = 5
+          }
+
           resources {
             requests = { cpu = "100m", memory = "128Mi" }
             limits   = { cpu = "250m", memory = "256Mi" }
@@ -527,12 +585,6 @@ resource "kubernetes_deployment" "hypercache_server" {
         }
       }
     }
-  }
-  lifecycle {
-    replace_triggered_by = [
-      kubernetes_config_map.posthog_env,
-      kubernetes_secret.posthog_secrets,
-    ]
   }
   depends_on = [helm_release.valkey]
 }
@@ -564,6 +616,10 @@ resource "kubernetes_deployment" "cyclotron_janitor" {
     template {
       metadata {
         labels = { app = "cyclotron-janitor" }
+        annotations = {
+          "checksum/posthog-env"     = sha1(jsonencode(kubernetes_config_map.posthog_env.data))
+          "checksum/posthog-secrets" = sha1(jsonencode(kubernetes_secret.posthog_secrets.data))
+        }
       }
       spec {
         container {
@@ -591,12 +647,6 @@ resource "kubernetes_deployment" "cyclotron_janitor" {
       }
     }
   }
-  lifecycle {
-    replace_triggered_by = [
-      kubernetes_config_map.posthog_env,
-      kubernetes_secret.posthog_secrets,
-    ]
-  }
   depends_on = [kubernetes_job.posthog_migrate]
 }
 
@@ -613,6 +663,10 @@ resource "kubernetes_deployment" "livestream" {
     template {
       metadata {
         labels = { app = "livestream" }
+        annotations = {
+          "checksum/posthog-env"     = sha1(jsonencode(kubernetes_config_map.posthog_env.data))
+          "checksum/posthog-secrets" = sha1(jsonencode(kubernetes_secret.posthog_secrets.data))
+        }
       }
       spec {
         container {
@@ -627,6 +681,14 @@ resource "kubernetes_deployment" "livestream" {
           }
 
           port { container_port = 8080 }
+
+          readiness_probe {
+            tcp_socket {
+              port = 8080
+            }
+            initial_delay_seconds = 5
+            period_seconds        = 5
+          }
 
           resources {
             requests = { cpu = "100m", memory = "128Mi" }
@@ -660,12 +722,6 @@ resource "kubernetes_deployment" "livestream" {
       }
     }
   }
-  lifecycle {
-    replace_triggered_by = [
-      kubernetes_config_map.posthog_env,
-      kubernetes_secret.posthog_secrets,
-    ]
-  }
   depends_on = [kubernetes_service.kafka, kubernetes_job.geoip_download]
 }
 
@@ -696,6 +752,10 @@ resource "kubernetes_deployment" "cymbal" {
     template {
       metadata {
         labels = { app = "cymbal" }
+        annotations = {
+          "checksum/posthog-env"     = sha1(jsonencode(kubernetes_config_map.posthog_env.data))
+          "checksum/posthog-secrets" = sha1(jsonencode(kubernetes_secret.posthog_secrets.data))
+        }
       }
       spec {
         container {
@@ -717,6 +777,14 @@ resource "kubernetes_deployment" "cymbal" {
 
           port { container_port = 3302 }
 
+          readiness_probe {
+            tcp_socket {
+              port = 3302
+            }
+            initial_delay_seconds = 5
+            period_seconds        = 5
+          }
+
           resources {
             requests = { cpu = "100m", memory = "128Mi" }
             limits   = { cpu = "250m", memory = "256Mi" }
@@ -736,12 +804,6 @@ resource "kubernetes_deployment" "cymbal" {
         }
       }
     }
-  }
-  lifecycle {
-    replace_triggered_by = [
-      kubernetes_config_map.posthog_env,
-      kubernetes_secret.posthog_secrets,
-    ]
   }
   depends_on = [kubernetes_job.posthog_migrate, kubernetes_job.geoip_download]
 }

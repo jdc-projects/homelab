@@ -14,6 +14,11 @@ resource "kubernetes_deployment" "posthog_web" {
     template {
       metadata {
         labels = { app = "web" }
+        annotations = {
+          "checksum/posthog-env"     = sha1(jsonencode(kubernetes_config_map.posthog_env.data))
+          "checksum/web-config"      = sha1(jsonencode(kubernetes_config_map.web_config.data))
+          "checksum/posthog-secrets" = sha1(jsonencode(kubernetes_secret.posthog_secrets.data))
+        }
       }
 
       spec {
@@ -34,6 +39,16 @@ resource "kubernetes_deployment" "posthog_web" {
 
           port { container_port = 8000 }
 
+          readiness_probe {
+            http_get {
+              path = "/_health"
+              port = 8000
+            }
+            initial_delay_seconds = 10
+            period_seconds        = 5
+            failure_threshold     = 6
+          }
+
           resources {
             requests = { cpu = "1", memory = "2Gi" }
             limits   = { cpu = "2", memory = "4Gi" }
@@ -41,14 +56,6 @@ resource "kubernetes_deployment" "posthog_web" {
         }
       }
     }
-  }
-
-  lifecycle {
-    replace_triggered_by = [
-      kubernetes_config_map.posthog_env,
-      kubernetes_config_map.web_config,
-      kubernetes_secret.posthog_secrets,
-    ]
   }
 
   depends_on = [
