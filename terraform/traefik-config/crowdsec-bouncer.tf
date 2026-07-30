@@ -15,7 +15,7 @@ resource "kubernetes_manifest" "crowdsec_bouncer_traefik_plugin_middleware" {
         crowdsec-bouncer = {
           Enabled               = "true"
           LogLevel              = "INFO"
-          CrowdsecMode          = "live"
+          CrowdsecMode          = "stream"
           CrowdsecAppsecEnabled = "true"
           CrowdsecAppsecHost    = "${data.terraform_remote_state.crowdsec.outputs.crowdsec_helm_release_name}-appsec-service.${data.terraform_remote_state.crowdsec.outputs.crowdsec_namespace}:7422"
           CrowdsecLapiScheme    = "http"
@@ -46,7 +46,7 @@ resource "kubernetes_manifest" "crowdsec_bouncer_without_appsec_traefik_plugin_m
         crowdsec-bouncer = {
           Enabled               = "true"
           LogLevel              = "INFO"
-          CrowdsecMode          = "live"
+          CrowdsecMode          = "stream"
           CrowdsecAppsecEnabled = "false"
           CrowdsecLapiScheme    = "http"
           CrowdsecLapiHost      = "${data.terraform_remote_state.crowdsec.outputs.crowdsec_helm_release_name}-service.${data.terraform_remote_state.crowdsec.outputs.crowdsec_namespace}:8080"
