@@ -5,7 +5,7 @@ resource "kubernetes_deployment" "posthog_web" {
   }
 
   spec {
-    replicas = 1
+    replicas = 2
 
     selector {
       match_labels = { app = "web" }
@@ -35,8 +35,8 @@ resource "kubernetes_deployment" "posthog_web" {
           port { container_port = 8000 }
 
           resources {
-            requests = { cpu = "500m", memory = "1Gi" }
-            limits   = { cpu = "1", memory = "2Gi" }
+            requests = { cpu = "1", memory = "2Gi" }
+            limits   = { cpu = "2", memory = "4Gi" }
           }
         }
       }

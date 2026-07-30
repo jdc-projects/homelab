@@ -237,8 +237,8 @@ resource "kubernetes_manifest" "posthog_clickhouse" {
                     { name = "KAFKA_HOSTS", value = "kafka:9092" }
                   ]
                   resources = {
-                    requests = { cpu = "200m", memory = "1Gi" }
-                    limits   = { cpu = "1", memory = "2Gi" }
+                    requests = { cpu = "1", memory = "3Gi" }
+                    limits   = { cpu = "3", memory = "6Gi" }
                   }
                 }
               ]

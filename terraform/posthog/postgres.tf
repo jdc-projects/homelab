@@ -10,10 +10,10 @@ locals {
     "ducklake",
   ]
 
-  pg_host        = kubernetes_manifest.posthog_db_pooler.manifest.metadata.name
-  pg_host_direct = "${kubernetes_manifest.posthog_db.manifest.metadata.name}-rw"
-  pg_base        = "postgres://posthog:${random_password.posthog_db_password.result}@${local.pg_host}:5432"
-  pg_base_direct = "postgres://posthog:${random_password.posthog_db_password.result}@${local.pg_host_direct}:5432"
+  pg_host             = kubernetes_manifest.posthog_db_pooler.manifest.metadata.name
+  pg_host_direct      = "${kubernetes_manifest.posthog_db.manifest.metadata.name}-rw"
+  pg_base             = "postgres://posthog:${random_password.posthog_db_password.result}@${local.pg_host}:5432"
+  pg_base_direct      = "postgres://posthog:${random_password.posthog_db_password.result}@${local.pg_host_direct}:5432"
   database_url        = "${local.pg_base}/posthog"
   database_url_direct = "${local.pg_base_direct}/posthog"
 }
