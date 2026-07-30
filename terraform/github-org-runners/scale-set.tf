@@ -136,7 +136,7 @@ resource "helm_release" "runner_scale_set" {
     },
     {
       name  = "template.spec.volumes[0].ephemeral.volumeClaimTemplate.spec.resources.requests.storage"
-      value = "1Gi"
+      value = "5Gi"
     },
   ]
 
