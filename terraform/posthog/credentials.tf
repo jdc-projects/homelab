@@ -65,7 +65,7 @@ resource "kubernetes_secret" "posthog_secrets" {
     CYCLOTRON_DATABASE_URL                    = local.database_url
     CYCLOTRON_NODE_DATABASE_URL               = "${local.pg_base}/cyclotron_node"
     CYCLOTRON_JANITOR_DB_URL                  = "${local.pg_base}/cyclotron"
-    PRIMARY_DATABASE_URL                      = "${local.pg_base}/posthog_persons"
+    PRIMARY_DATABASE_URL                      = local.database_url
     PGPASSWORD                                = random_password.posthog_db_password.result
     OBJECT_STORAGE_ACCESS_KEY_ID              = random_password.rustfs_primary_username.result
     OBJECT_STORAGE_SECRET_ACCESS_KEY          = random_password.rustfs_primary_password.result

@@ -39,6 +39,12 @@ resource "kubernetes_deployment" "capture" {
       }
     }
   }
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_config_map.posthog_env,
+      kubernetes_secret.posthog_secrets,
+    ]
+  }
   depends_on = [kubernetes_job.posthog_migrate]
 }
 
@@ -94,6 +100,12 @@ resource "kubernetes_deployment" "replay_capture" {
         }
       }
     }
+  }
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_config_map.posthog_env,
+      kubernetes_secret.posthog_secrets,
+    ]
   }
   depends_on = [kubernetes_job.posthog_migrate]
 }
@@ -154,6 +166,12 @@ resource "kubernetes_deployment" "capture_ai" {
       }
     }
   }
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_config_map.posthog_env,
+      kubernetes_secret.posthog_secrets,
+    ]
+  }
   depends_on = [kubernetes_job.posthog_migrate]
 }
 
@@ -213,6 +231,12 @@ resource "kubernetes_deployment" "capture_logs" {
       }
     }
   }
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_config_map.posthog_env,
+      kubernetes_secret.posthog_secrets,
+    ]
+  }
   depends_on = [kubernetes_job.posthog_migrate]
 }
 
@@ -266,6 +290,12 @@ resource "kubernetes_deployment" "property_defs_rs" {
         }
       }
     }
+  }
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_config_map.posthog_env,
+      kubernetes_secret.posthog_secrets,
+    ]
   }
   depends_on = [kubernetes_job.posthog_migrate]
 }
@@ -324,6 +354,12 @@ resource "kubernetes_deployment" "feature_flags" {
       }
     }
   }
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_config_map.posthog_env,
+      kubernetes_secret.posthog_secrets,
+    ]
+  }
   depends_on = [kubernetes_job.posthog_migrate, kubernetes_job.geoip_download]
 }
 
@@ -379,6 +415,12 @@ resource "kubernetes_deployment" "personhog_replica" {
         }
       }
     }
+  }
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_config_map.posthog_env,
+      kubernetes_secret.posthog_secrets,
+    ]
   }
   depends_on = [kubernetes_job.posthog_migrate]
 }
@@ -486,6 +528,12 @@ resource "kubernetes_deployment" "hypercache_server" {
       }
     }
   }
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_config_map.posthog_env,
+      kubernetes_secret.posthog_secrets,
+    ]
+  }
   depends_on = [helm_release.valkey]
 }
 
@@ -542,6 +590,12 @@ resource "kubernetes_deployment" "cyclotron_janitor" {
         }
       }
     }
+  }
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_config_map.posthog_env,
+      kubernetes_secret.posthog_secrets,
+    ]
   }
   depends_on = [kubernetes_job.posthog_migrate]
 }
@@ -605,6 +659,12 @@ resource "kubernetes_deployment" "livestream" {
         }
       }
     }
+  }
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_config_map.posthog_env,
+      kubernetes_secret.posthog_secrets,
+    ]
   }
   depends_on = [kubernetes_service.kafka, kubernetes_job.geoip_download]
 }
@@ -676,6 +736,12 @@ resource "kubernetes_deployment" "cymbal" {
         }
       }
     }
+  }
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_config_map.posthog_env,
+      kubernetes_secret.posthog_secrets,
+    ]
   }
   depends_on = [kubernetes_job.posthog_migrate, kubernetes_job.geoip_download]
 }
