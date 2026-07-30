@@ -5,7 +5,7 @@ locals {
   # shared ingress module. Traefik merges routes by priority — more specific
   # paths get higher numbers.
   ingress_routes = {
-    static       = { svc = kubernetes_service.posthog_web.metadata[0].name, port = 8000, path = "static", priority = 101, geoblock = true }
+    static       = { svc = kubernetes_service.posthog_web.metadata[0].name, port = 8000, path = "static", priority = 101, geoblock = false }
     e            = { svc = kubernetes_service.capture.metadata[0].name, port = 3000, path = "e", priority = 100, geoblock = false }
     i-v0-ai      = { svc = kubernetes_service.capture_ai.metadata[0].name, port = 3000, path = "i/v0/ai", priority = 100, geoblock = false }
     i-v0         = { svc = kubernetes_service.capture.metadata[0].name, port = 3000, path = "i/v0", priority = 90, geoblock = false }
