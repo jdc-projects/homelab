@@ -26,6 +26,22 @@ resource "kubernetes_manifest" "kubevirt_instance" {
             },
           ]
         }
+
+        supportContainerResources = [
+          {
+            type = "guest-console-log"
+            resources = {
+              requests = {
+                cpu    = "100m"
+                memory = "60M"
+              }
+              limits = {
+                cpu    = "100m"
+                memory = "60M"
+              }
+            }
+          },
+        ]
       }
       customizeComponents    = {}
       imagePullPolicy        = "IfNotPresent"

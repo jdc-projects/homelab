@@ -46,7 +46,7 @@ resource "helm_release" "rustfs" {
     { name = "ingress.enabled", value = "false" },
     { name = "resources.requests.cpu", value = "100m" },
     { name = "resources.requests.memory", value = "512Mi" },
-    { name = "resources.limits.cpu", value = "1000m" },
+    { name = "resources.limits.cpu", value = "2000m" },
     { name = "resources.limits.memory", value = "1Gi" },
   ]
 
