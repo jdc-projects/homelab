@@ -1,0 +1,50 @@
+# AGENTS.md
+
+Guidance for agents (and humans) working in this repo. Read before deploying.
+
+## Repo shape
+
+- `k3s/` — K3s host provisioning (Terraform).
+- `terraform/<service>/` — each service/app is its **own Terraform root module** with its own
+  state. States live in the cluster (kubernetes backend): secret `tfstate-default-<module>` in
+  the `tf-state` namespace. Modules are independent and are applied in dependency order by the
+  deploy workflow (below).
+- `terraform/modules/` — shared Terraform modules (`ingress`, `temporal`, `grafana-dashboard`).
+  Version constraints belong in **root modules only**, never in shared child modules.
+- `.github/workflows/deploy.yml` — the deploy pipeline (`workflow_dispatch`); each job applies
+  one terraform module, wired with `needs:` to enforce dependency order.
+- `utils/` — operational scripts.
+
+## Deploying changes
+
+Changes are **not** auto-deployed on push. Deploy is manual via the GitHub workflow. Always:
+
+1. **Commit + push** to `trunk` (the workflow checks out `trunk`).
+2. **Run the pre-deploy lock check** locally:
+   ```bash
+   utils/check-tf-locks.sh
+   ```
+   This catches held/stale terraform state locks — the #1 cause of deploy failures (a stale
+   lock left by a crashed or killed local `terraform plan`/`apply`). Clear anything it reports
+   with `cd terraform/<module> && terraform force-unlock -force <lock-id>` **before** triggering.
+3. **Trigger the deploy:**
+   ```bash
+   gh workflow run deploy.yml -f runner-type=self-hosted
+   ```
+4. **If a job fails** on a transient or state-lock error, re-run the failed jobs of the **same**
+   run — `gh run rerun <run-id> --failed` — rather than starting a new run. Don't stack runs.
+
+### Terraform state locks (why the check exists)
+
+The kubernetes backend stores each module's lock as a Lease
+`lock-tfstate-default-<module>` in `tf-state`; its `holderIdentity` holds the lock UUID while a
+terraform process holds it and is cleared on clean release. A non-empty `holderIdentity` with
+no active process is a stale lock. Always let local `terraform` commands finish (don't kill
+them mid-plan/apply).
+
+## Working in this repo
+
+- Each module has its own backend (`config_path = "../cluster.yml"`, which is gitignored). To
+  run terraform in a fresh checkout/worktree, `cluster.yml` must be present in `terraform/`.
+- `terraform fmt -check` is enforced in CI — run `terraform fmt` before committing.
+- Prefer small, self-contained commits (one per logical change).
