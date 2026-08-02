@@ -210,6 +210,14 @@ resource "helm_release" "velero" {
       value = "true"
     },
     {
+      name  = "metrics.serviceMonitor.enabled"
+      value = "true"
+    },
+    {
+      name  = "metrics.nodeAgentPodMonitor.enabled"
+      value = "true"
+    },
+    {
       name  = "nodeAgent.resources.requests.cpu"
       value = "4"
     },
