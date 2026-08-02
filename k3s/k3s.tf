@@ -33,6 +33,10 @@ resource "ssh_resource" "k3s_provisioning" {
       advertise-address: "${var.k3s_ip_address}"
       cluster-init: true
       kubelet-arg: "config=${local.kubelet_config_location}"
+      # Expose embedded etcd metrics as plaintext HTTP on :2381 so Prometheus
+      # can scrape them without TLS certs. Required for terraform/prometheus/
+      # ScrapeConfig discovery. Ref: https://docs.k3s.io/cli/server
+      etcd-expose-metrics: true
     EOF
     destination = "${local.k3s_directory}/config.yaml"
   }

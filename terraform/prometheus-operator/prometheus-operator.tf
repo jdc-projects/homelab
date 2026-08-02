@@ -27,6 +27,9 @@ resource "helm_release" "kube_prometheus_stack_operator" {
   # Operator + CRDs only. Everything else lives in terraform/prometheus/.
   # The subchart dependencies are gated by their parent camelCase conditions
   # (see the chart's Chart.yaml), not the dashed subchart-internal values.
+  # The cluster-component templates (coreDns, kubelet, kubeApiServer, etc.)
+  # install headless Services in kube-system and would conflict with the
+  # instance module's install, so they're disabled here too.
   set = [
     {
       name  = "crds.enabled"
@@ -58,6 +61,35 @@ resource "helm_release" "kube_prometheus_stack_operator" {
     },
     {
       name  = "defaultRules.create"
+      value = "false"
+    },
+    # Cluster-component monitors - owned by terraform/prometheus/.
+    {
+      name  = "kubeApiServer.enabled"
+      value = "false"
+    },
+    {
+      name  = "kubelet.enabled"
+      value = "false"
+    },
+    {
+      name  = "kubeControllerManager.enabled"
+      value = "false"
+    },
+    {
+      name  = "coreDns.enabled"
+      value = "false"
+    },
+    {
+      name  = "kubeEtcd.enabled"
+      value = "false"
+    },
+    {
+      name  = "kubeScheduler.enabled"
+      value = "false"
+    },
+    {
+      name  = "kubeProxy.enabled"
       value = "false"
     },
   ]
