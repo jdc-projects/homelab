@@ -90,6 +90,7 @@ resource "kubernetes_manifest" "vaultwarden_db" {
     "metadata.labels",
     "metadata.annotations",
     "spec.postgresql.parameters",
+    "spec.monitoring",
   ]
 
   wait {
