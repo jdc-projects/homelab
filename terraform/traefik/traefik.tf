@@ -177,6 +177,14 @@ resource "helm_release" "traefik" {
       value = 9500
     },
     {
+      name  = "metrics.prometheus.service.enabled"
+      value = "true"
+    },
+    {
+      name  = "metrics.prometheus.serviceMonitor.enabled"
+      value = "true"
+    },
+    {
       name  = "tlsStore.default.defaultCertificate.secretName"
       value = kubernetes_manifest.cert_manager_certificate_wilcard.manifest.spec.secretName
     },
