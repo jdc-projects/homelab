@@ -44,7 +44,7 @@ provider "registry.terraform.io/hashicorp/null" {
 
 provider "registry.terraform.io/keycloak/keycloak" {
   version     = "5.8.0"
-  constraints = "~> 5.0"
+  constraints = "~> 5.8"
   hashes = [
     "h1:SDUS536kmjuW8uHWRAGxJOnC/VdrsOX9qKqKtsGfnWY=",
     "zh:1689abfe6e992411fabd81e6befe288ac2fe13f7088187449e76b7996ab3c4ae",
