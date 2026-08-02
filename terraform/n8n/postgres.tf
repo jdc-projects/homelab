@@ -25,6 +25,10 @@ resource "kubernetes_manifest" "n8n_db" {
 
       instances = local.n8n_db_instances
 
+      monitoring = {
+        enablePodMonitor = true
+      }
+
       postgresql = {
         parameters = {
           shared_buffers = "256MB"
