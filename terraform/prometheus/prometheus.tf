@@ -1,12 +1,17 @@
 # https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack
 #
-# Installs the actual Prometheus instance, Alertmanager, node-exporter,
-# kube-state-metrics and all default alert rules / ServiceMonitors shipped by
-# kube-prometheus-stack. The operator itself (and the CRDs this chart's
-# templates depend on) is installed by terraform/prometheus-operator/.
+# Installs the Prometheus instance, Alertmanager, node-exporter and
+# kube-state-metrics. The operator + CRDs are in terraform/prometheus-operator/.
 #
-# `skip_crds = true` is critical: this release owns no CRDs, otherwise Helm
-# would try to re-apply them and conflict with the operator release's hooks.
+# This release provides INFRASTRUCTURE ONLY - no rules or dashboards. Those
+# are managed separately:
+#   - PrometheusRules: terraform/prometheus/rules/ (via prometheusrules.tf)
+#   - Grafana dashboards: terraform/prometheus/dashboards/ (via grafana-dashboards.tf)
+#
+# On K3s the control plane components (apiserver, controller-manager, scheduler,
+# kube-proxy) are bundled into one process. Their metrics are collected via
+# custom ScrapeConfigs in scrapeconfigs.tf, not the chart's ServiceMonitors.
+# All chart-provided cluster-component monitors are disabled.
 
 resource "helm_release" "kube_prometheus_stack" {
   name = "kube-prometheus-stack"
@@ -22,12 +27,12 @@ resource "helm_release" "kube_prometheus_stack" {
   skip_crds = true
 
   set = [
-    # Operator + CRDs are owned by terraform/prometheus-operator/.
+    # Operator + CRDs owned by terraform/prometheus-operator/.
     {
       name  = "prometheusOperator.enabled"
       value = "false"
     },
-    # Instance + exporters + default rules.
+    # Instance + exporters.
     {
       name  = "prometheus.enabled"
       value = "true"
@@ -44,141 +49,50 @@ resource "helm_release" "kube_prometheus_stack" {
       name  = "kubeStateMetrics.enabled"
       value = "true"
     },
+    # Rules and dashboards are managed in Terraform, not by the chart.
     {
       name  = "defaultRules.create"
-      value = "true"
-    },
-    # On K3s the apiserver, controller-manager, scheduler and kube-proxy are
-    # bundled into one process with kubelet. Their metrics are collected via
-    # the kubelet ScrapeConfig (job="kubelet"), not as separate per-component
-    # targets. These alert rules use absent(up{job="apiserver"}) etc. which
-    # are always false positives on K3s. Disable the specific "Down" alerts
-    # rather than entire rule categories so other alerts in the same files
-    # (e.g. KubeAggregatedAPIDown) remain active if per-component scraping
-    # is added later.
-    {
-      name  = "defaultRules.disabled.KubeAPIDown"
-      value = "true"
-    },
-    {
-      name  = "defaultRules.disabled.KubeControllerManagerDown"
-      value = "true"
-    },
-    {
-      name  = "defaultRules.disabled.KubeSchedulerDown"
-      value = "true"
-    },
-    {
-      name  = "defaultRules.disabled.KubeProxyDown"
-      value = "true"
+      value = "false"
     },
     {
       name  = "grafana.enabled"
       value = "false"
     },
-    # Cluster-component monitors are enabled for dashboard/rule generation, but
-    # their Services and ServiceMonitors are disabled. On K3s the control plane
-    # components (apiserver, controller-manager, scheduler, kube-proxy) are
-    # bundled into one process - the chart's separate monitors would either
-    # have zero endpoints (no matching pods) or produce duplicate samples.
-    # Custom ScrapeConfigs in scrapeconfigs.tf handle actual scraping of
-    # kubelet, etcd and coredns without creating any resources in kube-system.
-    # Keeping the components enabled ensures the chart ships its 29 default
-    # Grafana dashboards (including etcd, kubelet, coredns) and PrometheusRules.
+    {
+      name  = "grafana.forceDeployDashboards"
+      value = "false"
+    },
+    # All cluster-component monitors disabled - ScrapeConfigs in
+    # scrapeconfigs.tf handle kubelet, etcd and coredns.
     {
       name  = "kubeApiServer.enabled"
-      value = "true"
-    },
-    {
-      name  = "kubeApiServer.serviceMonitor.enabled"
       value = "false"
     },
     {
       name  = "kubelet.enabled"
-      value = "true"
-    },
-    {
-      name  = "kubelet.serviceMonitor.enabled"
       value = "false"
     },
     {
       name  = "kubeControllerManager.enabled"
-      value = "true"
-    },
-    {
-      name  = "kubeControllerManager.service.enabled"
-      value = "false"
-    },
-    {
-      name  = "kubeControllerManager.serviceMonitor.enabled"
       value = "false"
     },
     {
       name  = "coreDns.enabled"
-      value = "true"
-    },
-    {
-      name  = "coreDns.service.enabled"
-      value = "false"
-    },
-    {
-      name  = "coreDns.serviceMonitor.enabled"
       value = "false"
     },
     {
       name  = "kubeEtcd.enabled"
-      value = "true"
-    },
-    {
-      name  = "kubeEtcd.service.enabled"
-      value = "false"
-    },
-    {
-      name  = "kubeEtcd.serviceMonitor.enabled"
       value = "false"
     },
     {
       name  = "kubeScheduler.enabled"
-      value = "true"
-    },
-    {
-      name  = "kubeScheduler.service.enabled"
-      value = "false"
-    },
-    {
-      name  = "kubeScheduler.serviceMonitor.enabled"
       value = "false"
     },
     {
       name  = "kubeProxy.enabled"
-      value = "true"
-    },
-    {
-      name  = "kubeProxy.service.enabled"
       value = "false"
     },
-    {
-      name  = "kubeProxy.serviceMonitor.enabled"
-      value = "false"
-    },
-    # Deploy the chart's 29 default Grafana dashboards as GrafanaDashboard CRs
-    # that the grafana-operator (in terraform/grafana-operator/) imports
-    # automatically via allowCrossNamespaceImport + instanceSelector.
-    {
-      name  = "grafana.forceDeployDashboards"
-      value = "true"
-    },
-    {
-      name  = "grafana.operator.dashboardsConfigMapRefEnabled"
-      value = "true"
-    },
-    {
-      name  = "grafana.operator.matchLabels.dashboards"
-      value = "grafana"
-    },
-    # Discover ServiceMonitors/PodMonitors/Rules cluster-wide (any namespace,
-    # any label) so monitors from other namespaces (e.g. traefik) are picked
-    # up. Defaults to label-matching, which would silently drop them.
+    # Discover ServiceMonitors/PodMonitors/Rules/ScrapeConfigs cluster-wide.
     {
       name  = "prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues"
       value = "false"
@@ -232,9 +146,8 @@ resource "helm_release" "kube_prometheus_stack" {
     },
   ]
 
-  # Alertmanager config: SMTP email receiver for all alerts. kube-prometheus-stack
-  # ships ~100 default rules (node down, CPU saturation, cert expiry, etc.),
-  # so wiring email here gives us working alerting out of the box.
+  # Alertmanager config: SMTP email receiver for all alerts. Curated rules
+  # in prometheusrules.tf provide the alert definitions.
   values = [
     <<-EOF
       alertmanager:

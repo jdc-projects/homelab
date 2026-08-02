@@ -1,41 +1,60 @@
 # prometheus
 
-Installs the Prometheus instance, Alertmanager, node-exporter, kube-state-metrics
-and the default alert rules / ServiceMonitors shipped by kube-prometheus-stack.
+Installs the Prometheus instance, Alertmanager, node-exporter and
+kube-state-metrics via kube-prometheus-stack (infrastructure only).
 
-The operator itself and its CRDs live in `terraform/prometheus-operator/`.
-This release uses `skip_crds = true` and reads the chart version from the
-operator module via `terraform_remote_state` so both installs stay in lock-step.
+The operator + CRDs are in `terraform/prometheus-operator/`. This release
+uses `skip_crds = true` and reads the chart version from the operator module
+via `terraform_remote_state` so both stay in lock-step.
 
-Prometheus discovers ServiceMonitors/PodMonitors/ScrapeConfigs cluster-wide
-(any namespace, any label) so monitors installed by other modules (e.g.
-traefik) are picked up without label juggling.
+## Architecture
 
-Alertmanager sends notifications to `var.admin_email` via SMTP.
+The chart provides **infrastructure only** — no rules or dashboards:
+
+- **PrometheusRules**: curated in `rules/` (26 files extracted from
+  kube-prometheus-stack v88.1.2). The 9 per-component rule files that are
+  K3s false positives (apiserver, controller-manager, scheduler, proxy) are
+  excluded. Deployed via `prometheusrules.tf`.
+
+- **Grafana dashboards**: curated in `dashboards/` (22 JSON files from the
+  same chart version). The 7 component-specific and irrelevant dashboards
+  (apiserver, controller-manager, scheduler, proxy, AIX, Darwin,
+  multicluster) are excluded. Deployed via `grafana-dashboards.tf`.
+
+- **ScrapeConfigs**: custom K3s-specific configs in `scrapeconfigs.tf`
+  (kubelet, etcd, coredns). No resources created in `kube-system`.
+
+- **Grafana datasource**: Prometheus datasource in `grafana-datasource.tf`,
+  set as default.
 
 ## K3s cluster monitoring
 
-All chart-provided cluster-component monitors are disabled. Instead,
-`scrapeconfigs.tf` creates custom `ScrapeConfig` CRDs that scrape the
-cluster without creating any resources in `kube-system`:
+K3s bundles `kube-apiserver`, `kube-controller-manager`, `kube-scheduler`
+and `kube-proxy` into a single process with kubelet. Their metrics are all
+exposed via the kubelet endpoint — scraping kubelet on `:10250/metrics`
+returns the combined control plane metrics stream. No separate targets exist
+for the other components.
 
-| ScrapeConfig | Targets | Notes |
-|---|---|---|
-| `kubelet-*` (4 jobs) | All nodes, `:10250` | Captures the combined control plane metrics stream |
-| `k3s-etcd` | All nodes, `:2381` | Requires `etcd-expose-metrics: true` in the K3s config (`k3s/k3s.tf`) |
-| `coredns` | coredns pods, `:9153` | Pod-discovery via relabel filters |
+The one exception is **etcd** — a separate process scraped on `:2381`
+(requires `etcd-expose-metrics: true` in the K3s config, see `k3s/k3s.tf`).
 
-### Why no separate targets for controller-manager / scheduler / proxy / apiserver?
+## Updating rules and dashboards
 
-K3s bundles `kube-apiserver`, `kube-controller-manager`, `kube-scheduler`,
-and `kube-proxy` into a single process alongside `kubelet`. They share one
-metrics endpoint - scraping kubelet on `:10250/metrics` already returns all
-of their metrics combined. The chart's separate monitors would either find
-zero matching pods (dead endpoints) or produce duplicate samples.
+Both are pinned to chart v88.1.2. To update:
 
-### etcd dependency
+```bash
+# Render the chart
+helm template kube-prometheus-stack prometheus-community/kube-prometheus-stack \
+  --version <NEW_VERSION> --set prometheusOperator.enabled=false \
+  --set grafana.enabled=false --set defaultRules.create=true \
+  --set kubeApiServer.enabled=true --set kubelet.enabled=true \
+  --set kubeControllerManager.enabled=true --set coreDns.enabled=true \
+  --set kubeEtcd.enabled=true --set kubeScheduler.enabled=true \
+  --set kubeProxy.enabled=true
 
-The etcd ScrapeConfig will show as "down" until `etcd-expose-metrics: true`
-is applied to the K3s node config and K3s is restarted. The flag is set in
-`k3s/k3s.tf` but requires SSH access to apply (the k3s module is a
-provisioning-time tool, not in the CI deploy workflow).
+# Extract PrometheusRules (skip K3s-incompatible files)
+# Extract dashboard JSONs from ConfigMaps (skip component-specific ones)
+# Diff against existing files in rules/ and dashboards/
+```
+
+Also update the chart version in `terraform/prometheus-operator/prometheus-operator.tf`.
