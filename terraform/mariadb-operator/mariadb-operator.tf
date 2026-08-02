@@ -24,5 +24,12 @@ resource "helm_release" "mariadb_operator" {
 
   timeout = 300
 
+  set = [
+    {
+      name  = "metrics.enabled"
+      value = "true"
+    },
+  ]
+
   depends_on = [helm_release.mariadb_operator_crds]
 }
