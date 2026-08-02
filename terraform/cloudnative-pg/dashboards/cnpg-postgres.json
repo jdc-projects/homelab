@@ -9000,18 +9000,28 @@
         "type": "query"
       },
       {
-        "current": {},
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
         "datasource": {
           "type": "prometheus"
         },
         "definition": "cnpg_collector_up",
         "description": "Namespace where the database cluster is located",
         "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": "Database Namespace",
-        "multi": false,
+        "multi": true,
         "name": "namespace",
-        "options": [],
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          }
+        ],
         "query": {
           "query": "cnpg_collector_up",
           "refId": "StandardVariableQuery"
@@ -9020,21 +9030,32 @@
         "regex": "/namespace=\"(?<text>[^\"]+)/g",
         "skipUrlSync": false,
         "sort": 0,
-        "type": "query"
+        "type": "query",
+        "allValue": ".*"
       },
       {
-        "current": {},
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
         "datasource": {
           "type": "prometheus"
         },
         "definition": "cnpg_collector_up{namespace=~\"$namespace\"}",
         "description": "CNPG Cluster",
         "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": "Cluster",
-        "multi": false,
+        "multi": true,
         "name": "cluster",
-        "options": [],
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          }
+        ],
         "query": {
           "query": "cnpg_collector_up{namespace=~\"$namespace\"}",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
@@ -9043,7 +9064,8 @@
         "regex": "/\\bcluster\\b=\"(?<text>[^\"]+)/g",
         "skipUrlSync": false,
         "sort": 1,
-        "type": "query"
+        "type": "query",
+        "allValue": ".*"
       },
       {
         "allValue": "$cluster-([1-9][0-9]*)",

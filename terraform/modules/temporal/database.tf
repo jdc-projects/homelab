@@ -63,6 +63,10 @@ resource "kubernetes_manifest" "temporal_db" {
       primaryUpdateMethod   = "switchover"
 
       logLevel = "info"
+
+      monitoring = {
+        enablePodMonitor = true
+      }
     }
   }
 
@@ -74,6 +78,7 @@ resource "kubernetes_manifest" "temporal_db" {
     "metadata.labels",
     "metadata.annotations",
     "spec.postgresql.parameters",
+    "spec.monitoring",
   ]
 
   wait {
