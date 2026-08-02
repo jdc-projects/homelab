@@ -146,8 +146,10 @@ resource "helm_release" "kube_prometheus_stack" {
     },
   ]
 
-  # Alertmanager config: SMTP email receiver for all alerts. Curated rules
-  # in prometheusrules.tf provide the alert definitions.
+  # Alertmanager config: SMTP email receiver for warning+ alerts. InfoInhibitor
+  # (severity=none) is routed to a null receiver to prevent email noise from
+  # internal framework alerts. Curated rules in prometheusrules.tf provide the
+  # alert definitions.
   values = [
     <<-EOF
       alertmanager:
@@ -186,10 +188,17 @@ resource "helm_release" "kube_prometheus_stack" {
             repeat_interval: 12h
             receiver: 'email'
             routes:
+              # Watchdog always emails (confirms Alertmanager is working)
               - receiver: 'email'
                 matchers:
                   - alertname = "Watchdog"
+              # Drop framework alerts with no actionable severity
+              # (InfoInhibitor, etc.)
+              - receiver: 'null'
+                matchers:
+                  - severity = "none"
           receivers:
+            - name: 'null'
             - name: 'email'
               email_configs:
                 - to: "${var.admin_email}"

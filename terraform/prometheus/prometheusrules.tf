@@ -1,16 +1,23 @@
 # Curated PrometheusRules for K3s.
 #
-# The kube-prometheus-stack chart's rules assume a standard kubeadm cluster
-# where each control plane component (apiserver, controller-manager, scheduler,
-# kube-proxy) runs as a separate pod with its own Service+ServiceMonitor. On
-# K3s these are bundled into one process - the chart's per-component rules
-# (9 PrometheusRule files) are false positives and are excluded here.
+# Rule files in rules/ are extracted from kube-prometheus-stack (same version
+# as pinned in terraform/prometheus-operator/) with job="kubelet" label fixes
+# applied where needed. They reference metrics collected via the ScrapeConfigs
+# in scrapeconfigs.tf.
 #
-# The 26 rule files in rules/ are extracted from kube-prometheus-stack (same
-# version as pinned in terraform/prometheus-operator/). They reference
-# job="kubelet" with metrics_path="/metrics" which matches our ScrapeConfig
-# configuration. To update: re-render the chart, diff against the existing
-# files, and replace.
+# The following chart rule files are deliberately excluded:
+#   kube-apiserver-burnrate.rules     14 recording rules for multi-window SLO
+#                                     burn rates (5m-3d). Production SLO
+#                                     tracking - overkill for homelab.
+#   kube-apiserver-slos               KubeAPIErrorBudgetBurn alerts. Depends
+#                                     on burnrate rules above.
+#   kubernetes-system-controller-manager  KubeControllerManagerDown + instance
+#                                     unreachable. False positive - component
+#                                     is bundled into the K3s process.
+#   kubernetes-system-kube-proxy      KubeProxyDown + unreachable. Same.
+#   kubernetes-system-scheduler       KubeSchedulerDown + unreachable. Same.
+#
+# To update: re-render the chart, diff against existing files, and replace.
 
 locals {
   prometheus_rule_files = fileset("${path.module}/rules", "*.yaml")

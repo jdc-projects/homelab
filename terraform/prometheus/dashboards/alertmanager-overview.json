@@ -173,7 +173,7 @@
             "type": "prometheus",
             "uid": "$datasource"
           },
-          "expr": "sum(rate(alertmanager_notifications_total{namespace=~\"$namespace\",service=~\"$service\", integration=\"$integration\"}[$__rate_interval])) by (integration,namespace,service,instance)",
+          "expr": "sum(rate(alertmanager_notifications_total{namespace=~\"$namespace\",service=~\"$service\", integration=\"email\"}[$__rate_interval])) by (integration,namespace,service,instance)",
           "intervalFactor": 2,
           "legendFormat": "{{instance}} Total"
         },
@@ -182,12 +182,12 @@
             "type": "prometheus",
             "uid": "$datasource"
           },
-          "expr": "sum(rate(alertmanager_notifications_failed_total{namespace=~\"$namespace\",service=~\"$service\", integration=\"$integration\"}[$__rate_interval])) by (integration,namespace,service,instance)",
+          "expr": "sum(rate(alertmanager_notifications_failed_total{namespace=~\"$namespace\",service=~\"$service\", integration=\"email\"}[$__rate_interval])) by (integration,namespace,service,instance)",
           "intervalFactor": 2,
           "legendFormat": "{{instance}} Failed"
         }
       ],
-      "title": "$integration: Notifications Send Rate",
+      "title": "Notifications Send Rate",
       "type": "timeseries"
     },
     {
@@ -231,7 +231,7 @@
             "type": "prometheus",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.99,\n  sum(rate(alertmanager_notification_latency_seconds_bucket{namespace=~\"$namespace\",service=~\"$service\", integration=\"$integration\"}[$__rate_interval])) by (le,namespace,service,instance)\n)\n",
+          "expr": "histogram_quantile(0.99,\n  sum(rate(alertmanager_notification_latency_seconds_bucket{namespace=~\"$namespace\",service=~\"$service\", integration=\"email\"}[$__rate_interval])) by (le,namespace,service,instance)\n)\n",
           "intervalFactor": 2,
           "legendFormat": "{{instance}} 99th Percentile"
         },
@@ -240,7 +240,7 @@
             "type": "prometheus",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.50,\n  sum(rate(alertmanager_notification_latency_seconds_bucket{namespace=~\"$namespace\",service=~\"$service\", integration=\"$integration\"}[$__rate_interval])) by (le,namespace,service,instance)\n)\n",
+          "expr": "histogram_quantile(0.50,\n  sum(rate(alertmanager_notification_latency_seconds_bucket{namespace=~\"$namespace\",service=~\"$service\", integration=\"email\"}[$__rate_interval])) by (le,namespace,service,instance)\n)\n",
           "intervalFactor": 2,
           "legendFormat": "{{instance}} Median"
         },
@@ -249,12 +249,12 @@
             "type": "prometheus",
             "uid": "$datasource"
           },
-          "expr": "sum(rate(alertmanager_notification_latency_seconds_sum{namespace=~\"$namespace\",service=~\"$service\", integration=\"$integration\"}[$__rate_interval])) by (namespace,service,instance)\n/\nsum(rate(alertmanager_notification_latency_seconds_count{namespace=~\"$namespace\",service=~\"$service\", integration=\"$integration\"}[$__rate_interval])) by (namespace,service,instance)\n",
+          "expr": "sum(rate(alertmanager_notification_latency_seconds_sum{namespace=~\"$namespace\",service=~\"$service\", integration=\"email\"}[$__rate_interval])) by (namespace,service,instance)\n/\nsum(rate(alertmanager_notification_latency_seconds_count{namespace=~\"$namespace\",service=~\"$service\", integration=\"email\"}[$__rate_interval])) by (namespace,service,instance)\n",
           "intervalFactor": 2,
           "legendFormat": "{{instance}} Average"
         }
       ],
-      "title": "$integration: Notification Duration",
+      "title": "Notification Duration",
       "type": "timeseries"
     }
   ],
@@ -308,24 +308,6 @@
         "label": "service",
         "name": "service",
         "query": "label_values(alertmanager_alerts, service)",
-        "refresh": 2,
-        "sort": 1,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": "$__all",
-          "value": "$__all"
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${datasource}"
-        },
-        "hide": 2,
-        "includeAll": true,
-        "name": "integration",
-        "query": "label_values(alertmanager_notifications_total{integration=~\".*\"}, integration)",
         "refresh": 2,
         "sort": 1,
         "type": "query"
