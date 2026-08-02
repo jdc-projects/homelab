@@ -189,6 +189,14 @@ resource "helm_release" "crowdsec" {
       value = "crowdsecurity/base-config crowdsecurity/crs-exclusion-plugin-nextcloud"
     },
     {
+      name  = "lapi.metrics.serviceMonitor.enabled"
+      value = "true"
+    },
+    {
+      name  = "agent.metrics.serviceMonitor.enabled"
+      value = "true"
+    },
+    {
       name  = "lapi.persistentVolume.data.existingClaim"
       value = kubernetes_persistent_volume_claim.crowdsec["lapi-data"].metadata[0].name
     },
