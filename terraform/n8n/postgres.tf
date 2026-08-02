@@ -89,6 +89,7 @@ resource "kubernetes_manifest" "n8n_db" {
     "metadata.labels",
     "metadata.annotations",
     "spec.postgresql.parameters",
+    "spec.monitoring",
   ]
 
   wait {
