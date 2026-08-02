@@ -92,7 +92,7 @@ resource "kubernetes_manifest" "kubelet_scrape" {
           targetLabel  = "node"
         },
         {
-          sourceLabels = ["__meta_kubernetes_node_internal_ip"]
+          sourceLabels = ["__meta_kubernetes_node_address_InternalIP"]
           targetLabel  = "__address__"
           regex        = "(.+)"
           replacement  = "$1:10250"
@@ -132,7 +132,7 @@ resource "kubernetes_manifest" "etcd_scrape" {
 
       relabelings = [
         {
-          sourceLabels = ["__meta_kubernetes_node_internal_ip"]
+          sourceLabels = ["__meta_kubernetes_node_address_InternalIP"]
           targetLabel  = "__address__"
           regex        = "(.+)"
           replacement  = "$1:2381"
