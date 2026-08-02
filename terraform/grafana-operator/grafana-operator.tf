@@ -11,6 +11,10 @@ resource "helm_release" "grafana_operator" {
       name  = "crds.immutable"
       value = "false"
     },
+    {
+      name  = "serviceMonitor.enabled"
+      value = "true"
+    },
   ]
 
   timeout = 300
