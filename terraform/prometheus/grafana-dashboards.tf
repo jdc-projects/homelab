@@ -2,37 +2,25 @@
 #
 # Extracted from kube-prometheus-stack (same version as pinned in
 # terraform/prometheus-operator/). The 4 component-specific dashboards that
-# reference per-component job labels are included with K3s-compatible job
-# label fixes applied (see dashboards/README if created).
+# reference per-component job labels are included with K8s-compatible job
+# label fixes applied.
 #
 # To update: re-render the chart with forceDeployDashboards, extract the
 # ConfigMap dashboard JSONs, diff against existing files, and replace.
+#
+# Dashboard CRs are created via the shared terraform/modules/grafana-dashboard
+# helper, which owns the grafana instance-selector contract and the
+# allowCrossNamespaceImport setting (single source of truth). grafana-operator
+# v5 auto-assigns each dashboard to a folder named after its namespace, so these
+# land in a "prometheus" folder.
 
-locals {
-  dashboard_files = fileset("${path.module}/dashboards", "*.json")
-}
+module "grafana_dashboards" {
+  source    = "../modules/grafana-dashboard"
+  namespace = kubernetes_namespace.prometheus.metadata[0].name
 
-resource "kubernetes_manifest" "grafana_dashboard" {
-  for_each = local.dashboard_files
-
-  manifest = {
-    apiVersion = "grafana.integreatly.org/v1beta1"
-    kind       = "GrafanaDashboard"
-
-    metadata = {
-      name      = trimsuffix(each.value, ".json")
-      namespace = kubernetes_namespace.prometheus.metadata[0].name
-    }
-
-    spec = {
-      allowCrossNamespaceImport = "true"
-
-      instanceSelector = {
-        matchLabels = data.terraform_remote_state.grafana.outputs.grafana_deployment_labels
-      }
-
-      json = file("${path.module}/dashboards/${each.value}")
-    }
+  dashboards = {
+    for f in fileset("${path.module}/dashboards", "*.json") :
+    trimsuffix(f, ".json") => file("${path.module}/dashboards/${f}")
   }
 
   depends_on = [helm_release.kube_prometheus_stack]
