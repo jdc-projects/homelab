@@ -116,7 +116,7 @@ resource "helm_release" "kube_prometheus_stack" {
     # Retention.
     {
       name  = "prometheus.prometheusSpec.retention"
-      value = "15d"
+      value = "30d"
     },
     # Storage class mirrors terraform/grafana/loki.tf.
     {
