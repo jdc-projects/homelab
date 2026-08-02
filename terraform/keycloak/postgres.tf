@@ -92,6 +92,7 @@ resource "kubernetes_manifest" "keycloak_db" {
     "metadata.labels",
     "metadata.annotations",
     "spec.postgresql.parameters",
+    "spec.monitoring",
   ]
 
   wait {
