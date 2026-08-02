@@ -73,7 +73,7 @@ resource "kubernetes_deployment" "vaultwarden_ldap_deployment" {
             }
 
             limits = {
-              cpu    = "200m"
+              cpu    = "500m"
               memory = "256Mi"
             }
           }
