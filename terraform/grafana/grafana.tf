@@ -59,6 +59,14 @@ resource "kubernetes_manifest" "grafana_deployment" {
         "unified_alerting" = {
           alertmanager_url = "http://kube-prometheus-stack-alertmanager.prometheus.svc.cluster.local:9093"
         }
+
+        database = {
+          type     = "postgres"
+          host     = "${kubernetes_manifest.grafana_db.manifest.metadata.name}-rw:5432"
+          name     = kubernetes_manifest.grafana_db.manifest.spec.bootstrap.initdb.database
+          user     = random_password.grafana_db_username.result
+          password = random_password.grafana_db_password.result
+        }
       }
 
       deployment = {

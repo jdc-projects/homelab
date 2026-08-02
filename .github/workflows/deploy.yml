@@ -264,6 +264,7 @@ jobs:
       deploy-keycloak-config,
       deploy-traefik,
       deploy-openebs,
+      deploy-cloudnative-pg,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
