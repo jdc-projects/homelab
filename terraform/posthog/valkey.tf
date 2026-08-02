@@ -13,5 +13,7 @@ resource "helm_release" "valkey" {
     { name = "resources.requests.memory", value = "256Mi" },
     { name = "resources.limits.cpu", value = "500m" },
     { name = "resources.limits.memory", value = "512Mi" },
+    { name = "metrics.enabled", value = "true" },
+    { name = "metrics.serviceMonitor.enabled", value = "true" },
   ]
 }

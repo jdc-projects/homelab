@@ -37,6 +37,10 @@ resource "kubernetes_manifest" "posthog_db" {
 
       instances = local.posthog_db_instances
 
+      monitoring = {
+        enablePodMonitor = true
+      }
+
       postgresql = {
         parameters = {
           shared_buffers  = "256MB"
