@@ -51,8 +51,7 @@
   "panels": [
     {
       "datasource": {
-        "type": "loki",
-        "uid": "${DS_LOKI}"
+        "type": "loki"
       },
       "fieldConfig": {
         "defaults": {
@@ -130,8 +129,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "loki",
-            "uid": "${DS_LOKI}"
+            "type": "loki"
           },
           "expr": "sum(count_over_time({job=\"$app\"} |= \"$search\" [$__interval]))",
           "legendFormat": "",
@@ -143,8 +141,7 @@
     },
     {
       "datasource": {
-        "type": "loki",
-        "uid": "${DS_LOKI}"
+        "type": "loki"
       },
       "fieldConfig": {
         "defaults": {},
@@ -171,8 +168,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "loki",
-            "uid": "${DS_LOKI}"
+            "type": "loki"
           },
           "expr": "{job=\"$app\"} |= \"$search\" | logfmt",
           "hide": false,
@@ -192,26 +188,10 @@
   "templating": {
     "list": [
       {
-        "current": {},
-        "hide": 0,
-        "includeAll": false,
-        "label": "Loki datasource",
-        "multi": false,
-        "name": "DS_LOKI",
-        "options": [],
-        "query": "loki",
-        "queryValue": "",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "type": "datasource"
-      },
-      {
         "allValue": null,
         "current": {},
         "datasource": {
-          "type": "loki",
-          "uid": "${DS_LOKI}"
+          "type": "loki"
         },
         "definition": "label_values(job)",
         "hide": 0,

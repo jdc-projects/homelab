@@ -1,14 +1,5 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_PROMETHEUS",
-      "label": "prometheus",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
+  "__inputs": [],
   "__elements": {},
   "__requires": [
     {
@@ -73,8 +64,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "prometheus"
       },
       "description": "Current n8n version",
       "fieldConfig": {
@@ -125,8 +115,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -165,8 +154,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "prometheus"
       },
       "description": "Node.js runtime version",
       "fieldConfig": {
@@ -217,8 +205,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -255,8 +242,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "prometheus"
       },
       "description": "Shows uptime of the n8n instance",
       "fieldConfig": {
@@ -314,8 +300,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "time() - n8n_process_start_time_seconds",
@@ -352,8 +337,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "prometheus"
       },
       "description": "Instance role in cluster - 1 = Leader, 0 = Follower",
       "fieldConfig": {
@@ -419,8 +403,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "n8n_instance_role_leader",
@@ -451,8 +434,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -501,8 +483,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "n8n_active_workflow_count",
@@ -552,8 +533,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "prometheus"
       },
       "description": "Shows CPU usage breakdown",
       "fieldConfig": {
@@ -649,8 +629,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "rate(n8n_process_cpu_seconds_total[$__rate_interval]) * 100",
@@ -661,8 +640,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "rate(n8n_process_cpu_user_seconds_total[$__rate_interval]) * 100",
@@ -674,8 +652,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "rate(n8n_process_cpu_system_seconds_total[$__rate_interval]) * 100",
@@ -691,8 +668,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "prometheus"
       },
       "description": "Event loop lag",
       "fieldConfig": {
@@ -788,8 +764,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "n8n_nodejs_eventloop_lag_p99_seconds",
@@ -800,8 +775,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "n8n_nodejs_eventloop_lag_p90_seconds",
@@ -813,8 +787,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "n8n_nodejs_eventloop_lag_p50_seconds",
@@ -843,8 +816,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "prometheus"
       },
       "description": "Resident memory usage",
       "fieldConfig": {
@@ -935,8 +907,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "n8n_process_resident_memory_bytes",
@@ -951,8 +922,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "prometheus"
       },
       "description": "JavaScript heap memory - Node.js automatically manages heap size. High percentage (80-95%) is NORMAL and expected. Watch for heap total growing over time, not the percentage.",
       "fieldConfig": {
@@ -1047,8 +1017,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "n8n_nodejs_heap_size_used_bytes",
@@ -1059,8 +1028,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "n8n_nodejs_heap_size_total_bytes",
@@ -1076,8 +1044,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "prometheus"
       },
       "description": "Heap usage percentage shows how full the CURRENT heap allocation is. 80-95% is NORMAL for Node.js! This is NOT an indicator of memory pressure. Only worry if heap total keeps growing OR if you see excessive GC activity.",
       "fieldConfig": {
@@ -1136,8 +1103,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "(n8n_nodejs_heap_size_used_bytes / n8n_nodejs_heap_size_total_bytes) * 100",
@@ -1165,8 +1131,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "prometheus"
       },
       "description": "Gargabe Collector duration",
       "fieldConfig": {
@@ -1249,8 +1214,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "rate(n8n_nodejs_gc_duration_seconds_sum{kind=\"minor\"}[$__rate_interval])",
@@ -1261,8 +1225,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "rate(n8n_nodejs_gc_duration_seconds_sum{kind=\"major\"}[$__rate_interval])",
@@ -1278,8 +1241,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "prometheus"
       },
       "description": "File descriptors",
       "fieldConfig": {
@@ -1362,8 +1324,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "n8n_process_open_fds",
@@ -1374,8 +1335,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "n8n_process_max_fds",

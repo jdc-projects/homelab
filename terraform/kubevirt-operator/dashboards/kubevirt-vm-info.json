@@ -58,7 +58,9 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus"
+      },
       "fill": 10,
       "gridPos": {
         "h": 7,
@@ -161,7 +163,9 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus"
+      },
       "fill": 10,
       "gridPos": {
         "h": 7,
@@ -262,7 +266,9 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus"
+      },
       "fill": 1,
       "gridPos": {
         "h": 8,
@@ -354,7 +360,9 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus"
+      },
       "fill": 1,
       "gridPos": {
         "h": 8,
@@ -445,7 +453,9 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus"
+      },
       "fill": 1,
       "gridPos": {
         "h": 8,
@@ -549,7 +559,9 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus"
+      },
       "fill": 1,
       "gridPos": {
         "h": 7,
@@ -663,7 +675,9 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "$datasource",
+        "datasource": {
+          "type": "prometheus"
+        },
         "definition": "label_values(kubevirt_vmi_vcpu_seconds_total, exported_namespace)",
         "hide": 0,
         "includeAll": false,
@@ -685,7 +699,9 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "$datasource",
+        "datasource": {
+          "type": "prometheus"
+        },
         "definition": "label_values(kubevirt_vmi_vcpu_seconds_total{exported_namespace=\"$namespace\"}, name)",
         "hide": 0,
         "includeAll": false,
