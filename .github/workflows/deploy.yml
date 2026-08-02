@@ -57,6 +57,16 @@ jobs:
     with:
       terraform-dir: ./terraform/grafana-operator
 
+  deploy-valkey-operator:
+    needs: [
+      deploy-grafana-operator,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/valkey-operator
+
   deploy-prometheus-operator:
     needs: [
       deploy-github-org-runner,
