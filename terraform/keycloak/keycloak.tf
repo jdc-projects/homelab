@@ -91,6 +91,10 @@ resource "helm_release" "keycloak" {
       name  = "ingress.enabled"
       value = "false"
     },
+    {
+      name  = "serviceMonitor.enabled"
+      value = "true"
+    },
   ]
 }
 

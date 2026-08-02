@@ -77,6 +77,10 @@ resource "kubernetes_manifest" "keycloak_db" {
       primaryUpdateMethod   = "switchover"
 
       logLevel = "info"
+
+      monitoring = {
+        enablePodMonitor = true
+      }
     }
   }
 
