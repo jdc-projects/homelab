@@ -14,6 +14,20 @@ resource "kubernetes_manifest" "opensearch" {
         httpPort    = 9200
         serviceName = "opensearch"
 
+        # Prometheus exporter plugin. The opensearch-operator installs plugins
+        # listed here on every node-pod at startup via `opensearch-plugin install`.
+        # The plugin serves /_prometheusMetrics on the standard OpenSearch HTTP
+        # port (9200).
+        #
+        # The opensearch-prometheus-exporter is NOT published to Maven Central
+        # (the repo `opensearch-plugin install <gav>` defaults to), so we pass
+        # the GitHub release asset URL directly. Asset naming follows the
+        # upstream release line for OpenSearch 2.13.x:
+        # https://github.com/opensearch-project/opensearch-prometheus-exporter/releases
+        pluginsList = [
+          "https://github.com/opensearch-project/opensearch-prometheus-exporter/releases/download/2.13.0.0/prometheus-exporter-2.13.0.0.zip",
+        ]
+
         additionalConfig = {
           "plugins.security.disabled" = "true"
           # Match the node name the operator expects in cluster.initial_master_nodes

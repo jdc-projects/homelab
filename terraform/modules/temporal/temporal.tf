@@ -86,6 +86,14 @@ resource "kubernetes_deployment" "temporal" {
             }
           }
 
+          # Temporal's config_template.yaml honours PROMETHEUS_ENDPOINT by adding
+          # a `metrics.prometheus.listenAddress` block to the rendered config,
+          # which makes the temporal server expose a Prometheus scrape endpoint.
+          env {
+            name  = "PROMETHEUS_ENDPOINT"
+            value = "0.0.0.0:8001"
+          }
+
           volume_mount {
             name       = "dynamic-config"
             mount_path = "/etc/temporal/config/dynamicconfig"
@@ -93,6 +101,11 @@ resource "kubernetes_deployment" "temporal" {
 
           port {
             container_port = 7233
+          }
+
+          port {
+            name           = "metrics"
+            container_port = 8001
           }
 
           resources {
@@ -122,6 +135,10 @@ resource "kubernetes_service" "temporal" {
   metadata {
     name      = var.name_prefix
     namespace = var.namespace
+
+    labels = {
+      "app.kubernetes.io/name" = var.name_prefix
+    }
   }
 
   spec {
@@ -130,8 +147,17 @@ resource "kubernetes_service" "temporal" {
     }
 
     port {
+      name        = "grpc"
       port        = 7233
       target_port = 7233
+    }
+
+    # Prometheus metrics port — exposed so ServiceMonitors can scrape the
+    # endpoint served via PROMETHEUS_ENDPOINT=0.0.0.0:8001 on the container.
+    port {
+      name        = "metrics"
+      port        = 8001
+      target_port = "metrics"
     }
   }
 }

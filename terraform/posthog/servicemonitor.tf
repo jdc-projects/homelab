@@ -152,3 +152,67 @@ resource "kubernetes_manifest" "clickhouse_servicemonitor" {
     }
   }
 }
+
+# ---------------------------------------------------------------------------
+# Temporal metrics (PROMETHEUS_ENDPOINT=0.0.0.0:8001 served by temporal-server)
+# ---------------------------------------------------------------------------
+resource "kubernetes_manifest" "temporal_servicemonitor" {
+  manifest = {
+    apiVersion = "monitoring.coreos.com/v1"
+    kind       = "ServiceMonitor"
+
+    metadata = {
+      name      = "temporal"
+      namespace = kubernetes_namespace.posthog.metadata[0].name
+    }
+
+    spec = {
+      selector = {
+        matchLabels = {
+          "app.kubernetes.io/name" = "temporal"
+        }
+      }
+
+      endpoints = [
+        {
+          port = "metrics"
+          path = "/metrics"
+        }
+      ]
+    }
+  }
+}
+
+# ---------------------------------------------------------------------------
+# OpenSearch prometheus-exporter plugin (/_prometheus/metrics on :9200)
+# The opensearch-operator creates an `opensearch` service (and a headless
+# `opensearch-nodes` service) labelled `opensearch.org/opensearch-cluster`.
+# The prometheus-exporter plugin (installed via spec.general.pluginsList) serves
+# /_prometheus/metrics on the standard HTTP port (9200, port name "http").
+# ---------------------------------------------------------------------------
+resource "kubernetes_manifest" "opensearch_servicemonitor" {
+  manifest = {
+    apiVersion = "monitoring.coreos.com/v1"
+    kind       = "ServiceMonitor"
+
+    metadata = {
+      name      = "opensearch"
+      namespace = kubernetes_namespace.posthog.metadata[0].name
+    }
+
+    spec = {
+      selector = {
+        matchLabels = {
+          "opensearch.org/opensearch-cluster" = "opensearch"
+        }
+      }
+
+      endpoints = [
+        {
+          port = "http"
+          path = "/_prometheus/metrics"
+        }
+      ]
+    }
+  }
+}
