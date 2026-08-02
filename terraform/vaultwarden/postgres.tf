@@ -26,6 +26,10 @@ resource "kubernetes_manifest" "vaultwarden_db" {
 
       instances = local.vaultwarden_db_instances
 
+      monitoring = {
+        enablePodMonitor = true
+      }
+
       postgresql = {
         parameters = {
           shared_buffers = "256MB"
