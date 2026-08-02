@@ -47,6 +47,7 @@ This system requires that some setup is completed on the first:
 * VELERO_S3_BUCKET_NAME
 * VELERO_S3_REGION
 * VELERO_S3_URL
+* ADMIN_EMAIL
 
 ## Disaster Recovery
 

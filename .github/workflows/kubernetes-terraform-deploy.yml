@@ -65,6 +65,7 @@ env:
   TF_VAR_crowdsec_enroll_key: ${{ secrets.CROWDSEC_ENROLL_KEY }}
   TF_VAR_opnsense_nic_vendor_id: ${{ vars.OPNSENSE_NIC_VENDOR_ID }}
   TF_VAR_opnsense_nic_product_id: ${{ vars.OPNSENSE_NIC_PRODUCT_ID }}
+  TF_VAR_admin_email: ${{ vars.ADMIN_EMAIL }}
 
 jobs:
   deploy-kubernetes-terraform:

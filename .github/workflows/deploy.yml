@@ -57,6 +57,16 @@ jobs:
     with:
       terraform-dir: ./terraform/grafana-operator
 
+  deploy-prometheus-operator:
+    needs: [
+      deploy-github-org-runner,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/prometheus-operator
+
   deploy-cert-manager:
     needs: [
       deploy-github-org-runner,
@@ -235,6 +245,17 @@ jobs:
       terraform-dir: ./terraform/ocis
       resource-name: null_resource.ocis_helm_repo_clone
       force-apply-all: true
+
+  deploy-prometheus:
+    needs: [
+      deploy-prometheus-operator,
+      deploy-openebs,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/prometheus
 
   deploy-bulk:
     needs: [
