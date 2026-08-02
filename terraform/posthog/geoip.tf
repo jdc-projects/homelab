@@ -152,6 +152,7 @@ resource "kubernetes_manifest" "geoip_refresh_cronjob" {
                       apk add --no-cache curl brotli
                       curl -L "https://mmdbcdn.posthog.net/" --http1.1 --fail |
                         brotli --decompress --output=/share/GeoLite2-City.mmdb.new
+                      chmod 644 /share/GeoLite2-City.mmdb.new
                       mv /share/GeoLite2-City.mmdb.new /share/GeoLite2-City.mmdb
                       echo "GeoLite2-City.mmdb refreshed, restarting deployments..."
                       kubectl rollout restart ${join(" ", [for d in local.geoip_deployments : "deploy/${d}"])} -n ${kubernetes_namespace.posthog.metadata[0].name}
