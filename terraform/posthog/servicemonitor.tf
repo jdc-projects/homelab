@@ -97,3 +97,31 @@ resource "kubernetes_manifest" "personhog_router_servicemonitor" {
     }
   }
 }
+
+resource "kubernetes_manifest" "kafka_podmonitor" {
+  manifest = {
+    apiVersion = "monitoring.coreos.com/v1"
+    kind       = "PodMonitor"
+
+    metadata = {
+      name      = "kafka"
+      namespace = kubernetes_namespace.posthog.metadata[0].name
+    }
+
+    spec = {
+      selector = {
+        matchLabels = {
+          "strimzi.io/cluster" = "kafka"
+          "strimzi.io/kind"    = "Kafka"
+        }
+      }
+
+      podMetricsEndpoints = [
+        {
+          port = "tcp-prometheus"
+          path = "/metrics"
+        }
+      ]
+    }
+  }
+}
