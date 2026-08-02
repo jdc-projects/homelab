@@ -4,12 +4,16 @@ resource "kubernetes_service" "internal" {
   metadata {
     name      = "${var.name}-internal"
     namespace = var.namespace
+    labels = {
+      app = var.name
+    }
   }
 
   spec {
     selector = var.selector
 
     port {
+      name        = "http"
       port        = 80
       target_port = var.target_port
     }
