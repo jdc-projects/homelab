@@ -55,6 +55,10 @@ resource "kubernetes_manifest" "grafana_deployment" {
           auto_login                 = "true"
           allow_assign_grafana_admin = "true"
         }
+
+        "unified_alerting" = {
+          alertmanager_url = "http://kube-prometheus-stack-alertmanager.prometheus.svc.cluster.local:9093"
+        }
       }
 
       deployment = {
