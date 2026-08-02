@@ -151,18 +151,19 @@ resource "helm_release" "crowdsec" {
             - SetBodySizeExceededAction("partial")
             - SetMaxBodySize(52428800)
       pre_eval:
-        # OCIS native WebDAV (/dav/*) carries file content that trips CRS body
-        # rules. Legacy /remote.php/dav/* is handled by the Nextcloud exclusion
-        # plugin. Applies to both in-band and out-of-band phases.
-        - filter: req.URL.Path startsWith "/dav/"
+        # Each filter MUST be scoped to the app hostname via req.Host so it
+        # does not leak to other apps sharing the same AppSec engine. Add
+        # new entries when an app has request bodies that trip CRS rules.
+        - filter: req.Host == "ocis.${var.server_base_domain}" && req.URL.Path startsWith "/dav/"
           apply:
             - DisableBodyInspection()
-        # Outline: document/attachment/webhook bodies are user markdown/code/binary.
-        - filter: (req.URL.Path startsWith "/api/documents") || (req.URL.Path startsWith "/api/attachments") || (req.URL.Path startsWith "/api/hooks")
+        - filter: req.Host == "outline.${var.server_base_domain}" && ((req.URL.Path startsWith "/api/documents") || (req.URL.Path startsWith "/api/attachments") || (req.URL.Path startsWith "/api/hooks"))
           apply:
             - DisableBodyInspection()
-        # RustFS (Outline's S3 attachment store): binary uploads/downloads.
         - filter: req.Host == "assets-notes.${var.server_base_domain}"
+          apply:
+            - DisableBodyInspection()
+        - filter: req.Host == "grafana.${var.server_base_domain}" && req.URL.Path startsWith "/api/ds/query"
           apply:
             - DisableBodyInspection()
     EOF
