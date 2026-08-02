@@ -172,10 +172,13 @@ locals {
 
   # Native ClickHouse Prometheus exporter endpoint.
   # https://clickhouse.com/docs/en/operations/monitoring
+  # Modern ClickHouse (26.x) uses <endpoint> for the URL path and a separate
+  # <port> for the listen port; the legacy host:port <endpoint> form is invalid.
   posthog_prometheus_xml = <<-XML
     <clickhouse>
       <prometheus>
-        <endpoint>0.0.0.0:9363</endpoint>
+        <endpoint>/metrics</endpoint>
+        <port>9363</port>
         <metrics>true</metrics>
         <events>true</events>
         <asynchronous_metrics>true</asynchronous_metrics>
