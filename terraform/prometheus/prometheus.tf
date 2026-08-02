@@ -48,6 +48,30 @@ resource "helm_release" "kube_prometheus_stack" {
       name  = "defaultRules.create"
       value = "true"
     },
+    # On K3s the apiserver, controller-manager, scheduler and kube-proxy are
+    # bundled into one process with kubelet. Their metrics are collected via
+    # the kubelet ScrapeConfig (job="kubelet"), not as separate per-component
+    # targets. These alert rules use absent(up{job="apiserver"}) etc. which
+    # are always false positives on K3s. Disable the specific "Down" alerts
+    # rather than entire rule categories so other alerts in the same files
+    # (e.g. KubeAggregatedAPIDown) remain active if per-component scraping
+    # is added later.
+    {
+      name  = "defaultRules.disabled.KubeAPIDown"
+      value = "true"
+    },
+    {
+      name  = "defaultRules.disabled.KubeControllerManagerDown"
+      value = "true"
+    },
+    {
+      name  = "defaultRules.disabled.KubeSchedulerDown"
+      value = "true"
+    },
+    {
+      name  = "defaultRules.disabled.KubeProxyDown"
+      value = "true"
+    },
     {
       name  = "grafana.enabled"
       value = "false"

@@ -98,6 +98,15 @@ resource "kubernetes_manifest" "kubelet_scrape" {
           replacement  = "$1:10250"
           action       = "replace"
         },
+        # Expose the metrics path as a visible label. The chart's dashboards
+        # and alert rules filter on metrics_path="/metrics" etc. Without this
+        # relabel, __metrics_path__ stays internal and those queries return
+        # empty ("No Data" on dashboards, false-positive KubeletDown alert).
+        {
+          sourceLabels = ["__metrics_path__"]
+          targetLabel  = "metrics_path"
+          action       = "replace"
+        },
       ]
     }
   }
