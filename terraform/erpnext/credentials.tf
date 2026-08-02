@@ -34,6 +34,24 @@ resource "kubernetes_secret" "erpnext_admin_password" {
   }
 }
 
+resource "random_password" "mariadb_metrics_password" {
+  length  = 50
+  numeric = true
+  special = false
+  upper   = true
+}
+
+resource "kubernetes_secret" "mariadb_metrics_password" {
+  metadata {
+    name      = "mariadb-metrics-password"
+    namespace = kubernetes_namespace.erpnext.metadata[0].name
+  }
+
+  data = {
+    password = random_password.mariadb_metrics_password.result
+  }
+}
+
 resource "random_password" "keycloak_client_secret" {
   length  = 50
   numeric = true
