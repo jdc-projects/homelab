@@ -89,10 +89,6 @@ resource "kubernetes_service" "cdi_uploadproxy_nodeport" {
 # profiles) and existing clusters.
 locals {
   cdi_storage_profile_names = [
-    "default",
-    "openebs-hostpath",
-    "openebs-loki-localpv",
-    "openebs-minio-localpv",
     "openebs-zfs-localpv-bulk",
     "openebs-zfs-localpv-bulk-no-backup",
     "openebs-zfs-localpv-general",

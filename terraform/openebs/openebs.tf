@@ -38,5 +38,12 @@ resource "helm_release" "openebs" {
       name  = "alloy.enabled"
       value = "false"
     },
+    # Disable the hostpath localpv storage engine - nothing uses it, all
+    # storage goes through zfs-localpv. Prevents the chart from creating
+    # the openebs-hostpath storage class and localpv-provisioner deployment.
+    {
+      name  = "engines.local.hostpath.enabled"
+      value = "false"
+    },
   ]
 }
