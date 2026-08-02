@@ -11,6 +11,11 @@ terraform {
       version = "~> 2.0"
     }
 
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 3.0"
+    }
+
     http = {
       source  = "hashicorp/http"
       version = "~> 3.0"
@@ -19,6 +24,10 @@ terraform {
 }
 
 provider "kubectl" {
+  config_path = "../cluster.yml"
+}
+
+provider "kubernetes" {
   config_path = "../cluster.yml"
 }
 
