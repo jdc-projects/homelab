@@ -506,17 +506,27 @@
   "templating": {
     "list": [
       {
-        "allValue": null,
-        "current": {},
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
         "datasource": {
           "type": "prometheus"
         },
         "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": "Job",
-        "multi": false,
+        "multi": true,
         "name": "job",
-        "options": [],
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          }
+        ],
         "query": "label_values(kafka_consumergroup_current_offset, job)",
         "refresh": 1,
         "regex": "",
@@ -560,8 +570,12 @@
         "useTags": false
       },
       {
-        "allValue": null,
-        "current": {},
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
         "datasource": {
           "type": "prometheus"
         },
@@ -570,7 +584,13 @@
         "label": "Topic",
         "multi": true,
         "name": "topic",
-        "options": [],
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          }
+        ],
         "query": "label_values(kafka_topic_partition_current_offset{instance='$instance',topic!='__consumer_offsets',topic!='--kafka'}, topic)",
         "refresh": 1,
         "regex": "",
