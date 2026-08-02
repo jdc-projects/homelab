@@ -7,4 +7,11 @@ resource "helm_release" "cloudnative_pg" {
   version    = "0.29.0"
 
   timeout = 60
+
+  set = [
+    {
+      name  = "monitoring.podMonitorEnabled"
+      value = "true"
+    }
+  ]
 }
