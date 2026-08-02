@@ -65,8 +65,4 @@ resource "ssh_resource" "k3s_provisioning" {
   ]
 
   timeout = "1m"
-
-  depends_on = [
-    ssh_resource.k3s_kubelet_config,
-  ]
 }
