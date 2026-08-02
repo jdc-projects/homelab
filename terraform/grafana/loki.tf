@@ -39,6 +39,10 @@ resource "helm_release" "loki" {
       value = "false"
     },
     {
+      name  = "monitoring.serviceMonitor.enabled"
+      value = "true"
+    },
+    {
       name  = "test.enabled"
       value = "false"
     },

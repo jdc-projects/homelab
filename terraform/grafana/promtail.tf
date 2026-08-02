@@ -78,6 +78,10 @@ resource "helm_release" "promtail" {
       name  = "config.clients[0].url"
       value = "http://${helm_release.loki.name}-gateway/loki/api/v1/push"
     },
+    {
+      name  = "serviceMonitor.enabled"
+      value = "true"
+    },
   ]
 
   set_sensitive = [
