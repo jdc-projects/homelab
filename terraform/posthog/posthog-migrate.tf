@@ -14,14 +14,14 @@ resource "kubernetes_job" "posthog_migrate" {
         restart_policy = "Never"
 
         container {
-          image   = local.posthog_image
-          name    = "posthog-migrate"
+          image = local.posthog_image
+          name  = "posthog-migrate"
           # PostHog decoupled the Person model from Django's ORM (PRs #65968, #66471).
           # The last_seen_at field exists on the Python model but no Django migration
           # creates the column. The Node.js ingestion service queries it directly via
           # SQL, so the column must exist or ingestion-general crashes. This is
           # idempotent (IF NOT EXISTS) and a no-op once PostHog ships a proper migration.
-          command = ["sh", "-c", "python manage.py migrate && python manage.py migrate_clickhouse && python manage.py run_async_migrations && python -c \"import django; django.setup(); from django.db import connection; connection.cursor().execute('ALTER TABLE posthog_person ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ')\""]
+          command = ["sh", "-c", "python manage.py migrate && python manage.py migrate_clickhouse && python manage.py run_async_migrations && python -c \"import django; django.setup(); from django.db import connection; connection.cursor().execute('ALTER TABLE posthog_person ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ')\" && python manage.py run_async_migrations --check"]
 
           env_from {
             config_map_ref { name = kubernetes_config_map.posthog_env.metadata[0].name }
