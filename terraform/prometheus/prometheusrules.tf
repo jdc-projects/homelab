@@ -6,10 +6,11 @@
 # K3s these are bundled into one process - the chart's per-component rules
 # (9 PrometheusRule files) are false positives and are excluded here.
 #
-# The 26 rule files in rules/ are extracted from kube-prometheus-stack v88.1.2
-# via helm template. They reference job="kubelet" with metrics_path="/metrics"
-# which matches our ScrapeConfig configuration. To update: re-render the chart,
-# diff against the existing files, and replace.
+# The 26 rule files in rules/ are extracted from kube-prometheus-stack (same
+# version as pinned in terraform/prometheus-operator/). They reference
+# job="kubelet" with metrics_path="/metrics" which matches our ScrapeConfig
+# configuration. To update: re-render the chart, diff against the existing
+# files, and replace.
 
 locals {
   prometheus_rule_files = fileset("${path.module}/rules", "*.yaml")

@@ -12,14 +12,16 @@ via `terraform_remote_state` so both stay in lock-step.
 The chart provides **infrastructure only** — no rules or dashboards:
 
 - **PrometheusRules**: curated in `rules/` (26 files extracted from
-  kube-prometheus-stack v88.1.2). The 9 per-component rule files that are
-  K3s false positives (apiserver, controller-manager, scheduler, proxy) are
-  excluded. Deployed via `prometheusrules.tf`.
+  kube-prometheus-stack, same version as pinned in the operator module).
+  The 9 per-component rule files that are K3s false positives (apiserver,
+  controller-manager, scheduler, proxy) are excluded. Deployed via
+  `prometheusrules.tf`.
 
-- **Grafana dashboards**: curated in `dashboards/` (22 JSON files from the
-  same chart version). The 7 component-specific and irrelevant dashboards
-  (apiserver, controller-manager, scheduler, proxy, AIX, Darwin,
-  multicluster) are excluded. Deployed via `grafana-dashboards.tf`.
+- **Grafana dashboards**: curated in `dashboards/` (JSON files from the
+  same chart version). Component-specific dashboards (apiserver,
+  controller-manager, scheduler, proxy) have K3s job label fixes applied.
+  Irrelevant dashboards (AIX, Darwin, multicluster) are excluded.
+  Deployed via `grafana-dashboards.tf`.
 
 - **ScrapeConfigs**: custom K3s-specific configs in `scrapeconfigs.tf`
   (kubelet, etcd, coredns). No resources created in `kube-system`.
@@ -40,7 +42,8 @@ The one exception is **etcd** — a separate process scraped on `:2381`
 
 ## Updating rules and dashboards
 
-Both are pinned to chart v88.1.2. To update:
+Both are pinned to the chart version defined in
+`terraform/prometheus-operator/prometheus-operator.tf`. To update:
 
 ```bash
 # Render the chart

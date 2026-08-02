@@ -1,11 +1,9 @@
 # Curated Grafana dashboards for K3s.
 #
-# Extracted from kube-prometheus-stack v88.1.2. The 4 component-specific
-# dashboards (apiserver, controller-manager, scheduler, proxy) and irrelevant
-# ones (AIX, Darwin, multicluster, windows) are excluded - they reference
-# per-component job labels that don't exist on K3s. The remaining 22
-# dashboards use job="kubelet" (with metrics_path) or job="etcd"/"coredns"
-# which match our ScrapeConfig configuration.
+# Extracted from kube-prometheus-stack (same version as pinned in
+# terraform/prometheus-operator/). The 4 component-specific dashboards that
+# reference per-component job labels are included with K3s-compatible job
+# label fixes applied (see dashboards/README if created).
 #
 # To update: re-render the chart with forceDeployDashboards, extract the
 # ConfigMap dashboard JSONs, diff against existing files, and replace.
