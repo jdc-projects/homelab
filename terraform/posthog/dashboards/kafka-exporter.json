@@ -528,17 +528,27 @@
         "useTags": false
       },
       {
-        "allValue": null,
-        "current": {},
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
         "datasource": {
           "type": "prometheus"
         },
         "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": "Instance",
-        "multi": false,
+        "multi": true,
         "name": "instance",
-        "options": [],
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          }
+        ],
         "query": "label_values(kafka_consumergroup_current_offset{job=~\"$job\"}, instance)",
         "refresh": 1,
         "regex": "",
