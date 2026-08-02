@@ -83,6 +83,15 @@ resource "kubernetes_manifest" "erpnext_db" {
         }
       }
 
+      metrics = {
+        enabled = true
+
+        passwordSecretKeyRef = {
+          name = kubernetes_secret.mariadb_metrics_password.metadata[0].name
+          key  = "password"
+        }
+      }
+
       suspend = false
     }
   }
@@ -91,6 +100,7 @@ resource "kubernetes_manifest" "erpnext_db" {
     "metadata.labels",
     "metadata.annotations",
     "spec.suspend",
+    "spec.metrics",
   ]
 
   field_manager {
