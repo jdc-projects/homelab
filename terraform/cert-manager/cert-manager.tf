@@ -14,5 +14,9 @@ resource "helm_release" "cert_manager" {
       name  = "crds.enabled"
       value = "true"
     },
+    {
+      name  = "prometheus.servicemonitor.enabled"
+      value = "true"
+    },
   ]
 }
