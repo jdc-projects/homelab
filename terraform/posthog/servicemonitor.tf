@@ -125,3 +125,30 @@ resource "kubernetes_manifest" "kafka_podmonitor" {
     }
   }
 }
+
+resource "kubernetes_manifest" "clickhouse_servicemonitor" {
+  manifest = {
+    apiVersion = "monitoring.coreos.com/v1"
+    kind       = "ServiceMonitor"
+
+    metadata = {
+      name      = "clickhouse"
+      namespace = kubernetes_namespace.posthog.metadata[0].name
+    }
+
+    spec = {
+      selector = {
+        matchLabels = {
+          "clickhouse.altinity.com/chi" = "posthog-ch"
+        }
+      }
+
+      endpoints = [
+        {
+          port = "metrics"
+          path = "/metrics"
+        }
+      ]
+    }
+  }
+}

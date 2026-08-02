@@ -169,6 +169,19 @@ locals {
       <custom_settings_prefixes />
     </clickhouse>
   XML
+
+  # Native ClickHouse Prometheus exporter endpoint.
+  # https://clickhouse.com/docs/en/operations/monitoring
+  posthog_prometheus_xml = <<-XML
+    <clickhouse>
+      <prometheus>
+        <endpoint>0.0.0.0:9363</endpoint>
+        <metrics>true</metrics>
+        <events>true</events>
+        <asynchronous_metrics>true</asynchronous_metrics>
+      </prometheus>
+    </clickhouse>
+  XML
 }
 
 resource "kubernetes_manifest" "posthog_clickhouse" {
@@ -202,6 +215,7 @@ resource "kubernetes_manifest" "posthog_clickhouse" {
           "posthog-clusters.xml" = local.posthog_clusters_xml
           "posthog-keeper.xml"   = local.posthog_keeper_xml
           "posthog-compat.xml"   = local.posthog_compat_xml
+          "prometheus.xml"       = local.posthog_prometheus_xml
         }
 
         users = {
@@ -309,6 +323,31 @@ resource "kubernetes_service" "clickhouse" {
     port {
       name = "tcp"
       port = 9000
+    }
+  }
+
+  depends_on = [kubernetes_manifest.posthog_clickhouse]
+}
+
+resource "kubernetes_service" "clickhouse_metrics" {
+  metadata {
+    name      = "clickhouse-metrics"
+    namespace = kubernetes_namespace.posthog.metadata[0].name
+
+    labels = {
+      "clickhouse.altinity.com/chi" = "posthog-ch"
+    }
+  }
+
+  spec {
+    selector = {
+      "clickhouse.altinity.com/chi" = "posthog-ch"
+    }
+
+    port {
+      name        = "metrics"
+      port        = 9363
+      target_port = 9363
     }
   }
 
