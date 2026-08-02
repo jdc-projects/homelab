@@ -91,7 +91,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg(rate(kubevirt_vmi_vcpu_seconds{exported_namespace=\"$namespace\", name=\"$vm\"}[5m])) by (domain, name)",
+          "expr": "avg(rate(kubevirt_vmi_vcpu_seconds_total{exported_namespace=\"$namespace\", name=\"$vm\"}[5m])) by (domain, name)",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -299,7 +299,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "irate(kubevirt_vmi_storage_iops_total{exported_namespace=\"$namespace\", name=\"$vm\"}[1m])",
+          "expr": "label_replace(irate(kubevirt_vmi_storage_iops_read_total{exported_namespace=\"$namespace\", name=\"$vm\"}[1m]), \"type\", \"read\", \"\", \"\") or label_replace(irate(kubevirt_vmi_storage_iops_write_total{exported_namespace=\"$namespace\", name=\"$vm\"}[1m]), \"type\", \"write\", \"\", \"\")",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -391,7 +391,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "irate(kubevirt_vmi_storage_traffic_bytes_total{exported_namespace=\"$namespace\", name=\"$vm\"}[1m])",
+          "expr": "label_replace(irate(kubevirt_vmi_storage_read_traffic_bytes_total{exported_namespace=\"$namespace\", name=\"$vm\"}[1m]), \"type\", \"read\", \"\", \"\") or label_replace(irate(kubevirt_vmi_storage_write_traffic_bytes_total{exported_namespace=\"$namespace\", name=\"$vm\"}[1m]), \"type\", \"write\", \"\", \"\")",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -482,7 +482,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "irate(kubevirt_vmi_storage_times_ms_total{exported_namespace=\"$namespace\", name=\"$vm\"}[1m])",
+          "expr": "label_replace(irate(kubevirt_vmi_storage_read_times_seconds_total{exported_namespace=\"$namespace\", name=\"$vm\"}[1m]), \"type\", \"read\", \"\", \"\") or label_replace(irate(kubevirt_vmi_storage_write_times_seconds_total{exported_namespace=\"$namespace\", name=\"$vm\"}[1m]), \"type\", \"write\", \"\", \"\")",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -510,7 +510,7 @@
       },
       "yaxes": [
         {
-          "format": "ms",
+          "format": "s",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -586,7 +586,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "irate(kubevirt_vmi_network_traffic_bytes_total{exported_namespace=\"$namespace\", name=\"$vm\"}[5m])*8",
+          "expr": "label_replace(irate(kubevirt_vmi_network_receive_bytes_total{exported_namespace=\"$namespace\", name=\"$vm\"}[5m])*8, \"type\", \"rx\", \"\", \"\") or label_replace(irate(kubevirt_vmi_network_transmit_bytes_total{exported_namespace=\"$namespace\", name=\"$vm\"}[5m])*8, \"type\", \"tx\", \"\", \"\")",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -664,14 +664,14 @@
         "allValue": null,
         "current": {},
         "datasource": "$datasource",
-        "definition": "label_values(kubevirt_vmi_vcpu_seconds, exported_namespace)",
+        "definition": "label_values(kubevirt_vmi_vcpu_seconds_total, exported_namespace)",
         "hide": 0,
         "includeAll": false,
         "label": "namespace",
         "multi": false,
         "name": "namespace",
         "options": [],
-        "query": "label_values(kubevirt_vmi_vcpu_seconds, exported_namespace)",
+        "query": "label_values(kubevirt_vmi_vcpu_seconds_total, exported_namespace)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -686,14 +686,14 @@
         "allValue": null,
         "current": {},
         "datasource": "$datasource",
-        "definition": "label_values(kubevirt_vmi_vcpu_seconds{exported_namespace=\"$namespace\"}, name)",
+        "definition": "label_values(kubevirt_vmi_vcpu_seconds_total{exported_namespace=\"$namespace\"}, name)",
         "hide": 0,
         "includeAll": false,
         "label": "vm",
         "multi": false,
         "name": "vm",
         "options": [],
-        "query": "label_values(kubevirt_vmi_vcpu_seconds{exported_namespace=\"$namespace\"}, name)",
+        "query": "label_values(kubevirt_vmi_vcpu_seconds_total{exported_namespace=\"$namespace\"}, name)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
