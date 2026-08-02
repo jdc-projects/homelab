@@ -41,6 +41,19 @@ data "terraform_remote_state" "prometheus_operator" {
   }
 }
 
+# Reads the Grafana instance labels so the GrafanaDatasource CR (defined in
+# grafana-datasource.tf) can target the correct Grafana instance via
+# instanceSelector. The output is exported by terraform/grafana/outputs.tf.
+data "terraform_remote_state" "grafana" {
+  backend = "kubernetes"
+
+  config = {
+    secret_suffix = "grafana"
+    config_path   = "../cluster.yml"
+    namespace     = "tf-state"
+  }
+}
+
 resource "kubernetes_namespace" "prometheus" {
   metadata {
     name = "prometheus"

@@ -250,12 +250,26 @@ jobs:
     needs: [
       deploy-prometheus-operator,
       deploy-openebs,
+      deploy-grafana,
     ]
     uses: ./.github/workflows/kubernetes-terraform-deploy.yml
     secrets: inherit
 
     with:
       terraform-dir: ./terraform/prometheus
+
+  deploy-grafana:
+    needs: [
+      deploy-grafana-operator,
+      deploy-keycloak-config,
+      deploy-traefik,
+      deploy-openebs,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/grafana
 
   deploy-bulk:
     needs: [
@@ -274,7 +288,6 @@ jobs:
       fail-fast: false
       matrix:
         application: [
-          grafana,
           outline,
           services,
           13ft,
