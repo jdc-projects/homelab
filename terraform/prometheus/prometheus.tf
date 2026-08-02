@@ -52,41 +52,105 @@ resource "helm_release" "kube_prometheus_stack" {
       name  = "grafana.enabled"
       value = "false"
     },
-    # All chart-provided cluster-component monitors are disabled. On K3s, the
-    # control plane components (apiserver, controller-manager, scheduler,
-    # kube-proxy) are bundled into one process - their metrics are already
-    # captured via the kubelet ScrapeConfig in scrapeconfigs.tf. The chart's
-    # separate monitors would either have zero endpoints (no matching pods)
-    # or produce duplicate samples. Custom ScrapeConfigs in scrapeconfigs.tf
-    # handle kubelet, etcd and coredns without creating any resources in
-    # kube-system.
+    # Cluster-component monitors are enabled for dashboard/rule generation, but
+    # their Services and ServiceMonitors are disabled. On K3s the control plane
+    # components (apiserver, controller-manager, scheduler, kube-proxy) are
+    # bundled into one process - the chart's separate monitors would either
+    # have zero endpoints (no matching pods) or produce duplicate samples.
+    # Custom ScrapeConfigs in scrapeconfigs.tf handle actual scraping of
+    # kubelet, etcd and coredns without creating any resources in kube-system.
+    # Keeping the components enabled ensures the chart ships its 29 default
+    # Grafana dashboards (including etcd, kubelet, coredns) and PrometheusRules.
     {
       name  = "kubeApiServer.enabled"
+      value = "true"
+    },
+    {
+      name  = "kubeApiServer.serviceMonitor.enabled"
       value = "false"
     },
     {
       name  = "kubelet.enabled"
+      value = "true"
+    },
+    {
+      name  = "kubelet.serviceMonitor.enabled"
       value = "false"
     },
     {
       name  = "kubeControllerManager.enabled"
+      value = "true"
+    },
+    {
+      name  = "kubeControllerManager.service.enabled"
+      value = "false"
+    },
+    {
+      name  = "kubeControllerManager.serviceMonitor.enabled"
       value = "false"
     },
     {
       name  = "coreDns.enabled"
+      value = "true"
+    },
+    {
+      name  = "coreDns.service.enabled"
+      value = "false"
+    },
+    {
+      name  = "coreDns.serviceMonitor.enabled"
       value = "false"
     },
     {
       name  = "kubeEtcd.enabled"
+      value = "true"
+    },
+    {
+      name  = "kubeEtcd.service.enabled"
+      value = "false"
+    },
+    {
+      name  = "kubeEtcd.serviceMonitor.enabled"
       value = "false"
     },
     {
       name  = "kubeScheduler.enabled"
+      value = "true"
+    },
+    {
+      name  = "kubeScheduler.service.enabled"
+      value = "false"
+    },
+    {
+      name  = "kubeScheduler.serviceMonitor.enabled"
       value = "false"
     },
     {
       name  = "kubeProxy.enabled"
+      value = "true"
+    },
+    {
+      name  = "kubeProxy.service.enabled"
       value = "false"
+    },
+    {
+      name  = "kubeProxy.serviceMonitor.enabled"
+      value = "false"
+    },
+    # Deploy the chart's 29 default Grafana dashboards as GrafanaDashboard CRs
+    # that the grafana-operator (in terraform/grafana-operator/) imports
+    # automatically via allowCrossNamespaceImport + instanceSelector.
+    {
+      name  = "grafana.forceDeployDashboards"
+      value = "true"
+    },
+    {
+      name  = "grafana.operator.dashboardsConfigMapRefEnabled"
+      value = "true"
+    },
+    {
+      name  = "grafana.operator.matchLabels.dashboards"
+      value = "grafana"
     },
     # Discover ServiceMonitors/PodMonitors/Rules cluster-wide (any namespace,
     # any label) so monitors from other namespaces (e.g. traefik) are picked

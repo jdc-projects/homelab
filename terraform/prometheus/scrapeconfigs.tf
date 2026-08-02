@@ -63,7 +63,7 @@ resource "kubernetes_manifest" "kubelet_scrape" {
     }
 
     spec = {
-      jobName = "kubelet-${each.key}"
+      jobName = "kubelet"
 
       metricsPath = each.value
       scheme      = "HTTPS"
