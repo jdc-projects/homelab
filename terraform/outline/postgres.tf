@@ -26,6 +26,10 @@ resource "kubernetes_manifest" "outline_db" {
 
       instances = local.outline_db_instances
 
+      monitoring = {
+        enablePodMonitor = true
+      }
+
       postgresql = {
         parameters = {
           shared_buffers = "256MB"

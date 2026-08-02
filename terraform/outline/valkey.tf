@@ -7,4 +7,9 @@ resource "helm_release" "valkey" {
   version    = "0.10.0"
 
   timeout = 300
+
+  set = [
+    { name = "metrics.enabled", value = "true" },
+    { name = "metrics.serviceMonitor.enabled", value = "true" },
+  ]
 }
