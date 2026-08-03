@@ -22,9 +22,21 @@ jobs:
       - name: Get server status
         run: curl --max-time 5 https://ping.${{ vars.SERVER_BASE_DOMAIN }}
 
+  silence-alerts:
+    needs: [
+      check-server-up,
+    ]
+    uses: ./.github/workflows/alertmanager-silence.yml
+    secrets: inherit
+
+    with:
+      do_silence: true
+      run_tag: nightly-backup-${{ github.run_id }}
+
   hibernate-databases:
     needs: [
       check-server-up,
+      silence-alerts,
     ]
     uses: ./.github/workflows/databases-hibernate.yml
     secrets: inherit
@@ -150,3 +162,16 @@ jobs:
 
     with:
       do-hibernate: false
+
+  unsilence-alerts:
+    needs: [
+      restart-databases,
+      silence-alerts,
+    ]
+    if: always() && !cancelled() && needs.silence-alerts.result == 'success'
+    uses: ./.github/workflows/alertmanager-silence.yml
+    secrets: inherit
+
+    with:
+      do_silence: false
+      run_tag: nightly-backup-${{ github.run_id }}

@@ -1,0 +1,108 @@
+on:
+  workflow_call:
+    inputs:
+      do_silence:
+        description: 'True to create silences covering namespaces with hibernated datastores. False to expire the silences created by this run.'
+        required: true
+        type: boolean
+      run_tag:
+        description: 'Unique tag stamped into each silence comment so the expire leg can find them.'
+        required: true
+        type: string
+
+env:
+  CLIENT_CERT_DATA: ${{ secrets.KUBE_CLIENT_CERT_DATA }}
+  CLIENT_KEY_DATA: ${{ secrets.KUBE_CLIENT_KEY_DATA }}
+  CLUSTER_CA_CERT_DATA: ${{ secrets.KUBE_CLUSTER_CA_CERT_DATA }}
+  SERVER_IP_ADDRESS: ${{ secrets.K3S_IP_ADDRESS }}
+  SERVER_KUBE_PORT: ${{ vars.SERVER_KUBE_PORT }}
+
+jobs:
+  manage-silence:
+    runs-on: self-hosted
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v7
+      - name: "Add cluster CA certificate"
+        run: |
+          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
+          sudo mkdir /usr/local/share/ca-certificates/extra
+          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
+          sudo update-ca-certificates
+      - name: "Generate and install kubeconfig"
+        working-directory: ./terraform
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v5
+        with:
+          version: 'v1.33.6'
+
+      - name: "Create silence"
+        if: ${{ inputs.do_silence }}
+        env:
+          ALERTMANAGER_POD: alertmanager-kube-prometheus-stack-alertmanager-0
+          RUN_TAG: ${{ inputs.run_tag }}
+        run: |
+          set -euo pipefail
+
+          # Discover every namespace that contains a hibernated stateful resource,
+          # using the same CRDs the databases-hibernate workflow targets. In this
+          # cluster the dependent app workloads co-locate with their datastores, so
+          # the datastore namespace is also where the crash-loop alerts will fire.
+          NAMESPACES="$(
+            for crd in \
+                clusters.postgresql.cnpg.io \
+                clickhouseinstallations \
+                clickhousekeeperinstallations \
+                mariadbs.k8s.mariadb.com \
+                kafkas.kafka.strimzi.io \
+                opensearchclusters.opensearch.org; do
+              kubectl get "$crd" -A -o jsonpath='{.items[*].metadata.namespace}' 2>/dev/null || true
+              printf ' '
+            done | tr ' ' '\n' | sed '/^$/d' | sort -u
+          )"
+
+          if [ -z "$NAMESPACES" ]; then
+            echo "No hibernated resources found; nothing to silence."
+            exit 0
+          fi
+
+          NS_REGEX="$(printf '%s' "$NAMESPACES" | paste -sd '|' -)"
+          echo "Silencing alerts for namespaces matching: $NS_REGEX"
+
+          # amtool is shipped inside the alertmanager image; run it via kubectl exec
+          # so no CLI install or port-forward is needed on the runner. The 6h duration
+          # is only a safety net; the expire step (delete-silence) is what ends it.
+          kubectl -n prometheus exec "$ALERTMANAGER_POD" -c alertmanager -- \
+            amtool --alertmanager.url=http://localhost:9093 silence add \
+            "namespace=~${NS_REGEX}" -a nightly-backup -d 6h -c "$RUN_TAG"
+
+      - name: "Expire silence"
+        if: ${{ !inputs.do_silence }}
+        env:
+          ALERTMANAGER_POD: alertmanager-kube-prometheus-stack-alertmanager-0
+          RUN_TAG: ${{ inputs.run_tag }}
+        run: |
+          set -euo pipefail
+
+          # Re-discover the silence(s) we created by the run-tag comment and expire
+          # them. Idempotent: if nothing matches, there is nothing to clean up.
+          SILENCES_JSON="$(kubectl -n prometheus exec "$ALERTMANAGER_POD" -c alertmanager -- \
+            amtool -o json --alertmanager.url=http://localhost:9093 silence query)"
+
+          IDS="$(printf '%s' "$SILENCES_JSON" | yq '.[] | select(.comment == "'"$RUN_TAG"'") | .id')"
+
+          if [ -z "$IDS" ]; then
+            echo "No silences tagged \"$RUN_TAG\" found; nothing to expire."
+            exit 0
+          fi
+
+          for id in $IDS; do
+            echo "Expiring silence $id"
+            kubectl -n prometheus exec "$ALERTMANAGER_POD" -c alertmanager -- \
+              amtool --alertmanager.url=http://localhost:9093 silence expire "$id"
+          done
