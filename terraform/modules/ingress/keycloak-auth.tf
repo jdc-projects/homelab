@@ -1,80 +1,28 @@
-resource "random_password" "keycloak_auth_client_secret" {
-  count = var.do_enable_keycloak_auth ? 1 : 0
+# Shared auth elements for the ingress module.
+#
+# auth_mode selects how (if at all) requests are authenticated before reaching the backend:
+#   - "none":            no auth middleware.
+#   - "oidc-interactive": full OIDC flow (login page, redirects, session cookie). See keycloak-auth-interactive.tf.
+#   - "oidc-api":         OIDC offload (bearer-token validation + claim-derived headers injected upstream,
+#                        401 on failure, no redirect). See keycloak-auth-api.tf. Mimics AWS API Gateway /
+#                        Azure APIM JWT validation.
+#   - "api-key":         static API key validation (X-API-KEY header or Authorization: Bearer). See api-key-auth.tf.
+#
+# The OIDC modes share keycloak_auth_realm (resolved to a realm id in locals.tf) and the soft check below.
 
-  length  = 50
-  numeric = true
-  special = false
-  upper   = true
-}
-
-resource "random_password" "keycloak_auth_plugin_secret" {
-  count = var.do_enable_keycloak_auth ? 1 : 0
-
-  length  = 32
-  special = false
-}
-
-resource "keycloak_openid_client" "keycloak_auth" {
-  count = var.do_enable_keycloak_auth ? 1 : 0
-
-  realm_id  = var.is_keycloak_auth_admin_mode ? data.terraform_remote_state.keycloak.outputs.master_realm_id : data.terraform_remote_state.keycloak.outputs.primary_realm_id
-  client_id = var.name
-
-  name    = var.name
-  enabled = true
-
-  access_type = "CONFIDENTIAL"
-  valid_redirect_uris = [
-    "https://${var.domain}/*",
-  ]
-  web_origins = [
-    "https://${var.domain}",
-  ]
-
-  client_authenticator_type = "client-secret"
-  client_secret             = one(random_password.keycloak_auth_client_secret[*].result)
-
-  standard_flow_enabled        = true
-  direct_access_grants_enabled = true
-  implicit_flow_enabled        = false
-
-  full_scope_allowed = false
-
-  login_theme = "keycloak"
-}
-
-# TokenValidation defaults to IdToken (local JWKS signature validation), deliberately
-# NOT Introspection. Keycloak 26 enforces that the introspecting client must be in the
-# access token's `aud` claim; these clients use full_scope_allowed=false with no audience
-# mapper, so introspection returns active:false and causes a redirect loop. IdToken
-# validation sidesteps this because the ID token's `aud` is always the client id.
-# If Introspection is ever needed, add a keycloak_openid_audience_protocol_mapper to
-# keycloak_openid_client.keycloak_auth first.
-resource "kubernetes_manifest" "keycloak_auth_plugin_middleware" {
-  count = var.do_enable_keycloak_auth ? 1 : 0
-
-  manifest = {
-    apiVersion = "traefik.io/v1alpha1"
-    kind       = "Middleware"
-
-    metadata = {
-      name      = "${var.name}-keycloak-auth"
-      namespace = var.namespace
-    }
-
-    spec = {
-      plugin = {
-        traefik-oidc-auth = {
-          Provider = {
-            Url          = "${data.terraform_remote_state.keycloak.outputs.keycloak_url}/realms/${one(keycloak_openid_client.keycloak_auth[*].realm_id)}"
-            ClientId     = one(keycloak_openid_client.keycloak_auth[*].client_id)
-            ClientSecret = one(keycloak_openid_client.keycloak_auth[*].client_secret)
-            UsePkce      = true
-          }
-          Scopes = ["openid", "profile", "email"]
-          Secret = one(random_password.keycloak_auth_plugin_secret[*].result)
-        }
-      }
-    }
+# Soft (non-blocking) check: warns at plan time when keycloak_auth_realm is not a known alias, so a
+# typo'd or non-existent realm is a conscious choice rather than a silent failure. Non-alias values
+# are still used as literal realm names (see local.keycloak_auth_realm_id) - a wrong name will also
+# fail loudly at apply (Keycloak rejects the client creation / discovery 404s). Silence by adding
+# "keycloak_auth_realm_known" to var.silenced_checks. Do NOT silence after any change that affects
+# what this check validates (realm/client config) until re-verified; see silenced_checks description.
+check "keycloak_auth_realm_known" {
+  assert {
+    condition = anytrue([
+      contains(var.silenced_checks, "keycloak_auth_realm_known"),
+      var.auth_mode == "none",
+      contains(["primary", "master"], var.keycloak_auth_realm),
+    ])
+    error_message = "keycloak_auth_realm='${var.keycloak_auth_realm}' is not a known alias (primary/master); treating it as a literal realm name. Ensure that realm exists in Keycloak. If verified intentional, add 'keycloak_auth_realm_known' to silenced_checks."
   }
 }

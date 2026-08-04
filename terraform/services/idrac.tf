@@ -107,6 +107,6 @@ module "idrac_ingress" {
 
   is_scheme_http = false
 
-  do_enable_keycloak_auth     = true
-  is_keycloak_auth_admin_mode = true
+  auth_mode           = "oidc-interactive"
+  keycloak_auth_realm = "master"
 }

@@ -99,22 +99,79 @@ variable "do_enable_crowdsec_bouncer_appsec" {
   default     = true
 }
 
-variable "do_enable_api_key_auth" {
-  type        = bool
-  description = "True to enable API key authentication middleware."
-  default     = false
+variable "auth_mode" {
+  type        = string
+  description = "Authentication mode. \"none\" = no auth middleware. \"oidc-interactive\" = full OIDC flow (login page, redirects, session cookie) via the traefik-oidc-auth plugin. \"oidc-api\" = OIDC offload (bearer-token validation + claim-derived headers injected upstream, 401 on failure, no redirect) - mimics AWS API Gateway / Azure APIM JWT validation. \"api-key\" = static API key validation via the api-key-auth plugin (X-API-KEY header or Authorization: Bearer); the generated key is exposed in the api_key output."
+  default     = "none"
+
+  validation {
+    condition     = contains(["none", "oidc-interactive", "oidc-api", "api-key"], var.auth_mode)
+    error_message = "auth_mode must be one of: none, oidc-interactive, oidc-api, api-key."
+  }
 }
 
-variable "do_enable_keycloak_auth" {
-  type        = bool
-  description = "True to enable Keycloak authentication middleware."
-  default     = false
+variable "keycloak_auth_realm" {
+  type        = string
+  description = "Keycloak realm for the managed auth client. \"primary\" and \"master\" are aliases resolved from the keycloak module's remote state (rename-safe). Any other value is treated as a literal realm name and used as-is (the realm must already exist in Keycloak - the module does not create it). Non-alias values trigger the non-blocking keycloak_auth_realm_known check; see silenced_checks. Only relevant when auth_mode != \"none\"."
+  default     = "primary"
 }
 
-variable "is_keycloak_auth_admin_mode" {
+variable "auth_oidc_api_token_validation" {
+  type        = string
+  description = "Token validation mode for oidc-api auth. \"AccessToken\" = stateless local JWKS signature validation (default, mimics AWS API Gateway JWT authorizer). \"Introspection\" = call Keycloak's introspection endpoint per request (catches revoked tokens, slower, needs the client secret at the gateway)."
+  default     = "AccessToken"
+
+  validation {
+    condition     = contains(["AccessToken", "Introspection"], var.auth_oidc_api_token_validation)
+    error_message = "auth_oidc_api_token_validation must be one of: AccessToken, Introspection."
+  }
+}
+
+variable "auth_oidc_api_audience" {
+  type        = string
+  description = "Expected audience (aud claim) for api auth. When set, the middleware validates the access token's aud contains this value AND a Keycloak audience protocol mapper is added to the client so tokens it mints carry it. When empty, audience validation falls back to the client id. For cross-client token validation (tokens minted by other clients), set this to a shared audience and configure matching mappers on all participating Keycloak clients."
+  default     = ""
+}
+
+variable "auth_oidc_api_required_roles" {
+  type        = list(string)
+  description = "Keycloak realm roles (from the realm_access.roles claim) required to authorize a request in api mode. The gateway 403s before reaching the backend if none match (AssertClaims anyOf, evaluated by the plugin as JSONPath \"$.realm_access.roles\"). Empty = authentication only (no role gating); backends do their own authorization. Assumes Keycloak access tokens, which carry realm_access.roles by default."
+  default     = []
+}
+
+variable "auth_oidc_api_pass_access_token" {
   type        = bool
-  description = "True for admin-only (system_admins) auth. False for all users."
-  default     = false
+  description = "True to forward the raw access token to the backend as X-Access-Token (for backends that need to perform their own fine-grained authorization or audit). The identity headers (X-User-Id etc.) are always injected regardless."
+  default     = true
+}
+
+variable "auth_oidc_api_extra_headers" {
+  type = list(object({
+    Name  = string
+    Value = string
+  }))
+  description = "Additional headers to inject in api mode, appended after the defaults. PascalCase keys mirror the plugin's Header schema. Each Value is a Go template evaluated over the plugin context (e.g. {{ .claims.sub }}, {{ .claims.email }}, {{ .accessToken }}, {{ .idToken }}). See the traefik-oidc-auth Headers config. Note: Kubernetes CRD config does NOT require the backtick-escaping that YAML file config does."
+  default     = []
+}
+
+variable "auth_oidc_api_bypass_rule" {
+  type        = string
+  description = "A traefik-oidc-auth predicate expression that, when matched, bypasses authentication for the request (e.g. public API routes). Empty = no bypass (all requests require a valid token). See the plugin's BypassAuthenticationRule docs."
+  default     = ""
+}
+
+variable "silenced_checks" {
+  type        = list(string)
+  description = <<-EOT
+    Names of check blocks in this module to silence (they are non-blocking warnings by design).
+    Add a check name here only AFTER confirming its assertion is intentionally satisfied
+    (e.g. a non-alias realm you've verified exists in Keycloak).
+    Do NOT silence a check if you have made any change that affects what it validates -
+    re-verify first and leave it unsilenced until confirmed.
+    Typoing a check name here is fail-safe: the warning will still fire.
+    Current check names: keycloak_auth_realm_known.
+  EOT
+  default     = []
 }
 
 variable "extra_middlewares" {

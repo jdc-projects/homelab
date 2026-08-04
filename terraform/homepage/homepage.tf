@@ -107,5 +107,5 @@ module "homepage_ingress" {
     app = "homepage"
   }
 
-  do_enable_keycloak_auth = true
+  auth_mode = "oidc-interactive"
 }

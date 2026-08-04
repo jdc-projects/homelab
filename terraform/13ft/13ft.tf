@@ -51,7 +51,7 @@ module "_13ft_ingress" {
 
   target_port = 5000
 
-  do_enable_keycloak_auth = true
+  auth_mode = "oidc-interactive"
 
   selector = {
     app = "13ft"

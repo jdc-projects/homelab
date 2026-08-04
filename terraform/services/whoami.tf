@@ -59,5 +59,5 @@ module "whoami_ingress" {
     app = "whoami"
   }
 
-  do_enable_keycloak_auth = true
+  auth_mode = "oidc-interactive"
 }

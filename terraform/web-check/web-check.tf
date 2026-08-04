@@ -108,7 +108,7 @@ module "web_check_ingress" {
 
   target_port = 3000
 
-  do_enable_keycloak_auth = true
+  auth_mode = "oidc-interactive"
 
   selector = {
     app = "web-check"

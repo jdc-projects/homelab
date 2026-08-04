@@ -98,6 +98,6 @@ module "temporal_ui_ingress" {
   existing_service_namespace = var.namespace
   target_port                = 8080
 
-  do_enable_keycloak_auth     = true
-  is_keycloak_auth_admin_mode = true
+  auth_mode           = "oidc-interactive"
+  keycloak_auth_realm = "master"
 }

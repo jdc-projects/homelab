@@ -1,5 +1,5 @@
 resource "random_password" "api_key" {
-  count = var.do_enable_api_key_auth ? 1 : 0
+  count = var.auth_mode == "api-key" ? 1 : 0
 
   length  = 50
   numeric = true
@@ -8,7 +8,7 @@ resource "random_password" "api_key" {
 }
 
 resource "kubernetes_manifest" "api_key_auth_plugin_middleware" {
-  count = var.do_enable_api_key_auth ? 1 : 0
+  count = var.auth_mode == "api-key" ? 1 : 0
 
   manifest = {
     apiVersion = "traefik.io/v1alpha1"

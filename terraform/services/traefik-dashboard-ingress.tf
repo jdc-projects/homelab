@@ -21,8 +21,8 @@ module "traefik_dashboard_ingress" {
 
   priority = 900
 
-  do_enable_keycloak_auth     = true
-  is_keycloak_auth_admin_mode = true
+  auth_mode           = "oidc-interactive"
+  keycloak_auth_realm = "master"
 
   extra_middlewares = [{
     name      = kubernetes_manifest.traefik_dashboard_add_prefix_middleware.manifest.metadata.name
@@ -47,11 +47,9 @@ module "traefik_dashboard_api_ingress" {
 
   priority = 1000
 
-  do_enable_keycloak_auth = false
-
   extra_middlewares = [{
-    name      = module.traefik_dashboard_ingress.keycloak_auth_middleware_name
-    namespace = module.traefik_dashboard_ingress.keycloak_auth_middleware_namespace
+    name      = module.traefik_dashboard_ingress.auth_interactive_middleware_name
+    namespace = module.traefik_dashboard_ingress.auth_interactive_middleware_namespace
   }]
 }
 
@@ -68,11 +66,9 @@ module "traefik_dashboard_ping_ingress" {
 
   priority = 1000
 
-  do_enable_keycloak_auth = false
-
   extra_middlewares = [{
-    name      = module.traefik_dashboard_ingress.keycloak_auth_middleware_name
-    namespace = module.traefik_dashboard_ingress.keycloak_auth_middleware_namespace
+    name      = module.traefik_dashboard_ingress.auth_interactive_middleware_name
+    namespace = module.traefik_dashboard_ingress.auth_interactive_middleware_namespace
   }]
 }
 
