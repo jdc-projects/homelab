@@ -105,34 +105,6 @@ resource "helm_release" "traefik" {
       value = "true"
     },
     {
-      name  = "providers.kubernetesGateway.enabled"
-      value = "true"
-    },
-    {
-      name  = "gateway.listeners.web.port"
-      value = 80
-    },
-    {
-      name  = "gateway.listeners.websecure.port"
-      value = 443
-    },
-    {
-      name  = "gateway.listeners.websecure.protocol"
-      value = "HTTPS"
-    },
-    {
-      name  = "gateway.listeners.websecure.namespacePolicy.from"
-      value = "All"
-    },
-    {
-      name  = "gateway.listeners.websecure.certificateRefs[0].name"
-      value = kubernetes_manifest.cert_manager_certificate_wilcard.manifest.spec.secretName
-    },
-    {
-      name  = "gateway.listeners.websecure.mode"
-      value = "Terminate"
-    },
-    {
       name  = "additionalArguments[0]"
       value = "--serverstransport.insecureskipverify=true"
     },
