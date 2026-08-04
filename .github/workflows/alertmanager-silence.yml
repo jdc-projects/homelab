@@ -21,6 +21,10 @@ jobs:
   manage-silence:
     runs-on: self-hosted
 
+    # Bounds the expire leg, which polls (up to 25m internally) until backup-induced
+    # alerts clear before re-arming.
+    timeout-minutes: 30
+
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
@@ -74,12 +78,36 @@ jobs:
           NS_REGEX="$(printf '%s' "$NAMESPACES" | paste -sd '|' -)"
           echo "Silencing alerts for namespaces matching: $NS_REGEX"
 
+          # Snapshot the alerts already firing in the affected namespaces *before*
+          # hibernation starts. This is the pre-existing baseline: anything in it is,
+          # by definition, not caused by this backup. The expire leg waits until the
+          # live set is a subset of this baseline before re-arming, so pre-existing
+          # alerts never delay unsilencing and no alertname allowlist is needed.
+          # Fingerprints are stable per label-set.
+          export NS_PATTERN="^(${NS_REGEX})$"
+          BASELINE=""
+          ALERTS_JSON="$(kubectl -n prometheus exec "$ALERTMANAGER_POD" -c alertmanager -- \
+            wget -qO- 'http://localhost:9093/api/v2/alerts?active=true&silenced=true&unprocessed=true' 2>/dev/null || true)"
+          case "$ALERTS_JSON" in
+            \[*)
+              BASELINE="$(printf '%s' "$ALERTS_JSON" | yq -r \
+                '[.[] | select(.labels.namespace // "" | test(strenv(NS_PATTERN))) | .fingerprint] | unique | join(",")')"
+              ;;
+            *)
+              echo "WARN: could not reach Alertmanager to capture baseline; assuming empty baseline."
+              ;;
+          esac
+          echo "Pre-existing baseline fingerprints: ${BASELINE:-<none>}"
+
           # amtool is shipped inside the alertmanager image; run it via kubectl exec
           # so no CLI install or port-forward is needed on the runner. The 6h duration
-          # is only a safety net; the expire step (delete-silence) is what ends it.
+          # is only a safety net; the expire step is what ends it. The comment carries
+          # the run_tag (for lookup) and the baseline fingerprints (for the recovery
+          # wait in the expire leg).
+          COMMENT="${RUN_TAG}|baseline=${BASELINE}"
           kubectl -n prometheus exec "$ALERTMANAGER_POD" -c alertmanager -- \
             amtool --alertmanager.url=http://localhost:9093 silence add \
-            "namespace=~${NS_REGEX}" -a nightly-backup -d 6h -c "$RUN_TAG"
+            "namespace=~${NS_REGEX}" -a nightly-backup -d 6h -c "$COMMENT"
 
       - name: "Expire silence"
         if: ${{ !inputs.do_silence }}
@@ -89,18 +117,83 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Re-discover the silence(s) we created by the run-tag comment and expire
-          # them. Idempotent: if nothing matches, there is nothing to clean up.
+          export RUN_TAG
+
           SILENCES_JSON="$(kubectl -n prometheus exec "$ALERTMANAGER_POD" -c alertmanager -- \
             amtool -o json --alertmanager.url=http://localhost:9093 silence query)"
 
-          IDS="$(printf '%s' "$SILENCES_JSON" | yq '.[] | select(.comment == "'"$RUN_TAG"'") | .id')"
-
-          if [ -z "$IDS" ]; then
-            echo "No silences tagged \"$RUN_TAG\" found; nothing to expire."
+          # Find our silence(s) by run_tag prefix and pull the baseline out of the comment.
+          BASELINE_COMMENT="$(printf '%s' "$SILENCES_JSON" | yq -r \
+            '[.[] | select(.comment | startswith(strenv(RUN_TAG) + "|")) | .comment] | .[0] // ""')"
+          if [ -z "$BASELINE_COMMENT" ]; then
+            echo "No silences tagged \"${RUN_TAG}|*\" found; nothing to expire."
             exit 0
           fi
+          case "$BASELINE_COMMENT" in
+            *"|baseline="*) BASELINE="${BASELINE_COMMENT##*|baseline=}" ;;
+            *) BASELINE="" ;;
+          esac
+          printf '%s' "$BASELINE" | tr ',' '\n' | sed '/^$/d' | sort -u > /tmp/baseline.txt
+          echo "Baseline fingerprints ($(wc -l < /tmp/baseline.txt | tr -d ' ')): $(paste -sd, /tmp/baseline.txt 2>/dev/null || true)"
 
+          # Re-discover the affected namespaces so the live query matches the silence scope.
+          NAMESPACES="$(
+            for crd in \
+                clusters.postgresql.cnpg.io \
+                clickhouseinstallations \
+                clickhousekeeperinstallations \
+                mariadbs.k8s.mariadb.com \
+                kafkas.kafka.strimzi.io \
+                opensearchclusters.opensearch.org; do
+              kubectl get "$crd" -A -o jsonpath='{.items[*].metadata.namespace}' 2>/dev/null || true
+              printf ' '
+            done | tr ' ' '\n' | sed '/^$/d' | sort -u
+          )"
+          NS_REGEX="$(printf '%s' "$NAMESPACES" | paste -sd '|' -)"
+          export NS_PATTERN="^(${NS_REGEX})$"
+
+          # Bounded poll: wait until every live alert in the affected namespaces was
+          # already firing before the backup (current ⊆ baseline). The backup-induced
+          # alerts (fingerprints not in baseline) clear once pods recover. A timeout
+          # ensures a genuinely new issue re-arms instead of hanging forever.
+          POLL_INTERVAL=30
+          TIMEOUT=1500   # 25 min; observed recovery ~14 min
+          DEADLINE=$(( $(date +%s) + TIMEOUT ))
+          echo "Waiting up to $((TIMEOUT/60))m for backup-induced alerts to clear..."
+          ITER=0
+          while :; do
+            ITER=$((ITER + 1))
+            ALERTS_JSON="$(kubectl -n prometheus exec "$ALERTMANAGER_POD" -c alertmanager -- \
+              wget -qO- 'http://localhost:9093/api/v2/alerts?active=true&silenced=true&unprocessed=true' 2>/dev/null || true)"
+            case "$ALERTS_JSON" in
+              \[*) ;;
+              *)
+                echo "[$ITER] Alertmanager query failed; retrying in ${POLL_INTERVAL}s..."
+                sleep "$POLL_INTERVAL"
+                continue
+                ;;
+            esac
+            CURRENT="$(printf '%s' "$ALERTS_JSON" | yq -r \
+              '[.[] | select(.labels.namespace // "" | test(strenv(NS_PATTERN))) | .fingerprint] | unique | join(",")')"
+            printf '%s' "$CURRENT" | tr ',' '\n' | sed '/^$/d' | sort -u > /tmp/current.txt
+            NEW="$(comm -13 /tmp/baseline.txt /tmp/current.txt)"
+
+            if [ -z "$NEW" ]; then
+              echo "[$ITER] All backup-induced alerts cleared. Safe to unsilence."
+              break
+            fi
+            NOW=$(date +%s)
+            if [ "$NOW" -ge "$DEADLINE" ]; then
+              echo "[timeout] $(wc -l < /tmp/current.txt | tr -d ' ') non-baseline alert(s) still live after $((TIMEOUT/60))m; unsilencing anyway."
+              break
+            fi
+            echo "[$ITER] $(printf '%s\n' "$NEW" | grep -c . || true) non-baseline alert(s) still live; ~$(( (DEADLINE - NOW) / 60 ))m left."
+            sleep "$POLL_INTERVAL"
+          done
+
+          # Expire the silence(s) for this run. Idempotent.
+          IDS="$(printf '%s' "$SILENCES_JSON" | yq -r \
+            '.[] | select(.comment | startswith(strenv(RUN_TAG) + "|")) | .id')"
           for id in $IDS; do
             echo "Expiring silence $id"
             kubectl -n prometheus exec "$ALERTMANAGER_POD" -c alertmanager -- \

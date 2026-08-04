@@ -175,3 +175,6 @@ jobs:
     with:
       do_silence: false
       run_tag: nightly-backup-${{ github.run_id }}
+
+    # The unsilence leg polls (up to 25m) until backup-induced alerts clear before
+    # re-arming; the hard job timeout lives on the called job in alertmanager-silence.yml.
