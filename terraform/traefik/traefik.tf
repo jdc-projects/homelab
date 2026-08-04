@@ -86,7 +86,7 @@ resource "helm_release" "traefik" {
     },
     {
       name  = "experimental.plugins.traefik-oidc-auth.version"
-      value = "v0.20.1"
+      value = "v0.21.0"
     },
     {
       name  = "ingressRoute.dashboard.enabled"
