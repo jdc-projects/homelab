@@ -1,0 +1,21 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: velero
+  namespace: default
+spec:
+  groups:
+  - name: velero
+    rules:
+    - alert: VeleroBackupFailed
+      # Velero's built-in gauge (1 = success, 0 = failure), updated on every
+      # backup regardless of trigger (nightly workflow, manual, ad-hoc). Scraped
+      # via the existing velero ServiceMonitor, so it carries namespace=velero and
+      # is outside the nightly-backup alert silence -> backup failures always page.
+      expr: velero_backup_last_status == 0
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Velero backup failed"
+        description: "Velero reports the most recent backup failed (velero_backup_last_status == 0; Velero's encoding is 1 = success, 0 = failure). Covers any schedule."
