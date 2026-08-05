@@ -127,6 +127,50 @@ resource "kubernetes_manifest" "otel_collector" {
               },
             ]
           }
+
+          # Normalize Temporal's per-role service.name down to a single
+          # `temporal` service so all of its traces group together in
+          # Grafana/Tempo, while preserving the role as `temporal.role`.
+          #
+          # WHY: Temporal's Go server composes ResourceServiceName as
+          # `{OTEL_SERVICE_NAME}.{role}` (frontend/history/matching/worker)
+          # rather than a single service name, so each role lands as its own
+          # "service" in Tempo (temporal.frontend, temporal.history, ...),
+          # fragmenting the service dropdown. This captures the role suffix
+          # and flattens service.name to `temporal`. Runs after
+          # k8s_attributes/resource (which don't touch service.name), before
+          # batch. error_mode=ignore so a bad match never drops traces.
+          #
+          # Config shape note (transform 0.156): there is no top-level
+          # `resource_statements` key; resource-attribute edits on the traces
+          # pipeline are nested under `trace_statements` with context=resource.
+          #
+          # OTTL string escaping: the OTTL string literal "^temporal\\."
+          # denotes the regex ^temporal\. (a literal dot anchor), so it only
+          # rewrites names that start with "temporal." and leaves a bare
+          # "temporal" untouched. The doubled backslash is OTTL's own string
+          # escaping; each backslash is then re-escaped for HCL ("\\\\").
+          #
+          # OTTL function names are inconsistently cased in 0.156: IsMatch and
+          # ExtractPatterns are CamelCase and RETURN a value (usable inside
+          # set()), but the replacement helpers are snake_case
+          # (replace_pattern/replace_all_patterns) and mutate their target
+          # argument in place — they cannot be nested inside set(). So we (1)
+          # copy service.name into temporal.role, (2) strip the "temporal."
+          # prefix in place, (3) flatten service.name to "temporal".
+          "transform/temporal" = {
+            error_mode = "ignore"
+            trace_statements = [
+              {
+                context = "resource"
+                statements = [
+                  "set(attributes[\"temporal.role\"], attributes[\"service.name\"]) where attributes[\"service.name\"] != nil and IsMatch(attributes[\"service.name\"], \"^temporal\\\\.\")",
+                  "replace_pattern(attributes[\"temporal.role\"], \"^temporal\\\\.\", \"\") where attributes[\"temporal.role\"] != nil and IsMatch(attributes[\"temporal.role\"], \"^temporal\\\\.\")",
+                  "set(attributes[\"service.name\"], \"temporal\") where attributes[\"service.name\"] != nil and IsMatch(attributes[\"service.name\"], \"^temporal\\\\.\")",
+                ]
+              },
+            ]
+          }
         }
 
         exporters = {
@@ -156,7 +200,7 @@ resource "kubernetes_manifest" "otel_collector" {
           pipelines = {
             traces = {
               receivers  = ["otlp"]
-              processors = ["memory_limiter", "k8s_attributes", "resource", "batch"]
+              processors = ["memory_limiter", "k8s_attributes", "resource", "transform/temporal", "batch"]
               exporters  = ["otlp_grpc/tempo", "debug"]
             }
             metrics = {
