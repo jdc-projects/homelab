@@ -1,5 +1,5 @@
 resource "random_password" "keycloak_auth_client_secret" {
-  count = var.auth_mode == "oidc-interactive" ? 1 : 0
+  count = var.auth_mode == "oidc-interactive" && local.auth_oidc_managed ? 1 : 0
 
   length  = 50
   numeric = true
@@ -7,6 +7,8 @@ resource "random_password" "keycloak_auth_client_secret" {
   upper   = true
 }
 
+# The plugin Secret (32-char, encrypts session/cookie state) is provider-independent - created for
+# both the managed Keycloak path and the generic OIDC path.
 resource "random_password" "keycloak_auth_plugin_secret" {
   count = var.auth_mode == "oidc-interactive" ? 1 : 0
 
@@ -15,7 +17,7 @@ resource "random_password" "keycloak_auth_plugin_secret" {
 }
 
 resource "keycloak_openid_client" "keycloak_auth" {
-  count = var.auth_mode == "oidc-interactive" ? 1 : 0
+  count = var.auth_mode == "oidc-interactive" && local.auth_oidc_managed ? 1 : 0
 
   realm_id  = local.keycloak_auth_realm_id
   client_id = var.name
@@ -71,13 +73,22 @@ resource "kubernetes_manifest" "keycloak_auth_plugin_middleware" {
     spec = {
       plugin = {
         traefik-oidc-auth = {
-          Provider = {
-            Url          = "${data.terraform_remote_state.keycloak.outputs.keycloak_url}/realms/${one(keycloak_openid_client.keycloak_auth[*].realm_id)}"
-            ClientId     = one(keycloak_openid_client.keycloak_auth[*].client_id)
-            ClientSecret = one(keycloak_openid_client.keycloak_auth[*].client_secret)
-            UsePkce      = true
-          }
-          Scopes                  = ["openid", "profile", "email"]
+          # Provider inputs switch on managed (Keycloak client) vs generic (auth_oidc_provider).
+          # ClientSecret is overlaid via merge() so it's omitted entirely when null (generic +
+          # PKCE-only/public client) rather than sent as null/empty, which trips the
+          # kubernetes_manifest provider's post-apply validation.
+          Provider = merge(
+            {
+              Url      = local.auth_oidc_managed ? "${data.terraform_remote_state.keycloak.outputs.keycloak_url}/realms/${one(keycloak_openid_client.keycloak_auth[*].realm_id)}" : local.auth_oidc_provider_url
+              ClientId = local.auth_oidc_managed ? one(keycloak_openid_client.keycloak_auth[*].client_id) : local.auth_oidc_provider_client_id
+              UsePkce  = true
+            },
+            local.auth_oidc_interactive_client_secret != null ? {
+              ClientSecret = local.auth_oidc_interactive_client_secret
+            } : {}
+          )
+
+          Scopes                  = local.auth_oidc_interactive_scopes
           Secret                  = one(random_password.keycloak_auth_plugin_secret[*].result)
           UnauthenticatedBehavior = "Auto"
         }

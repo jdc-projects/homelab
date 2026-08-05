@@ -3,22 +3,20 @@
 # claims as upstream headers, and returns 401/403 on failure (no redirect, no login page). Mimics
 # AWS API Gateway / Azure APIM JWT validation.
 #
-# TokenValidation defaults to AccessToken (local JWKS). Introspection mode calls Keycloak's
-# introspection endpoint per request - it catches revoked tokens but is slower and needs the client
-# secret. Note the same caveat as the interactive client (comment in keycloak-auth-interactive.tf):
-# Keycloak 26 requires the introspecting client to be in the access token's `aud` claim, so set
-# auth_oidc_api_audience and ensure issuing clients carry it (via their own audience mappers) when
-# using Introspection.
+# Supports two provider sources, selected by auth_oidc_provider:
+#   - null (default, "managed"): the module provisions a Keycloak client (keycloak_openid_client)
+#     and an audience protocol mapper below. ValidAudience defaults to that client's id.
+#   - set ("generic"): the module creates no Keycloak resources; Provider Url/ClientId/ClientSecret
+#     come straight from auth_oidc_provider. The client must be provisioned out-of-band in your IdP.
 #
-# Future work (generic OIDC): the auth_oidc_api_* vars here are already provider-agnostic. The only
-# Keycloak-specific pieces are keycloak_auth_realm and the keycloak_openid_client + audience mapper
-# below. Adding an optional auth_oidc_provider object var (null = Keycloak-managed) that, when set,
-# skips client creation and passes Url/ClientId/ClientSecret through would make this generic - the
-# middleware manifest itself would need no change, only its input source. Raise this once migrations
-# are complete.
+# TokenValidation defaults to AccessToken (local JWKS). Introspection mode calls the provider's
+# introspection endpoint per request - it catches revoked tokens but is slower and needs the client
+# secret. For the managed Keycloak path, note the audience caveat: Keycloak 26 requires the
+# introspecting client to be in the access token's `aud` claim, so set auth_oidc_api_audience and
+# ensure issuing clients carry it (via their own audience mappers) when using Introspection.
 
 resource "random_password" "keycloak_auth_api_client_secret" {
-  count = var.auth_mode == "oidc-api" ? 1 : 0
+  count = var.auth_mode == "oidc-api" && local.auth_oidc_managed ? 1 : 0
 
   length  = 50
   numeric = true
@@ -26,6 +24,8 @@ resource "random_password" "keycloak_auth_api_client_secret" {
   upper   = true
 }
 
+# The plugin Secret (32-char, encrypts state) is provider-independent - created for both managed and
+# generic paths.
 resource "random_password" "keycloak_auth_api_plugin_secret" {
   count = var.auth_mode == "oidc-api" ? 1 : 0
 
@@ -34,7 +34,7 @@ resource "random_password" "keycloak_auth_api_plugin_secret" {
 }
 
 resource "keycloak_openid_client" "keycloak_auth_api" {
-  count = var.auth_mode == "oidc-api" ? 1 : 0
+  count = var.auth_mode == "oidc-api" && local.auth_oidc_managed ? 1 : 0
 
   realm_id  = local.keycloak_auth_realm_id
   client_id = "${var.name}-api"
@@ -64,10 +64,11 @@ resource "keycloak_openid_client" "keycloak_auth_api" {
 # Keycloak 26 service-account (client_credentials) tokens ship WITHOUT an `aud` claim by default,
 # which the plugin rejects ("token is missing required claim: aud"); this mapper ensures one is
 # always present. The audience defaults to the client id (matching the middleware's ValidAudience
-# default) and is overridden by auth_oidc_api_audience for cross-client validation. Note: this only
+# default) and is overridden by auth_oidc_api_audience for cross-client validation. Managed path
+# only - generic providers must configure their own client's audience out-of-band. Note: this only
 # shapes tokens minted by THIS client - tokens minted by OTHER clients need their own mappers.
 resource "keycloak_openid_audience_protocol_mapper" "api_audience" {
-  count = var.auth_mode == "oidc-api" ? 1 : 0
+  count = var.auth_mode == "oidc-api" && local.auth_oidc_managed ? 1 : 0
 
   realm_id  = local.keycloak_auth_realm_id
   client_id = one(keycloak_openid_client.keycloak_auth_api[*].id)
@@ -100,17 +101,23 @@ resource "kubernetes_manifest" "keycloak_auth_api_plugin_middleware" {
         # AuthorizationHeader mode it forces CheckOnEveryRequest=true regardless.
         traefik-oidc-auth = merge(
           {
-            Provider = {
-              Url             = "${data.terraform_remote_state.keycloak.outputs.keycloak_url}/realms/${one(keycloak_openid_client.keycloak_auth_api[*].realm_id)}"
-              ClientId        = one(keycloak_openid_client.keycloak_auth_api[*].client_id)
-              ClientSecret    = one(keycloak_openid_client.keycloak_auth_api[*].client_secret)
-              TokenValidation = var.auth_oidc_api_token_validation
+            # Provider inputs switch on managed vs generic. ClientSecret is overlaid via a nested
+            # merge() so it's omitted when null (generic + JWKS-only, no secret needed).
+            Provider = merge(
+              {
+                Url             = local.auth_oidc_managed ? "${data.terraform_remote_state.keycloak.outputs.keycloak_url}/realms/${one(keycloak_openid_client.keycloak_auth_api[*].realm_id)}" : local.auth_oidc_provider_url
+                ClientId        = local.auth_oidc_managed ? one(keycloak_openid_client.keycloak_auth_api[*].client_id) : local.auth_oidc_provider_client_id
+                TokenValidation = var.auth_oidc_api_token_validation
 
-              # ValidateIssuer/ValidateAudience default to true (plugin CreateConfig). ValidIssuer
-              # defaults to the discovery document issuer. ValidAudience defaults to ClientId; override
-              # with auth_oidc_api_audience when set so cross-client tokens can be validated against a shared aud.
-              ValidAudience = var.auth_oidc_api_audience != "" ? var.auth_oidc_api_audience : one(keycloak_openid_client.keycloak_auth_api[*].client_id)
-            }
+                # ValidateIssuer/ValidateAudience default to true (plugin CreateConfig). ValidIssuer
+                # defaults to the discovery document issuer. ValidAudience = explicit override, else
+                # managed client id, else generic provider client id (see local.auth_oidc_api_effective_audience).
+                ValidAudience = local.auth_oidc_api_effective_audience
+              },
+              local.auth_oidc_api_client_secret != null ? {
+                ClientSecret = local.auth_oidc_api_client_secret
+              } : {}
+            )
 
             # Read the bearer token from this header instead of starting an OIDC flow.
             AuthorizationHeader = { Name = "Authorization" }

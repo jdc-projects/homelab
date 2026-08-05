@@ -13,6 +13,32 @@ locals {
     var.keycloak_auth_realm,
   )
 
+  # auth_oidc_managed: true when the module provisions a Keycloak client (default); false when the
+  # caller passes a generic OIDC provider via auth_oidc_provider. Gates the Keycloak resources and
+  # selects the source of the middleware Provider block inputs.
+  auth_oidc_managed = var.auth_oidc_provider == null
+
+  # Guarded access to auth_oidc_provider fields. The == null ternary short-circuits so the attribute
+  # access only happens when the var is set (avoids null-attribute errors in the branches below).
+  auth_oidc_provider_url           = var.auth_oidc_provider == null ? null : var.auth_oidc_provider.url
+  auth_oidc_provider_client_id     = var.auth_oidc_provider == null ? null : var.auth_oidc_provider.client_id
+  auth_oidc_provider_client_secret = var.auth_oidc_provider == null ? null : var.auth_oidc_provider.client_secret
+  auth_oidc_provider_scopes        = var.auth_oidc_provider == null ? null : var.auth_oidc_provider.scopes
+
+  # Interactive-flow scopes: provider override or the standard trio.
+  auth_oidc_interactive_scopes = local.auth_oidc_provider_scopes != null ? local.auth_oidc_provider_scopes : ["openid", "profile", "email"]
+
+  # Effective Provider.ClientSecret per mode. Managed reads the Keycloak client's secret; generic
+  # reads the passed provider secret (null when not provided). Null => the field is omitted from the
+  # manifest via merge() in each middleware, so no null/empty value reaches the CRD (which would trip
+  # the kubernetes_manifest provider's post-apply validation).
+  auth_oidc_interactive_client_secret = local.auth_oidc_managed ? one(keycloak_openid_client.keycloak_auth[*].client_secret) : local.auth_oidc_provider_client_secret
+  auth_oidc_api_client_secret         = local.auth_oidc_managed ? one(keycloak_openid_client.keycloak_auth_api[*].client_secret) : local.auth_oidc_provider_client_secret
+
+  # Effective ValidAudience for oidc-api: explicit override wins; else managed client id; else
+  # generic provider client id. Always a non-null string in practice (client_id is required).
+  auth_oidc_api_effective_audience = var.auth_oidc_api_audience != "" ? var.auth_oidc_api_audience : (local.auth_oidc_managed ? one(keycloak_openid_client.keycloak_auth_api[*].client_id) : local.auth_oidc_provider_client_id)
+
   # Default identity headers injected in oidc-api mode. Templates are evaluated by traefik-oidc-auth
   # over the session context. The {{ with }} guards render an empty value when a claim is absent
   # (e.g. service-account tokens carry no email/name/realm_access) instead of "<no value>" or a

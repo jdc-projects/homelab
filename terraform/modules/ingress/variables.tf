@@ -112,8 +112,24 @@ variable "auth_mode" {
 
 variable "keycloak_auth_realm" {
   type        = string
-  description = "Keycloak realm for the managed auth client. \"primary\" and \"master\" are aliases resolved from the keycloak module's remote state (rename-safe). Any other value is treated as a literal realm name and used as-is (the realm must already exist in Keycloak - the module does not create it). Non-alias values trigger the non-blocking keycloak_auth_realm_known check; see silenced_checks. Only relevant when auth_mode != \"none\"."
+  description = "Keycloak realm for the managed auth client. \"primary\" and \"master\" are aliases resolved from the keycloak module's remote state (rename-safe). Any other value is treated as a literal realm name and used as-is (the realm must already exist in Keycloak - the module does not create it). Non-alias values trigger the non-blocking keycloak_auth_realm_known check; see silenced_checks. Only relevant when auth_mode is an oidc mode AND auth_oidc_provider is null (managed)."
   default     = "primary"
+}
+
+variable "auth_oidc_provider" {
+  type = object({
+    url           = string
+    client_id     = string
+    client_secret = optional(string)
+    scopes        = optional(list(string))
+  })
+  default     = null
+  description = "Generic OIDC provider connection details (url = discovery/issuer URL). When set, the module uses this provider directly and creates NO Keycloak client - the client must be provisioned out-of-band in your IdP. When null (default), the module provisions and uses a managed Keycloak client. Only applies when auth_mode is oidc-interactive or oidc-api. client_secret is optional (omit for PKCE-only/JWKS-only; required for Introspection); scopes override the interactive-flow default."
+
+  validation {
+    condition     = var.auth_oidc_provider == null || contains(["oidc-interactive", "oidc-api"], var.auth_mode)
+    error_message = "auth_oidc_provider can only be set when auth_mode is oidc-interactive or oidc-api."
+  }
 }
 
 variable "auth_oidc_api_token_validation" {
