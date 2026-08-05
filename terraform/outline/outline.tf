@@ -72,6 +72,11 @@ resource "kubernetes_deployment" "outline" {
     namespace = kubernetes_namespace.outline.metadata[0].name
   }
 
+  # Instrumentation CR must exist before a pod is admitted, else the
+  # opentelemetry-operator injection webhook has nothing to inject
+  # (cold-apply race — see terraform/web-check/web-check.tf).
+  depends_on = [kubernetes_manifest.outline_instrumentation]
+
   spec {
     replicas = 1
 
@@ -85,6 +90,14 @@ resource "kubernetes_deployment" "outline" {
       metadata {
         labels = {
           app = "outline"
+        }
+
+        # Pod-level (NOT namespace-level) injection annotation. The outline
+        # namespace also runs rustfs (a Rust binary); a namespace-level
+        # inject-nodejs would make the operator try to inject the Node SDK
+        # into rustfs and break it. Keep this on the pod template only.
+        annotations = {
+          "instrumentation.opentelemetry.io/inject-nodejs" = "true"
         }
       }
 
