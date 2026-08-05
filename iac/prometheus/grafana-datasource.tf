@@ -61,7 +61,7 @@ resource "kubernetes_manifest" "alertmanager_grafana_datasource" {
       }
 
       datasource = {
-        name = "Alertmanager"
+        name = "Prometheus Alertmanager"
         type = "alertmanager"
 
         access = "proxy"
