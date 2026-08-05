@@ -29,7 +29,7 @@ provider "kubernetes" {
 }
 
 # Reads the pinned chart version from the operator module so both installs
-# always match - the CRDs installed by terraform/prometheus-operator/ must
+# always match - the CRDs installed by iac/prometheus-operator/ must
 # be the same version the instance module templates against.
 data "terraform_remote_state" "prometheus_operator" {
   backend = "kubernetes"
@@ -43,7 +43,7 @@ data "terraform_remote_state" "prometheus_operator" {
 
 # Reads the Grafana instance labels so the GrafanaDatasource CR (defined in
 # grafana-datasource.tf) can target the correct Grafana instance via
-# instanceSelector. The output is exported by terraform/grafana/outputs.tf.
+# instanceSelector. The output is exported by iac/grafana/outputs.tf.
 data "terraform_remote_state" "grafana" {
   backend = "kubernetes"
 

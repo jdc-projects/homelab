@@ -1,7 +1,7 @@
 # Curated PrometheusRules for K3s.
 #
 # Rule files in rules/ are extracted from kube-prometheus-stack (same version
-# as pinned in terraform/prometheus-operator/) with job="kubelet" label fixes
+# as pinned in iac/prometheus-operator/) with job="kubelet" label fixes
 # applied where needed. They reference metrics collected via the ScrapeConfigs
 # in scrapeconfigs.tf.
 #

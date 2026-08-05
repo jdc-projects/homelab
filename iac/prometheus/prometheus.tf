@@ -1,12 +1,12 @@
 # https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack
 #
 # Installs the Prometheus instance, Alertmanager, node-exporter and
-# kube-state-metrics. The operator + CRDs are in terraform/prometheus-operator/.
+# kube-state-metrics. The operator + CRDs are in iac/prometheus-operator/.
 #
 # This release provides INFRASTRUCTURE ONLY - no rules or dashboards. Those
 # are managed separately:
-#   - PrometheusRules: terraform/prometheus/rules/ (via prometheusrules.tf)
-#   - Grafana dashboards: terraform/prometheus/dashboards/ (via grafana-dashboards.tf)
+#   - PrometheusRules: iac/prometheus/rules/ (via prometheusrules.tf)
+#   - Grafana dashboards: iac/prometheus/dashboards/ (via grafana-dashboards.tf)
 #
 # On K3s the control plane components (apiserver, controller-manager, scheduler,
 # kube-proxy) are bundled into one process. Their metrics are collected via
@@ -27,7 +27,7 @@ resource "helm_release" "kube_prometheus_stack" {
   skip_crds = true
 
   set = [
-    # Operator + CRDs owned by terraform/prometheus-operator/.
+    # Operator + CRDs owned by iac/prometheus-operator/.
     {
       name  = "prometheusOperator.enabled"
       value = "false"
@@ -124,7 +124,7 @@ resource "helm_release" "kube_prometheus_stack" {
       name  = "prometheus.prometheusSpec.enableRemoteWriteReceiver"
       value = "true"
     },
-    # Storage class mirrors terraform/grafana/loki.tf.
+    # Storage class mirrors iac/grafana/loki.tf.
     {
       name  = "prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.storageClassName"
       value = "openebs-zfs-localpv-random-no-backup"

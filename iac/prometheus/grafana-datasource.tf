@@ -1,7 +1,7 @@
 # Grafana datasource for Prometheus. Lives in the prometheus namespace (the
 # data owner) and is imported cross-namespace into the Grafana instance via
 # allowCrossNamespaceImport + instanceSelector. Mirrors the pattern used by
-# the Loki datasource in terraform/grafana/grafana-datasource.tf.
+# the Loki datasource in iac/grafana/grafana-datasource.tf.
 
 resource "kubernetes_manifest" "prometheus_grafana_datasource" {
   manifest = {

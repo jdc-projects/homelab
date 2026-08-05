@@ -1,8 +1,8 @@
 # Grafana Tempo — distributed trace backend (tempo-distributed chart).
 #
 # Storage: an inline RustFS instance (this module) provides the S3 backend,
-# matching the per-service RustFS convention used by terraform/outline and
-# terraform/posthog. The bucket is created by kubernetes_job.rustfs_provision
+# matching the per-service RustFS convention used by iac/outline and
+# iac/posthog. The bucket is created by kubernetes_job.rustfs_provision
 # BEFORE this release installs (see depends_on below), so Tempo always starts
 # against an existing bucket. This avoids the bundled-MinIO chicken-and-egg
 # (bucket created by a post-install hook that only runs after Tempo pods are
@@ -10,7 +10,7 @@
 # standard `wait = true`.
 #
 # Receivers: the distributor accepts OTLP grpc (4317) + http (4318); the
-# OpenTelemetryCollector (terraform/otel-collector/) exports traces here.
+# OpenTelemetryCollector (iac/otel-collector/) exports traces here.
 # Grafana queries the query-frontend HTTP API on :3200 (see
 # grafana-datasource.tf).
 resource "helm_release" "tempo" {
@@ -103,7 +103,7 @@ resource "helm_release" "tempo" {
     # The chart defaults to a REQUIRED podAntiAffinity (spread replicas across
     # nodes). On this single-node cluster that deadlocks rolling updates - the
     # surge pod can't schedule while the old pod runs. Empty disables it, same
-    # pattern as the affinity overrides in terraform/grafana/loki.tf.
+    # pattern as the affinity overrides in iac/grafana/loki.tf.
     {
       name  = "metricsGenerator.affinity"
       value = ""

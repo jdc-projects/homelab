@@ -9,7 +9,7 @@ terraform {
 locals {
   # grafana instance targeting contract. This is the single source of truth for
   # the label that all GrafanaDashboard CRs use to select the Grafana instance.
-  # It MUST match the label on the Grafana CR in terraform/grafana/grafana.tf
+  # It MUST match the label on the Grafana CR in iac/grafana/grafana.tf
   # (currently { dashboards = "grafana" }).
   #
   # grafana-operator v5 also auto-assigns each dashboard to a folder named after

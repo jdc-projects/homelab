@@ -3,7 +3,7 @@
 # metrics exported by the velero server and scraped via the ServiceMonitor /
 # PodMonitor enabled in velero.tf.
 #
-# Dashboard CRs are created via the shared terraform/modules/grafana-dashboard
+# Dashboard CRs are created via the shared iac/modules/grafana-dashboard
 # helper, which owns the grafana instance-selector contract and the
 # allowCrossNamespaceImport setting (single source of truth). grafana-operator
 # v5 auto-assigns each dashboard to a folder named after its namespace, so this

@@ -2,7 +2,7 @@
 # lands on the same `openebs-zfs-localpv-random-no-backup` class used by
 # Prometheus/Loki (no backup, fast) rather than the `bulk` class the
 # outline/posthog RustFS instances use (those hold user data). Mirrors the PVC
-# pattern in terraform/outline/storage.tf.
+# pattern in iac/outline/storage.tf.
 resource "kubernetes_persistent_volume_claim" "rustfs" {
   metadata {
     name      = "rustfs"

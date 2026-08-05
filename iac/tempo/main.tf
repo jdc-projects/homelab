@@ -30,7 +30,7 @@ provider "kubernetes" {
 
 # Cross-module read of the Grafana instance selector labels so the Tempo
 # GrafanaDatasource CR (in grafana-datasource.tf) targets the right instance,
-# mirroring the pattern in terraform/prometheus/grafana-datasource.tf.
+# mirroring the pattern in iac/prometheus/grafana-datasource.tf.
 data "terraform_remote_state" "grafana" {
   backend = "kubernetes"
 

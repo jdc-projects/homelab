@@ -4,7 +4,7 @@
 # storage IO time / network traffic series exported by virt-handler on its
 # /metrics endpoint (scraped via the ServiceMonitor in metrics.tf).
 #
-# Dashboard CRs are created via the shared terraform/modules/grafana-dashboard
+# Dashboard CRs are created via the shared iac/modules/grafana-dashboard
 # helper, which owns the grafana instance-selector contract and the
 # allowCrossNamespaceImport setting (single source of truth). grafana-operator
 # v5 auto-assigns each dashboard to a folder named after the namespace of its
@@ -15,7 +15,7 @@
 # The dashboard ships a `datasource` template variable of type=prometheus
 # (query=prometheus); grafana-operator's datasource sync binds it to the
 # provisioned Prometheus instance automatically (same pattern as the velero
-# dashboard in terraform/velero/dashboards/).
+# dashboard in iac/velero/dashboards/).
 
 module "kubevirt_dashboards" {
   source    = "../modules/grafana-dashboard"

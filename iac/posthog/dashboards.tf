@@ -1,6 +1,6 @@
 # Community Grafana dashboards for the PostHog stack.
 #
-# Dashboards live as JSON files under terraform/posthog/dashboards/ and are
+# Dashboards live as JSON files under iac/posthog/dashboards/ and are
 # turned into GrafanaDashboard CRs by the ../modules/grafana-dashboard helper.
 module "posthog_dashboards" {
   source = "../modules/grafana-dashboard"

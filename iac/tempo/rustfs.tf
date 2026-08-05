@@ -2,8 +2,8 @@ locals {
   rustfs_bucket_name = "tempo-traces"
 }
 
-# Inline RustFS instance (per-service convention, matching terraform/outline
-# and terraform/posthog). Tempo is cluster-internal, so unlike Outline there is
+# Inline RustFS instance (per-service convention, matching iac/outline
+# and iac/posthog). Tempo is cluster-internal, so unlike Outline there is
 # no Ingress and the bucket needs no anonymous/CORS setup. The bucket is
 # created by kubernetes_job.rustfs_provision (see rustfs-provision.tf), which
 # completes before helm_release.tempo installs - so Tempo always starts against

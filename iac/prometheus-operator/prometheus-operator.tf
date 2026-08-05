@@ -2,7 +2,7 @@
 #
 # This module installs ONLY the Prometheus operator and its CRDs. The actual
 # Prometheus instance, Alertmanager, exporters and default rules are deployed
-# by the sibling `terraform/prometheus/` module, which re-uses this operator.
+# by the sibling `iac/prometheus/` module, which re-uses this operator.
 #
 # Chart version is exported via outputs.tf so the instance module can pin to
 # the exact same version through terraform_remote_state - keeping them in sync
@@ -24,7 +24,7 @@ resource "helm_release" "kube_prometheus_stack_operator" {
 
   timeout = 600
 
-  # Operator + CRDs only. Everything else lives in terraform/prometheus/.
+  # Operator + CRDs only. Everything else lives in iac/prometheus/.
   # The subchart dependencies are gated by their parent camelCase conditions
   # (see the chart's Chart.yaml), not the dashed subchart-internal values.
   # The cluster-component templates (coreDns, kubelet, kubeApiServer, etc.)
@@ -63,7 +63,7 @@ resource "helm_release" "kube_prometheus_stack_operator" {
       name  = "defaultRules.create"
       value = "false"
     },
-    # Cluster-component monitors - owned by terraform/prometheus/.
+    # Cluster-component monitors - owned by iac/prometheus/.
     {
       name  = "kubeApiServer.enabled"
       value = "false"

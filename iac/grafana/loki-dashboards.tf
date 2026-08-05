@@ -4,7 +4,7 @@
 # that lets you filter by the `job` label and substring-match log lines.
 # Downloads: ~16M. Verified to query the Loki datasource via ${DS_LOKI}.
 #
-# Dashboard CRs are created via the shared terraform/modules/grafana-dashboard
+# Dashboard CRs are created via the shared iac/modules/grafana-dashboard
 # helper, which owns the grafana instance-selector contract and the
 # allowCrossNamespaceImport setting (single source of truth). grafana-operator
 # v5 auto-assigns each dashboard to a folder named after its namespace, so

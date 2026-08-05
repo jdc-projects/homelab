@@ -74,7 +74,7 @@ resource "kubernetes_deployment" "outline" {
 
   # Instrumentation CR must exist before a pod is admitted, else the
   # opentelemetry-operator injection webhook has nothing to inject
-  # (cold-apply race — see terraform/web-check/web-check.tf).
+  # (cold-apply race — see iac/web-check/web-check.tf).
   depends_on = [kubernetes_manifest.outline_instrumentation]
 
   spec {

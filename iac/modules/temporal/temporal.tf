@@ -1,7 +1,7 @@
 locals {
   # OTLP gRPC receiver on the cluster's otel-collector (Tempo backend).
   # Kept as a local rather than a variable so this stays self-contained in
-  # temporal.tf; the module's only consumer is terraform/posthog.
+  # temporal.tf; the module's only consumer is iac/posthog.
   otel_collector_endpoint = "otel-collector.otel.svc:4317"
 
   temporal_config = merge(

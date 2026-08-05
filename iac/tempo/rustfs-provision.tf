@@ -2,7 +2,7 @@
 # helm release installs. Uses mc (RustFS's documented S3 client) since the
 # rustfs binary has no bucket subcommands. Idempotent: alias set overwrites and
 # mb uses --ignore-existing, so safe to re-run. Mirrors
-# terraform/outline/rustfs-provision.tf (minus the anonymous/CORS steps, which
+# iac/outline/rustfs-provision.tf (minus the anonymous/CORS steps, which
 # Tempo - being cluster-internal - does not need).
 resource "kubernetes_job" "rustfs_provision" {
   metadata {

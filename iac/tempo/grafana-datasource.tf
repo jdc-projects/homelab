@@ -1,12 +1,12 @@
 # Grafana datasource for Tempo. Lives in the tempo namespace (the data owner)
 # and is imported cross-namespace into the Grafana instance via
 # allowCrossNamespaceImport + instanceSelector, mirroring the pattern used by
-# the Prometheus datasource in terraform/prometheus/grafana-datasource.tf.
+# the Prometheus datasource in iac/prometheus/grafana-datasource.tf.
 #
 # tracesToLogs wires Tempo traces to the existing Loki datasource: clicking a
 # span jumps to the matching Loki log lines filtered by traceId (emitted into
 # Loki structured metadata by the promtail pipeline stage added in
-# terraform/grafana/promtail.tf).  The Loki datasource UID is grafana-operator
+# iac/grafana/promtail.tf).  The Loki datasource UID is grafana-operator
 # generated (a UUID, not name-derived) — it is read here as a local so the
 # coupling is explicit.
 
@@ -45,7 +45,7 @@ resource "kubernetes_manifest" "tempo_grafana_datasource" {
             datasourceUid   = local.loki_datasource_uid
             filterByTraceID = true
             # Span attributes that map to Loki stream labels emitted by promtail.
-            # The collector (terraform/otel-collector/) adds matching `namespace`
+            # The collector (iac/otel-collector/) adds matching `namespace`
             # and `pod` resource attributes via its k8sattributes processor.
             tags = ["namespace", "pod"]
           }
