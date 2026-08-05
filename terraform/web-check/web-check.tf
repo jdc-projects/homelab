@@ -20,6 +20,15 @@ resource "kubernetes_deployment" "web_check" {
     namespace = kubernetes_namespace.web_check.metadata[0].name
   }
 
+  # The pod template annotation asks the opentelemetry-operator webhook to
+  # inject the Node.js SDK; that injection only happens if the
+  # kubernetes_manifest.web_check_instrumentation CR already exists in the
+  # namespace when the pod is admitted. Without this dependency, Terraform can
+  # apply the annotation (triggering a rollout) before the CR is created,
+  # leaving the new pod un-instrumented. Order the CR first so the webhook
+  # sees it on admission.
+  depends_on = [kubernetes_manifest.web_check_instrumentation]
+
   spec {
     replicas = 1
 
@@ -33,6 +42,14 @@ resource "kubernetes_deployment" "web_check" {
       metadata {
         labels = {
           app = "web-check"
+        }
+
+        # Tell the opentelemetry-operator webhook to inject the Node.js
+        # auto-instrumentation SDK (defined by
+        # kubernetes_manifest.web_check_instrumentation). Injected on pod
+        # creation, so changes here trigger a rolling restart.
+        annotations = {
+          "instrumentation.opentelemetry.io/inject-nodejs" = "true"
         }
       }
 
