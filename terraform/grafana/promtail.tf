@@ -87,11 +87,22 @@ resource "helm_release" "promtail" {
   # Extract traceId from JSON logs into Loki structured metadata (Loki 3.x) so
   # Tempo's tracesToLogs correlation can match.  The default pipeline ships only
   # a `cri` stage, so we must redeclare it here — overriding snippets.pipelineStages
-  # replaces the list.  Stages are a no-op for log lines that are not valid JSON
-  # or that carry no trace id: the json stage bails (pipeline stops, line is still
-  # shipped) or the extracted values are empty (structured_metadata omits empties).
-  # Supported key variants: trace_id (OTEL SDK default), traceId (Quarkus/Java),
-  # traceID (some Go libs); normalised into a single `traceId` metadata key.
+  # replaces the list.  Stages are a no-op for log lines that carry no trace id:
+  # the json stage sets nothing for non-JSON lines (drop_mismatched defaults to
+  # false, so the pipeline continues), and the template stage yields an empty
+  # string when none of the keys are set, which structured_metadata omits.
+  # Supported key variants: trace_id (OTEL SDK default / Traefik), traceId
+  # (Quarkus/Keycloak kv logs, via the regex stage), traceID (some Go libs);
+  # normalised into a single `traceId` metadata key.
+  #
+  # The regex stage handles non-JSON kv-format logs (e.g. Keycloak's
+  # `... traceId=<hex> parentId=... spanId=...` lines that the json stage can't
+  # parse); it is a no-op for JSON lines (which contain `traceId":` not `traceId=`)
+  # and for lines without a traceId.
+  #
+  # IMPORTANT: the template uses if/else (not concatenation) so that unset keys
+  # yield an empty string rather than Go-template's literal "<no value>" — which
+  # would otherwise be stored as the traceId value and break exact-match queries.
   values = [
     <<-EOF
       config:
@@ -103,9 +114,11 @@ resource "helm_release" "promtail" {
                   trace_id: trace_id
                   traceId: traceId
                   traceID: traceID
+            - regex:
+                expression: 'traceId=(?P<traceId>[0-9a-fA-F]+)'
             - template:
                 source: traceId
-                template: '{{ .trace_id }}{{ .traceId }}{{ .traceID }}'
+                template: '{{ if .trace_id }}{{ .trace_id }}{{ else if .traceId }}{{ .traceId }}{{ else if .traceID }}{{ .traceID }}{{ end }}'
             - structured_metadata:
                 traceId:
     EOF
