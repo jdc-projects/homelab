@@ -81,6 +81,10 @@ resource "kubernetes_deployment" "n8n" {
         labels = {
           app = "n8n"
         }
+
+        annotations = {
+          "instrumentation.opentelemetry.io/inject-nodejs" = "true"
+        }
       }
 
       spec {
