@@ -97,7 +97,7 @@ jobs:
       - name: "OpenTofu setup"
         uses: opentofu/setup-opentofu@v2
         with:
-          tofu_version: 1.12.5
+          tofu_version_file: .opentofu-version
       - name: "Generate kubeconfig"
         working-directory: ./iac
         run: |
