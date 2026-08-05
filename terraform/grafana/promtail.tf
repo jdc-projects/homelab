@@ -84,6 +84,33 @@ resource "helm_release" "promtail" {
     },
   ]
 
+  # Extract traceId from JSON logs into Loki structured metadata (Loki 3.x) so
+  # Tempo's tracesToLogs correlation can match.  The default pipeline ships only
+  # a `cri` stage, so we must redeclare it here — overriding snippets.pipelineStages
+  # replaces the list.  Stages are a no-op for log lines that are not valid JSON
+  # or that carry no trace id: the json stage bails (pipeline stops, line is still
+  # shipped) or the extracted values are empty (structured_metadata omits empties).
+  # Supported key variants: trace_id (OTEL SDK default), traceId (Quarkus/Java),
+  # traceID (some Go libs); normalised into a single `traceId` metadata key.
+  values = [
+    <<-EOF
+      config:
+        snippets:
+          pipelineStages:
+            - cri: {}
+            - json:
+                expressions:
+                  trace_id: trace_id
+                  traceId: traceId
+                  traceID: traceID
+            - template:
+                source: traceId
+                template: '{{ .trace_id }}{{ .traceId }}{{ .traceID }}'
+            - structured_metadata:
+                traceId:
+    EOF
+  ]
+
   set_sensitive = [
     {
       name  = "config.clients[0].basic_auth.username"

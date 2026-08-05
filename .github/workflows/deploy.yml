@@ -311,3 +311,39 @@ jobs:
 
     with:
       terraform-dir: ./terraform/${{ matrix.application }}
+
+  # --- OpenTelemetry tracing platform ---
+  # operator -> Tempo backend -> collector (collector exports into Tempo).
+  deploy-otel-operator:
+    needs: [
+      deploy-cert-manager,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/otel-operator
+
+  deploy-tempo:
+    needs: [
+      deploy-grafana,
+      deploy-openebs,
+      deploy-prometheus-operator,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/tempo
+
+  deploy-otel-collector:
+    needs: [
+      deploy-otel-operator,
+      deploy-tempo,
+      deploy-prometheus-operator,
+    ]
+    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    secrets: inherit
+
+    with:
+      terraform-dir: ./terraform/otel-collector
