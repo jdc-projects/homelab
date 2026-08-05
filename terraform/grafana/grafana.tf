@@ -57,7 +57,7 @@ resource "kubernetes_manifest" "grafana_deployment" {
         }
 
         "unified_alerting" = {
-          alertmanager_url = "http://kube-prometheus-stack-alertmanager.prometheus.svc.cluster.local:9093"
+          rule_version_record_limit = 5
         }
 
         database = {
