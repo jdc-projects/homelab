@@ -95,7 +95,7 @@ jobs:
         with:
            version: 'v3.16.1'
       - name: "OpenTofu setup"
-        uses: opentofu/setup-opentofu@v1
+        uses: opentofu/setup-opentofu@v2
         with:
           tofu_version: 1.12.5
       - name: "Generate kubeconfig"
