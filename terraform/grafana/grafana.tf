@@ -1,6 +1,6 @@
 locals {
   grafana_domain  = "grafana.${var.server_base_domain}"
-  grafana_version = "13.0.3"
+  grafana_version = "13.1.2"
 }
 
 resource "kubernetes_manifest" "grafana_deployment" {
