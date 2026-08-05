@@ -1,4 +1,9 @@
 locals {
+  # OTLP gRPC receiver on the cluster's otel-collector (Tempo backend).
+  # Kept as a local rather than a variable so this stays self-contained in
+  # temporal.tf; the module's only consumer is terraform/posthog.
+  otel_collector_endpoint = "otel-collector.otel.svc:4317"
+
   temporal_config = merge(
     {
       DB                       = "postgres12"
@@ -45,6 +50,56 @@ resource "kubernetes_config_map" "temporal_config" {
   }
 
   data = local.temporal_config
+}
+
+# The auto-setup image's entrypoint renders /etc/temporal/config/docker.yaml
+# (via dockerize) from its built-in config_template.yaml, then runs autosetup,
+# then execs /etc/temporal/start-temporal.sh. That template has NO otel section,
+# and Temporal's Go server reads observability config ONLY from this YAML — it
+# does not honour the OTEL_* SDK env vars the way the OpenTelemetry SDK does.
+# So we override start-temporal.sh to append an `otel` block (1.26's
+# connections/exporters schema) to the rendered config immediately before
+# temporal-server starts, exporting traces over OTLP gRPC to the cluster's
+# otel-collector. See common/telemetry/config.go + env.go upstream.
+resource "kubernetes_config_map" "temporal_otel" {
+  metadata {
+    name      = "${var.name_prefix}-otel"
+    namespace = var.namespace
+  }
+
+  data = {
+    "start-temporal.sh" = <<-EOT
+      #!/bin/bash
+      set -eu -o pipefail
+
+      # Append the otel exporter section to the already-rendered server config.
+      # Leading blank line separates it from the preceding dynamicConfigClient
+      # block; the rest is plain YAML that temporal-server parses at startup.
+      cat >> /etc/temporal/config/docker.yaml <<'OTEL'
+
+      otel:
+        exporters:
+          - kind:
+              signal: traces
+              model: otlp
+              protocol: grpc
+            spec:
+              connection:
+                endpoint: ${local.otel_collector_endpoint}
+                insecure: true
+      OTEL
+
+      : "$${SERVICES:=}"
+      flags=()
+      if [[ -n $${SERVICES} ]]; then
+          SERVICES="$${SERVICES//:/,}"
+          SERVICES="$${SERVICES//,/ }"
+          for i in $SERVICES; do flags+=("--service=$i"); done
+      fi
+
+      exec temporal-server --env docker start "$${flags[@]}"
+    EOT
+  }
 }
 
 resource "kubernetes_deployment" "temporal" {
@@ -94,16 +149,11 @@ resource "kubernetes_deployment" "temporal" {
             value = "0.0.0.0:8001"
           }
 
-          # OpenTelemetry tracing — the auto-setup image is configured to export
-          # spans via the OTLP gRPC receiver on the cluster's otel-collector.
-          env {
-            name  = "OTEL_EXPORTER_OTLP_ENDPOINT"
-            value = "http://otel-collector.otel.svc:4317"
-          }
-          env {
-            name  = "OTEL_EXPORTER_OTLP_PROTOCOL"
-            value = "grpc"
-          }
+          # OpenTelemetry tracing. The actual exporter is wired via the otel
+          # block appended to docker.yaml by start-temporal.sh (see the
+          # temporal_otel config map) — Temporal's Go server ignores the SDK
+          # OTEL_EXPORTER_* env vars. OTEL_SERVICE_NAME is still honoured by
+          # the server as the resource.service.name prefix (-> temporal.<svc>).
           env {
             name  = "OTEL_SERVICE_NAME"
             value = "temporal"
@@ -112,6 +162,14 @@ resource "kubernetes_deployment" "temporal" {
           volume_mount {
             name       = "dynamic-config"
             mount_path = "/etc/temporal/config/dynamicconfig"
+          }
+
+          # Override the image's start-temporal.sh so the otel block is appended
+          # to docker.yaml before temporal-server starts (subPath -> single file).
+          volume_mount {
+            name       = "otel-start-script"
+            mount_path = "/etc/temporal/start-temporal.sh"
+            sub_path   = "start-temporal.sh"
           }
 
           port {
@@ -139,6 +197,14 @@ resource "kubernetes_deployment" "temporal" {
           name = "dynamic-config"
           config_map {
             name = kubernetes_config_map.temporal_dynamic_config.metadata[0].name
+          }
+        }
+
+        volume {
+          name = "otel-start-script"
+          config_map {
+            name         = kubernetes_config_map.temporal_otel.metadata[0].name
+            default_mode = "0755"
           }
         }
       }
