@@ -1,7 +1,7 @@
 on:
   workflow_call:
     inputs:
-      terraform-dir:
+      iac-dir:
         required: true
         type: string
       resource-name:
@@ -73,7 +73,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ${{ inputs.terraform-dir }}
+        working-directory: ${{ inputs.iac-dir }}
 
     steps:
       - name: "Repo checkout"

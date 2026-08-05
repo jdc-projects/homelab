@@ -30,229 +30,229 @@ jobs:
     needs: [
       deploy-tf-state-namespace,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/github-org-runners
+      iac-dir: ./iac/github-org-runners
       runner-type: ${{ inputs.runner-type }}
 
   deploy-openebs:
     needs: [
       deploy-github-org-runner,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/openebs
+      iac-dir: ./iac/openebs
 
   deploy-grafana-operator:
     needs: [
       deploy-github-org-runner,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/grafana-operator
+      iac-dir: ./iac/grafana-operator
 
   deploy-valkey-operator:
     needs: [
       deploy-grafana-operator,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/valkey-operator
+      iac-dir: ./iac/valkey-operator
 
   deploy-prometheus-operator:
     needs: [
       deploy-github-org-runner,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/prometheus-operator
+      iac-dir: ./iac/prometheus-operator
 
   deploy-cert-manager:
     needs: [
       deploy-github-org-runner,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/cert-manager
+      iac-dir: ./iac/cert-manager
 
   deploy-kubevirt-operator:
     needs: [
       deploy-github-org-runner,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/kubevirt-operator
+      iac-dir: ./iac/kubevirt-operator
 
   deploy-clickhouse-operator:
     needs: [
       deploy-github-org-runner,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/clickhouse-operator
+      iac-dir: ./iac/clickhouse-operator
       needs-kubectl: true
 
   deploy-kafka-operator:
     needs: [
       deploy-github-org-runner,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/kafka-operator
+      iac-dir: ./iac/kafka-operator
 
   deploy-opensearch-operator:
     needs: [
       deploy-cert-manager,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/opensearch-operator
+      iac-dir: ./iac/opensearch-operator
 
   deploy-traefik:
     needs: [
       deploy-openebs,
       deploy-cert-manager,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/traefik
+      iac-dir: ./iac/traefik
 
   deploy-cloudnative-pg:
     needs: [
       deploy-openebs,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/cloudnative-pg
+      iac-dir: ./iac/cloudnative-pg
 
   deploy-mariadb-operator:
     needs: [
       deploy-openebs,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/mariadb-operator
+      iac-dir: ./iac/mariadb-operator
 
   deploy-velero:
     needs: [
       deploy-openebs,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/velero
+      iac-dir: ./iac/velero
 
   deploy-kubevirt:
     needs: [
       deploy-openebs,
       deploy-kubevirt-operator,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
       needs-kubectl: true
-      terraform-dir: ./iac/kubevirt
+      iac-dir: ./iac/kubevirt
 
   deploy-crowdsec:
     needs: [
       deploy-traefik,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/crowdsec
+      iac-dir: ./iac/crowdsec
 
   deploy-traefik-config:
     needs: [
       deploy-traefik,
       deploy-crowdsec,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/traefik-config
+      iac-dir: ./iac/traefik-config
 
   deploy-openldap:
     needs: [
       deploy-traefik-config,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/openldap
+      iac-dir: ./iac/openldap
 
   deploy-keycloak:
     needs: [
       deploy-cloudnative-pg,
       deploy-openldap,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/keycloak
+      iac-dir: ./iac/keycloak
 
   deploy-keycloak-config:
     needs: [
       deploy-keycloak,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/keycloak-config
+      iac-dir: ./iac/keycloak-config
 
   deploy-vaultwarden:
     needs: [
       deploy-cloudnative-pg,
       deploy-openldap,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/vaultwarden
+      iac-dir: ./iac/vaultwarden
 
   deploy-ocis:
     needs: [
       deploy-keycloak-config,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/ocis
+      iac-dir: ./iac/ocis
       resource-name: null_resource.ocis_helm_repo_clone
       force-apply-all: true
 
@@ -262,11 +262,11 @@ jobs:
       deploy-openebs,
       deploy-grafana,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/prometheus
+      iac-dir: ./iac/prometheus
 
   deploy-grafana:
     needs: [
@@ -276,11 +276,11 @@ jobs:
       deploy-openebs,
       deploy-cloudnative-pg,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/grafana
+      iac-dir: ./iac/grafana
 
   deploy-bulk:
     needs: [
@@ -292,7 +292,7 @@ jobs:
       deploy-opensearch-operator,
       deploy-clickhouse-operator,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     strategy:
@@ -310,7 +310,7 @@ jobs:
         ]
 
     with:
-      terraform-dir: ./iac/${{ matrix.application }}
+      iac-dir: ./iac/${{ matrix.application }}
 
   # --- OpenTelemetry tracing platform ---
   # operator -> Tempo backend -> collector (collector exports into Tempo).
@@ -318,11 +318,11 @@ jobs:
     needs: [
       deploy-cert-manager,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/otel-operator
+      iac-dir: ./iac/otel-operator
 
   deploy-tempo:
     needs: [
@@ -330,11 +330,11 @@ jobs:
       deploy-openebs,
       deploy-prometheus-operator,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/tempo
+      iac-dir: ./iac/tempo
 
   deploy-otel-collector:
     needs: [
@@ -342,8 +342,8 @@ jobs:
       deploy-tempo,
       deploy-prometheus-operator,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/otel-collector
+      iac-dir: ./iac/otel-collector

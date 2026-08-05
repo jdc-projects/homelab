@@ -19,44 +19,44 @@ jobs:
     needs: [
       deploy-tf-state-namespace,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/openebs
+      iac-dir: ./iac/openebs
       runner-type: ubuntu-latest
 
   deploy-github-org-runner:
     needs: [
       deploy-openebs,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/github-org-runners
+      iac-dir: ./iac/github-org-runners
       runner-type: ubuntu-latest
 
   deploy-velero:
     needs: [
       deploy-github-org-runner,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/velero
+      iac-dir: ./iac/velero
       extra-variable: is_restore_mode=true
 
   do-velero-restore:
     needs: [
       deploy-velero,
     ]
-    uses: ./.github/workflows/kubernetes-terraform-deploy.yml
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
-      terraform-dir: ./iac/velero-restore
+      iac-dir: ./iac/velero-restore
 
   run-deploy:
     needs: [
