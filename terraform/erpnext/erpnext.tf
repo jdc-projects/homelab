@@ -32,6 +32,15 @@ resource "helm_release" "erpnext" {
   timeout       = 600
   wait_for_jobs = true
 
+  # The pod-template annotation asks the opentelemetry-operator webhook to
+  # inject the Python auto-instrumentation SDK; that injection only happens if
+  # the kubernetes_manifest.erpnext_instrumentation CR already exists in the
+  # namespace when the pod is admitted. Without this dependency, Terraform can
+  # apply the annotation (triggering a helm upgrade + rollout) before the CR is
+  # created, leaving the new pod un-instrumented. Order the CR first so the
+  # webhook sees it on admission.
+  depends_on = [kubernetes_manifest.erpnext_instrumentation]
+
   values = [
     <<-EOT
       image:
@@ -90,6 +99,13 @@ resource "helm_release" "erpnext" {
           envVars:
             - name: FRAPPE_STREAM_LOGGING
               value: "1"
+          # Tells the opentelemetry-operator webhook to inject the Python
+          # auto-instrumentation SDK (defined by
+          # kubernetes_manifest.erpnext_instrumentation). Injected on pod
+          # creation, so changes here trigger a rolling restart of the
+          # gunicorn (HTTP-serving) deployment.
+          podAnnotations:
+            "instrumentation.opentelemetry.io/inject-python": "true"
         scheduler:
           envVars:
             - name: FRAPPE_STREAM_LOGGING
