@@ -124,7 +124,7 @@ jobs:
 
           # Find our silence(s) by run_tag prefix and pull the baseline out of the comment.
           BASELINE_COMMENT="$(printf '%s' "$SILENCES_JSON" | yq -r \
-            '[.[] | select(.comment | startswith(strenv(RUN_TAG) + "|")) | .comment] | .[0] // ""')"
+            '[.[] | select((.comment | split("|")[0]) == strenv(RUN_TAG)) | .comment] | .[0] // ""')"
           if [ -z "$BASELINE_COMMENT" ]; then
             echo "No silences tagged \"${RUN_TAG}|*\" found; nothing to expire."
             exit 0
@@ -193,7 +193,7 @@ jobs:
 
           # Expire the silence(s) for this run. Idempotent.
           IDS="$(printf '%s' "$SILENCES_JSON" | yq -r \
-            '.[] | select(.comment | startswith(strenv(RUN_TAG) + "|")) | .id')"
+            '.[] | select((.comment | split("|")[0]) == strenv(RUN_TAG)) | .id')"
           for id in $IDS; do
             echo "Expiring silence $id"
             kubectl -n prometheus exec "$ALERTMANAGER_POD" -c alertmanager -- \
