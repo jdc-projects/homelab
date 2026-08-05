@@ -36,6 +36,6 @@ while IFS=$'\t' read -r lease holder; do
   [ -z "$holder" ] && continue
   mod="${lease#lock-tfstate-default-}"
   echo "  module=$mod   lock-id=$holder" >&2
-  echo "    -> cd terraform/$mod && terraform force-unlock -force $holder" >&2
+  echo "    -> cd terraform/$mod && tofu force-unlock -force $holder" >&2
 done <<< "$held"
 exit 1
