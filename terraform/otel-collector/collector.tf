@@ -4,24 +4,21 @@
 # OTEL_EXPORTER_OTLP_ENDPOINT at `otel-collector.otel.svc:4317` (gRPC) or
 # `:4318` (HTTP). The operator creates the Service automatically.
 #
-# Traces -> Tempo distributor (otlpgrpc, `tempo-distributor.tempo.svc:4317`).
+# Traces  -> Tempo distributor (otlpgrpc, `tempo-distributor.tempo.svc:4317`).
+# Metrics -> Prometheus remote-write receiver (`prometheusremotewrite` exporter
+#            pushes to kube-prometheus-stack-prometheus:9090/api/v1/write; the
+#            pull-style `prometheus` exporter is not in the
+#            opentelemetry-collector-k8s distro in 0.156+, hence remote-write).
 #
-# Traces-only for now: the `prometheus` exporter (pull-style, :8889) was removed
-# from the opentelemetry-collector-k8s distribution (0.156+ ships only
-# otlp/debug/file/loadbalancing/otelarrow exporters). When a service needs OTLP
-# metrics bridged into Prometheus, the right move is enabling the Prometheus
-# remote-write receiver and using the `prometheusremotewrite` exporter here -
-# that's a follow-up alongside the first service that needs it.
+# k8sattributes enriches every span with k8s metadata (namespace/pod/node/
+# deployment) using the collector's own service account; the RBAC it needs is in
+# rbac.tf. The `resource` processor copies the dotted names (k8s.namespace.name)
+# into undotted ones (namespace, pod) so the Tempo datasource's tracesToLogs.tags
+# can match Loki's namespace/pod labels (Loki labels can't contain dots).
 #
-# The operator still exposes the collector's OWN self-telemetry (spans
-# processed, queue depth, errors) on `otel-collector-monitoring:8888`; that is
-# what the ServiceMonitor in servicemonitor.tf scrapes.
-#
-# v1 scope (platform only, no services instrumented yet): deliberately lean -
-# memory_limiter + batch only. When the first service is instrumented, add a
-# k8sattributes processor (with its RBAC) so traces carry namespace/pod
-# resource attributes that the Tempo datasource tracesToLogs.tags can match
-# against Loki's namespace/pod labels.
+# The operator also exposes the collector's OWN self-telemetry (spans processed,
+# queue depth, errors) on `otel-collector-monitoring:8888`; that is what the
+# ServiceMonitor in servicemonitor.tf scrapes.
 resource "kubernetes_manifest" "otel_collector" {
   manifest = {
     apiVersion = "opentelemetry.io/v1beta1"
@@ -34,6 +31,15 @@ resource "kubernetes_manifest" "otel_collector" {
 
     spec = {
       mode = "deployment"
+
+      # Use the contrib distribution rather than the operator's default
+      # opentelemetry-collector-k8s image: the k8s distro ships only
+      # otlp/debug/file/loadbalancing/otelarrow exporters and omits the
+      # `prometheusremotewrite` exporter we use to bridge OTLP metrics into
+      # Prometheus. contrib has everything the k8s distro has (k8sattributes,
+      # resource, ...) plus prometheusremotewrite. Pinned to match the
+      # operator's collector version.
+      image = "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib:0.156.0"
 
       # Explicit ports so the operator-generated Service exposes the OTLP
       # receivers. The collector's own metrics live on the operator-managed
@@ -88,6 +94,39 @@ resource "kubernetes_manifest" "otel_collector" {
             timeout         = "5s"
             send_batch_size = 1024
           }
+
+          # Enrich spans with Kubernetes metadata via the API server (RBAC in
+          # rbac.tf). auth_type=serviceAccount uses the collector's own SA.
+          # Explicit `k8s_attributes` type (bare `k8sattributes` is deprecated).
+          "k8s_attributes" = {
+            auth_type = "serviceAccount"
+            extract = {
+              metadata = [
+                "k8s.namespace.name",
+                "k8s.pod.name",
+                "k8s.node.name",
+                "k8s.deployment.name",
+              ]
+            }
+          }
+
+          # Copy the canonical dotted k8s.* names into undotted `namespace` /
+          # `pod` resource attributes that match Loki's label names, so Tempo's
+          # tracesToLogs.tags (["namespace","pod"]) can narrow the log stream.
+          resource = {
+            attributes = [
+              {
+                key            = "namespace"
+                action         = "upsert"
+                from_attribute = "k8s.namespace.name"
+              },
+              {
+                key            = "pod"
+                action         = "upsert"
+                from_attribute = "k8s.pod.name"
+              },
+            ]
+          }
         }
 
         exporters = {
@@ -98,6 +137,13 @@ resource "kubernetes_manifest" "otel_collector" {
             tls = {
               insecure = true
             }
+          }
+          # Metrics -> Prometheus remote-write receiver (enabled on
+          # kube-prometheus-stack via prometheus.prometheusSpec.enableRemoteWriteReceiver).
+          # Explicit `prometheus_remote_write` type (the bare `prometheusremotewrite`
+          # alias is deprecated in 0.156).
+          "prometheus_remote_write" = {
+            endpoint = "http://kube-prometheus-stack-prometheus.prometheus.svc.cluster.local:9090/api/v1/write"
           }
           # Useful while standing the pipeline up; lower verbosity or remove
           # once traces are flowing from real services.
@@ -110,8 +156,13 @@ resource "kubernetes_manifest" "otel_collector" {
           pipelines = {
             traces = {
               receivers  = ["otlp"]
-              processors = ["memory_limiter", "batch"]
+              processors = ["memory_limiter", "k8s_attributes", "resource", "batch"]
               exporters  = ["otlp_grpc/tempo", "debug"]
+            }
+            metrics = {
+              receivers  = ["otlp"]
+              processors = ["memory_limiter", "batch"]
+              exporters  = ["prometheus_remote_write"]
             }
           }
         }

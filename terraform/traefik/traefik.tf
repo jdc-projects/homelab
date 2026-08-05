@@ -28,6 +28,30 @@ resource "helm_release" "traefik" {
       name  = "accessLog.format"
       value = "json"
     },
+    # Distributed tracing: emit ingress root spans for every request via OTLP
+    # gRPC to the OTel collector. Traefik v3 native OTLP support. The chart has
+    # two enable gates: tracing.otlp.enabled (outer) AND
+    # tracing.otlp.grpc.enabled (inner) - both must be true.
+    {
+      name  = "tracing.otlp.enabled"
+      value = "true"
+    },
+    {
+      name  = "tracing.otlp.grpc.enabled"
+      value = "true"
+    },
+    {
+      name  = "tracing.otlp.grpc.endpoint"
+      value = "otel-collector.otel.svc:4317"
+    },
+    {
+      name  = "tracing.otlp.grpc.insecure"
+      value = "true"
+    },
+    {
+      name  = "tracing.serviceName"
+      value = "traefik"
+    },
     {
       name  = "deployment.kind"
       value = "DaemonSet"

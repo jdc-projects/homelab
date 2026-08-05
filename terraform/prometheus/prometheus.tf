@@ -118,6 +118,12 @@ resource "helm_release" "kube_prometheus_stack" {
       name  = "prometheus.prometheusSpec.retention"
       value = "30d"
     },
+    # Enable the remote-write receiver so the OTel collector can push
+    # OTLP-sourced metrics via its prometheusremotewrite exporter.
+    {
+      name  = "prometheus.prometheusSpec.enableRemoteWriteReceiver"
+      value = "true"
+    },
     # Storage class mirrors terraform/grafana/loki.tf.
     {
       name  = "prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.storageClassName"
