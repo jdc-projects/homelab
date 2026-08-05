@@ -45,6 +45,14 @@ resource "helm_release" "keycloak" {
           value: "${local.keycloak_hostname}"
         - name: KC_LOG_LEVEL
           value: "INFO"
+        - name: KC_TRACING_ENABLED
+          value: "true"
+        - name: KC_TRACING_ENDPOINT
+          value: "http://otel-collector.otel.svc:4317"
+        - name: KC_TRACING_PROTOCOL
+          value: "grpc"
+        - name: KC_TRACING_SERVICE_NAME
+          value: "keycloak"
       EOF
     },
   ]
