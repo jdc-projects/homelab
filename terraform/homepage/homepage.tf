@@ -41,6 +41,10 @@ resource "kubernetes_deployment" "homepage" {
         labels = {
           app = "homepage"
         }
+
+        annotations = {
+          "instrumentation.opentelemetry.io/inject-nodejs" = "true"
+        }
       }
 
       spec {
