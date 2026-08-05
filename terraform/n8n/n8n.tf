@@ -67,6 +67,10 @@ resource "kubernetes_deployment" "n8n" {
     namespace = kubernetes_namespace.n8n.metadata[0].name
   }
 
+  # Instrumentation CR must exist before a pod is admitted, else the operator's
+  # injection webhook has nothing to inject (cold-apply race).
+  depends_on = [kubernetes_manifest.n8n_instrumentation]
+
   spec {
     replicas = 1
 

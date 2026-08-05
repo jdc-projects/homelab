@@ -27,6 +27,10 @@ resource "kubernetes_deployment" "homepage" {
     namespace = kubernetes_namespace.homepage.metadata[0].name
   }
 
+  # Instrumentation CR must exist before a pod is admitted, else the operator's
+  # injection webhook has nothing to inject (cold-apply race).
+  depends_on = [kubernetes_manifest.homepage_instrumentation]
+
   spec {
     replicas = 1
 
