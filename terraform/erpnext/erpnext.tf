@@ -106,22 +106,34 @@ resource "helm_release" "erpnext" {
           # gunicorn (HTTP-serving) deployment.
           podAnnotations:
             "instrumentation.opentelemetry.io/inject-python": "true"
+        # All Frappe Python workers (scheduler + the three RQ queue workers)
+        # share one namespace-wide Instrumentation CR (see instrumentation.tf);
+        # this annotation per pod-template tells the opentelemetry-operator
+        # webhook to inject the Python SDK on each. Rollout on annotation change.
         scheduler:
           envVars:
             - name: FRAPPE_STREAM_LOGGING
               value: "1"
+          podAnnotations:
+            "instrumentation.opentelemetry.io/inject-python": "true"
         default:
           envVars:
             - name: FRAPPE_STREAM_LOGGING
               value: "1"
+          podAnnotations:
+            "instrumentation.opentelemetry.io/inject-python": "true"
         long:
           envVars:
             - name: FRAPPE_STREAM_LOGGING
               value: "1"
+          podAnnotations:
+            "instrumentation.opentelemetry.io/inject-python": "true"
         short:
           envVars:
             - name: FRAPPE_STREAM_LOGGING
               value: "1"
+          podAnnotations:
+            "instrumentation.opentelemetry.io/inject-python": "true"
 
       socketio:
         envVars:
