@@ -3,7 +3,7 @@
 Installs the Prometheus instance, Alertmanager, node-exporter and
 kube-state-metrics via kube-prometheus-stack (infrastructure only).
 
-The operator + CRDs are in `terraform/prometheus-operator/`. This release
+The operator + CRDs are in `iac/prometheus-operator/`. This release
 uses `skip_crds = true` and reads the chart version from the operator module
 via `terraform_remote_state` so both stay in lock-step.
 
@@ -43,7 +43,7 @@ The one exception is **etcd** — a separate process scraped on `:2381`
 ## Updating rules and dashboards
 
 Both are pinned to the chart version defined in
-`terraform/prometheus-operator/prometheus-operator.tf`. To update:
+`iac/prometheus-operator/prometheus-operator.tf`. To update:
 
 ```bash
 # Render the chart
@@ -60,4 +60,4 @@ helm template kube-prometheus-stack prometheus-community/kube-prometheus-stack \
 # Diff against existing files in rules/ and dashboards/
 ```
 
-Also update the chart version in `terraform/prometheus-operator/prometheus-operator.tf`.
+Also update the chart version in `iac/prometheus-operator/prometheus-operator.tf`.

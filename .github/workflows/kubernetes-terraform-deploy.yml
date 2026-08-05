@@ -99,7 +99,7 @@ jobs:
         with:
           tofu_version: 1.12.5
       - name: "Generate kubeconfig"
-        working-directory: ./terraform
+        working-directory: ./iac
         run: |
           ./cluster-config-write.sh
           mkdir ~/.kube

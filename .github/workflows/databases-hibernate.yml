@@ -40,7 +40,7 @@ jobs:
           sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
           sudo update-ca-certificates
       - name: "Generate and install kubeconfig"
-        working-directory: ./terraform
+        working-directory: ./iac
         run: |
           ./cluster-config-write.sh
           mkdir ~/.kube
@@ -76,7 +76,7 @@ jobs:
           sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
           sudo update-ca-certificates
       - name: "Generate and install kubeconfig"
-        working-directory: ./terraform
+        working-directory: ./iac
         run: |
           ./cluster-config-write.sh
           mkdir ~/.kube
@@ -112,7 +112,7 @@ jobs:
           sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
           sudo update-ca-certificates
       - name: "Generate and install kubeconfig"
-        working-directory: ./terraform
+        working-directory: ./iac
         run: |
           ./cluster-config-write.sh
           mkdir ~/.kube
@@ -148,7 +148,7 @@ jobs:
           sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
           sudo update-ca-certificates
       - name: "Generate and install kubeconfig"
-        working-directory: ./terraform
+        working-directory: ./iac
         run: |
           ./cluster-config-write.sh
           mkdir ~/.kube
@@ -190,7 +190,7 @@ jobs:
           sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
           sudo update-ca-certificates
       - name: "Generate and install kubeconfig"
-        working-directory: ./terraform
+        working-directory: ./iac
         run: |
           ./cluster-config-write.sh
           mkdir ~/.kube
@@ -232,7 +232,7 @@ jobs:
           sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
           sudo update-ca-certificates
       - name: "Generate and install kubeconfig"
-        working-directory: ./terraform
+        working-directory: ./iac
         run: |
           ./cluster-config-write.sh
           mkdir ~/.kube
@@ -274,7 +274,7 @@ jobs:
           sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
           sudo update-ca-certificates
       - name: "Generate and install kubeconfig"
-        working-directory: ./terraform
+        working-directory: ./iac
         run: |
           ./cluster-config-write.sh
           mkdir ~/.kube
@@ -316,7 +316,7 @@ jobs:
           sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
           sudo update-ca-certificates
       - name: "Generate and install kubeconfig"
-        working-directory: ./terraform
+        working-directory: ./iac
         run: |
           ./cluster-config-write.sh
           mkdir ~/.kube
@@ -358,7 +358,7 @@ jobs:
           sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
           sudo update-ca-certificates
       - name: "Generate and install kubeconfig"
-        working-directory: ./terraform
+        working-directory: ./iac
         run: |
           ./cluster-config-write.sh
           mkdir ~/.kube
@@ -391,7 +391,7 @@ jobs:
           sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
           sudo update-ca-certificates
       - name: "Generate and install kubeconfig"
-        working-directory: ./terraform
+        working-directory: ./iac
         run: |
           ./cluster-config-write.sh
           mkdir ~/.kube
@@ -434,7 +434,7 @@ jobs:
           sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
           sudo update-ca-certificates
       - name: "Generate and install kubeconfig"
-        working-directory: ./terraform
+        working-directory: ./iac
         run: |
           ./cluster-config-write.sh
           mkdir ~/.kube
@@ -466,7 +466,7 @@ jobs:
           sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
           sudo update-ca-certificates
       - name: "Generate and install kubeconfig"
-        working-directory: ./terraform
+        working-directory: ./iac
         run: |
           ./cluster-config-write.sh
           mkdir ~/.kube
@@ -499,7 +499,7 @@ jobs:
           sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
           sudo update-ca-certificates
       - name: "Generate and install kubeconfig"
-        working-directory: ./terraform
+        working-directory: ./iac
         run: |
           ./cluster-config-write.sh
           mkdir ~/.kube
@@ -542,7 +542,7 @@ jobs:
           sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
           sudo update-ca-certificates
       - name: "Generate and install kubeconfig"
-        working-directory: ./terraform
+        working-directory: ./iac
         run: |
           ./cluster-config-write.sh
           mkdir ~/.kube

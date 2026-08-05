@@ -8,7 +8,7 @@ jobs:
     secrets: inherit
 
     with:
-      manifest-file: ./terraform/tf-state-namespace.yml
+      manifest-file: ./iac/tf-state-namespace.yml
       runner-type: ubuntu-latest
 
   # if not a clean cluster: need to remove storageclasses and volumesnapshotclasses to enable openebs install
@@ -23,7 +23,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/openebs
+      terraform-dir: ./iac/openebs
       runner-type: ubuntu-latest
 
   deploy-github-org-runner:
@@ -34,7 +34,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/github-org-runners
+      terraform-dir: ./iac/github-org-runners
       runner-type: ubuntu-latest
 
   deploy-velero:
@@ -45,7 +45,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/velero
+      terraform-dir: ./iac/velero
       extra-variable: is_restore_mode=true
 
   do-velero-restore:
@@ -56,7 +56,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/velero-restore
+      terraform-dir: ./iac/velero-restore
 
   run-deploy:
     needs: [

@@ -23,7 +23,7 @@ jobs:
     secrets: inherit
 
     with:
-      manifest-file: ./terraform/tf-state-namespace.yml
+      manifest-file: ./iac/tf-state-namespace.yml
       runner-type: ${{ inputs.runner-type }}
 
   deploy-github-org-runner:
@@ -34,7 +34,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/github-org-runners
+      terraform-dir: ./iac/github-org-runners
       runner-type: ${{ inputs.runner-type }}
 
   deploy-openebs:
@@ -45,7 +45,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/openebs
+      terraform-dir: ./iac/openebs
 
   deploy-grafana-operator:
     needs: [
@@ -55,7 +55,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/grafana-operator
+      terraform-dir: ./iac/grafana-operator
 
   deploy-valkey-operator:
     needs: [
@@ -65,7 +65,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/valkey-operator
+      terraform-dir: ./iac/valkey-operator
 
   deploy-prometheus-operator:
     needs: [
@@ -75,7 +75,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/prometheus-operator
+      terraform-dir: ./iac/prometheus-operator
 
   deploy-cert-manager:
     needs: [
@@ -85,7 +85,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/cert-manager
+      terraform-dir: ./iac/cert-manager
 
   deploy-kubevirt-operator:
     needs: [
@@ -95,7 +95,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/kubevirt-operator
+      terraform-dir: ./iac/kubevirt-operator
 
   deploy-clickhouse-operator:
     needs: [
@@ -105,7 +105,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/clickhouse-operator
+      terraform-dir: ./iac/clickhouse-operator
       needs-kubectl: true
 
   deploy-kafka-operator:
@@ -116,7 +116,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/kafka-operator
+      terraform-dir: ./iac/kafka-operator
 
   deploy-opensearch-operator:
     needs: [
@@ -126,7 +126,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/opensearch-operator
+      terraform-dir: ./iac/opensearch-operator
 
   deploy-traefik:
     needs: [
@@ -137,7 +137,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/traefik
+      terraform-dir: ./iac/traefik
 
   deploy-cloudnative-pg:
     needs: [
@@ -147,7 +147,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/cloudnative-pg
+      terraform-dir: ./iac/cloudnative-pg
 
   deploy-mariadb-operator:
     needs: [
@@ -157,7 +157,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/mariadb-operator
+      terraform-dir: ./iac/mariadb-operator
 
   deploy-velero:
     needs: [
@@ -167,7 +167,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/velero
+      terraform-dir: ./iac/velero
 
   deploy-kubevirt:
     needs: [
@@ -179,7 +179,7 @@ jobs:
 
     with:
       needs-kubectl: true
-      terraform-dir: ./terraform/kubevirt
+      terraform-dir: ./iac/kubevirt
 
   deploy-crowdsec:
     needs: [
@@ -189,7 +189,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/crowdsec
+      terraform-dir: ./iac/crowdsec
 
   deploy-traefik-config:
     needs: [
@@ -200,7 +200,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/traefik-config
+      terraform-dir: ./iac/traefik-config
 
   deploy-openldap:
     needs: [
@@ -210,7 +210,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/openldap
+      terraform-dir: ./iac/openldap
 
   deploy-keycloak:
     needs: [
@@ -221,7 +221,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/keycloak
+      terraform-dir: ./iac/keycloak
 
   deploy-keycloak-config:
     needs: [
@@ -231,7 +231,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/keycloak-config
+      terraform-dir: ./iac/keycloak-config
 
   deploy-vaultwarden:
     needs: [
@@ -242,7 +242,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/vaultwarden
+      terraform-dir: ./iac/vaultwarden
 
   deploy-ocis:
     needs: [
@@ -252,7 +252,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/ocis
+      terraform-dir: ./iac/ocis
       resource-name: null_resource.ocis_helm_repo_clone
       force-apply-all: true
 
@@ -266,7 +266,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/prometheus
+      terraform-dir: ./iac/prometheus
 
   deploy-grafana:
     needs: [
@@ -280,7 +280,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/grafana
+      terraform-dir: ./iac/grafana
 
   deploy-bulk:
     needs: [
@@ -310,7 +310,7 @@ jobs:
         ]
 
     with:
-      terraform-dir: ./terraform/${{ matrix.application }}
+      terraform-dir: ./iac/${{ matrix.application }}
 
   # --- OpenTelemetry tracing platform ---
   # operator -> Tempo backend -> collector (collector exports into Tempo).
@@ -322,7 +322,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/otel-operator
+      terraform-dir: ./iac/otel-operator
 
   deploy-tempo:
     needs: [
@@ -334,7 +334,7 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/tempo
+      terraform-dir: ./iac/tempo
 
   deploy-otel-collector:
     needs: [
@@ -346,4 +346,4 @@ jobs:
     secrets: inherit
 
     with:
-      terraform-dir: ./terraform/otel-collector
+      terraform-dir: ./iac/otel-collector

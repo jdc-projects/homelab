@@ -37,7 +37,7 @@ resource "ssh_resource" "k3s_provisioning" {
       # them without TLS certs. `etcd-expose-metrics` enables the listener but
       # binds to 127.0.0.1 only; the etcd-arg below adds the node's LAN IP so
       # pods in the cluster network can reach it. Localhost is kept for
-      # node-side debugging. Required for terraform/prometheus/ ScrapeConfig
+      # node-side debugging. Required for iac/prometheus/ ScrapeConfig
       # discovery. Ref: https://docs.k3s.io/cli/server
       etcd-expose-metrics: true
       etcd-arg:
