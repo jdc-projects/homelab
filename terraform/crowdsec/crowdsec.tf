@@ -197,6 +197,10 @@ resource "helm_release" "crowdsec" {
       value = "true"
     },
     {
+      name  = "lapi.resources.limits.cpu"
+      value = "1000m"
+    },
+    {
       name  = "lapi.persistentVolume.data.existingClaim"
       value = kubernetes_persistent_volume_claim.crowdsec["lapi-data"].metadata[0].name
     },

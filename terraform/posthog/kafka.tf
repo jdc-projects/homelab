@@ -308,7 +308,7 @@ resource "kubernetes_manifest" "kafka_node_pool" {
           memory = "512Mi"
         }
         limits = {
-          cpu    = "500m"
+          cpu    = "1000m"
           memory = "1Gi"
         }
       }
