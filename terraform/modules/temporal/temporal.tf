@@ -94,6 +94,21 @@ resource "kubernetes_deployment" "temporal" {
             value = "0.0.0.0:8001"
           }
 
+          # OpenTelemetry tracing — the auto-setup image is configured to export
+          # spans via the OTLP gRPC receiver on the cluster's otel-collector.
+          env {
+            name  = "OTEL_EXPORTER_OTLP_ENDPOINT"
+            value = "http://otel-collector.otel.svc:4317"
+          }
+          env {
+            name  = "OTEL_EXPORTER_OTLP_PROTOCOL"
+            value = "grpc"
+          }
+          env {
+            name  = "OTEL_SERVICE_NAME"
+            value = "temporal"
+          }
+
           volume_mount {
             name       = "dynamic-config"
             mount_path = "/etc/temporal/config/dynamicconfig"
