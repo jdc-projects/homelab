@@ -240,11 +240,11 @@ resource "kubernetes_manifest" "kafka" {
         ]
 
         config = {
-          "offsets.topic.replication.factor"         = "3"
-          "transaction.state.log.replication.factor" = "3"
-          "transaction.state.log.min.isr"            = "2"
-          "default.replication.factor"               = "3"
-          "min.insync.replicas"                      = "2"
+          "offsets.topic.replication.factor"         = "1"
+          "transaction.state.log.replication.factor" = "1"
+          "transaction.state.log.min.isr"            = "1"
+          "default.replication.factor"               = "1"
+          "min.insync.replicas"                      = "1"
         }
 
         metricsConfig = {
@@ -292,7 +292,7 @@ resource "kubernetes_manifest" "kafka_node_pool" {
     }
 
     spec = {
-      replicas = 3
+      replicas = 1
       roles    = ["controller", "broker"]
 
       storage = {
@@ -336,7 +336,7 @@ resource "kubernetes_manifest" "kafka_topics" {
 
     spec = {
       partitions = 1
-      replicas   = 3
+      replicas   = 1
       topicName  = each.key
     }
   }
