@@ -49,7 +49,7 @@ resource "helm_release" "kube_prometheus_stack" {
       name  = "kubeStateMetrics.enabled"
       value = "true"
     },
-    # Rules and dashboards are managed in Terraform, not by the chart.
+    # Rules and dashboards are managed in OpenTofu, not by the chart.
     {
       name  = "defaultRules.create"
       value = "false"

@@ -35,7 +35,7 @@ resource "helm_release" "erpnext" {
   # The pod-template annotation asks the opentelemetry-operator webhook to
   # inject the Python auto-instrumentation SDK; that injection only happens if
   # the kubernetes_manifest.erpnext_instrumentation CR already exists in the
-  # namespace when the pod is admitted. Without this dependency, Terraform can
+  # namespace when the pod is admitted. Without this dependency, OpenTofu can
   # apply the annotation (triggering a helm upgrade + rollout) before the CR is
   # created, leaving the new pod un-instrumented. Order the CR first so the
   # webhook sees it on admission.

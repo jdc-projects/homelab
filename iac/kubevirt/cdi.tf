@@ -83,7 +83,7 @@ resource "kubernetes_service" "cdi_uploadproxy_nodeport" {
 # CDIDefaultStorageClassDegraded alerts stop firing.
 #
 # These are applied via kubectl server-side apply (not kubernetes_manifest)
-# because CDI's controller creates the StorageProfiles before Terraform runs.
+# because CDI's controller creates the StorageProfiles before OpenTofu runs.
 # Server-side apply patches the spec fields without conflicting with CDI's
 # status management. Works on both fresh deploys (after CDI creates the
 # profiles) and existing clusters.

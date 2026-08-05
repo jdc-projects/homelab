@@ -105,7 +105,7 @@ resource "kubernetes_manifest" "posthog_db" {
     "spec.postgresql.parameters",
     # CNPG operator injects default monitoring queries/labels into spec.monitoring
     # (enablePodMonitor is reflected back with operator-managed fields). Treat as
-    # computed so terraform plan stays clean against the live cluster.
+    # computed so tofu plan stays clean against the live cluster.
     "spec.monitoring",
   ]
 

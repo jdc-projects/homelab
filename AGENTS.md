@@ -4,15 +4,15 @@ Guidance for agents (and humans) working in this repo. Read before deploying.
 
 ## Repo shape
 
-- `k3s/` — K3s host provisioning (Terraform).
-- `iac/<service>/` — each service/app is its **own Terraform root module** with its own
+- `k3s/` — K3s host provisioning (OpenTofu).
+- `iac/<service>/` — each service/app is its **own OpenTofu root module** with its own
   state. States live in the cluster (kubernetes backend): secret `tfstate-default-<module>` in
   the `tf-state` namespace. Modules are independent and are applied in dependency order by the
   deploy workflow (below).
-- `iac/modules/` — shared Terraform modules (`ingress`, `temporal`, `grafana-dashboard`).
+- `iac/modules/` — shared OpenTofu modules (`ingress`, `temporal`, `grafana-dashboard`).
   Version constraints belong in **root modules only**, never in shared child modules.
 - `.github/workflows/deploy.yml` — the deploy pipeline (`workflow_dispatch`); each job applies
-  one terraform module, wired with `needs:` to enforce dependency order.
+  one tofu module, wired with `needs:` to enforce dependency order.
 - `utils/` — operational scripts.
 
 ## Deploying changes
@@ -24,7 +24,7 @@ Changes are **not** auto-deployed on push. Deploy is manual via the GitHub workf
    ```bash
    utils/check-tf-locks.sh
    ```
-   This catches held/stale terraform state locks — the #1 cause of deploy failures (a stale
+   This catches held/stale state locks — the #1 cause of deploy failures (a stale
    lock left by a crashed or killed local `tofu plan`/`apply`). Clear anything it reports
    with `cd iac/<module> && tofu force-unlock -force <lock-id>` **before** triggering.
 3. **Trigger the deploy:**
@@ -34,11 +34,11 @@ Changes are **not** auto-deployed on push. Deploy is manual via the GitHub workf
 4. **If a job fails** on a transient or state-lock error, re-run the failed jobs of the **same**
    run — `gh run rerun <run-id> --failed` — rather than starting a new run. Don't stack runs.
 
-### Terraform state locks (why the check exists)
+### OpenTofu state locks (why the check exists)
 
 The kubernetes backend stores each module's lock as a Lease
 `lock-tfstate-default-<module>` in `tf-state`; its `holderIdentity` holds the lock UUID while a
-terraform process holds it and is cleared on clean release. A non-empty `holderIdentity` with
+tofu process holds it and is cleared on clean release. A non-empty `holderIdentity` with
 no active process is a stale lock. Always let local `tofu` commands finish (don't kill
 them mid-plan/apply).
 

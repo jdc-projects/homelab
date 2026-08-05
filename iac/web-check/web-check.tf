@@ -23,7 +23,7 @@ resource "kubernetes_deployment" "web_check" {
   # The pod template annotation asks the opentelemetry-operator webhook to
   # inject the Node.js SDK; that injection only happens if the
   # kubernetes_manifest.web_check_instrumentation CR already exists in the
-  # namespace when the pod is admitted. Without this dependency, Terraform can
+  # namespace when the pod is admitted. Without this dependency, OpenTofu can
   # apply the annotation (triggering a rollout) before the CR is created,
   # leaving the new pod un-instrumented. Order the CR first so the webhook
   # sees it on admission.

@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Pre-deploy check: detect held/stale terraform state locks before deploying.
+# Pre-deploy check: detect held/stale OpenTofu state locks before deploying.
 #
-# The terraform kubernetes backend stores each module's state lock as a Lease
+# The OpenTofu kubernetes backend stores each module's state lock as a Lease
 # (coordination.k8s.io/v1) named `lock-tfstate-default-<module>` in the
 # tf-state namespace. The Lease's holderIdentity field holds the lock UUID
-# while a terraform process holds the lock, and is cleared on clean release.
+# while a tofu process holds the lock, and is cleared on clean release.
 # A non-empty holderIdentity = a held lock — almost always stale, left behind
-# by a crashed/killed local `terraform plan`/`apply`. The deploy workflow's
-# `terraform apply` will fail to acquire its lock against a stale holder, so
+# by a crashed/killed local `tofu plan`/`apply`. The deploy workflow's
+# `tofu apply` will fail to acquire its lock against a stale holder, so
 # run this before triggering the deploy workflow.
 #
 # Usage:   utils/check-tf-locks.sh
@@ -27,11 +27,11 @@ fi
 held=$(printf '%s\n' "$raw" | awk -F'\t' '$2 != "" {print}')
 
 if [ -z "$held" ]; then
-  echo "No terraform state locks held in $NS."
+  echo "No state locks held in $NS."
   exit 0
 fi
 
-echo "Held/stale terraform state lock(s) in $NS — clear before deploying:" >&2
+echo "Held/stale state lock(s) in $NS — clear before deploying:" >&2
 while IFS=$'\t' read -r lease holder; do
   [ -z "$holder" ] && continue
   mod="${lease#lock-tfstate-default-}"

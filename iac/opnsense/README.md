@@ -15,7 +15,7 @@ For this reason, it isn't included in the deployment pipeline.
 
 - Copy `config.xml` into this directory
 - Uncomment `null_resource.config_xml` references (and installer image references) in the VM definition
-- `terraform apply`
+- `tofu apply`
 - `virtctl -n opnsense console opnsense`
 - Press any key when the prompt for the config import comes up
 - Enter `cd0`

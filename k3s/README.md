@@ -21,6 +21,6 @@ It would be nice to fully automate the provisioning of the K3s machine, but for 
         cat /home/k3s/.ssh/ed25519.pub  | sudo tee -a /home/k3s/.ssh/authorized_keys
         ```
 3. Create 'terraform.tfvars' in this directory, and populate with the required values
-4. Run the Terraform in this directory
+4. Run OpenTofu in this directory
 5. Get the kubeconfig values (at /etc/rancher/k3s/k3s.yaml)
 7. Restart the server before deploying anything
