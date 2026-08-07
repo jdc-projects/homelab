@@ -50,7 +50,7 @@ resource "kubernetes_deployment" "posthog_web" {
           }
 
           resources {
-            requests = { cpu = "1", memory = "2Gi" }
+            requests = { cpu = "250m", memory = "2Gi" }
             limits   = { cpu = "2", memory = "4Gi" }
           }
         }
