@@ -2,6 +2,16 @@ locals {
   is_existing_service  = "" != var.existing_service_name
   is_endpoint_internal = "" == var.external_name
 
+  # Match fragment appended after Host(). Empty when no path is set.
+  # PathPrefix (default) keeps the current leading-slash-prepend behavior; PathRegexp
+  # emits the caller's regex verbatim (no slash added) — use for regex routes like
+  # ingest endpoints (e.g. ^/api/([1-9][0-9]*)/.*).
+  path_match_fragment = "" == var.path ? "" : (
+    var.path_matcher == "PathRegexp"
+    ? " && PathRegexp(`${var.path}`)"
+    : " && PathPrefix(`/${var.path}`)"
+  )
+
   # "primary" / "master" are aliases resolved from the keycloak module's remote state (rename-safe).
   # Any other value is treated as a literal realm name and used as-is (the realm must pre-exist).
   keycloak_auth_realm_id = lookup(

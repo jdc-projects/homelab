@@ -19,6 +19,17 @@ variable "path" {
   default     = ""
 }
 
+variable "path_matcher" {
+  type        = string
+  description = "Traefik matcher applied to 'path'. \"PathPrefix\" (default) = literal prefix match; an automatic leading slash is prepended to 'path' (current behavior). \"PathRegexp\" = treats 'path' as a Traefik regular expression and emits it verbatim (no slash added) — use for routes that must match a regex, e.g. an ingest endpoint matching '^/api/([1-9][0-9]*)/.*'."
+  default     = "PathPrefix"
+
+  validation {
+    condition     = contains(["PathPrefix", "PathRegexp"], var.path_matcher)
+    error_message = "path_matcher must be one of: PathPrefix, PathRegexp."
+  }
+}
+
 variable "target_port" {
   type        = number
   description = "Port on the application / endpoint that the service should connect to. If using an existing service, this should be the port on the service."

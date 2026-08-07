@@ -15,7 +15,7 @@ resource "kubernetes_manifest" "internal_ingress" {
 
       routes = [{
         kind  = "Rule"
-        match = "Host(`${var.domain}`)${"" != var.path ? " && PathPrefix(`/${var.path}`)" : ""}"
+        match = "Host(`${var.domain}`)${local.path_match_fragment}"
 
         priority = var.priority
 
@@ -49,7 +49,7 @@ resource "kubernetes_manifest" "external_ingress" {
 
       routes = [{
         kind  = "Rule"
-        match = "Host(`${var.domain}`)${"" != var.path ? " && PathPrefix(`/${var.path}`)" : ""}"
+        match = "Host(`${var.domain}`)${local.path_match_fragment}"
 
         priority = var.priority
 
