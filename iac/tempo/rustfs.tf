@@ -66,7 +66,7 @@ resource "helm_release" "rustfs" {
     },
     {
       name  = "resources.limits.cpu"
-      value = "200m"
+      value = "500m"
     },
     {
       name  = "resources.limits.memory"
