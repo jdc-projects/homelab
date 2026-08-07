@@ -13,7 +13,7 @@ resource "ssh_resource" "k3s_provisioning" {
     content     = <<-EOF
       apiVersion: kubelet.config.k8s.io/v1beta1
       kind: KubeletConfiguration
-      maxPods: 200
+      maxPods: 500
     EOF
     destination = local.kubelet_config_location
   }
