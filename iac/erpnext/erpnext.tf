@@ -99,6 +99,8 @@ resource "helm_release" "erpnext" {
           envVars:
             - name: FRAPPE_STREAM_LOGGING
               value: "1"
+            - name: SENTRY_DSN
+              value: "${local.sentry_dsn}"
           # Tells the opentelemetry-operator webhook to inject the Python
           # auto-instrumentation SDK (defined by
           # kubernetes_manifest.erpnext_instrumentation). Injected on pod
@@ -114,24 +116,32 @@ resource "helm_release" "erpnext" {
           envVars:
             - name: FRAPPE_STREAM_LOGGING
               value: "1"
+            - name: SENTRY_DSN
+              value: "${local.sentry_dsn}"
           podAnnotations:
             "instrumentation.opentelemetry.io/inject-python": "true"
         default:
           envVars:
             - name: FRAPPE_STREAM_LOGGING
               value: "1"
+            - name: SENTRY_DSN
+              value: "${local.sentry_dsn}"
           podAnnotations:
             "instrumentation.opentelemetry.io/inject-python": "true"
         long:
           envVars:
             - name: FRAPPE_STREAM_LOGGING
               value: "1"
+            - name: SENTRY_DSN
+              value: "${local.sentry_dsn}"
           podAnnotations:
             "instrumentation.opentelemetry.io/inject-python": "true"
         short:
           envVars:
             - name: FRAPPE_STREAM_LOGGING
               value: "1"
+            - name: SENTRY_DSN
+              value: "${local.sentry_dsn}"
           podAnnotations:
             "instrumentation.opentelemetry.io/inject-python": "true"
 

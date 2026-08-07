@@ -16,6 +16,13 @@
 # Both run in a single django shell exec against the running sentry-web pod,
 # which already has the full chart config. No TF provider exists for Sentry
 # users/org options, so this mirrors the clickhouse-provision pattern.
+#
+#   3. Mints an org-scoped Sentry auth token (ApiToken, USER type) for the
+#      jianyuan/sentry Terraform provider and writes it to the sentry-auth-token
+#      Secret. App modules consume it via the `sentry_auth_token` output (with a
+#      "" default) so they can deploy before/without Sentry and self-serve their
+#      own projects. Idempotent: if the Secret already exists, it is left alone
+#      (the token plaintext is one-time-read, so it is captured on first mint).
 
 resource "kubernetes_service_account" "sentry_bootstrap" {
   metadata {
@@ -47,6 +54,13 @@ resource "kubernetes_role" "sentry_bootstrap" {
     api_groups = ["apps"]
     resources  = ["deployments"]
     verbs      = ["get"]
+  }
+
+  # Create/check the sentry-auth-token Secret (provider token minted below).
+  rule {
+    api_groups = [""]
+    resources  = ["secrets"]
+    verbs      = ["create", "get"]
   }
 }
 
@@ -117,6 +131,41 @@ resource "kubernetes_job" "sentry_bootstrap" {
               else:
                   print("WARNING: no organization found; skipping auth_provider setup")
               PY
+
+              # 3. Mint the jianyuan/sentry provider token (idempotent via Secret).
+              if kubectl -n ${local.ns} get secret sentry-auth-token -o jsonpath='{.data.token}' 2>/dev/null | base64 -d 2>/dev/null | grep -q .; then
+                echo "sentry-auth-token Secret already present"
+              else
+                kubectl -n ${local.ns} exec -i deployment/sentry-web -- sentry django shell <<'PY' > /tmp/token_raw.out
+              from sentry.models import ApiToken
+              from sentry.types.token import AuthTokenType
+              from django.contrib.auth import get_user_model
+              User = get_user_model()
+              u = User.objects.get(email="${var.admin_email}")
+              name = "terraform-provider"
+              old = ApiToken.objects.filter(name=name, user_id=u.id).first()
+              if old:
+                  old.delete()
+              t = ApiToken.objects.create(
+                  user_id=u.id,
+                  name=name,
+                  token_type=AuthTokenType.USER,
+                  scope_list=["org:read", "org:write", "team:read", "team:write", "project:read", "project:write", "project:releases"],
+                  expires_at=None,
+              )
+              print("TOKEN_START")
+              print(t.plaintext_token)
+              print("TOKEN_END")
+              PY
+                TOKEN="$(sed -n '/TOKEN_START/{n;p;}' /tmp/token_raw.out | tr -d '[:space:]')"
+                if [ -n "$TOKEN" ]; then
+                  kubectl -n ${local.ns} create secret generic sentry-auth-token --from-literal=token="$TOKEN"
+                  echo "minted provider token -> sentry-auth-token Secret"
+                else
+                  echo "ERROR: failed to mint provider token" >&2
+                  exit 1
+                fi
+              fi
             EOT
           ]
         }
@@ -140,4 +189,16 @@ resource "kubernetes_job" "sentry_bootstrap" {
   }
 
   depends_on = [helm_release.sentry]
+}
+
+# Read the minted provider token back (the Secret is written by the job above)
+# so it can be exported for app modules. depends_on defers the read until the
+# bootstrap job has run on first apply (when the Secret is created).
+data "kubernetes_secret" "sentry_auth_token" {
+  metadata {
+    name      = "sentry-auth-token"
+    namespace = local.ns
+  }
+
+  depends_on = [kubernetes_job.sentry_bootstrap]
 }

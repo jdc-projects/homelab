@@ -63,5 +63,6 @@ resource "kubernetes_config_map" "posthog_env" {
     TEMPORAL_PORT                      = "7233"
     CELERY_MAX_MEMORY_PER_CHILD        = "1572864"
     WEB_CONCURRENCY                    = "2"
+    SENTRY_DSN                         = local.sentry_dsn
   }
 }

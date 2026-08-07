@@ -37,6 +37,11 @@ resource "kubernetes_manifest" "grafana_deployment" {
           disable_login_form = "false"
         }
 
+        sentry = {
+          dsn         = local.sentry_dsn
+          environment = "production"
+        }
+
         "auth.generic_oauth" = {
           enabled                    = "true"
           name                       = "Keycloak"

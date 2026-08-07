@@ -20,6 +20,11 @@ terraform {
       source  = "keycloak/keycloak"
       version = "~> 5.8"
     }
+
+    sentry = {
+      source  = "jianyuan/sentry"
+      version = "0.15.4"
+    }
   }
 }
 

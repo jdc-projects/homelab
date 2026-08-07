@@ -268,6 +268,24 @@ jobs:
     with:
       iac-dir: ./iac/prometheus
 
+  # --- Sentry ---
+  # Dedicated job (not in deploy-bulk): app modules read its auth token via
+  # remote_state, so outline/erpnext/posthog (in deploy-bulk) and grafana must
+  # apply after it.
+  deploy-sentry:
+    needs: [
+      deploy-cloudnative-pg,
+      deploy-kafka-operator,
+      deploy-clickhouse-operator,
+      deploy-keycloak-config,
+      deploy-traefik-config,
+    ]
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
+    secrets: inherit
+
+    with:
+      iac-dir: ./iac/sentry
+
   deploy-grafana:
     needs: [
       deploy-grafana-operator,
@@ -275,6 +293,7 @@ jobs:
       deploy-traefik,
       deploy-openebs,
       deploy-cloudnative-pg,
+      deploy-sentry,
     ]
     uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
@@ -293,6 +312,7 @@ jobs:
       deploy-clickhouse-operator,
       deploy-cloudnative-pg,
       deploy-traefik-config,
+      deploy-sentry,
     ]
     uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
@@ -309,7 +329,6 @@ jobs:
           web-check,
           convertx,
           posthog,
-          sentry,
         ]
 
     with:

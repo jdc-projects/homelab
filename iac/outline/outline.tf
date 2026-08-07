@@ -47,6 +47,7 @@ resource "kubernetes_config_map" "outline_env" {
     RATE_LIMITER_REQUESTS        = 1000
     RATE_LIMITER_DURATION_WINDOW = 60
     REDIS_URL                    = "valkey://${helm_release.valkey.name}:6379"
+    SENTRY_DSN                   = local.sentry_dsn
   }
 }
 

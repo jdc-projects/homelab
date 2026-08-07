@@ -13,3 +13,9 @@ output "admin_password" {
   sensitive   = true
   description = "Initial Sentry admin password. Retrieve with: tofu output -raw admin_password"
 }
+
+output "sentry_auth_token" {
+  value       = data.kubernetes_secret.sentry_auth_token.data.token
+  sensitive   = true
+  description = "Org-scoped auth token for the jianyuan/sentry provider. App modules read this via remote_state and self-create their Sentry projects."
+}
