@@ -89,7 +89,7 @@ resource "kubernetes_service" "temporal_ui" {
 
 module "temporal_ui_ingress" {
   count  = var.ui_domain != null ? 1 : 0
-  source = "../ingress"
+  source = var.ingress_module_source
 
   name                       = "${var.name_prefix}-ui"
   namespace                  = var.namespace
@@ -100,4 +100,5 @@ module "temporal_ui_ingress" {
 
   auth_mode           = "oidc-interactive"
   keycloak_auth_realm = "master"
+  kubeconfig_path     = var.kubeconfig_path
 }

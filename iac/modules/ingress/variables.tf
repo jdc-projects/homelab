@@ -195,3 +195,9 @@ variable "extra_middlewares" {
   description = "Extra middlewares to use."
   default     = []
 }
+
+variable "kubeconfig_path" {
+  type        = string
+  default     = "../cluster.yml"
+  description = "Path to the kubeconfig used to read remote state from the kubernetes backend. Resolved relative to the directory tofu runs in. In-repo callers use the default; external consumers override with their own path."
+}

@@ -62,3 +62,15 @@ variable "ui_domain" {
   default     = null
   description = "Domain for Temporal UI ingress. Null = UI not exposed externally."
 }
+
+variable "ingress_module_source" {
+  type        = string
+  default     = "git::https://github.com/jdc-projects/homelab.git//iac/modules/ingress?ref=main"
+  description = "Source for the ingress submodule used by the optional Temporal UI ingress. Default points at the published git ref; in-repo consumers override with \"../ingress\" to use the local copy."
+}
+
+variable "kubeconfig_path" {
+  type        = string
+  default     = "../cluster.yml"
+  description = "Path to the kubeconfig used to read remote state from the kubernetes backend, forwarded to the ingress submodule. Resolved relative to the directory tofu runs in. In-repo callers use the default; external consumers override with their own path."
+}

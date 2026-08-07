@@ -11,6 +11,7 @@ Guidance for agents (and humans) working in this repo. Read before deploying.
   deploy workflow (below).
 - `iac/modules/` — shared OpenTofu modules (`ingress`, `temporal`, `grafana-dashboard`).
   Version constraints belong in **root modules only**, never in shared child modules.
+  See `iac/modules/README.md` for how to consume these modules from other repos.
 - `.github/workflows/deploy.yml` — the deploy pipeline (`workflow_dispatch`); each job applies
   one tofu module, wired with `needs:` to enforce dependency order.
 - `utils/` — operational scripts.
@@ -52,3 +53,29 @@ them mid-plan/apply).
   `iac/cluster-config-write.sh` (needs the cluster secrets/env).
 - `tofu fmt -check` is enforced in CI — run `tofu fmt` before committing.
 - Prefer small, self-contained commits (one per logical change).
+
+## Consuming modules from other repos
+
+The shared modules under `iac/modules/` are consumable from other repos via git
+source URLs — no registry, no submodule. Point `source` at the module subdirectory
+and pin with `?ref=<commit-sha>`:
+
+```hcl
+module "ingress" {
+  source = "git::https://github.com/jdc-projects/homelab.git//iac/modules/ingress?ref=<commit-sha>"
+  # ...
+}
+```
+
+- Pin to a **full commit SHA** for reproducibility (the only recommended pinning method;
+  there are no moving or CalVer tags).
+- The `git::` prefix and the `//iac/modules/<name>` subdirectory path are required.
+- See `iac/modules/README.md` for per-module variable references and copy-paste snippets.
+
+### The `temporal` module's ingress dependency
+
+The `temporal` module internally instantiates the `ingress` module for its optional UI
+ingress. By default it pulls `ingress` from the same git source as above (floating on
+`main`), so external consumers don't need to do anything special. In-repo callers (e.g.
+`iac/posthog/temporal.tf`) override this with `ingress_module_source = "../ingress"` to
+use the local copy that sits next to the temporal module.

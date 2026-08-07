@@ -7,5 +7,7 @@ module "temporal" {
   cors_origins    = "https://posthog.${var.server_base_domain}"
   ui_domain       = "temporal.${var.server_base_domain}"
 
+  ingress_module_source = "../ingress"
+
   depends_on = [kubernetes_manifest.opensearch]
 }

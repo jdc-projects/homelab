@@ -15,7 +15,7 @@ data "terraform_remote_state" "traefik" {
 
   config = {
     secret_suffix = "traefik"
-    config_path   = "../cluster.yml"
+    config_path   = var.kubeconfig_path
     namespace     = "tf-state"
   }
 }
@@ -25,7 +25,7 @@ data "terraform_remote_state" "keycloak" {
 
   config = {
     secret_suffix = "keycloak-config"
-    config_path   = "../cluster.yml"
+    config_path   = var.kubeconfig_path
     namespace     = "tf-state"
   }
 }
