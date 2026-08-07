@@ -31,11 +31,11 @@ resource "helm_release" "velero" {
   set = [
     {
       name  = "resources.requests.cpu"
-      value = "2"
+      value = "100m"
     },
     {
       name  = "resources.requests.memory"
-      value = "4Gi"
+      value = "256Mi"
     },
     {
       name  = "resources.limits.cpu"
@@ -219,11 +219,11 @@ resource "helm_release" "velero" {
     },
     {
       name  = "nodeAgent.resources.requests.cpu"
-      value = "4"
+      value = "100m"
     },
     {
       name  = "nodeAgent.resources.requests.memory"
-      value = "4Gi"
+      value = "256Mi"
     },
     {
       name  = "nodeAgent.resources.limits.cpu"
