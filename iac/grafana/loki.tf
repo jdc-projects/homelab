@@ -164,12 +164,13 @@ resource "helm_release" "loki" {
           max_query_lookback: 720h
         compactor:
           retention_enabled: true
-          # filesystem delete_request_store is fine here because the compactor runs
-          # as a single backend replica (data-loki-backend-0); the boltdb lives on
-          # its PVC. If backend.replicas is raised above 1, switch this to the
-          # shared S3 store. working_directory defaults to /var/loki/compactor,
-          # which is already on the persistent backend PVC.
-          delete_request_store: filesystem
+          # Use the shared S3 object store (the bundled MinIO) for the compactor's
+          # delete-request bookkeeping DB instead of the backend pod's local disk.
+          # Reuses common.storage.s3 (same creds / chunks bucket), so it survives
+          # backend PVC loss and works if backend.replicas is ever raised above 1.
+          # working_directory defaults to /var/loki/compactor (marker files land on
+          # the persistent backend PVC).
+          delete_request_store: s3
     EOF
   ]
 
