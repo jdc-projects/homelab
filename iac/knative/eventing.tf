@@ -7,7 +7,7 @@
 #     plane only — NOT the Kafka broker/channel data plane; see README).
 #   - source.redis: installs the (alpha) RedisStreamSource.
 # The backing Kafka and Valkey instances live with the tests (tests-kafka.tf,
-# tests-redis.tf), reusing the already-installed Strimzi operator and the
+# tests-valkey.tf), reusing the already-installed Strimzi operator and the
 # established valkey.io Helm chart.
 
 resource "kubernetes_manifest" "knative_eventing" {

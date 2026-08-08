@@ -350,7 +350,7 @@ kubectl -n knative-test exec kafka-kafka-0 -- bin/kafka-console-producer.sh \
 kubectl -n knative-test logs -l serving.knative.dev/service=fn-kafka --tail=20
 
 # RedisStreamSource (alpha) — seed stream entries, then read logs:
-kubectl -n knative-test exec svc/valkey -- redis-cli XADD mystream '* task ping'
+kubectl -n knative-test exec svc/valkey -- redis-cli XADD mystream '*' task ping
 kubectl -n knative-test logs -l serving.knative.dev/service=fn-redis --tail=20
 
 # Broker fan-out — post one event of each type, watch each ksvc get its filtered subset:
