@@ -245,9 +245,14 @@ resource "kubernetes_manifest" "my_kafka_source" {
 > **Two alpha-source quirks** (both handled by this module):
 > 1. The `address` field **must** use the `redis://` URL scheme — the adapter
 >    panics with `"redis: invalid URL scheme"` on a bare `host:port`.
-> 2. The operator creates a `tls-secret` with an **empty placeholder cert** that
->    crashes the adapter (`panic called with nil argument`). This module deletes
->    the Secret on every apply (`eventing.tf` → `delete_redis_tls_secret`).
+> 2. The operator ships a broken `tls-secret` (placeholder PEM with no cert
+>    body) that crashes the adapter (`panic called with nil argument`) —
+>    upstream bug
+>    [knative-extensions/eventing-redis#626](https://github.com/knative-extensions/eventing-redis/issues/626),
+>    closed stale/unfixed. This module overrides the controller's
+>    `SECRET_TLS_TLSCERTIFICATE` env var to empty via `spec.workloads` on the
+>    KnativeEventing CR, so it never reads the broken Secret and the adapter
+>    uses plain TCP.
 
 ```hcl
 resource "kubernetes_manifest" "my_redis_source" {
