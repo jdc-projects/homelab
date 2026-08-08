@@ -304,3 +304,34 @@ spec = {
   ]
 }
 ```
+
+## Namespace teardown: finalizer guard
+
+When a module with ksvcs is destroyed (`tofu destroy`), the Knative Serving
+controller must remove finalizers from its internal Ingress (Kingress) resources
+before the namespace can be deleted. The controller processes these
+asynchronously — if tofu deletes the namespace in the same apply, the namespace
+stalls in `Terminating` with `SomeFinalizersRemain`.
+
+Add a `time_sleep` between the ksvcs and the namespace so the controller has
+time to clean up:
+
+```hcl
+resource "time_sleep" "knative_cleanup" {
+  create_duration  = "0s"
+  destroy_duration = "120s"
+  depends_on       = [kubernetes_namespace.app]
+}
+
+resource "kubernetes_manifest" "my_fn" {
+  manifest = {
+    # ...
+  }
+  depends_on = [time_sleep.knative_cleanup]
+}
+```
+
+The dependency chain is `namespace → time_sleep → ksvcs`. On destroy this
+reverses: ksvcs are deleted first, then `time_sleep` blocks for 120s (giving the
+controller time to process Kingress finalizers), then the namespace is deleted
+cleanly.
