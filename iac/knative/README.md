@@ -1,9 +1,8 @@
 # Knative (Serving + Eventing)
 
-Installs Knative via the [Knative Operator](../knative-operator/) and ships a set
-of **live test functions** (in `knative-test`) that prove every enabled eventing
-capability, plus a **pattern catalog** (below) for adding real functions inside
-app modules.
+Installs Knative Serving + Eventing via the [Knative Operator](../knative-operator/),
+configured for the cluster's Traefik-based ingress. App modules consume the
+platform via `terraform_remote_state.knative` and the **pattern catalog** below.
 
 ## What this module installs
 
@@ -11,13 +10,12 @@ app modules.
 |---|---|---|
 | `KnativeServing` | `serving.tf` | core Serving; ingress class `traefik.ingress.networking.knative.dev` (Istio plugin disabled — Traefik is the external ingress); request traces → OTel collector; `autocreate-cluster-domain-claims` enabled |
 | `KnativeEventing` | `eventing.tf` | core Eventing + `source.kafka` (KafkaSource data plane only) + `source.redis` (RedisStreamSource, **alpha**) |
-| Live test fns | `tests-*.tf` | one per capability, all togglable via `var.enable_tests` |
 
 > **Kafka broker data plane is NOT installed.** The operator's `source.kafka`
 > flag deploys the Kafka **source** data plane (`kafka-source-dispatcher`) only.
 > The Kafka **broker/channel** data plane (`kafka-broker-dispatcher`/`receiver` +
 > `config-kafka-broker-data-plane`) is absent. Use the **default channel-based
-> Broker** (mt-broker + IMC) — which is what `tests-broker.tf` does.
+> Broker** (mt-broker + IMC).
 
 Outputs app modules consume via `terraform_remote_state.knative`: serving
 namespace, eventing namespace, ingress class, and which sources are installed.
@@ -72,30 +70,12 @@ entirely for the Tier-2 path. The trade-off is no scale-to-zero wake-up via this
 path (the Service has no endpoints when the revision is at zero); either pin
 `min-scale=1` or accept cold-start 503s for internet-facing functions.
 
-## Live test functions (`knative-test`)
-
-Each is gated by a flag in `var.enable_tests` (all on by default). Verify with
-the commands in the [verification checklist](#verification-checklist).
-
-| Test | Proves | Backing service |
-|---|---|---|
-| `fn-ticker` | PingSource → Serving + scale-to-zero + Traefik Knative provider | — |
-| `fn-k8s` | ApiServerSource (Pod/ConfigMap) → Serving | — (own SA+Role) |
-| `fn-kafka` | KafkaSource → Serving | in-module Strimzi Kafka (`tests-kafka.tf`) |
-| `fn-redis` | RedisStreamSource (**alpha**) → Serving | in-module Valkey (`tests-valkey.tf`) |
-| `fn-broker-a/b` | default channel-based Broker + two filtered Triggers (fan-out) | — (IMC, not Kafka) |
-| `fn-public` | Tier-2 public routing + wildcard TLS + middleware chain | — |
-
-There is **no shared/central Kafka or Valkey** in the cluster, so the Kafka/Redis
-tests bring their own (Strimzi `Kafka` CR + `valkey` Helm release), mirroring
-`iac/posthog/kafka.tf` and `iac/n8n/valkey.tf`.
-
 ## Pattern catalog (for app modules)
 
 Consume the platform from an app module (e.g. `iac/<app>/`) with remote state,
-then add a `kubernetes_manifest` per function. Sinks use
-`gcr.io/knative-releases/knative.dev/eventing/cmd/event_display` here only because
-it logs CloudEvents; real functions use your own image.
+then add a `kubernetes_manifest` per function. The examples below use
+`gcr.io/knative-releases/knative.dev/eventing/cmd/event_display` as a placeholder
+image (it logs CloudEvents); real functions use your own image.
 
 ```hcl
 data "terraform_remote_state" "knative" {
@@ -145,8 +125,8 @@ resource "kubernetes_manifest" "my_fn_ping" {
 }
 ```
 
-ApiServerSource needs its own `ServiceAccount` + `Role` (get/list/watch) — see
-`tests-sources.tf` (`fn_k8s_reader_*`).
+ApiServerSource needs its own `ServiceAccount` + `Role` (get/list/watch on the
+resource types you want to observe — e.g. Pods, ConfigMaps).
 
 ### Tier-2: public + authenticated function (the canonical internet pattern)
 
@@ -240,8 +220,8 @@ resource "kubernetes_manifest" "my_kafka_source" {
 >    upstream bug
 >    [knative-extensions/eventing-redis#626](https://github.com/knative-extensions/eventing-redis/issues/626),
 >    closed stale/unfixed. This module overrides the controller's
->    `SECRET_TLS_TLSCERTIFICATE` env var to empty via `spec.workloads` on the
->    KnativeEventing CR, so it never reads the broken Secret and the adapter
+>    `SECRET_TLS_TLSCERTIFICATE` env var via `spec.workloads` on the
+>    KnativeEventing CR so it never reads the broken Secret and the adapter
 >    uses plain TCP.
 
 ```hcl
@@ -324,45 +304,3 @@ spec = {
   ]
 }
 ```
-
-## Verification checklist
-
-Run after deploy:
-
-```sh
-# Serving + Tier-1 (Traefik Knative provider) + scale-to-zero
-kubectl -n knative-test get ksvc fn-ticker
-kubectl -n knative-test logs -l serving.knative.dev/service=fn-ticker --tail=20   # CloudEvents from PingSource
-# cold start: watch pods scale 0->1 on an event, then ->0 at idle:
-kubectl -n knative-test get pods -l serving.knative.dev/service=fn-ticker -w
-
-# ApiServerSource
-kubectl -n knative-test logs -l serving.knative.dev/service=fn-k8s --tail=20
-
-# KafkaSource — seed a message, then read the ksvc logs:
-kubectl -n knative-test exec kafka-kafka-0 -- bin/kafka-console-producer.sh \
-  --bootstrap-server localhost:9092 --topic knative-test <<< '{"hello":"kafka"}'
-kubectl -n knative-test logs -l serving.knative.dev/service=fn-kafka --tail=20
-
-# RedisStreamSource (alpha) — seed stream entries, then read logs:
-kubectl -n knative-test exec svc/valkey -- redis-cli XADD mystream '*' task ping
-kubectl -n knative-test logs -l serving.knative.dev/service=fn-redis --tail=20
-
-# Broker fan-out — post one event of each type, watch each ksvc get its filtered subset:
-kubectl -n knative-test run curl --rm -i --restart=Never --image=curlimages/curl -- \
-  curl -s -X POST \
-  http://broker-ingress.knative-eventing.svc.cluster.local/knative-test/test-broker \
-  -H "Ce-Id: 1" -H "Ce-Specversion: 1.0" -H "Ce-Type: type.a" \
-  -H "Content-Type: application/json" -d '{"x":1}'
-kubectl -n knative-test logs -l serving.knative.dev/service=fn-broker-a --tail=10  # gets type.a
-kubectl -n knative-test logs -l serving.knative.dev/service=fn-broker-b --tail=10  # does NOT get type.a
-
-# Tier-2 public fn (TLS + shared middleware chain) — 405 = function reached (event_display rejects GET)
-curl -sI https://fn-public.<server_base_domain>     # expect 405 (or 200 if your fn handles GET)
-```
-
-## Tearing down the tests
-
-Set the relevant `var.enable_tests.*` to `false` (or all of them) and re-apply.
-The `knative-test` namespace is removed automatically when no test is enabled.
-The platform install (Serving/Eventing) stays.
