@@ -148,6 +148,23 @@ resource "helm_release" "traefik" {
       name  = "additionalArguments[0]"
       value = "--serverstransport.insecureskipverify=true"
     },
+    # Knative provider config not exposed by the chart values schema, so passed
+    # as CLI flags. privateEntrypoints MUST be set — without it the provider
+    # silently skips ALL cluster-local Kingress rules (the root cause of the
+    # empty-configuration bug). privateService is written into each Kingress's
+    # status.loadBalancer so Serving creates the correct ExternalName target.
+    {
+      name  = "additionalArguments[1]"
+      value = "--providers.knative.privateEntrypoints=knative"
+    },
+    {
+      name  = "additionalArguments[2]"
+      value = "--providers.knative.privateService.name=${kubernetes_service.traefik_internal.metadata[0].name}"
+    },
+    {
+      name  = "additionalArguments[3]"
+      value = "--providers.knative.privateService.namespace=${kubernetes_service.traefik_internal.metadata[0].namespace}"
+    },
     {
       name  = "ports.traefik.port"
       value = 9000
@@ -186,7 +203,14 @@ resource "helm_release" "traefik" {
     },
     {
       name  = "ports.metrics.port"
-      value = 9500
+      value = "9500"
+    },
+    # Knative internal entrypoint: plain HTTP on port 8080. No web→websecure
+    # redirect (unlike the "web" entrypoint) so cluster-local functions are
+    # reachable from inside the cluster without TLS friction.
+    {
+      name  = "ports.knative.port"
+      value = "8080"
     },
     {
       name  = "metrics.prometheus.service.enabled"
@@ -244,6 +268,29 @@ resource "helm_release" "traefik" {
   lifecycle {
     replace_triggered_by  = [null_resource.traefik_version]
     create_before_destroy = false
+  }
+}
+
+# ClusterIP Service that selects the Traefik DaemonSet pods (hostNetwork) on the
+# "knative" container port (8080). This is the gateway that Knative Serving's
+# ExternalName Services resolve to for cluster-local ksvcs.
+resource "kubernetes_service" "traefik_internal" {
+  metadata {
+    name      = "traefik-internal"
+    namespace = kubernetes_namespace.traefik.metadata[0].name
+  }
+
+  spec {
+    selector = {
+      "app.kubernetes.io/name"     = "traefik"
+      "app.kubernetes.io/instance" = "traefik-traefik"
+    }
+
+    port {
+      name        = "knative"
+      port        = 80
+      target_port = "knative"
+    }
   }
 }
 
