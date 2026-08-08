@@ -37,9 +37,37 @@ jobs:
       iac-dir: ./iac/github-org-runners
       runner-type: ${{ inputs.runner-type }}
 
+  deploy-calico-operator:
+    # CNI operator — installs the tigera-operator + its CRDs. Split from
+    # deploy-calico so the Installation CR applies only once the CRDs are
+    # Established (mirrors knative-operator -> knative). Runs as early as
+    # possible, in parallel with the runner job.
+    needs: [
+      deploy-tf-state-namespace,
+    ]
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
+    secrets: inherit
+
+    with:
+      iac-dir: ./iac/calico-operator
+
+  deploy-calico:
+    # The Installation CR — tells the operator to deploy Calico (calico-node,
+    # which installs the CNI). CNI is functional once this completes, so every
+    # pod-scheduling job below depends on it.
+    needs: [
+      deploy-calico-operator,
+    ]
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
+    secrets: inherit
+
+    with:
+      iac-dir: ./iac/calico
+
   deploy-openebs:
     needs: [
       deploy-github-org-runner,
+      deploy-calico,
     ]
     uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
@@ -50,6 +78,7 @@ jobs:
   deploy-grafana-operator:
     needs: [
       deploy-github-org-runner,
+      deploy-calico,
     ]
     uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
@@ -70,6 +99,7 @@ jobs:
   deploy-prometheus-operator:
     needs: [
       deploy-github-org-runner,
+      deploy-calico,
     ]
     uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
@@ -80,6 +110,7 @@ jobs:
   deploy-cert-manager:
     needs: [
       deploy-github-org-runner,
+      deploy-calico,
     ]
     uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
@@ -90,6 +121,7 @@ jobs:
   deploy-kubevirt-operator:
     needs: [
       deploy-github-org-runner,
+      deploy-calico,
     ]
     uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
@@ -100,6 +132,7 @@ jobs:
   deploy-clickhouse-operator:
     needs: [
       deploy-github-org-runner,
+      deploy-calico,
     ]
     uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
@@ -111,12 +144,24 @@ jobs:
   deploy-kafka-operator:
     needs: [
       deploy-github-org-runner,
+      deploy-calico,
     ]
     uses: ./.github/workflows/kubernetes-iac-deploy.yml
     secrets: inherit
 
     with:
       iac-dir: ./iac/kafka-operator
+
+  deploy-knative-operator:
+    needs: [
+      deploy-github-org-runner,
+      deploy-calico,
+    ]
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
+    secrets: inherit
+
+    with:
+      iac-dir: ./iac/knative-operator
 
   deploy-opensearch-operator:
     needs: [
@@ -369,3 +414,28 @@ jobs:
 
     with:
       iac-dir: ./iac/otel-collector
+
+  deploy-knative:
+    # Knative Serving + Eventing (full eventing) + live test functions.
+    # Dependencies:
+    #   - knative-operator  : KnativeServing/KnativeEventing CRDs
+    #   - traefik           : Knative provider (Tier-1) + shared-middleware
+    #                         remote_state for the Tier-2 ingress test fn
+    #   - kafka-operator    : Strimzi CRDs for the in-module test Kafka
+    #   - prometheus-operator / grafana-operator : ServiceMonitor /
+    #                         GrafanaDashboard CRDs (observability)
+    #   - keycloak-config   : the ingress module's keycloak provider reads its
+    #                         state (even for auth_mode=none)
+    needs: [
+      deploy-knative-operator,
+      deploy-traefik,
+      deploy-kafka-operator,
+      deploy-prometheus-operator,
+      deploy-grafana-operator,
+      deploy-keycloak-config,
+    ]
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
+    secrets: inherit
+
+    with:
+      iac-dir: ./iac/knative

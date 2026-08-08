@@ -25,6 +25,14 @@ resource "ssh_resource" "k3s_provisioning" {
       disable:
         - "traefik"
         - "local-storage"
+      # CNI is provided by Calico (see iac/calico/), NOT k3s's bundled flannel.
+      # flannel-backend=none disables flannel entirely; disable-network-policy
+      # disables k3s's network-policy controller so it doesn't conflict with
+      # Calico's. Calico brings its own IPAM (block-based) so the per-node
+      # podCIDR is no longer a capacity limit. See k3s/README.md for the
+      # migration + restore flow (Calico must be installed before pods schedule).
+      flannel-backend: none
+      disable-network-policy: true
       cluster-cidr: "10.42.0.0/16"
       service-cidr: "10.43.0.0/16"
       service-node-port-range: "27000-32767"
