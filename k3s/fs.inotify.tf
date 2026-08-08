@@ -4,9 +4,9 @@ resource "ssh_resource" "fs_inotify_update" {
   private_key = var.k3s_ssh_private_key
 
   file {
-    content = <<-EOF
+    content     = <<-EOF
       fs.inotify.max_queued_events = 65536
-      fs.inotify.max_user_instances = 512
+      fs.inotify.max_user_instances = 2048
       fs.inotify.max_user_watches = 996788
     EOF
     destination = "99-inotify.conf"
