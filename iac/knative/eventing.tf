@@ -52,3 +52,25 @@ resource "kubernetes_manifest" "knative_eventing" {
 
   depends_on = [null_resource.wait_for_operator_crds]
 }
+
+# The Knative Operator creates a "tls-secret" Secret in knative-eventing with an
+# empty placeholder cert (-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----)
+# for the RedisStreamSource adapter. The adapter's newPool() checks
+# TLSCertificate != "" — the non-empty placeholder triggers the TLS code path,
+# which fails to parse the empty cert and panics ("panic called with nil
+# argument"). Deleting the Secret makes the controller pass an empty
+# TLS_CERTIFICATE env var, so the adapter uses plain TCP. Apply this after every
+# operator reconciliation that might recreate the Secret.
+resource "null_resource" "delete_redis_tls_secret" {
+  triggers = {
+    always_run = timestamp()
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      kubectl -n ${kubernetes_namespace.knative_eventing.metadata[0].name} delete secret tls-secret --ignore-not-found=true
+    EOT
+  }
+
+  depends_on = [kubernetes_manifest.knative_eventing]
+}

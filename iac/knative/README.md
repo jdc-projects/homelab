@@ -242,8 +242,12 @@ resource "kubernetes_manifest" "my_kafka_source" {
 
 ### RedisStreamSource → function (alpha)
 
-> The `address` field **must** use the `redis://` URL scheme — the adapter
-> panics with `"redis: invalid URL scheme"` on a bare `host:port`.
+> **Two alpha-source quirks** (both handled by this module):
+> 1. The `address` field **must** use the `redis://` URL scheme — the adapter
+>    panics with `"redis: invalid URL scheme"` on a bare `host:port`.
+> 2. The operator creates a `tls-secret` with an **empty placeholder cert** that
+>    crashes the adapter (`panic called with nil argument`). This module deletes
+>    the Secret on every apply (`eventing.tf` → `delete_redis_tls_secret`).
 
 ```hcl
 resource "kubernetes_manifest" "my_redis_source" {
