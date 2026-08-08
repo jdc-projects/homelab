@@ -157,6 +157,19 @@ resource "helm_release" "loki" {
                 period: 24h
         limits_config:
           allow_structured_metadata: true
+          # Time-based retention (compactor-driven; see compactor block below).
+          # At ~0.94 GiB/day of chunks this caps the minio PVC at a steady state
+          # of ~28 GiB, leaving comfortable headroom under the 50Gi PVC.
+          retention_period: 720h
+          max_query_lookback: 720h
+        compactor:
+          retention_enabled: true
+          # filesystem delete_request_store is fine here because the compactor runs
+          # as a single backend replica (data-loki-backend-0); the boltdb lives on
+          # its PVC. If backend.replicas is raised above 1, switch this to the
+          # shared S3 store. working_directory defaults to /var/loki/compactor,
+          # which is already on the persistent backend PVC.
+          delete_request_store: filesystem
     EOF
   ]
 
