@@ -72,6 +72,15 @@ resource "helm_release" "traefik" {
       name  = "experimental.abortOnPluginFailure"
       value = "true"
     },
+    # Enable the experimental Knative provider (the provider itself is additionally
+    # gated by providers.knative.enabled below; the chart fails if one is set
+    # without the other). Knative Serving points at Traefik via the ingress class
+    # "traefik.ingress.networking.knative.dev". namespaces is left empty so the
+    # provider watches all namespaces (functions live in app namespaces).
+    {
+      name  = "experimental.knative"
+      value = "true"
+    },
     {
       name  = "experimental.plugins.cloudflare.moduleName"
       value = "github.com/agence-gaya/traefik-plugin-cloudflare"
@@ -126,6 +135,13 @@ resource "helm_release" "traefik" {
     },
     {
       name  = "providers.kubernetesIngress.allowExternalNameServices"
+      value = "true"
+    },
+    # Knative provider: watches Knative internal Ingress resources
+    # (networking.internal.knative.dev) produced by Knative Serving and renders
+    # them as Traefik routes (Tier-1 routing for cluster-local/internal functions).
+    {
+      name  = "providers.knative.enabled"
       value = "true"
     },
     {
