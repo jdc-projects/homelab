@@ -64,6 +64,4 @@ resource "kubernetes_manifest" "knative_serving" {
     "metadata.labels",
     "metadata.annotations",
   ]
-
-  depends_on = [null_resource.wait_for_operator_crds]
 }
