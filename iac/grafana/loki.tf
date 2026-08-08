@@ -126,7 +126,7 @@ resource "helm_release" "loki" {
     },
     {
       name  = "minio.persistence.size"
-      value = "20Gi"
+      value = "50Gi"
     },
     {
       name  = "minio.persistence.storageClass"
