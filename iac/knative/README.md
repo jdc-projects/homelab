@@ -52,16 +52,6 @@ passed as CLI flags in `iac/traefik/traefik.tf`:
 The provider is **experimental**; keep blast-radius small by not exposing
 internet-facing functions through it.
 
-> **Switching ingress controllers:** if you ever replace the Traefik Knative
-> provider (e.g. with Kourier and back), the existing Kingress statuses will be
-> stale (old `NetworkConfigured=True` + old `loadBalancer` target). The provider
-> only re-writes status when `observedGeneration != generation`. Reset it:
-> ```sh
-> kubectl -n <ns> patch ingresses.networking.internal.knative.dev <name> \
->   --type=json -p='[{"op":"replace","path":"/status/observedGeneration","value":0}]' \
->   --subresource=status
-> ```
-
 ### Tier-2 — shared `ingress` module (internet-facing functions)
 
 Make the ksvc `cluster-local` (so Tier-1 handles internal routing) and expose it
