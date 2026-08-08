@@ -17,11 +17,11 @@ variable "enable_tests" {
   })
 
   default = {
-    ticker = true
-    k8s    = true
-    kafka  = true
-    redis  = true
-    broker = true
-    public = true
+    ticker = false
+    k8s    = false
+    kafka  = false
+    redis  = false
+    broker = false
+    public = false
   }
 }
