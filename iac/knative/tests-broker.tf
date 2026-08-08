@@ -1,6 +1,6 @@
-# Kafka Broker fan-out test: one Kafka-backed Broker with two filtered Triggers
-# routing to two ksvcs. Posting a CloudEvent with type "type.a" reaches only
-# fn-broker-a; "type.b" reaches only fn-broker-b — proving Broker mesh delivery
+# Broker fan-out test: one default channel-based Broker (IMC) with two filtered
+# Triggers routing to two ksvcs. Posting a CloudEvent with type "type.a" reaches
+# only fn-broker-a; "type.b" reaches only fn-broker-b — proving Broker delivery
 # + Trigger attribute filtering. Verified via the two ksvcs' pod logs.
 
 resource "kubernetes_manifest" "fn_broker_a" {

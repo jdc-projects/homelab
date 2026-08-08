@@ -3,8 +3,8 @@
 # Knative Eventing, reconciled by the Knative Operator. Built-in sources
 # (PingSource, ApiServerSource) ship with Eventing. The Kafka and Redis source
 # extensions are enabled explicitly:
-#   - source.kafka: installs the Kafka eventing extension (KafkaSource, plus the
-#     Kafka Broker/Channel/Sink data plane used by tests-broker.tf).
+#   - source.kafka: installs the Kafka eventing extension (KafkaSource data
+#     plane only — NOT the Kafka broker/channel data plane; see README).
 #   - source.redis: installs the (alpha) RedisStreamSource.
 # The backing Kafka and Valkey instances live with the tests (tests-kafka.tf,
 # tests-redis.tf), reusing the already-installed Strimzi operator and the
@@ -31,8 +31,8 @@ resource "kubernetes_manifest" "knative_eventing" {
         gitlab   = { enabled = false }
         rabbitmq = { enabled = false }
 
-        # Kafka eventing extension: KafkaSource plus the Kafka Broker/Channel/Sink
-        # data plane used by tests-broker.tf.
+        # Kafka eventing extension: KafkaSource data plane only (kafka-source-
+        # dispatcher). The Kafka broker/channel data plane is NOT included.
         kafka = {
           enabled = true
         }
