@@ -54,8 +54,10 @@ resource "helm_release" "rustfs" {
       name  = "ingress.enabled"
       value = "false"
     },
-    # Traces are small; lighter footprint than the outline/posthog RustFS
-    # instances which hold user data.
+    # Tempo ingesters batch-flush trace blocks to RustFS, producing short CPU
+    # bursts well above the ~70m average. 500m was clipping them (~40% CFS
+    # throttle, firing CPUThrottlingHigh); 1000m gives headroom while staying
+    # lighter than posthog's user-data rustfs (2000m).
     {
       name  = "resources.requests.cpu"
       value = "100m"
@@ -66,7 +68,7 @@ resource "helm_release" "rustfs" {
     },
     {
       name  = "resources.limits.cpu"
-      value = "500m"
+      value = "1000m"
     },
     {
       name  = "resources.limits.memory"
