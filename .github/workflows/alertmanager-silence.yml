@@ -64,7 +64,8 @@ jobs:
                 clickhousekeeperinstallations \
                 mariadbs.k8s.mariadb.com \
                 kafkas.kafka.strimzi.io \
-                opensearchclusters.opensearch.org; do
+                opensearchclusters.opensearch.org \
+                elasticsearches.elasticsearch.k8s.elastic.co; do
               kubectl get "$crd" -A -o jsonpath='{.items[*].metadata.namespace}' 2>/dev/null || true
               printf ' '
             done | tr ' ' '\n' | sed '/^$/d' | sort -u
@@ -144,7 +145,8 @@ jobs:
                 clickhousekeeperinstallations \
                 mariadbs.k8s.mariadb.com \
                 kafkas.kafka.strimzi.io \
-                opensearchclusters.opensearch.org; do
+                opensearchclusters.opensearch.org \
+                elasticsearches.elasticsearch.k8s.elastic.co; do
               kubectl get "$crd" -A -o jsonpath='{.items[*].metadata.namespace}' 2>/dev/null || true
               printf ' '
             done | tr ' ' '\n' | sed '/^$/d' | sort -u

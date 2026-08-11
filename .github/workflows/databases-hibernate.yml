@@ -574,6 +574,133 @@ jobs:
           echo "Waiting for pods to be Ready..."
           kubectl -n "$NS" wait pod -l opensearch.org/opensearch-cluster="$CLUSTER" --for=condition=Ready --timeout=30m
 
+  get-elasticsearch-clusters:
+    runs-on: self-hosted
+
+    outputs:
+      clusters: ${{ steps.get-clusters.outputs.clusters}}
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v7
+      - name: "Add cluster CA certificate"
+        run: |
+          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
+          sudo mkdir /usr/local/share/ca-certificates/extra
+          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
+          sudo update-ca-certificates
+      - name: "Generate and install kubeconfig"
+        working-directory: ./iac
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v5
+        with:
+          version: 'v1.33.6'
+      - name: "Get Elasticsearch clusters"
+        id: "get-clusters"
+        run: |
+          kubectl get elasticsearches.elasticsearch.k8s.elastic.co -A -o yaml > clusters.yml
+          yq '.items[].metadata | pick(["name", "namespace"])' clusters.yml -o json -I 0 > dbs.json
+          sed -i '{:q;N;s/\n/, /g;t q}' dbs.json
+          sed -i 's#^#[#' dbs.json
+          sed -i 's#$#]#' dbs.json
+          truncate -s -1 dbs.json
+          echo "clusters=$(cat dbs.json)" >> "$GITHUB_OUTPUT"
+
+  hibernate-elasticsearch-operator:
+    runs-on: self-hosted
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v7
+      - name: "Add cluster CA certificate"
+        run: |
+          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
+          sudo mkdir /usr/local/share/ca-certificates/extra
+          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
+          sudo update-ca-certificates
+      - name: "Generate and install kubeconfig"
+        working-directory: ./iac
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v5
+        with:
+          version: 'v1.33.6'
+      # ECK runs as a StatefulSet (elastic-operator-0), not a Deployment - scale
+      # syntax differs from the OpenSearch job above. The operator keeps no
+      # local state (reconciles from CRs/Secrets), so scaling to 0 is safe.
+      - name: "Stop ECK operator"
+        if: ${{ inputs.do-hibernate }}
+        run: |
+          kubectl -n elasticsearch-operator scale sts elastic-operator --replicas=0
+          kubectl -n elasticsearch-operator wait pod -l app.kubernetes.io/name=elastic-operator --for=delete --timeout=5m
+      - name: "Start ECK operator"
+        if: ${{ !inputs.do-hibernate }}
+        run: |
+          kubectl -n elasticsearch-operator scale sts elastic-operator --replicas=1
+          kubectl -n elasticsearch-operator wait pod -l app.kubernetes.io/name=elastic-operator --for=condition=Ready --timeout=5m
+
+  hibernate-elasticsearch-clusters:
+    needs: [
+      get-elasticsearch-clusters,
+      hibernate-elasticsearch-operator,
+    ]
+    runs-on: self-hosted
+    if: ${{ needs.get-elasticsearch-clusters.outputs.clusters != '' }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        cluster: ${{ fromJson(needs.get-elasticsearch-clusters.outputs.clusters) }}
+
+    steps:
+      - name: "Repo checkout"
+        uses: actions/checkout@v7
+      - name: "Add cluster CA certificate"
+        run: |
+          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
+          sudo mkdir /usr/local/share/ca-certificates/extra
+          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
+          sudo update-ca-certificates
+      - name: "Generate and install kubeconfig"
+        working-directory: ./iac
+        run: |
+          ./cluster-config-write.sh
+          mkdir ~/.kube
+          cp cluster.yml ~/.kube/config
+      - name: "Setup kubectl"
+        uses: azure/setup-kubectl@v5
+        with:
+          version: 'v1.33.6'
+      - name: "Scale Elasticsearch StatefulSets to 0"
+        if: ${{ inputs.do-hibernate }}
+        run: |
+          NS=${{ matrix.cluster.namespace }}
+          CLUSTER=${{ matrix.cluster.name }}
+          for sts in $(kubectl get sts -n "$NS" -l elasticsearch.k8s.elastic.co/cluster-name="$CLUSTER" -o jsonpath='{.items[*].metadata.name}'); do
+            kubectl -n "$NS" scale sts "$sts" --replicas=0
+          done
+          kubectl -n "$NS" wait pod -l elasticsearch.k8s.elastic.co/cluster-name="$CLUSTER" --for=delete --timeout=5m
+      - name: "Wait for Elasticsearch Ready"
+        if: ${{ !inputs.do-hibernate }}
+        run: |
+          NS=${{ matrix.cluster.namespace }}
+          CLUSTER=${{ matrix.cluster.name }}
+          for sts in $(kubectl get sts -n "$NS" -l elasticsearch.k8s.elastic.co/cluster-name="$CLUSTER" -o jsonpath='{.items[*].metadata.name}'); do
+            echo "Waiting for operator to restore replicas for $sts..."
+            timeout 10m bash -c "while [ \$(kubectl get sts $sts -n $NS -o jsonpath='{.spec.replicas}') = '0' ]; do sleep 5; done"
+          done
+          echo "Waiting for pods to be created..."
+          timeout 5m bash -c "while [ -z \$(kubectl get pods -n $NS -l elasticsearch.k8s.elastic.co/cluster-name=$CLUSTER -o jsonpath='{.items[*].metadata.name}' 2>/dev/null) ]; do sleep 5; done"
+          echo "Waiting for pods to be Ready..."
+          kubectl -n "$NS" wait pod -l elasticsearch.k8s.elastic.co/cluster-name="$CLUSTER" --for=condition=Ready --timeout=30m
+
   report-hibernation-status:
     needs: [
       hibernate-postgres-databases,
@@ -582,11 +709,12 @@ jobs:
       hibernate-mariadb-databases,
       hibernate-kafka-clusters,
       hibernate-opensearch-clusters,
+      hibernate-elasticsearch-clusters,
     ]
     if: always() && !cancelled() && inputs.do-hibernate
     runs-on: ubuntu-latest
     outputs:
-      attempted: ${{ (needs.hibernate-postgres-databases.result != 'skipped') || (needs.hibernate-clickhouse-databases.result != 'skipped') || (needs.hibernate-clickhouse-keeper-databases.result != 'skipped') || (needs.hibernate-mariadb-databases.result != 'skipped') || (needs.hibernate-kafka-clusters.result != 'skipped') || (needs.hibernate-opensearch-clusters.result != 'skipped') }}
+      attempted: ${{ (needs.hibernate-postgres-databases.result != 'skipped') || (needs.hibernate-clickhouse-databases.result != 'skipped') || (needs.hibernate-clickhouse-keeper-databases.result != 'skipped') || (needs.hibernate-mariadb-databases.result != 'skipped') || (needs.hibernate-kafka-clusters.result != 'skipped') || (needs.hibernate-opensearch-clusters.result != 'skipped') || (needs.hibernate-elasticsearch-clusters.result != 'skipped') }}
     steps:
       - name: "Report status"
         run: echo "done"

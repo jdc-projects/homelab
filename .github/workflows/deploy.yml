@@ -173,6 +173,16 @@ jobs:
     with:
       iac-dir: ./iac/opensearch-operator
 
+  deploy-elasticsearch-operator:
+    needs: [
+      deploy-cert-manager,
+    ]
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
+    secrets: inherit
+
+    with:
+      iac-dir: ./iac/elasticsearch-operator
+
   deploy-traefik:
     needs: [
       deploy-openebs,
@@ -354,6 +364,7 @@ jobs:
       deploy-velero,
       deploy-kafka-operator,
       deploy-opensearch-operator,
+      deploy-elasticsearch-operator,
       deploy-clickhouse-operator,
       deploy-cloudnative-pg,
       deploy-traefik-config,
