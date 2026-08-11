@@ -54,6 +54,27 @@ them mid-plan/apply).
 - `tofu fmt -check` is enforced in CI — run `tofu fmt` before committing.
 - Prefer small, self-contained commits (one per logical change).
 
+## Observability
+
+Every app module wires observability as standard, not as an afterthought.
+
+- **Tracing**: OTel `Instrumentation` CR in the module namespace pointing at
+  `http://otel-collector.otel.svc:4318` (mirror `iac/outline/instrumentation.tf`). For
+  owned Deployments, add `instrumentation.opentelemetry.io/inject-nodejs` (or
+  `-python` / `-java`) directly to the pod template. For chart-managed pods that don't
+  expose an annotation hook, use helm `postrender` to add it — see
+  `iac/huly/post-renderer.sh` for the pattern.
+- **Errors**: Sentry project + DSN via the `sentry` provider, **but only if the app
+  supports Sentry upstream** (grep the source/chart first — many apps don't bundle the
+  SDK, in which case wiring Sentry is wasted effort).
+- **Metrics**: `ServiceMonitor` or `PodMonitor` if the app exposes `/metrics` or
+  `/prometheus`. Skip silently if not.
+- **Dashboards**: Grafana dashboard via `modules/grafana-dashboard` when the app exposes
+  meaningful metrics.
+
+If an app can't support a given signal (no metrics endpoint, no Sentry SDK, etc.), note
+it in the module's `README.md` so the next person doesn't repeat the search.
+
 ## Consuming modules from other repos
 
 The shared modules under `iac/modules/` are consumable from other repos via git

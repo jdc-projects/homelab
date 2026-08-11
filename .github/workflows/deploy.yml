@@ -385,6 +385,7 @@ jobs:
           web-check,
           convertx,
           posthog,
+          huly,
         ]
 
     with:
