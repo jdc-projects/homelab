@@ -185,6 +185,45 @@ locals {
       </prometheus>
     </clickhouse>
   XML
+
+  # Bounded retention for the ClickHouse system log tables that the operator's
+  # default config.xml leaves without a TTL (text_log, query_views_log,
+  # background_schedule_pool_log, metric_log, asynchronous_metric_log). The
+  # other log tables (query_log, part_log, trace_log, processors_profile_log)
+  # already carry a 30-day TTL via the operator's 01-clickhouse-*.xml files.
+  # Without this, the system logs grow unbounded and fill the data volume.
+  # text_log is additionally reduced from <level>trace</level> to information,
+  # which is the main reason it reached ~10 GiB in two weeks.
+  posthog_system_logs_xml = <<-XML
+    <clickhouse>
+      <text_log>
+        <database>system</database>
+        <table>text_log</table>
+        <ttl>event_date + toIntervalDay(7)</ttl>
+        <level>information</level>
+      </text_log>
+      <query_views_log>
+        <database>system</database>
+        <table>query_views_log</table>
+        <ttl>event_date + toIntervalDay(7)</ttl>
+      </query_views_log>
+      <background_schedule_pool_log>
+        <database>system</database>
+        <table>background_schedule_pool_log</table>
+        <ttl>event_date + toIntervalDay(7)</ttl>
+      </background_schedule_pool_log>
+      <metric_log>
+        <database>system</database>
+        <table>metric_log</table>
+        <ttl>event_date + toIntervalDay(7)</ttl>
+      </metric_log>
+      <asynchronous_metric_log>
+        <database>system</database>
+        <table>asynchronous_metric_log</table>
+        <ttl>event_date + toIntervalDay(7)</ttl>
+      </asynchronous_metric_log>
+    </clickhouse>
+  XML
 }
 
 resource "kubernetes_manifest" "posthog_clickhouse" {
@@ -215,10 +254,11 @@ resource "kubernetes_manifest" "posthog_clickhouse" {
         ]
 
         files = {
-          "posthog-clusters.xml" = local.posthog_clusters_xml
-          "posthog-keeper.xml"   = local.posthog_keeper_xml
-          "posthog-compat.xml"   = local.posthog_compat_xml
-          "prometheus.xml"       = local.posthog_prometheus_xml
+          "posthog-clusters.xml"    = local.posthog_clusters_xml
+          "posthog-keeper.xml"      = local.posthog_keeper_xml
+          "posthog-compat.xml"      = local.posthog_compat_xml
+          "posthog-system-logs.xml" = local.posthog_system_logs_xml
+          "prometheus.xml"          = local.posthog_prometheus_xml
         }
 
         users = {
@@ -271,7 +311,7 @@ resource "kubernetes_manifest" "posthog_clickhouse" {
               storageClassName = "openebs-zfs-localpv-bulk"
               accessModes      = ["ReadWriteOnce"]
               resources = {
-                requests = { storage = "20Gi" }
+                requests = { storage = "50Gi" }
               }
             }
           }
