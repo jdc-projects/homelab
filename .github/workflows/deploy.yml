@@ -373,6 +373,7 @@ jobs:
           erpnext,
           web-check,
           convertx,
+          cap,
           vaultwarden,
           posthog,
           huly,
