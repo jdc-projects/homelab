@@ -288,17 +288,6 @@ jobs:
     with:
       iac-dir: ./iac/keycloak-config
 
-  deploy-vaultwarden:
-    needs: [
-      deploy-cloudnative-pg,
-      deploy-openldap,
-    ]
-    uses: ./.github/workflows/kubernetes-iac-deploy.yml
-    secrets: inherit
-
-    with:
-      iac-dir: ./iac/vaultwarden
-
   deploy-ocis:
     needs: [
       deploy-keycloak-config,
@@ -384,6 +373,7 @@ jobs:
           erpnext,
           web-check,
           convertx,
+          vaultwarden,
           posthog,
           huly,
         ]
