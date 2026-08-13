@@ -132,3 +132,33 @@ module "vaultwarden_ingress" {
     app = "vaultwarden"
   }
 }
+
+# The admin panel (/admin) is served on the same host as the public vault.
+# Unlike cap, the vaultwarden admin surface is a single clean prefix, so we keep
+# the main ingress public (users log in with their master password) and put OIDC
+# in front of /admin only - defense in depth on top of ADMIN_TOKEN.
+#
+# The regex also covers /oidc/callback: the traefik-oidc-auth plugin redirects
+# there after login, and that path must route through this same OIDC middleware
+# or (with a public catch-all) the code would never exchange and login breaks.
+# priority 100 beats the public catch-all (auto-priority) for these paths only.
+module "vaultwarden_admin_ingress" {
+  source = "../modules/ingress"
+
+  name      = "vaultwarden-admin"
+  namespace = kubernetes_namespace.vaultwarden.metadata[0].name
+  domain    = local.vaultwarden_domain
+
+  # Reuse the service created by vaultwarden_ingress (named <name>-internal).
+  existing_service_name      = "vaultwarden-internal"
+  existing_service_namespace = kubernetes_namespace.vaultwarden.metadata[0].name
+  target_port                = 80
+
+  auth_mode           = "oidc-interactive"
+  keycloak_auth_realm = "primary"
+
+  path_matcher = "PathRegexp"
+  path         = "^/(admin(/.*)?|oidc/callback(/.*)?)$"
+
+  priority = 100
+}

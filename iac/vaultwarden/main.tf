@@ -32,13 +32,23 @@ data "terraform_remote_state" "openldap" {
   }
 }
 
-# provider is required by the ingress module, but not used, so values don't matter
+data "terraform_remote_state" "keycloak" {
+  backend = "kubernetes"
+
+  config = {
+    secret_suffix = "keycloak-config"
+    config_path   = "../cluster.yml"
+    namespace     = "tf-state"
+  }
+}
+
+# Used by the /admin OIDC ingress (vaultwarden_admin_ingress), which provisions
+# a Keycloak client in front of the admin panel.
 provider "keycloak" {
-  client_id     = "admin-cli"
-  username      = ""
-  password      = ""
-  url           = ""
-  initial_login = false
+  client_id = "admin-cli"
+  username  = data.terraform_remote_state.keycloak.outputs.keycloak_admin_username
+  password  = data.terraform_remote_state.keycloak.outputs.keycloak_admin_password
+  url       = data.terraform_remote_state.keycloak.outputs.keycloak_url
 }
 
 resource "kubernetes_namespace" "vaultwarden" {
