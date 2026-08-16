@@ -55,9 +55,10 @@ resource "helm_release" "rustfs" {
       value = "false"
     },
     # Tempo ingesters batch-flush trace blocks to RustFS, producing short CPU
-    # bursts well above the ~70m average. 500m was clipping them (~40% CFS
-    # throttle, firing CPUThrottlingHigh); 1000m gives headroom while staying
-    # lighter than posthog's user-data rustfs (2000m).
+    # bursts well above the ~70m average. 500m clipped them (~40% CFS
+    # throttle), 1000m still throttled ~37% (CPUThrottlingHigh); 2000m matches
+    # the posthog/sentry bursty-ingest rustfs limit while requests stay at
+    # 100m so scheduling/QoS are unchanged.
     {
       name  = "resources.requests.cpu"
       value = "100m"
@@ -68,7 +69,7 @@ resource "helm_release" "rustfs" {
     },
     {
       name  = "resources.limits.cpu"
-      value = "1000m"
+      value = "2000m"
     },
     {
       name  = "resources.limits.memory"
