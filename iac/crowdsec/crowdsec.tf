@@ -166,6 +166,24 @@ resource "helm_release" "crowdsec" {
         - filter: req.Host == "grafana.${var.server_base_domain}" && req.URL.Path startsWith "/api/ds/query"
           apply:
             - DisableBodyInspection()
+      on_match:
+        # Scoped CRS exceptions for hosts/paths where legitimate traffic trips CRS
+        # rules. Same scoping rule as pre_eval: every filter must pin req.Host.
+        # cap: host-wide — captcha service whose sensitive endpoints already
+        # require a secret key; dashboard assets and base64 challenge/redeem
+        # tokens false-positive CRS body inspection (933120 et al).
+        - filter: req.Host == "cap.${var.server_base_domain}"
+          apply:
+            - CancelAlert()
+            - CancelEvent()
+            - SetRemediation("allow")
+        # idp: OIDC token endpoint only — client-credentials/token POST bodies
+        # (secrets, opaque tokens) trip CRS; keep CRS active on the rest of idp.
+        - filter: req.Host == "idp.${var.server_base_domain}" && req.URL.Path endsWith "/protocol/openid-connect/token"
+          apply:
+            - CancelAlert()
+            - CancelEvent()
+            - SetRemediation("allow")
     EOF
     },
     {
