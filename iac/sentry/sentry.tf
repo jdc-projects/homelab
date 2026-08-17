@@ -123,10 +123,11 @@ resource "helm_release" "sentry" {
       web:
         existingSecretEnv: "sentry-secrets"
       # The cluster has no default StorageClass; the chart's taskBroker PVC
-      # defaults to "" and never binds. Pin it to the bulk class.
+      # defaults to "" and never binds. Pin it to the no-backup bulk class —
+      # taskbroker queues are ephemeral and excluded from velero backups.
       taskBroker:
         persistence:
-          storageClass: "openebs-zfs-localpv-bulk"
+          storageClass: "openebs-zfs-localpv-bulk-no-backup"
 
     # OIDC SSO via the sentry-auth-oidc plugin (installed in the custom image).
     # OIDC_DOMAIN is the Keycloak realm URL; the plugin appends

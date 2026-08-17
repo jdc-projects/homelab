@@ -91,7 +91,7 @@ resource "kubernetes_manifest" "sentry_clickhouse" {
             name          = "data"
             reclaimPolicy = "Delete"
             spec = {
-              storageClassName = "openebs-zfs-localpv-bulk"
+              storageClassName = "openebs-zfs-localpv-bulk-no-backup"
               accessModes      = ["ReadWriteOnce"]
               resources = {
                 requests = { storage = "20Gi" }

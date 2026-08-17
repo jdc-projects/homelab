@@ -75,6 +75,14 @@ EOF
 
 ## Notes
 
+- **Backup scope** (velero): only the CNPG Postgres config DB (`sentry-db`, on
+  `openebs-zfs-localpv-random`) is backed up — it holds orgs, projects, users,
+  rules, tokens (all manual config). ClickHouse, Kafka, taskbroker and RustFS
+  volumes use `openebs-zfs-localpv-bulk-no-backup` (skipped via the velero
+  resource-policy): analytics data and release artifacts are treated as
+  disposable in DR. After a restore, Postgres comes back populated and
+  ClickHouse/Kafka come back empty (schema + topics re-provisioned by the
+  operators/jobs).
 - **Valkey is unauthenticated** (mirrors the PostHog module). The valkey.io chart
   uses ACL-based auth (`auth.aclUsers`), not a simple `auth.password`; wiring
   that is deferred to a hardening pass.
