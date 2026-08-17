@@ -150,15 +150,34 @@ recreations — keep the init container idempotent.
 
 ### Hibernation
 
-ECK has no native `suspend`/`hibernate` field on the `Elasticsearch` CRD.
-The `pause-orchestration` annotation added in 3.5 only pauses spec
-reconciliation; it does **not** scale pods to zero. To hibernate, mirror
-the OpenSearch pattern in `.github/workflows/databases-hibernate.yml`:
+ECK has no native `suspend`/`hibernate` field on the `Elasticsearch` CRD, and
+the `eck.k8s.elastic.co/suspend` annotation only stops the ES *process* for
+debugging (pods stay up). The naive "scale the operator to 0, scale the sts to
+0, restore the operator and let ECK bring the pods back" pattern **wedges
+permanently on single-master ES 7.x clusters**: ECK's upscale path must call
+the ES API to enumerate nodes (one-at-a-time master safety), the API is
+unreachable at 0 pods, so the CR loops `"Upscaling StatefulSet ... from 0 to 1"`
+and the sts stays at 0 replicas forever (observed for 5 days straight on
+huly/elastic; see elastic/cloud-on-k8s#8939 — the fix there only landed for
+ES 8+).
 
-1. Scale `deploy/elastic-operator` to 0 in `elasticsearch-operator` ns
-   (so it doesn't fight the next step).
+Working pattern (implemented in `.github/workflows/databases-hibernate.yml`) —
+the workflow owns the sts replicas for the whole window, and ECK is paused via
+the 3.5+ `eck.k8s.elastic.co/pause-orchestration` annotation so it never has to
+re-upscale from 0 itself:
+
+1. `kubectl annotate elasticsearch <cr> eck.k8s.elastic.co/pause-orchestration=true`
+   — pauses sts spec changes/rollups/scale only; certs, services, users and
+   health monitoring keep running (the operator stays up, unlike the old
+   pattern).
 2. Scale the ES `StatefulSet` (labeled
-   `elasticsearch.k8s.elastic.co/cluster-name=<name>`) to 0.
-3. PVCs are retained automatically (scaling doesn't touch PVCs).
-4. On wake: reverse the operator scale and let ECK restore the desired
-   `count` from the CR.
+   `elasticsearch.k8s.elastic.co/cluster-name=<name>`) to 0. PVCs are retained
+   automatically (ECK sets `persistentVolumeClaimRetentionPolicy: Retain`).
+3. On wake: scale the sts back to `spec.nodeSets[].count` for its nodeSet
+   (sts name is `<cr>-es-<nodeSet>`) **while still paused**.
+4. Wait for pods Ready, then remove the annotation; ECK resumes and the CR
+   settles to `phase: Ready`.
+
+The annotation is per-CR and persists across the hibernate/restart workflow
+invocations (they are separate `workflow_call`s), so it doubles as the
+window-state marker between the two legs.

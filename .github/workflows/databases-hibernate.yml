@@ -610,46 +610,9 @@ jobs:
           truncate -s -1 dbs.json
           echo "clusters=$(cat dbs.json)" >> "$GITHUB_OUTPUT"
 
-  hibernate-elasticsearch-operator:
-    runs-on: self-hosted
-
-    steps:
-      - name: "Repo checkout"
-        uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
-        with:
-          version: 'v1.33.6'
-      # ECK runs as a StatefulSet (elastic-operator-0), not a Deployment - scale
-      # syntax differs from the OpenSearch job above. The operator keeps no
-      # local state (reconciles from CRs/Secrets), so scaling to 0 is safe.
-      - name: "Stop ECK operator"
-        if: ${{ inputs.do-hibernate }}
-        run: |
-          kubectl -n elasticsearch-operator scale sts elastic-operator --replicas=0
-          kubectl -n elasticsearch-operator wait pod -l app.kubernetes.io/name=elastic-operator --for=delete --timeout=5m
-      - name: "Start ECK operator"
-        if: ${{ !inputs.do-hibernate }}
-        run: |
-          kubectl -n elasticsearch-operator scale sts elastic-operator --replicas=1
-          kubectl -n elasticsearch-operator wait pod -l app.kubernetes.io/name=elastic-operator --for=condition=Ready --timeout=5m
-
   hibernate-elasticsearch-clusters:
     needs: [
       get-elasticsearch-clusters,
-      hibernate-elasticsearch-operator,
     ]
     runs-on: self-hosted
     if: ${{ needs.get-elasticsearch-clusters.outputs.clusters != '' }}
@@ -678,28 +641,49 @@ jobs:
         uses: azure/setup-kubectl@v5
         with:
           version: 'v1.33.6'
-      - name: "Scale Elasticsearch StatefulSets to 0"
+      - name: "Pause ECK orchestration and scale StatefulSets to 0"
         if: ${{ inputs.do-hibernate }}
         run: |
           NS=${{ matrix.cluster.namespace }}
           CLUSTER=${{ matrix.cluster.name }}
+          # Pause ECK orchestration for the whole window: the workflow owns the
+          # sts replicas instead of the operator. ECK cannot re-upscale a
+          # single-master ES 7.x cluster from 0 (its upscale path needs a
+          # reachable ES API), so leaving it managing the sts wedges the CR in
+          # "Upscaling from 0 to 1" forever. Certs/services/PDB/health keep
+          # running while paused (ECK 3.5+).
+          kubectl -n "$NS" annotate elasticsearch "$CLUSTER" eck.k8s.elastic.co/pause-orchestration=true --overwrite
           for sts in $(kubectl get sts -n "$NS" -l elasticsearch.k8s.elastic.co/cluster-name="$CLUSTER" -o jsonpath='{.items[*].metadata.name}'); do
             kubectl -n "$NS" scale sts "$sts" --replicas=0
           done
           kubectl -n "$NS" wait pod -l elasticsearch.k8s.elastic.co/cluster-name="$CLUSTER" --for=delete --timeout=5m
+      - name: "Scale StatefulSets back up (orchestration still paused)"
+        if: ${{ !inputs.do-hibernate }}
+        run: |
+          NS=${{ matrix.cluster.namespace }}
+          CLUSTER=${{ matrix.cluster.name }}
+          # Target replicas come from the CR: sts <cluster>-es-<nodeSet> maps to
+          # spec.nodeSets[name=nodeSet].count. Scaling is safe while paused;
+          # ECK never has to re-upscale from 0 itself (see hibernate leg).
+          kubectl -n "$NS" get elasticsearch "$CLUSTER" -o yaml > es.yml
+          for sts in $(kubectl get sts -n "$NS" -l elasticsearch.k8s.elastic.co/cluster-name="$CLUSTER" -o jsonpath='{.items[*].metadata.name}'); do
+            NODESET=${sts#"$CLUSTER"-es-}
+            REPLICAS=$(yq ".spec.nodeSets[] | select(.name == \"$NODESET\") | .count" es.yml)
+            echo "Scaling $sts to $REPLICAS..."
+            kubectl -n "$NS" scale sts "$sts" --replicas="$REPLICAS"
+          done
       - name: "Wait for Elasticsearch Ready"
         if: ${{ !inputs.do-hibernate }}
         run: |
           NS=${{ matrix.cluster.namespace }}
           CLUSTER=${{ matrix.cluster.name }}
-          for sts in $(kubectl get sts -n "$NS" -l elasticsearch.k8s.elastic.co/cluster-name="$CLUSTER" -o jsonpath='{.items[*].metadata.name}'); do
-            echo "Waiting for operator to restore replicas for $sts..."
-            timeout 10m bash -c "while [ \$(kubectl get sts $sts -n $NS -o jsonpath='{.spec.replicas}') = '0' ]; do sleep 5; done"
-          done
-          echo "Waiting for pods to be created..."
-          timeout 5m bash -c "while [ -z \$(kubectl get pods -n $NS -l elasticsearch.k8s.elastic.co/cluster-name=$CLUSTER -o jsonpath='{.items[*].metadata.name}' 2>/dev/null) ]; do sleep 5; done"
           echo "Waiting for pods to be Ready..."
           kubectl -n "$NS" wait pod -l elasticsearch.k8s.elastic.co/cluster-name="$CLUSTER" --for=condition=Ready --timeout=30m
+          # Hand control back to ECK once ES is reachable, then require the CR
+          # to settle. Removal is || true so a missing annotation (e.g. manual
+          # intervention mid-window) doesn't fail the job.
+          kubectl -n "$NS" annotate elasticsearch "$CLUSTER" eck.k8s.elastic.co/pause-orchestration- --overwrite || true
+          kubectl -n "$NS" wait elasticsearch "$CLUSTER" --timeout=10m --for "jsonpath={.status.phase}=Ready"
 
   report-hibernation-status:
     needs: [
