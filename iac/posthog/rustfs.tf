@@ -11,7 +11,7 @@ resource "kubernetes_persistent_volume_claim" "rustfs" {
 
   spec {
     access_modes       = ["ReadWriteOnce"]
-    storage_class_name = "openebs-zfs-localpv-bulk"
+    storage_class_name = "openebs-zfs-localpv-bulk-no-backup"
 
     resources {
       requests = {
@@ -64,7 +64,7 @@ resource "kubernetes_persistent_volume_claim" "rustfs_recordings" {
 
   spec {
     access_modes       = ["ReadWriteOnce"]
-    storage_class_name = "openebs-zfs-localpv-bulk"
+    storage_class_name = "openebs-zfs-localpv-bulk-no-backup"
 
     resources {
       requests = {

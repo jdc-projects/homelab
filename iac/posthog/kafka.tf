@@ -298,7 +298,7 @@ resource "kubernetes_manifest" "kafka_node_pool" {
       storage = {
         type        = "persistent-claim"
         size        = "10Gi"
-        class       = "openebs-zfs-localpv-bulk"
+        class       = "openebs-zfs-localpv-bulk-no-backup"
         deleteClaim = false
       }
 

@@ -43,7 +43,7 @@ resource "kubernetes_manifest" "opensearch" {
 
           persistence = {
             pvc = {
-              storageClass = "openebs-zfs-localpv-bulk"
+              storageClass = "openebs-zfs-localpv-bulk-no-backup"
               accessModes  = ["ReadWriteOnce"]
             }
           }
