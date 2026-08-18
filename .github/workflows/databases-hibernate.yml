@@ -38,17 +38,7 @@ jobs:
       - name: "Get Databases"
         id: "get-databases"
         run: |
-          kubectl get clusters.postgresql.cnpg.io -A -o yaml > clusters.yml
-          # Skip namespaces excluded from velero backups (ns label) — hibernating
-          # their workloads is pointless: nothing snapshots them.
-          EXCLUDED_NS=$(kubectl get ns -l velero.io/exclude-from-backup=true -o jsonpath='{.items[*].metadata.name}' | tr ' ' ',')
-          export EXCLUDED_NS="${EXCLUDED_NS:-__none__}"
-          yq '.items[] | .metadata.namespace as $ns | select((env(EXCLUDED_NS) | split(",") | map(. == $ns) | any) | not) | .metadata | pick(["name", "namespace"])' clusters.yml -o json -I 0 > dbs.json
-          sed -i '{:q;N;s/\n/, /g;t q}' dbs.json
-          sed -i 's#^#[#' dbs.json
-          sed -i 's#$#]#' dbs.json
-          truncate -s -1 dbs.json
-          echo "databases=$(cat dbs.json)" >> "$GITHUB_OUTPUT"
+          utils/discover-hibernate-matrix.sh clusters.postgresql.cnpg.io '.metadata | pick(["name", "namespace"])' databases
 
   get-clickhouse-databases:
     runs-on: self-hosted
@@ -64,15 +54,7 @@ jobs:
       - name: "Get Databases"
         id: "get-databases"
         run: |
-          kubectl get clickhouseinstallations -A -o yaml > clusters.yml
-          EXCLUDED_NS=$(kubectl get ns -l velero.io/exclude-from-backup=true -o jsonpath='{.items[*].metadata.name}' | tr ' ' ',')
-          export EXCLUDED_NS="${EXCLUDED_NS:-__none__}"
-          yq '.items[] | .metadata.namespace as $ns | select((env(EXCLUDED_NS) | split(",") | map(. == $ns) | any) | not) | {"name": .metadata.name, "namespace": .metadata.namespace, "replicas": (.spec.configuration.clusters[0].layout.replicasCount // 1)}' clusters.yml -o json -I 0 > dbs.json
-          sed -i '{:q;N;s/\n/, /g;t q}' dbs.json
-          sed -i 's#^#[#' dbs.json
-          sed -i 's#$#]#' dbs.json
-          truncate -s -1 dbs.json
-          echo "databases=$(cat dbs.json)" >> "$GITHUB_OUTPUT"
+          utils/discover-hibernate-matrix.sh clickhouseinstallations '{"name": .metadata.name, "namespace": .metadata.namespace, "replicas": (.spec.configuration.clusters[0].layout.replicasCount // 1)}' databases
 
   get-clickhouse-keeper-databases:
     runs-on: self-hosted
@@ -88,15 +70,7 @@ jobs:
       - name: "Get Databases"
         id: "get-databases"
         run: |
-          kubectl get clickhousekeeperinstallations -A -o yaml > clusters.yml
-          EXCLUDED_NS=$(kubectl get ns -l velero.io/exclude-from-backup=true -o jsonpath='{.items[*].metadata.name}' | tr ' ' ',')
-          export EXCLUDED_NS="${EXCLUDED_NS:-__none__}"
-          yq '.items[] | .metadata.namespace as $ns | select((env(EXCLUDED_NS) | split(",") | map(. == $ns) | any) | not) | {"name": .metadata.name, "namespace": .metadata.namespace}' clusters.yml -o json -I 0 > dbs.json
-          sed -i '{:q;N;s/\n/, /g;t q}' dbs.json
-          sed -i 's#^#[#' dbs.json
-          sed -i 's#$#]#' dbs.json
-          truncate -s -1 dbs.json
-          echo "databases=$(cat dbs.json)" >> "$GITHUB_OUTPUT"
+          utils/discover-hibernate-matrix.sh clickhousekeeperinstallations '{"name": .metadata.name, "namespace": .metadata.namespace}' databases
 
   get-mariadb-databases:
     runs-on: self-hosted
@@ -112,15 +86,7 @@ jobs:
       - name: "Get Databases"
         id: "get-databases"
         run: |
-          kubectl get mariadbs.k8s.mariadb.com -A -o yaml > clusters.yml
-          EXCLUDED_NS=$(kubectl get ns -l velero.io/exclude-from-backup=true -o jsonpath='{.items[*].metadata.name}' | tr ' ' ',')
-          export EXCLUDED_NS="${EXCLUDED_NS:-__none__}"
-          yq '.items[] | .metadata.namespace as $ns | select((env(EXCLUDED_NS) | split(",") | map(. == $ns) | any) | not) | .metadata | pick(["name", "namespace"])' clusters.yml -o json -I 0 > dbs.json
-          sed -i '{:q;N;s/\n/, /g;t q}' dbs.json
-          sed -i 's#^#[#' dbs.json
-          sed -i 's#$#]#' dbs.json
-          truncate -s -1 dbs.json
-          echo "databases=$(cat dbs.json)" >> "$GITHUB_OUTPUT"
+          utils/discover-hibernate-matrix.sh mariadbs.k8s.mariadb.com '.metadata | pick(["name", "namespace"])' databases
 
   hibernate-postgres-databases:
     needs: [
@@ -254,15 +220,7 @@ jobs:
       - name: "Get Kafka clusters"
         id: "get-clusters"
         run: |
-          kubectl get kafkas.kafka.strimzi.io -A -o yaml > clusters.yml
-          EXCLUDED_NS=$(kubectl get ns -l velero.io/exclude-from-backup=true -o jsonpath='{.items[*].metadata.name}' | tr ' ' ',')
-          export EXCLUDED_NS="${EXCLUDED_NS:-__none__}"
-          yq '.items[] | .metadata.namespace as $ns | select((env(EXCLUDED_NS) | split(",") | map(. == $ns) | any) | not) | .metadata | pick(["name", "namespace"])' clusters.yml -o json -I 0 > dbs.json
-          sed -i '{:q;N;s/\n/, /g;t q}' dbs.json
-          sed -i 's#^#[#' dbs.json
-          sed -i 's#$#]#' dbs.json
-          truncate -s -1 dbs.json
-          echo "clusters=$(cat dbs.json)" >> "$GITHUB_OUTPUT"
+          utils/discover-hibernate-matrix.sh kafkas.kafka.strimzi.io '.metadata | pick(["name", "namespace"])' clusters
 
   hibernate-kafka-operator:
     # Only stop/start the operator when there's at least one cluster to
@@ -329,15 +287,7 @@ jobs:
       - name: "Get OpenSearch clusters"
         id: "get-clusters"
         run: |
-          kubectl get opensearchclusters.opensearch.org -A -o yaml > clusters.yml
-          EXCLUDED_NS=$(kubectl get ns -l velero.io/exclude-from-backup=true -o jsonpath='{.items[*].metadata.name}' | tr ' ' ',')
-          export EXCLUDED_NS="${EXCLUDED_NS:-__none__}"
-          yq '.items[] | .metadata.namespace as $ns | select((env(EXCLUDED_NS) | split(",") | map(. == $ns) | any) | not) | .metadata | pick(["name", "namespace"])' clusters.yml -o json -I 0 > dbs.json
-          sed -i '{:q;N;s/\n/, /g;t q}' dbs.json
-          sed -i 's#^#[#' dbs.json
-          sed -i 's#$#]#' dbs.json
-          truncate -s -1 dbs.json
-          echo "clusters=$(cat dbs.json)" >> "$GITHUB_OUTPUT"
+          utils/discover-hibernate-matrix.sh opensearchclusters.opensearch.org '.metadata | pick(["name", "namespace"])' clusters
 
   hibernate-opensearch-operator:
     # Only stop/start the operator when there's at least one cluster to
@@ -419,15 +369,7 @@ jobs:
       - name: "Get Elasticsearch clusters"
         id: "get-clusters"
         run: |
-          kubectl get elasticsearches.elasticsearch.k8s.elastic.co -A -o yaml > clusters.yml
-          EXCLUDED_NS=$(kubectl get ns -l velero.io/exclude-from-backup=true -o jsonpath='{.items[*].metadata.name}' | tr ' ' ',')
-          export EXCLUDED_NS="${EXCLUDED_NS:-__none__}"
-          yq '.items[] | .metadata.namespace as $ns | select((env(EXCLUDED_NS) | split(",") | map(. == $ns) | any) | not) | .metadata | pick(["name", "namespace"])' clusters.yml -o json -I 0 > dbs.json
-          sed -i '{:q;N;s/\n/, /g;t q}' dbs.json
-          sed -i 's#^#[#' dbs.json
-          sed -i 's#$#]#' dbs.json
-          truncate -s -1 dbs.json
-          echo "clusters=$(cat dbs.json)" >> "$GITHUB_OUTPUT"
+          utils/discover-hibernate-matrix.sh elasticsearches.elasticsearch.k8s.elastic.co '.metadata | pick(["name", "namespace"])' clusters
 
   hibernate-elasticsearch-clusters:
     needs: [
