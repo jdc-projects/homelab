@@ -1,0 +1,45 @@
+name: Setup cluster access
+description: Checkout-adjacent bootstrap for jobs that talk to the k3s cluster.
+  Installs the cluster CA, generates the kubeconfig (iac/cluster-config-write.sh),
+  and sets up kubectl. Optionally installs the Velero CLI.
+
+inputs:
+  velero-cli-version:
+    description: "Velero CLI version to install, e.g. v1.18.2. Omit to skip."
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: "Add cluster CA certificate"
+      shell: bash
+      run: |
+        echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
+        sudo mkdir -p /usr/local/share/ca-certificates/extra
+        sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
+        sudo update-ca-certificates
+
+    - name: "Generate and install kubeconfig"
+      shell: bash
+      working-directory: ./iac
+      run: |
+        ./cluster-config-write.sh
+        mkdir -p ~/.kube
+        cp cluster.yml ~/.kube/config
+
+    - name: "Setup kubectl"
+      uses: azure/setup-kubectl@v5
+      with:
+        version: 'v1.33.6'
+
+    - name: "Install Velero CLI"
+      if: ${{ inputs.velero-cli-version != '' }}
+      shell: bash
+      env:
+        VELERO_VERSION: ${{ inputs.velero-cli-version }}
+      run: |
+        mkdir velero
+        curl https://github.com/vmware-tanzu/velero/releases/download/${VELERO_VERSION}/velero-${VELERO_VERSION}-linux-amd64.tar.gz -Lo velero.tar.gz
+        tar -xvf velero.tar.gz -C ./velero --strip-components=1
+        sudo cp ./velero/velero /usr/local/bin/velero

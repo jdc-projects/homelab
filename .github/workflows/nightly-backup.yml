@@ -53,30 +53,10 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
         with:
-          version: 'v1.33.6'
-      - name: "Install Velero CLI"
-        env:
-          VELERO_VERSION: 'v1.18.2'
-        run: |
-          mkdir velero
-          curl https://github.com/vmware-tanzu/velero/releases/download/${{ env.VELERO_VERSION }}/velero-${{ env.VELERO_VERSION }}-linux-amd64.tar.gz -Lo velero.tar.gz
-          tar -xvf velero.tar.gz -C ./velero --strip-components=1
-          sudo cp ./velero/velero /usr/local/bin/velero
+          velero-cli-version: 'v1.18.2'
       # Failed-backup cleanup runs BEFORE this run's backup exists. If it ran
       # after (as it used to), a backup that failed fast would be deleted by
       # its own run — and the subsequent "items[-1]" wait would then match the
@@ -114,30 +94,10 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
         with:
-          version: 'v1.33.6'
-      - name: "Install Velero CLI"
-        env:
-          VELERO_VERSION: 'v1.18.2'
-        run: |
-          mkdir velero
-          curl https://github.com/vmware-tanzu/velero/releases/download/${{ env.VELERO_VERSION }}/velero-${{ env.VELERO_VERSION }}-linux-amd64.tar.gz -Lo velero.tar.gz
-          tar -xvf velero.tar.gz -C ./velero --strip-components=1
-          sudo cp ./velero/velero /usr/local/bin/velero
+          velero-cli-version: 'v1.18.2'
       - name: "Get old backups to delete"
         id: "get-old-backups-to-delete"
         env:

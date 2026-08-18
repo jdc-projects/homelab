@@ -33,22 +33,8 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
-        with:
-          version: 'v1.33.6'
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
       - name: "Get Databases"
         id: "get-databases"
         run: |
@@ -73,22 +59,8 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
-        with:
-          version: 'v1.33.6'
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
       - name: "Get Databases"
         id: "get-databases"
         run: |
@@ -111,22 +83,8 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
-        with:
-          version: 'v1.33.6'
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
       - name: "Get Databases"
         id: "get-databases"
         run: |
@@ -149,22 +107,8 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
-        with:
-          version: 'v1.33.6'
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
       - name: "Get Databases"
         id: "get-databases"
         run: |
@@ -193,22 +137,8 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
-        with:
-          version: 'v1.33.6'
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
       - name: "Hibernate / restart DB"
         env:
           HIBERNATE_CHOICE: ${{ inputs.do-hibernate && 'on' || 'off' }}
@@ -235,22 +165,8 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
-        with:
-          version: 'v1.33.6'
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
       - name: "Hibernate / restart ClickHouse"
         env:
           STOP_VALUE: ${{ inputs.do-hibernate && '1' || '0' }}
@@ -277,22 +193,8 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
-        with:
-          version: 'v1.33.6'
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
       - name: "Hibernate / restart Keeper"
         env:
           STOP_VALUE: ${{ inputs.do-hibernate && '1' || '0' }}
@@ -319,22 +221,8 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
-        with:
-          version: 'v1.33.6'
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
       - name: "Hibernate DB"
         if: ${{ inputs.do-hibernate }}
         run: |
@@ -361,22 +249,8 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
-        with:
-          version: 'v1.33.6'
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
       - name: "Get Kafka clusters"
         id: "get-clusters"
         run: |
@@ -403,22 +277,8 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
-        with:
-          version: 'v1.33.6'
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
       - name: "Stop Kafka operator"
         if: ${{ inputs.do-hibernate }}
         run: |
@@ -446,22 +306,8 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
-        with:
-          version: 'v1.33.6'
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
       - name: "Delete Kafka pods"
         if: ${{ inputs.do-hibernate }}
         run: kubectl delete pods -n ${{ matrix.cluster.namespace }} -l strimzi.io/cluster=${{ matrix.cluster.name }} --timeout=10m
@@ -478,22 +324,8 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
-        with:
-          version: 'v1.33.6'
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
       - name: "Get OpenSearch clusters"
         id: "get-clusters"
         run: |
@@ -519,22 +351,8 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
-        with:
-          version: 'v1.33.6'
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
       - name: "Stop OpenSearch operator"
         if: ${{ inputs.do-hibernate }}
         run: |
@@ -562,22 +380,8 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
-        with:
-          version: 'v1.33.6'
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
       - name: "Scale OpenSearch StatefulSets to 0"
         if: ${{ inputs.do-hibernate }}
         run: |
@@ -610,22 +414,8 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
-        with:
-          version: 'v1.33.6'
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
       - name: "Get Elasticsearch clusters"
         id: "get-clusters"
         run: |
@@ -654,22 +444,8 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
-        with:
-          version: 'v1.33.6'
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
       - name: "Pause ECK orchestration and scale StatefulSets to 0"
         if: ${{ inputs.do-hibernate }}
         run: |

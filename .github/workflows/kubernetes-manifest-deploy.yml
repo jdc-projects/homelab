@@ -23,22 +23,8 @@ jobs:
     steps:
       - name: "Repo checkout"
         uses: actions/checkout@v7
-      - name: "Add cluster CA certificate"
-        run: |
-          echo "$CLUSTER_CA_CERT_DATA" > cluster.cert.pem
-          sudo mkdir /usr/local/share/ca-certificates/extra
-          sudo cp cluster.cert.pem /usr/local/share/ca-certificates/extra/cluster.cert.crt
-          sudo update-ca-certificates
-      - name: "Generate and install kubeconfig"
-        working-directory: ./iac
-        run: |
-          ./cluster-config-write.sh
-          mkdir ~/.kube
-          cp cluster.yml ~/.kube/config
-      - name: "Setup kubectl"
-        uses: azure/setup-kubectl@v5
-        with:
-          version: 'v1.33.6'
+      - name: "Setup cluster access"
+        uses: ./.github/actions/setup-cluster
       - name: "Connect to Tailnet"
         if: "${{ ('self-hosted' != inputs.runner-type) }}"
         uses: tailscale/github-action@v4
