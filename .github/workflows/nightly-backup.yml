@@ -77,6 +77,25 @@ jobs:
           curl https://github.com/vmware-tanzu/velero/releases/download/${{ env.VELERO_VERSION }}/velero-${{ env.VELERO_VERSION }}-linux-amd64.tar.gz -Lo velero.tar.gz
           tar -xvf velero.tar.gz -C ./velero --strip-components=1
           sudo cp ./velero/velero /usr/local/bin/velero
+      # Failed-backup cleanup runs BEFORE this run's backup exists. If it ran
+      # after (as it used to), a backup that failed fast would be deleted by
+      # its own run — and the subsequent "items[-1]" wait would then match the
+      # previous night's Completed backup and the job would go green. Cleaning
+      # up here instead means a failure always survives until the next run,
+      # ~24h of visibility for investigation. Matches any Failed/PartiallyFailed
+      # backup (manual/ad-hoc runs included).
+      - name: "Get failed backups to delete"
+        id: "get-failed-backups-to-delete"
+        env:
+          MAX_NUM_BACKUPS: 30
+        run: |
+          velero get backups -o yaml > backups.yml
+          yq '.items[] | select(.status.phase == "Failed" or .status.phase == "PartiallyFailed") | .metadata.name' backups.yml > backups-to-delete.txt
+          sed -i '{:q;N;s/\n/ /g;t q}' backups-to-delete.txt
+          echo "failed-backups-to-delete=$(cat backups-to-delete.txt)" >> "$GITHUB_OUTPUT"
+      - name: "Delete failed backups"
+        if: steps.get-failed-backups-to-delete.outputs.failed-backups-to-delete != ''
+        run: velero delete backup ${{ steps.get-failed-backups-to-delete.outputs.failed-backups-to-delete }} --confirm
       - name: "Start backup"
         run: retry --times="$BACKUP_START_MAX_RETRIES" --delay="$BACKUP_START_RETRY_DELAY" -- velero create backup --from-schedule nightly
       - name: "Wait for snapshots"
@@ -119,18 +138,6 @@ jobs:
           curl https://github.com/vmware-tanzu/velero/releases/download/${{ env.VELERO_VERSION }}/velero-${{ env.VELERO_VERSION }}-linux-amd64.tar.gz -Lo velero.tar.gz
           tar -xvf velero.tar.gz -C ./velero --strip-components=1
           sudo cp ./velero/velero /usr/local/bin/velero
-      - name: "Get failed backups to delete"
-        id: "get-failed-backups-to-delete"
-        env:
-          MAX_NUM_BACKUPS: 30
-        run: |
-          velero get backups -o yaml > backups.yml
-          yq '.items[] | select(.status.phase == "Failed" or .status.phase == "PartiallyFailed") | .metadata.name' backups.yml > backups-to-delete.txt
-          sed -i '{:q;N;s/\n/ /g;t q}' backups-to-delete.txt
-          echo "failed-backups-to-delete=$(cat backups-to-delete.txt)" >> "$GITHUB_OUTPUT"
-      - name: "Delete failed backups"
-        if: steps.get-failed-backups-to-delete.outputs.failed-backups-to-delete != ''
-        run: velero delete backup ${{ steps.get-failed-backups-to-delete.outputs.failed-backups-to-delete }} --confirm
       - name: "Get old backups to delete"
         id: "get-old-backups-to-delete"
         env:
