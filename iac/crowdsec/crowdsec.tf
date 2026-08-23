@@ -134,59 +134,6 @@ resource "helm_release" "crowdsec" {
       value = "appsec"
     },
     {
-      name  = "appsec.configs.custom-appsec-config\\.yaml"
-      value = <<-EOF
-      name: crowdsecurity/custom-appsec-config
-      default_remediation: ban
-      inband_rules:
-        - crowdsecurity/base-config
-        - crowdsecurity/vpatch-*
-        - crowdsecurity/generic-*
-      outofband_rules:
-        - crowdsecurity/crs
-      on_load:
-        - apply:
-            # Truncate (don't block) oversized request bodies so large uploads
-            # never get auto-banned by the body-size guard.
-            - SetBodySizeExceededAction("partial")
-            - SetMaxBodySize(52428800)
-      pre_eval:
-        # Each filter MUST be scoped to the app hostname via req.Host so it
-        # does not leak to other apps sharing the same AppSec engine. Add
-        # new entries when an app has request bodies that trip CRS rules.
-        - filter: req.Host == "ocis.${var.server_base_domain}" && req.URL.Path startsWith "/dav/"
-          apply:
-            - DisableBodyInspection()
-        - filter: req.Host == "outline.${var.server_base_domain}" && ((req.URL.Path startsWith "/api/documents") || (req.URL.Path startsWith "/api/attachments") || (req.URL.Path startsWith "/api/hooks"))
-          apply:
-            - DisableBodyInspection()
-        - filter: req.Host == "assets-notes.${var.server_base_domain}"
-          apply:
-            - DisableBodyInspection()
-        - filter: req.Host == "grafana.${var.server_base_domain}" && req.URL.Path startsWith "/api/ds/query"
-          apply:
-            - DisableBodyInspection()
-      on_match:
-        # Scoped CRS exceptions for hosts/paths where legitimate traffic trips CRS
-        # rules. Same scoping rule as pre_eval: every filter must pin req.Host.
-        # cap: host-wide — captcha service whose sensitive endpoints already
-        # require a secret key; dashboard assets and base64 challenge/redeem
-        # tokens false-positive CRS body inspection (933120 et al).
-        - filter: req.Host == "cap.${var.server_base_domain}"
-          apply:
-            - CancelAlert()
-            - CancelEvent()
-            - SetRemediation("allow")
-        # idp: OIDC token endpoint only — client-credentials/token POST bodies
-        # (secrets, opaque tokens) trip CRS; keep CRS active on the rest of idp.
-        - filter: req.Host == "idp.${var.server_base_domain}" && req.URL.Path endsWith "/protocol/openid-connect/token"
-          apply:
-            - CancelAlert()
-            - CancelEvent()
-            - SetRemediation("allow")
-    EOF
-    },
-    {
       name  = "appsec.env[0].name"
       value = "COLLECTIONS"
     },
@@ -226,6 +173,67 @@ resource "helm_release" "crowdsec" {
       name  = "lapi.persistentVolume.config.existingClaim"
       value = kubernetes_persistent_volume_claim.crowdsec["lapi-config"].metadata[0].name
     },
+  ]
+
+  # The AppSec config must be passed via `values` (a rendered values file),
+  # never the `set` list: helm parses `set` values with --set/strvals
+  # semantics, which splits values on commas. YAML containing commas gets
+  # silently truncated at the first comma (this previously amputated the idp
+  # token-endpoint entry mid-comment) or fails to apply outright
+  # ("key ... has no value (cannot end with ,)").
+  values = [<<-YAML
+    appsec:
+      configs:
+        custom-appsec-config.yaml: |
+          name: crowdsecurity/custom-appsec-config
+          default_remediation: ban
+          inband_rules:
+            - crowdsecurity/base-config
+            - crowdsecurity/vpatch-*
+            - crowdsecurity/generic-*
+          outofband_rules:
+            - crowdsecurity/crs
+          on_load:
+            - apply:
+                # Truncate (don't block) oversized request bodies so large uploads
+                # never get auto-banned by the body-size guard.
+                - SetBodySizeExceededAction("partial")
+                - SetMaxBodySize(52428800)
+          pre_eval:
+            # Each filter MUST be scoped to the app hostname via req.Host so it
+            # does not leak to other apps sharing the same AppSec engine. Add
+            # new entries when an app has request bodies that trip CRS rules.
+            - filter: req.Host == "ocis.${var.server_base_domain}" && req.URL.Path startsWith "/dav/"
+              apply:
+                - DisableBodyInspection()
+            - filter: req.Host == "outline.${var.server_base_domain}" && ((req.URL.Path startsWith "/api/documents") || (req.URL.Path startsWith "/api/attachments") || (req.URL.Path startsWith "/api/hooks"))
+              apply:
+                - DisableBodyInspection()
+            - filter: req.Host == "assets-notes.${var.server_base_domain}"
+              apply:
+                - DisableBodyInspection()
+            - filter: req.Host == "grafana.${var.server_base_domain}" && req.URL.Path startsWith "/api/ds/query"
+              apply:
+                - DisableBodyInspection()
+          on_match:
+            # Scoped CRS exceptions for hosts/paths where legitimate traffic trips CRS
+            # rules. Same scoping rule as pre_eval: every filter must pin req.Host.
+            # cap: host-wide — captcha service whose sensitive endpoints already
+            # require a secret key; dashboard assets and base64 challenge/redeem
+            # tokens false-positive CRS body inspection (933120 et al).
+            - filter: req.Host == "cap.${var.server_base_domain}"
+              apply:
+                - CancelAlert()
+                - CancelEvent()
+                - SetRemediation("allow")
+            # idp: OIDC token endpoint only — client-credentials/token POST bodies
+            # (secrets, opaque tokens) trip CRS; keep CRS active on the rest of idp.
+            - filter: req.Host == "idp.${var.server_base_domain}" && req.URL.Path endsWith "/protocol/openid-connect/token"
+              apply:
+                - CancelAlert()
+                - CancelEvent()
+                - SetRemediation("allow")
+  YAML
   ]
 
   set_sensitive = [
