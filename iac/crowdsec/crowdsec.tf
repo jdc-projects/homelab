@@ -233,6 +233,16 @@ resource "helm_release" "crowdsec" {
                 - CancelAlert()
                 - CancelEvent()
                 - SetRemediation("allow")
+            # idp: Keycloak Admin REST API — already gated by a master-realm bearer
+            # token; its JSON bodies (user credentials, client secrets) false-positive
+            # the out-of-band CRS rules (crowdsec-appsec-outofband), banning the home
+            # IP and cascading into other services' deploys. Path-scoped: the rest
+            # of idp keeps full CRS.
+            - filter: req.Host == "idp.${var.server_base_domain}" && req.URL.Path startsWith "/admin/"
+              apply:
+                - CancelAlert()
+                - CancelEvent()
+                - SetRemediation("allow")
   YAML
   ]
 
