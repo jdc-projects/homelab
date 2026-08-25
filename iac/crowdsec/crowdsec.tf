@@ -243,6 +243,17 @@ resource "helm_release" "crowdsec" {
                 - CancelAlert()
                 - CancelEvent()
                 - SetRemediation("allow")
+            # xitter (dev + prod): presigned image-upload surface only (RustFS via
+            # the edge) — binary image bytes and chunked/multipart presign payloads
+            # false-positive the out-of-band CRS body rules (933120 et al on
+            # non-HTML bodies, same class as the cap entry). The surface is already
+            # guarded by per-object presigned-URL signatures, so body inspection
+            # adds nothing; CRS stays fully active on every other path on both hosts.
+            - filter: (req.Host == "xitter-dev.${var.server_base_domain}" || req.Host == "xitter.${var.server_base_domain}") && req.URL.Path startsWith "/xitter-media/"
+              apply:
+                - CancelAlert()
+                - CancelEvent()
+                - SetRemediation("allow")
   YAML
   ]
 
