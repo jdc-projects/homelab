@@ -64,7 +64,10 @@ resource "kubernetes_manifest" "huly_db" {
 
       resources = {
         requests = {
-          cpu    = "500m"
+          # Idle homelab DB: peak usage 12-70m measured 2026-08-29. 150m is
+          # 2x+ headroom; the old 500m/instance starved the node (99% CPU
+          # requests) and blocked xitter-prod's first apply from scheduling.
+          cpu    = "150m"
           memory = "1Gi"
         }
         limits = {
