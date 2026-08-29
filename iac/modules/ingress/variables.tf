@@ -127,6 +127,17 @@ variable "keycloak_auth_realm" {
   default     = "primary"
 }
 
+variable "callback_path" {
+  type        = string
+  description = "OIDC interactive flow: the path the plugin registers for the IdP redirect callback. Default \"/oidc/callback\" (plugin default). Set a route-local path (e.g. \"/cms/oidc/callback\") when the auth'd router matches only a prefix of the domain: the callback must land on THIS router or the handshake 404s on whatever else owns the root - and two auth'd routers on one domain must not share one callback path (separate plugin sessions would fight over it). Only relevant when auth_mode is oidc-interactive."
+  default     = "/oidc/callback"
+
+  validation {
+    condition     = startswith(var.callback_path, "/")
+    error_message = "callback_path must start with a slash."
+  }
+}
+
 variable "auth_oidc_provider" {
   type = object({
     url           = string

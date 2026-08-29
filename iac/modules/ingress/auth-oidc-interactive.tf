@@ -90,6 +90,7 @@ resource "kubernetes_manifest" "keycloak_auth_plugin_middleware" {
 
           Scopes                  = local.auth_oidc_interactive_scopes
           Secret                  = one(random_password.keycloak_auth_plugin_secret[*].result)
+          CallbackPath            = var.callback_path
           UnauthenticatedBehavior = "Auto"
         }
       }
