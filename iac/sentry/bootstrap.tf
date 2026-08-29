@@ -150,7 +150,7 @@ resource "kubernetes_job" "sentry_bootstrap" {
                   user_id=u.id,
                   name=name,
                   token_type=AuthTokenType.USER,
-                  scope_list=["org:read", "org:write", "org:admin", "team:read", "team:write", "project:read", "project:write", "project:admin", "project:releases"],
+                  scope_list=["org:read", "org:write", "org:admin", "team:read", "team:write", "team:admin", "project:read", "project:write", "project:admin", "project:releases"],
                   expires_at=None,
               )
               print("TOKEN_START")
