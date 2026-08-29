@@ -28,6 +28,16 @@ resource "kubernetes_storage_class" "openebs_zfs_localpv" {
 
   metadata {
     name = "openebs-zfs-localpv-${each.value.name_suffix}"
+
+    # Exactly one class is the cluster default. Without ANY default, a
+    # classless PVC can never bind - it pends forever, silently. Operators
+    # and charts that omit storageClassName (observed: the opensearch
+    # operator's transient bootstrap PVC) then wedge cold formations.
+    # `general` (128k, the ZFS default recordsize) is the neutral choice:
+    # random is for spreading DB volumes, bulk for large blobs.
+    annotations = each.key == "general" ? {
+      "storageclass.kubernetes.io/is-default-class" = "true"
+    } : {}
   }
 
   storage_provisioner = "zfs.csi.openebs.io"
