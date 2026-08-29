@@ -254,6 +254,20 @@ resource "helm_release" "crowdsec" {
                 - CancelAlert()
                 - CancelEvent()
                 - SetRemediation("allow")
+            # xitter (dev + prod): Next.js server actions POST to page URLs
+            # with Content-Type: text/plain + a Next-Action header - the App
+            # Router's mutation transport, not an attack. CRS's allowed
+            # content types exclude text/plain (920420) and the action body
+            # has no CRS processor (901340), so every like/compose click
+            # scores and 10 events in 2min ban a normal user (reproduced
+            # 2026-08-29). Scoped to POST + the marker header on the two
+            # hosts; the app's own zod-contract validation is the primary
+            # defense, all other traffic keeps full CRS.
+            - filter: (req.Host == "xitter-dev.${var.server_base_domain}" || req.Host == "xitter.${var.server_base_domain}") && req.Method == "POST" && req.Header.Get("Next-Action") != ""
+              apply:
+                - CancelAlert()
+                - CancelEvent()
+                - SetRemediation("allow")
   YAML
   ]
 
