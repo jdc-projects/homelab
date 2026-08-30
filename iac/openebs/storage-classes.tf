@@ -27,7 +27,7 @@ resource "kubernetes_storage_class" "openebs_zfs_localpv" {
   })
 
   metadata {
-    name = "opensearch-zfs-localpv-${each.value.name_suffix}"
+    name = "openebs-zfs-localpv-${each.value.name_suffix}"
   }
 
   storage_provisioner = "zfs.csi.openebs.io"
