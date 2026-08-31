@@ -140,16 +140,21 @@ resource "kubernetes_deployment" "n8n" {
             read_only  = true
           }
 
+          # /healthz is a shallow process check that keeps returning 200 while the
+          # postgres pool is poisoned, so a wedged instance never restarts.
+          # /healthz/readiness fails when the db is unreachable, letting kubelet
+          # recycle the pod (e.g. after a cnpg switchover or during the nightly
+          # velero hibernation window).
           liveness_probe {
             http_get {
-              path = "/healthz"
+              path = "/healthz/readiness"
               port = 5678
             }
 
             initial_delay_seconds = 30
             period_seconds        = 10
             timeout_seconds       = 5
-            failure_threshold     = 3
+            failure_threshold     = 6
           }
 
           readiness_probe {
