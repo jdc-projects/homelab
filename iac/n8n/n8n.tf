@@ -109,7 +109,7 @@ resource "kubernetes_deployment" "n8n" {
         }
 
         container {
-          image = "n8nio/n8n:2.28.3"
+          image = "n8nio/n8n:2.37.0"
           name  = "n8n"
 
           env_from {
