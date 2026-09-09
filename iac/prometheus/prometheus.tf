@@ -219,16 +219,6 @@ resource "helm_release" "kube_prometheus_stack" {
               - receiver: 'null'
                 matchers:
                   - severity = "none"
-              # CDI noise, permanently not actionable on this cluster: it
-              # doesn't recognize the openebs zfs-localpv provisioner, so it
-              # can't infer capabilities from the SC and reports every
-              # StorageProfile as incomplete; and since marking a virt-default
-              # class (see iac/openebs), it also reports that class as
-              # degraded (no inferred RWX). Both are still visible in the AM
-              # UI, never emailed.
-              - receiver: 'null'
-                matchers:
-                  - alertname =~ "CDIStorageProfilesIncomplete|CDIDefaultStorageClassDegraded"
           receivers:
             - name: 'null'
             - name: 'email'
