@@ -28,6 +28,18 @@ resource "kubernetes_storage_class" "openebs_zfs_localpv" {
 
   metadata {
     name = "openebs-zfs-localpv-${each.value.name_suffix}"
+
+    # Mark the bulk (1M recordsize - VM-disk-shaped) class as the default for
+    # KubeVirt/CDI only. This is NOT a general default StorageClass (normal
+    # PVCs are unaffected; all existing DataVolumes pin classes explicitly),
+    # but it stops CDINoDefaultStorageClass firing spuriously - with no
+    # default SC of either kind, that alert treats any >10m gap in the single
+    # kubevirt_cdi_datavolume_pending metric as "a DataVolume is pending"
+    # (it did exactly that during the 2026-09-09 Prometheus outage).
+    # Key must match CDI's AnnDefaultVirtStorageClass constant.
+    annotations = each.key == "bulk_no_backup" ? {
+      "storageclass.kubevirt.io/is-default-virt-class" = "true"
+    } : {}
   }
 
   storage_provisioner = "zfs.csi.openebs.io"
