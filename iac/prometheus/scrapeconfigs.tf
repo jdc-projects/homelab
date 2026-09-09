@@ -62,65 +62,72 @@ resource "kubernetes_manifest" "kubelet_scrape" {
       namespace = kubernetes_namespace.prometheus.metadata[0].name
     }
 
-    spec = {
-      jobName = "kubelet"
+    # The spec is merged so metricRelabelings exists only on the cadvisor
+    # entry: the CRD rejects an empty list, and an explicit null leaves
+    # kubernetes_manifest planning a perpetual diff.
+    spec = merge(
+      {
+        jobName = "kubelet"
 
-      metricsPath = each.value
+        metricsPath = each.value
+
+        scheme = "HTTPS"
+
+        tlsConfig = {
+          insecureSkipVerify = true
+        }
+
+        authorization = {
+          type = "Bearer"
+          credentials = {
+            name = kubernetes_secret.prometheus_scrape_token.metadata[0].name
+            key  = "token"
+          }
+        }
+
+        kubernetesSDConfigs = [
+          {
+            role = "Node"
+          }
+        ]
+
+        relabelings = [
+          {
+            sourceLabels = ["__meta_kubernetes_node_name"]
+            targetLabel  = "node"
+          },
+          {
+            sourceLabels = ["__meta_kubernetes_node_address_InternalIP"]
+            targetLabel  = "__address__"
+            regex        = "(.+)"
+            replacement  = "$1:10250"
+            action       = "replace"
+          },
+          # Expose the metrics path as a visible label. The chart's dashboards
+          # and alert rules filter on metrics_path="/metrics" etc. Without this
+          # relabel, __metrics_path__ stays internal and those queries return
+          # empty ("No Data" on dashboards, false-positive KubeletDown alert).
+          {
+            sourceLabels = ["__metrics_path__"]
+            targetLabel  = "metrics_path"
+            action       = "replace"
+          },
+        ]
+      },
 
       # cAdvisor emits a handful of high-cardinality, near-zero-value metrics
       # (~25k series on this cluster, none referenced by any rule or dashboard
-      # in this repo). Drop them at ingest to slow TSDB growth. The CRD rejects
-      # an empty list, so the key is omitted (null) for the other paths.
-      metricRelabelings = each.key == "cadvisor" ? [
-        {
-          sourceLabels = ["__name__"]
-          regex        = "container_(tasks_state|blkio_device_usage_total|memory_failures_total)"
-          action       = "drop"
-        },
-      ] : null
-      scheme = "HTTPS"
-
-      tlsConfig = {
-        insecureSkipVerify = true
-      }
-
-      authorization = {
-        type = "Bearer"
-        credentials = {
-          name = kubernetes_secret.prometheus_scrape_token.metadata[0].name
-          key  = "token"
-        }
-      }
-
-      kubernetesSDConfigs = [
-        {
-          role = "Node"
-        }
-      ]
-
-      relabelings = [
-        {
-          sourceLabels = ["__meta_kubernetes_node_name"]
-          targetLabel  = "node"
-        },
-        {
-          sourceLabels = ["__meta_kubernetes_node_address_InternalIP"]
-          targetLabel  = "__address__"
-          regex        = "(.+)"
-          replacement  = "$1:10250"
-          action       = "replace"
-        },
-        # Expose the metrics path as a visible label. The chart's dashboards
-        # and alert rules filter on metrics_path="/metrics" etc. Without this
-        # relabel, __metrics_path__ stays internal and those queries return
-        # empty ("No Data" on dashboards, false-positive KubeletDown alert).
-        {
-          sourceLabels = ["__metrics_path__"]
-          targetLabel  = "metrics_path"
-          action       = "replace"
-        },
-      ]
-    }
+      # in this repo). Drop them at ingest to slow TSDB growth.
+      each.key == "cadvisor" ? {
+        metricRelabelings = [
+          {
+            sourceLabels = ["__name__"]
+            regex        = "container_(tasks_state|blkio_device_usage_total|memory_failures_total)"
+            action       = "drop"
+          },
+        ]
+      } : {}
+    )
   }
 
   depends_on = [kubernetes_secret.prometheus_scrape_token, helm_release.kube_prometheus_stack]
