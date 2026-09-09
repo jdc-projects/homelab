@@ -66,7 +66,19 @@ resource "kubernetes_manifest" "kubelet_scrape" {
       jobName = "kubelet"
 
       metricsPath = each.value
-      scheme      = "HTTPS"
+
+      # cAdvisor emits a handful of high-cardinality, near-zero-value metrics
+      # (~25k series on this cluster, none referenced by any rule or dashboard
+      # in this repo). Drop them at ingest to slow TSDB growth. The CRD rejects
+      # an empty list, so the key is omitted (null) for the other paths.
+      metricRelabelings = each.key == "cadvisor" ? [
+        {
+          sourceLabels = ["__name__"]
+          regex        = "container_(tasks_state|blkio_device_usage_total|memory_failures_total)"
+          action       = "drop"
+        },
+      ] : null
+      scheme = "HTTPS"
 
       tlsConfig = {
         insecureSkipVerify = true
