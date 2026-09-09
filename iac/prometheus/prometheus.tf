@@ -13,6 +13,14 @@
 # custom ScrapeConfigs in scrapeconfigs.tf, not the chart's ServiceMonitors.
 # All chart-provided cluster-component monitors are disabled.
 
+locals {
+  # Size of the Prometheus TSDB PVC (Gi). retentionSize is derived from this so
+  # the byte cap always tracks the volume: if the PVC is ever resized, both
+  # values move together. At ~0.7GiB/day ingestion, 30d retention needs ~21GiB
+  # of blocks, plus WAL/compaction headroom - 60Gi leaves ~2x margin.
+  prometheus_db_storage_gib = 60
+}
+
 resource "helm_release" "kube_prometheus_stack" {
   name = "kube-prometheus-stack"
 
@@ -135,7 +143,15 @@ resource "helm_release" "kube_prometheus_stack" {
     },
     {
       name  = "prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage"
-      value = "30Gi"
+      value = "${local.prometheus_db_storage_gib}Gi"
+    },
+    # Hard byte cap on the TSDB dir, kept 1Gi under the PVC: Prometheus drops
+    # oldest blocks before the disk can fill, trading retention for uptime
+    # instead of deadlocking on a full WAL (which took monitoring down for
+    # ~10h on 2026-09-09).
+    {
+      name  = "prometheus.prometheusSpec.retentionSize"
+      value = "${local.prometheus_db_storage_gib - 1}GiB"
     },
     # Alertmanager storage (small - only stores silences + notification state).
     {
