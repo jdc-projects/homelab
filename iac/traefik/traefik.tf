@@ -60,6 +60,17 @@ resource "helm_release" "traefik" {
       name  = "deployment.dnsPolicy"
       value = "ClusterFirstWithHostNet"
     },
+    # Workaround for traefik/traefik#8606: Traefik never removes the
+    # traefik_tls_certs_not_after series of a replaced certificate, so every
+    # in-place cert-manager renewal leaks one ghost gauge series (old serial,
+    # stale notAfter) that only a process restart clears. Bump this timestamp
+    # after each wildcard renewal (~quarterly, next ~2026-10-18) until a
+    # fixed Traefik release ships - see README.md. Expect a few seconds of
+    # edge downtime on apply (maxUnavailable=1, single node).
+    {
+      name  = "deployment.podAnnotations.homelab/restartedAt"
+      value = "2026-09-11"
+    },
     {
       name  = "updateStrategy.rollingUpdate.maxUnavailable"
       value = "1"
