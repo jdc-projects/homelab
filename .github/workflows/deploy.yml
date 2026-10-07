@@ -377,6 +377,7 @@ jobs:
           vaultwarden,
           posthog,
           huly,
+          coder,
         ]
 
     with:
