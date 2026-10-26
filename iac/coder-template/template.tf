@@ -20,6 +20,26 @@ locals {
     for f in sort(local.workspace_template_files) :
     filesha256("${local.workspace_template_dir}/${f}")
   ]))
+
+  kubevirt_template_dir = "${path.module}/templates/kubevirt"
+
+  kubevirt_template_files = fileset(local.kubevirt_template_dir, "*")
+
+  kubevirt_template_hash = sha256(join("", [
+    for f in sort(local.kubevirt_template_files) :
+    filesha256("${local.kubevirt_template_dir}/${f}")
+  ]))
+
+  # Template-level terraform variable values for the kubevirt template
+  # (e.g. debug_ssh_authorized_key). NOTE: folded into the version name —
+  # the provider only creates a new version when the name changes, and a
+  # tf_vars-only change doesn't alter the directory hash.
+  kubevirt_version_vars = toset([])
+
+  kubevirt_version_name = substr(sha256(join("|", [
+    local.kubevirt_template_hash,
+    jsonencode(sort([for v in local.kubevirt_version_vars : "${v.name}=${v.value}"])),
+  ])), 0, 12)
 }
 
 resource "coderd_template" "default" {
@@ -41,4 +61,23 @@ resource "coderd_template" "default" {
   # Enterprise-only fields (acl, auto_stop_requirement, dormant TTLs,
   # require_active_version, ...) are deliberately unset: AGPL deployment,
   # no license — the provider errors on them at apply time.
+}
+
+# KubeVirt VM workspaces — full Linux VMs (docker-in-docker ready). Bespoke
+# template: no upstream to vendor; see templates/kubevirt/main.tf for the
+# architecture (VM + DataVolume clone + cloud-init agent).
+resource "coderd_template" "kubevirt" {
+  name         = "kubevirt"
+  display_name = "KubeVirt VM"
+  description  = "Full Ubuntu VMs on k3s — real kernel, native docker, root disk persists across restarts."
+
+  default_ttl_ms = 8 * 60 * 60 * 1000
+
+  versions = [{
+    directory = local.kubevirt_template_dir
+    active    = true
+    name      = local.kubevirt_version_name
+    message   = "Managed by OpenTofu (iac/coder-template)"
+    tf_vars   = local.kubevirt_version_vars
+  }]
 }

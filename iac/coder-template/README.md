@@ -14,6 +14,14 @@ this module after `deploy-bulk` (which includes `iac/coder`) has converged.
 | Piece     | What                                                                                       |
 | --------- | ------------------------------------------------------------------------------------------ |
 | Template  | `default` — vendored from [registry.coder.com/templates/coder/kubernetes](https://registry.coder.com/templates/coder/kubernetes), see `templates/default/` |
+| Template  | `kubevirt` — bespoke VM workspaces (full Linux VM, native docker), see `templates/kubevirt/` |
+
+The kubevirt template depends on extra infrastructure, all deployed by this
+repo: the golden Ubuntu Noble image PVC (`iac/kubevirt/images.tf`), the CDI
+cross-namespace clone-auth Role (`iac/kubevirt/coder-workspace-clone-auth.tf`),
+VirtualMachine/DataVolume RBAC via the chart's
+`serviceAccount.workspaceNamespaces[].extraRules`, and the read-only
+`coder-crd-reader` ClusterRole for CRD schema discovery (`iac/coder/crd-reader.tf`).
 
 ## Versioning
 
