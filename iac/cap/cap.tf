@@ -84,7 +84,8 @@ resource "kubernetes_deployment" "cap" {
         }
 
         container {
-          image = "tiago2/cap:3.1.9"
+          # 3.1.17 bundles Bun 1.4.4 (brotli 1.2.1, GHSA-663w-cv8g-jj2p fix).
+          image = "tiago2/cap:3.1.17"
           name  = "cap"
 
           env_from {
