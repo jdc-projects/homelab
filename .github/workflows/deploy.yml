@@ -375,7 +375,6 @@ jobs:
           convertx,
           cap,
           vaultwarden,
-          posthog,
           huly,
           coder,
         ]
