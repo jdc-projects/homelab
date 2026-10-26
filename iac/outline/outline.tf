@@ -46,8 +46,11 @@ resource "kubernetes_config_map" "outline_env" {
     RATE_LIMITER_ENABLED         = "true"
     RATE_LIMITER_REQUESTS        = 1000
     RATE_LIMITER_DURATION_WINDOW = 60
-    REDIS_URL                    = "valkey://${helm_release.valkey.name}:6379"
-    SENTRY_DSN                   = local.sentry_dsn
+    # Must use the redis:// scheme: Valkey speaks the Redis wire protocol, and
+    # Outline >= 1.12's ioredis no longer accepts the valkey:// scheme (it
+    # misparses it as a unix socket path -> connect ENOENT //valkey:6379).
+    REDIS_URL  = "redis://${helm_release.valkey.name}:6379"
+    SENTRY_DSN = local.sentry_dsn
   }
 }
 
