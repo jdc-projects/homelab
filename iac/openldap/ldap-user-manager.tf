@@ -104,16 +104,24 @@ resource "kubernetes_deployment" "ldap_user_manager" {
   }
 }
 
-module "ldap_user_manager_ingress" {
-  source = "../modules/ingress"
-
-  name      = "ldap-user-manager"
-  namespace = kubernetes_namespace.openldap.metadata[0].name
-  domain    = "idm.${var.server_base_domain}"
-
-  target_port = kubernetes_config_map.ldap_user_manager_env.data.SERVER_PORT
-
-  selector = {
-    app = "ldap-user-manager"
-  }
-}
+# TODO(security, 2026-10-26): ingress disabled. Image wheelybird/luminary v2.1.1
+# bundles PHP 8.4.15 via Apache mod_php (the highest-risk serving mode), vulnerable
+# to CVE-2026-109618 / CVE-2026-109619 ("php2shell", unauthenticated RCE; patched
+# in PHP 8.4.27). No patched upstream image exists - latest v2.2.1 still ships
+# PHP 8.4.24. Re-enable this block and bump the image once upstream rebuilds on
+# php:8.4.27-apache. Deployment is left running (in-cluster only); to use the UI
+# temporarily, uncomment this block and `tofu apply`.
+# Upstream tracking: https://github.com/wheelybird/luminary/issues/279
+# module "ldap_user_manager_ingress" {
+#   source = "../modules/ingress"
+#
+#   name      = "ldap-user-manager"
+#   namespace = kubernetes_namespace.openldap.metadata[0].name
+#   domain    = "idm.${var.server_base_domain}"
+#
+#   target_port = kubernetes_config_map.ldap_user_manager_env.data.SERVER_PORT
+#
+#   selector = {
+#     app = "ldap-user-manager"
+#   }
+# }
