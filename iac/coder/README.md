@@ -16,6 +16,7 @@ so OSS deployments cannot use it).
 | Ingress      | apex `coder.jd-chapman.dev` + suffix wildcard route (below)          |
 | Metrics      | `ServiceMonitor` scraping coderd `:2112` via Service `coder-metrics` |
 | Dashboards   | `dashboards/coder.json` → GrafanaDashboard CR                       |
+| Workspaces   | tofu-managed template `default` (../coder-template), pods in `coder-workspaces` ns |
 
 ## Workspace-app wildcard: suffix form (`*-coder.jd-chapman.dev`)
 
@@ -65,8 +66,12 @@ Consequences / mitigations:
   2. Designed path: create the owner on `/setup` using the **same email as the
      Keycloak account** (any password), sign out, then use "Sign in with
      Keycloak" on `/login` — OIDC matches the existing account by email.
-  Owners retain password login as a lockout escape hatch; `coder server
-  create-admin` can recover a fully locked-out deployment.
+- **Password login is fully blocked** while `CODER_DISABLE_PASSWORD_AUTH=true`
+  — including for owners: the "owner exemption" in `coderd/userauth.go` is a
+  comment, not code (verified v2.36.7 and current main; the API returns
+  `403 Password authentication is disabled.` even with correct owner
+  credentials). Lockout recovery: temporarily remove that env var, or mint an
+  `api_keys` row via psql — `bootstrap.tf` demonstrates the latter.
 
 ## Known quirk: GitHub external-auth env var
 
@@ -86,12 +91,58 @@ a CLI arg via `coder.commandArgs` instead. Re-test on upgrade.
 
 ## Workspaces
 
-- Kubernetes pod workspaces via Coder's terraform provider; the chart's service
-  account can manage pods/PVCs in the `coder` namespace (workspaces land there
-  by default).
+- Workspaces (Deployment + home PVC) land in the **`coder-workspaces`**
+  namespace, isolated from the coderd control plane and its database; RBAC is
+  granted by the chart's `coder.serviceAccount.workspaceNamespaces` value.
+- The default template (`default`, displayed "Default (Kubernetes)") is
+  **tofu-managed** by the sibling
+  **`iac/coder-template`** module — separate because its `coder/coderd`
+  provider needs a running coderd even at plan time (state refresh), and this
+  module must stay plannable while coderd is down (first bootstrap, DB
+  hibernation). Template lifecycle, auth and versioning are documented there.
+
+## Automation auth (bootstrap.tf)
+
+Coder's API only accepts tokens, and tokens can only be minted by an
+already-authenticated identity — tofu can't own this credential end-to-end
+like the keycloak/grafana admin secrets. `bootstrap.tf` (sentry-style) solves
+it from inside the deployment, as an idempotent post-deploy Job:
+
+1. `coder server create-admin-user` exec'd in the coderd container creates a
+   dedicated owner `tofu-deploy` (plain DB INSERT via the pod's
+   `CODER_PG_CONNECTION_URL`; exec'ing our own pod is the auth).
+2. The token row is INSERTed directly into `api_keys` on the CNPG primary,
+   replicating coderd's own `apikey.Generate` (verified against v2.36.7
+   source): `token = <10-char id>-<22-char secret>`, `hashed_secret` = raw
+   sha256(secret), `scopes = ['coder:all']`, 5y expiry. There is no API path
+   for this: coderd blocks `POST /users/login` outright while
+   `CODER_DISABLE_PASSWORD_AUTH=true` — even for owners (the "owner exemption"
+   in `coderd/userauth.go` is a comment, not code, as of 2.36.7 and main).
+3. The token is written to the `coder-api-token` Secret and exported as the
+   `coder_api_token` output for `iac/coder-template` (the `sentry_auth_token`
+   pattern).
+
+The gate is "Secret exists → skip", so re-runs never mint duplicates; delete
+the Secret to force rotation. The `tofu-deploy` user appears in the Users page
+as an owner — that is expected.
+
+Idempotency: `create-admin-user` is a plain DB INSERT (no upsert, no password
+reset — verified against v2.36.7 source) with a fixed username/email, so
+duplicate users are impossible (partial-failure reruns tolerate
+already-exists); token rows use a unique `token_name` per attempt for the same
+reason. The user's password is unusable (password login is blocked
+deployment-wide) — the token is its only access.
+- `default_ttl_ms` = 8h: workspaces auto-stop after a working day of
+  inactivity; restart via dashboard/CLI or autostart schedule.
 - Sizing: single-node cluster — keep template CPU/memory defaults modest.
 - KubeVirt is installed if VM-based workspaces are ever wanted (template-level
   change + extra SA rules; not wired here).
+
+Creating a workspace: dashboard → Templates → Default (Kubernetes) → Create
+workspace, or `coder create --template default <name>`. The default image
+(`codercom/example-base:ubuntu`) is minimal; swap the template's `image`
+variable for `codercom/example-universal:ubuntu` or a custom build for more
+preinstalled tooling.
 
 ## Operational notes
 
@@ -102,9 +153,9 @@ a CLI arg via `coder.commandArgs` instead. Re-test on upgrade.
   then restart workspaces if the CLI/agent version skew warns.
 - If workspace connections hang behind Traefik/Cloudflare, try
   `CODER_DERP_FORCE_WEBSOCKETS=true` (DERP normally uses `Upgrade: derp`).
-- First-run: sign in via Keycloak → owner account → `coder templates create`
-  (start from `examples/templates/kubernetes` in coder/coder; use the
-  `registry.coder.com/coder/code-server` module with `subdomain = true`).
+- First-run: sign in via Keycloak → owner account. The workspace template is
+  deployed by tofu (`../coder-template`), and its API token is auto-minted by
+  `bootstrap.tf` — no manual steps.
 
 ## Application of this module
 

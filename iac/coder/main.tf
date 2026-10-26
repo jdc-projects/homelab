@@ -67,3 +67,13 @@ resource "kubernetes_namespace" "coder" {
     name = "coder"
   }
 }
+
+# Workspaces (pods + home PVCs) land here, isolated from the coderd control
+# plane and its database. coderd's service account is granted
+# pod/PVC/Deployment permissions in this namespace by the helm chart via the
+# coder.serviceAccount.workspaceNamespaces value (see coder.tf).
+resource "kubernetes_namespace" "coder_workspaces" {
+  metadata {
+    name = "coder-workspaces"
+  }
+}

@@ -59,6 +59,19 @@ resource "helm_release" "coder" {
           type = "ClusterIP"
         }
 
+        # Grant coderd's service account pod/PVC/Deployment permissions in the
+        # dedicated coder-workspaces namespace (the chart creates a Role +
+        # RoleBinding there, mirroring coder-workspace-perms in this
+        # namespace). Referencing the namespace resource here also orders this
+        # helm upgrade after its creation.
+        serviceAccount = {
+          workspaceNamespaces = [
+            {
+              name = kubernetes_namespace.coder_workspaces.metadata[0].name
+            }
+          ]
+        }
+
         env = [
           {
             name = "CODER_PG_CONNECTION_URL"
