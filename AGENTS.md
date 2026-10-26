@@ -62,8 +62,9 @@ Every app module wires observability as standard, not as an afterthought.
   `http://otel-collector.otel.svc:4318` (mirror `iac/outline/instrumentation.tf`). For
   owned Deployments, add `instrumentation.opentelemetry.io/inject-nodejs` (or
   `-python` / `-java`) directly to the pod template. For chart-managed pods that don't
-  expose an annotation hook, use helm `postrender` to add it — see
-  `iac/huly/post-renderer.sh` for the pattern.
+  expose an annotation hook, use helm `postrender` with a small `yq` script that reads
+  the rendered manifests on stdin, adds the annotation to every `Deployment`, and
+  writes them back to stdout.
 - **Errors**: Sentry project + DSN via the `sentry` provider, **but only if the app
   supports Sentry upstream** (grep the source/chart first — many apps don't bundle the
   SDK, in which case wiring Sentry is wasted effort).
