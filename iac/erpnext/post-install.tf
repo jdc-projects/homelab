@@ -83,7 +83,15 @@ resource "kubernetes_config_map" "configure_erpnext_script" {
 
 
       def _clear_workspace_sidebar(module):
-          """Clear items on Workspace Sidebar records for a module (by name AND module field)."""
+          """Clear items on Workspace Sidebar records for a module (by name AND module field).
+
+          ERPNext >= 16.5x migrates stock workspaces to archived records ('an archive
+          of the previous navigation') that refuse edits - skip those; the Module
+          Profile and Desktop Icon hiding still block them from the desk.
+          """
+          def _skip_archived(exc):
+              return "no longer be edited" in str(exc)
+
           ws_names = set()
           by_name = frappe.db.get_value("Workspace Sidebar", {"name": module, "for_user": None}, "name")
           if by_name:
@@ -94,13 +102,25 @@ resource "kubernetes_config_map" "configure_erpnext_script" {
               for ws_name in ws_names:
                   ws = frappe.get_doc("Workspace Sidebar", ws_name)
                   ws.items = []
-                  ws.save(ignore_permissions=True)
+                  try:
+                      ws.save(ignore_permissions=True)
+                  except frappe.ValidationError as e:
+                      if _skip_archived(e):
+                          print(f"Workspace Sidebar {ws_name} is archived; skipping")
+                      else:
+                          raise
           else:
               ws = frappe.new_doc("Workspace Sidebar")
               ws.title = module
               ws.module = module
               ws.items = []
-              ws.insert(ignore_permissions=True)
+              try:
+                  ws.insert(ignore_permissions=True)
+              except frappe.ValidationError as e:
+                  if _skip_archived(e):
+                      print(f"Workspace Sidebar {module} is archived; skipping insert")
+                  else:
+                      raise
 
 
       def block_modules():
