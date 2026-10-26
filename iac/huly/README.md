@@ -145,6 +145,16 @@ The Huly chart is pinned to `0.1.0` because that's the only published OCI
 version as of writing. The app version `v0.7.432` is a stable upstream tag
 (avoid `s*` tags — those are dev pre-releases).
 
+> **Known vulnerability (2026-10-26):** the `v0.7.432` images bundle Node
+> 22.19.0, which is vulnerable to CVE-2026-111497 (Brotli decoder OOB write,
+> "Node2Shell"; fixed in Node 22.23.4) plus the 2026-10-21 TLS
+> hostname/cert verification fixes. `v0.7.432` is still the latest upstream
+> release (nothing rebuilt since 2026-07-16), so **no patched image exists**.
+> Exposure is limited: every Huly route is behind Keycloak OIDC
+> (`ingress.tf`), so only authenticated traffic reaches the Node processes.
+> When a release after the 2026-10-21 Node security releases ships, bump
+> `hulyVersion` and re-check.
+
 ## Post-renderer (`post-renderer.sh`)
 
 The chart has two limitations this module works around via a helm
