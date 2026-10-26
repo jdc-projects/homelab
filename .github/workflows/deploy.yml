@@ -381,6 +381,20 @@ jobs:
     with:
       iac-dir: ./iac/${{ matrix.application }}
 
+  # Coder workspace templates: the coderd provider needs a running coderd at
+  # plan time (state refresh), so this runs after the coder deployment (in
+  # deploy-bulk) has converged — and iac/coder stays plannable while coderd
+  # is down.
+  deploy-coder-template:
+    needs: [
+      deploy-bulk,
+    ]
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
+    secrets: inherit
+
+    with:
+      iac-dir: ./iac/coder-template
+
   # --- OpenTelemetry tracing platform ---
   # operator -> Tempo backend -> collector (collector exports into Tempo).
   deploy-otel-operator:
