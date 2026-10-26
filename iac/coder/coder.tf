@@ -63,11 +63,42 @@ resource "helm_release" "coder" {
         # dedicated coder-workspaces namespace (the chart creates a Role +
         # RoleBinding there, mirroring coder-workspace-perms in this
         # namespace). Referencing the namespace resource here also orders this
-        # helm upgrade after its creation.
+        # helm upgrade after its creation. extraRules add what the KubeVirt
+        # workspace template manages on top of pods: VirtualMachines and
+        # CDI DataVolumes.
         serviceAccount = {
           workspaceNamespaces = [
             {
               name = kubernetes_namespace.coder_workspaces.metadata[0].name
+
+              extraRules = [
+                {
+                  apiGroups = ["kubevirt.io"]
+                  resources = ["virtualmachines", "virtualmachineinstances"]
+                  verbs = [
+                    "create", "delete", "deletecollection", "get",
+                    "list", "patch", "update", "watch",
+                  ]
+                },
+                {
+                  apiGroups = ["cdi.kubevirt.io"]
+                  resources = ["datavolumes"]
+                  verbs = [
+                    "create", "delete", "deletecollection", "get",
+                    "list", "patch", "update", "watch",
+                  ]
+                },
+                {
+                  # KubeVirt cloud-init payloads over 2048 bytes must ride in
+                  # a Secret referenced by userDataSecretRef.
+                  apiGroups = [""]
+                  resources = ["secrets"]
+                  verbs = [
+                    "create", "delete", "deletecollection", "get",
+                    "list", "patch", "update", "watch",
+                  ]
+                },
+              ]
             }
           ]
         }

@@ -134,9 +134,17 @@ reason. The user's password is unusable (password login is blocked
 deployment-wide) — the token is its only access.
 - `default_ttl_ms` = 8h: workspaces auto-stop after a working day of
   inactivity; restart via dashboard/CLI or autostart schedule.
+- **KubeVirt VM workspaces** are wired too — a second template (`kubevirt`,
+  managed here in `templates/kubevirt/`) runs full Ubuntu VMs with native
+  docker. Cloud-init's per-instance modules only run on a workspace disk's
+  FIRST boot, so the template installs a self-syncing agent service: on every
+  boot it re-extracts the agent script + rotated token from the regenerated
+  cloud-init seed ISO. Consequence: template changes that only alter
+  cloud-init reach existing workspaces at their next start.
 - Sizing: single-node cluster — keep template CPU/memory defaults modest.
-- KubeVirt is installed if VM-based workspaces are ever wanted (template-level
-  change + extra SA rules; not wired here).
+- KubeVirt VM workspaces: see the bullet above and `../coder-template`'s
+  README for the extra infrastructure (golden image, clone-auth, VM RBAC,
+  CRD reader).
 
 Creating a workspace: dashboard → Templates → Default (Kubernetes) → Create
 workspace, or `coder create --template default <name>`. The default image
