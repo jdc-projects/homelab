@@ -1,7 +1,9 @@
 locals {
   erpnext_domain     = "erpnext.${var.server_base_domain}"
   erpnext_image_repo = "ghcr.io/jdc-projects/erpnext-extended"
-  erpnext_image_tag  = "erpnext-v16.26.2-oidc-v0.4.0"
+  # v16.52.1 base carries Node 24.22.1 for the realtime process
+  # (CVE-2026-111497 / Node2Shell fix); versions <= v16.52.0 have Node <= 24.22.0.
+  erpnext_image_tag = "erpnext-v16.52.1-oidc-v0.4.0"
 
   blocked_modules = [
     "Stock",
