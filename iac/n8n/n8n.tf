@@ -109,7 +109,8 @@ resource "kubernetes_deployment" "n8n" {
         }
 
         container {
-          image = "n8nio/n8n:2.37.0"
+          # 2.44.7 bundles Node 26.12.1 (CVE-2026-111497 / Node2Shell fix).
+          image = "n8nio/n8n:2.44.7"
           name  = "n8n"
 
           env_from {
