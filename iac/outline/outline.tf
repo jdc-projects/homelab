@@ -104,7 +104,8 @@ resource "kubernetes_deployment" "outline" {
 
       spec {
         container {
-          image = "outlinewiki/outline:1.8.1"
+          # 1.12.0 bundles Node 26.12.1 (CVE-2026-111497 / Node2Shell fix).
+          image = "outlinewiki/outline:1.12.0"
           name  = "outline"
 
           env_from {
