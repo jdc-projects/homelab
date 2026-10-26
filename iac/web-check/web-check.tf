@@ -116,18 +116,26 @@ resource "kubernetes_deployment" "web_check" {
   }
 }
 
-module "web_check_ingress" {
-  source = "../modules/ingress"
-
-  name      = "web-check"
-  namespace = kubernetes_namespace.web_check.metadata[0].name
-  domain    = local.web_check_domain
-
-  target_port = 3000
-
-  auth_mode = "oidc-interactive"
-
-  selector = {
-    app = "web-check"
-  }
-}
+# TODO(security, 2026-10-26): ingress disabled. Image 2.1.9 bundles Node 22.23.3,
+# vulnerable to CVE-2026-111497 (Brotli decoder out-of-bounds write, "Node2Shell";
+# patched in Node 22.23.4). No patched version tag exists yet - every tag up to
+# 2.3.8 was built before the 2026-10-21 Node security release; only the floating
+# `latest` tag has Node 22.23.4, and this repo pins version tags. Re-enable this
+# block and bump the image once a versioned release (>= 2.3.9) ships with
+# Node >= 22.23.4. Deployment is left running (in-cluster only).
+# Upstream tracking: https://github.com/Lissy93/web-check/issues/365
+# module "web_check_ingress" {
+#   source = "../modules/ingress"
+#
+#   name      = "web-check"
+#   namespace = kubernetes_namespace.web_check.metadata[0].name
+#   domain    = local.web_check_domain
+#
+#   target_port = 3000
+#
+#   auth_mode = "oidc-interactive"
+#
+#   selector = {
+#     app = "web-check"
+#   }
+# }
