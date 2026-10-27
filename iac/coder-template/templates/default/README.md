@@ -18,6 +18,12 @@ provisioners against the homelab k3s cluster.
 - A persistent home directory (`/home/coder`) on a ZFS-backed PVC that
   survives workspace restarts.
 - code-server (VS Code in the browser), served on a workspace subdomain.
+- Optional **docker-in-docker**: a privileged `docker:29-dind` sidecar whose
+  socket is exposed to the workspace (toggle the `docker_enabled` parameter;
+  CPU/memory configurable, mutable — applies on restart). Unprivileged pods
+  cannot run dockerd themselves. Prefer the KubeVirt template if you want
+  containers without a privileged pod on the node. Docker images/layers live
+  in a 25Gi emptyDir — they do not survive workspace restarts.
 
 Everything outside `/home/coder` is rebuilt from the image on restart: bake
 tools into the image, or manage them via [dotfiles](https://coder.com/docs/dotfiles).

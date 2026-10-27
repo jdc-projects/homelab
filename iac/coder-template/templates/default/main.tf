@@ -13,6 +13,12 @@
 #     app would be unreachable.
 #   - Memory options are generated parametrically: every power of two between
 #     the bounds in `locals` below becomes a dropdown tier.
+#   - Optional docker-in-docker sidecar (privileged `docker:29-dind` sharing
+#     its socket with the workspace container via an emptyDir). Unprivileged
+#     pods cannot run dockerd themselves (zero capabilities, read-only
+#     cgroups/sysfs — verified empirically); the sidecar trades a privileged
+#     container on the node for native `docker` in the workspace. Use the
+#     kubevirt template to avoid that trade with full VMs.
 #
 # NOTE: this file is NOT part of a tofu module. The coderd provider in
 # ../../coder-template/main.tf tars this directory and ships it to coderd,
@@ -74,6 +80,20 @@ locals {
     for i in range(0, floor(log(local.memory_max / local.memory_min, 2)) + 1) :
     local.memory_min * pow(2, i)
   ]
+
+  docker_cpu_min  = 2
+  docker_cpu_max  = 8
+  docker_cpu_tiers = [
+    for i in range(0, floor(log(local.docker_cpu_max / local.docker_cpu_min, 2)) + 1) :
+    local.docker_cpu_min * pow(2, i)
+  ]
+
+  docker_memory_min  = 2
+  docker_memory_max  = 16
+  docker_memory_tiers = [
+    for i in range(0, floor(log(local.docker_memory_max / local.docker_memory_min, 2)) + 1) :
+    local.docker_memory_min * pow(2, i)
+  ]
 }
 
 data "coder_parameter" "cpu" {
@@ -130,6 +150,59 @@ data "coder_parameter" "home_disk_size" {
   validation {
     min = 1
     max = 99999
+  }
+}
+
+data "coder_parameter" "docker_enabled" {
+  name         = "docker_enabled"
+  display_name = "Docker (dind sidecar)"
+  description  = "Run a privileged docker-in-docker sidecar and expose its socket to the workspace. When disabled, the docker CPU/memory parameters have no effect."
+  default      = "false"
+  icon         = "/icon/docker.svg"
+  mutable      = true
+  option {
+    name  = "Enabled"
+    value = "true"
+  }
+  option {
+    name  = "Disabled"
+    value = "false"
+  }
+}
+
+data "coder_parameter" "docker_cpu" {
+  name         = "docker_cpu"
+  display_name = "Docker CPU"
+  description  = "CPU cores for the docker sidecar (only when docker is enabled)"
+  default      = "2"
+  icon         = "/icon/docker.svg"
+  mutable      = true
+
+  dynamic "option" {
+    for_each = local.docker_cpu_tiers
+
+    content {
+      name  = "${option.value} Cores"
+      value = tostring(option.value)
+    }
+  }
+}
+
+data "coder_parameter" "docker_memory" {
+  name         = "docker_memory"
+  display_name = "Docker memory"
+  description  = "Memory in GB for the docker sidecar (only when docker is enabled)"
+  default      = "4"
+  icon         = "/icon/docker.svg"
+  mutable      = true
+
+  dynamic "option" {
+    for_each = local.docker_memory_tiers
+
+    content {
+      name  = "${option.value} GB"
+      value = tostring(option.value)
+    }
   }
 }
 
@@ -340,6 +413,65 @@ resource "kubernetes_deployment_v1" "main" {
             name       = "home"
             read_only  = false
           }
+
+          # The dind socket directory (shared with the sidecar below) mounts
+          # over /var/run so the preinstalled docker CLI finds it at the
+          # standard path.
+          dynamic "volume_mount" {
+            for_each = data.coder_parameter.docker_enabled.value == "true" ? [1] : []
+
+            content {
+              mount_path = "/var/run"
+              name       = "dind-sock"
+            }
+          }
+        }
+
+        # Privileged docker-in-docker sidecar. The workspace container cannot
+        # run dockerd itself (unprivileged: zero capabilities, read-only
+        # cgroups/sysfs), so the daemon runs here and shares its socket via
+        # the dind-sock emptyDir. dockerd runs with `--group=1000` so the
+        # socket is group-writable by the workspace's uid.
+        dynamic "container" {
+          for_each = data.coder_parameter.docker_enabled.value == "true" ? [1] : []
+
+          content {
+            name  = "dockerd"
+            image = "docker:29-dind"
+            args  = ["--group=1000"]
+
+            security_context {
+              privileged    = true
+              run_as_user   = 0
+              run_as_non_root = false
+            }
+
+            env {
+              name  = "DOCKER_TLS_CERTDIR"
+              value = ""
+            }
+
+            volume_mount {
+              mount_path = "/var/run"
+              name       = "dind-sock"
+            }
+
+            volume_mount {
+              mount_path = "/var/lib/docker"
+              name       = "dind-data"
+            }
+
+            resources {
+              requests = {
+                "cpu"    = "250m"
+                "memory" = "512Mi"
+              }
+              limits = {
+                "cpu"    = "${data.coder_parameter.docker_cpu.value}"
+                "memory" = "${data.coder_parameter.docker_memory.value}Gi"
+              }
+            }
+          }
         }
 
         volume {
@@ -347,6 +479,20 @@ resource "kubernetes_deployment_v1" "main" {
           persistent_volume_claim {
             claim_name = kubernetes_persistent_volume_claim_v1.home.metadata.0.name
             read_only  = false
+          }
+        }
+
+        volume {
+          name = "dind-sock"
+          empty_dir {}
+        }
+
+        volume {
+          name = "dind-data"
+          empty_dir {
+            # Image/layer storage for the sidecar; exceeding it evicts the
+            # workspace pod (node ephemeral-storage limit).
+            size_limit = "25Gi"
           }
         }
 
