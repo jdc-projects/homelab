@@ -10,13 +10,16 @@ Full Ubuntu 24.04 virtual machines on the homelab cluster — a real kernel, so
 privileged workloads run natively: dockerd/containerd, systemd, kernel
 modules, eBPF experiments. No privileged pods.
 
-- Root disk is cloned from the golden `ubuntu-noble-server-cloudimg-amd64`
-  image (managed in `iac/kubevirt/images.tf`) and persists across restarts.
-- Docker is preinstalled and the `coder` user is in the `docker` group.
-- Stop = VM powered off (disk kept); restart takes ~1–2 min after the first
-  clone. First start clones the root disk, so expect a few minutes.
+Persistence mirrors pod workspaces: **disposable root + persistent home**.
+
+- Root boots fresh from the golden `coder-workspace-ubuntu-noble` image
+  (ephemeral overlay, discarded on stop): every start is a pristine first
+  boot — tools installed ad-hoc during a session vanish; pre-bake them into
+  the golden image (see `iac/coder/golden-image.tf`) or manage via
+  [dotfiles](https://coder.com/docs/dotfiles).
+- `/home/coder` is a persistent ZFS-backed PVC that survives restarts.
+- Docker is installed on every start (~1–2 min of apt). Bake it into the
+  golden image to skip that.
 - CPU/memory are **pinned** (requests = limits): a VM reserves what it asks
   for, unlike pod workspaces which only reserve a small floor.
-
-Pre-bake tools into a golden image (see `iac/kubevirt/images.tf`) to skip
-cloud-init package installs on first boot.
+- Stop = VM powered off; start ≈ 1.5–2 min (boot + cloud-init + agent).

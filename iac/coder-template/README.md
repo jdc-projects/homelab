@@ -17,11 +17,11 @@ this module after `deploy-bulk` (which includes `iac/coder`) has converged.
 | Template  | `kubevirt` — bespoke VM workspaces (full Linux VM, native docker), see `templates/kubevirt/` |
 
 The kubevirt template depends on extra infrastructure, all deployed by this
-repo: the golden Ubuntu Noble image PVC (`iac/kubevirt/images.tf`), the CDI
-cross-namespace clone-auth Role (`iac/kubevirt/coder-workspace-clone-auth.tf`),
-VirtualMachine/DataVolume RBAC via the chart's
-`serviceAccount.workspaceNamespaces[].extraRules`, and the read-only
-`coder-crd-reader` ClusterRole for CRD schema discovery (`iac/coder/crd-reader.tf`).
+repo: the golden Ubuntu Noble image DataVolume (20Gi, URL-imported with CDI
+so the image is expanded — `iac/coder/golden-image.tf`), VirtualMachine RBAC
+via the chart's `serviceAccount.workspaceNamespaces[].extraRules`, and the
+read-only `coder-crd-reader` ClusterRole for CRD schema discovery
+(`iac/coder/crd-reader.tf`).
 
 ## Versioning
 

@@ -136,11 +136,10 @@ deployment-wide) — the token is its only access.
   inactivity; restart via dashboard/CLI or autostart schedule.
 - **KubeVirt VM workspaces** are wired too — a second template (`kubevirt`,
   managed here in `templates/kubevirt/`) runs full Ubuntu VMs with native
-  docker. Cloud-init's per-instance modules only run on a workspace disk's
-  FIRST boot, so the template installs a self-syncing agent service: on every
-  boot it re-extracts the agent script + rotated token from the regenerated
-  cloud-init seed ISO. Consequence: template changes that only alter
-  cloud-init reach existing workspaces at their next start.
+  docker. Persistence mirrors pod workspaces: disposable root (ephemeral
+  overlay over a golden image) + persistent `/home/coder` PVC, so every
+  start is a pristine first boot — fresh agent token, fresh packages, no
+  drift.
 - Sizing: single-node cluster — keep template CPU/memory defaults modest.
 - KubeVirt VM workspaces: see the bullet above and `../coder-template`'s
   README for the extra infrastructure (golden image, clone-auth, VM RBAC,

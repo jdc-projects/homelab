@@ -81,16 +81,8 @@ resource "helm_release" "coder" {
                   ]
                 },
                 {
-                  apiGroups = ["cdi.kubevirt.io"]
-                  resources = ["datavolumes"]
-                  verbs = [
-                    "create", "delete", "deletecollection", "get",
-                    "list", "patch", "update", "watch",
-                  ]
-                },
-                {
                   # KubeVirt cloud-init payloads over 2048 bytes must ride in
-                  # a Secret referenced by userDataSecretRef.
+                  # a Secret referenced by secretRef.
                   apiGroups = [""]
                   resources = ["secrets"]
                   verbs = [
