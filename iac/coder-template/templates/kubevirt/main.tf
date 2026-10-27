@@ -63,7 +63,7 @@ variable "namespace" {
 variable "golden_pvc" {
   type        = string
   description = "Golden root image PVC (in the workspace namespace) that VMs boot ephemeral-style."
-  default     = "coder-workspace-ubuntu-noble"
+  default     = "coder-workspace-ubuntu-resolute"
 }
 
 variable "debug_ssh_authorized_key" {

@@ -67,7 +67,7 @@ variable "image" {
     README for guidance on choosing an image.
     EOF
   type        = string
-  default     = "codercom/example-base:ubuntu"
+  default     = "codercom/example-universal:ubuntu"
 }
 
 # Memory tiers for the workspace dropdown: every power of two from

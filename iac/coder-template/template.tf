@@ -21,6 +21,22 @@ locals {
     filesha256("${local.workspace_template_dir}/${f}")
   ]))
 
+  # Template-level terraform variable values. NOTE (coderd behaviour): when
+  # a new template version is created without explicit variable values, the
+  # previous active version's values are INHERITED — HCL default changes in
+  # the template source never take effect for existing templates. Any
+  # variable that matters must be pinned here (and the version-name hash
+  # below folds these in, since a tf_vars-only change doesn't alter the
+  # directory hash).
+  default_version_vars = toset([
+    { name = "image", value = "codercom/example-universal:ubuntu" },
+  ])
+
+  default_version_name = substr(sha256(join("|", [
+    local.workspace_template_hash,
+    jsonencode(sort([for v in local.default_version_vars : "${v.name}=${v.value}"])),
+  ])), 0, 12)
+
   kubevirt_template_dir = "${path.module}/templates/kubevirt"
 
   kubevirt_template_files = fileset(local.kubevirt_template_dir, "*")
@@ -30,11 +46,13 @@ locals {
     filesha256("${local.kubevirt_template_dir}/${f}")
   ]))
 
-  # Template-level terraform variable values for the kubevirt template
-  # (e.g. debug_ssh_authorized_key). NOTE: folded into the version name —
-  # the provider only creates a new version when the name changes, and a
-  # tf_vars-only change doesn't alter the directory hash.
-  kubevirt_version_vars = toset([])
+  # See default_version_vars above for why these are pinned explicitly:
+  # coderd inherits the previous version's variable values, so HCL default
+  # changes (like the noble -> resolute golden rename) would otherwise never
+  # reach existing templates.
+  kubevirt_version_vars = toset([
+    { name = "golden_pvc", value = "coder-workspace-ubuntu-resolute" },
+  ])
 
   kubevirt_version_name = substr(sha256(join("|", [
     local.kubevirt_template_hash,
@@ -54,8 +72,9 @@ resource "coderd_template" "default" {
   versions = [{
     directory = local.workspace_template_dir
     active    = true
-    name      = substr(local.workspace_template_hash, 0, 12)
+    name      = local.default_version_name
     message   = "Managed by OpenTofu (iac/coder-template)"
+    tf_vars   = local.default_version_vars
   }]
 
   # Enterprise-only fields (acl, auto_stop_requirement, dormant TTLs,

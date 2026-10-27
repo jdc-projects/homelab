@@ -6,13 +6,13 @@ icon: /emojis/1f5a5.png
 
 # KubeVirt VM
 
-Full Ubuntu 24.04 virtual machines on the homelab cluster — a real kernel, so
-privileged workloads run natively: dockerd/containerd, systemd, kernel
-modules, eBPF experiments. No privileged pods.
+Full Ubuntu 26.04 (Resolute) LTS virtual machines on the homelab cluster —
+a real kernel, so privileged workloads run natively: dockerd/containerd,
+systemd, kernel modules, eBPF experiments. No privileged pods.
 
 Persistence mirrors pod workspaces: **disposable root + persistent home**.
 
-- Root boots fresh from the golden `coder-workspace-ubuntu-noble` image
+- Root boots fresh from the golden `coder-workspace-ubuntu-resolute` image
   (ephemeral overlay, discarded on stop): every start is a pristine first
   boot — tools installed ad-hoc during a session vanish; pre-bake them into
   the golden image (see `iac/coder/golden-image.tf`) or manage via

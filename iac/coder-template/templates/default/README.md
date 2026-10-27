@@ -12,9 +12,9 @@ provisioners against the homelab k3s cluster.
 ## What you get
 
 - A pod (Deployment) running the workspace image — default
-  `codercom/example-base:ubuntu` (minimal; an admin can swap the template's
-  `image` variable for more preinstalled tooling) — with the Coder agent
-  injected.
+  `codercom/example-universal:ubuntu` (Coder's catch-all image with many
+  languages and tools preinstalled; swap the template's `image` variable
+  for a leaner or custom build) — with the Coder agent injected.
 - A persistent home directory (`/home/coder`) on a ZFS-backed PVC that
   survives workspace restarts.
 - code-server (VS Code in the browser), served on a workspace subdomain.
