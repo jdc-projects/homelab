@@ -89,6 +89,10 @@ resource "vault_policy" "terraform" {
     path "sys/policies/acl/openbao-terraform" {
       capabilities = ["create", "read", "update", "delete", "list"]
     }
+
+    path "sys/policies/acl/git-identity" {
+      capabilities = ["create", "read", "update", "delete", "list"]
+    }
   EOT
 }
 

@@ -175,6 +175,28 @@ data "coder_parameter" "opencode_enabled" {
   }
 }
 
+data "coder_parameter" "git_identity" {
+  name         = "git_identity"
+  display_name = "Git identity"
+  description  = "Configure git (name, email, SSH auth + SSH commit signing) at startup from OpenBao: secret/git-identities/<your-keycloak-user>/<identity>. 'None' leaves git unconfigured."
+  default      = "none"
+  icon         = "/icon/git.svg"
+  mutable      = true
+
+  option {
+    name  = "None (leave git unconfigured)"
+    value = "none"
+  }
+  option {
+    name  = "Personal"
+    value = "personal"
+  }
+  option {
+    name  = "Work"
+    value = "work"
+  }
+}
+
 provider "kubernetes" {
   config_path = var.use_kubeconfig == true ? "~/.kube/config" : null
 }
@@ -465,6 +487,114 @@ locals {
 }
 
 # Persistent home directory — the only disk that survives workspace restarts.
+# Git identity from OpenBao (per-user bank). coderd refreshes the workspace
+# OWNER's Keycloak access token at every build and bakes it into this script
+# at provision time (data.coder_workspace_owner.me.oidc_access_token); the
+# script logs into OpenBao with it (auth/oidc role "coder" — azp-bound JWT
+# login, user-scoped via the git-identity policy in iac/openbao-config) and
+# reads secret/git-identities/<keycloak-username>/<identity>: {name, email,
+# ssh_private_key, ssh_public_key}. The selected identity wires git identity
+# + SSH auth + SSH signing (gpg.format ssh) — one key registered on GitHub as
+# both an authentication and a signing key shows commits as Verified.
+#
+# Graceful skips (exit 0, never fails the workspace): no OIDC token (owner
+# not OIDC-logged-in / automation user), OpenBao unreachable/login failure,
+# or the identity entry not populated yet.
+# OpenBao is reached in-cluster only: http://openbao.openbao.svc:8200.
+resource "coder_script" "git_identity" {
+  count        = data.coder_parameter.git_identity.value != "none" ? 1 : 0
+  agent_id     = coder_agent.main.id
+  display_name = "Git identity (OpenBao)"
+  icon         = "/icon/git.svg"
+
+  script = <<-EOT
+    #!/usr/bin/env sh
+    set -eu
+    IDENTITY="${data.coder_parameter.git_identity.value}"
+    JWT="${data.coder_workspace_owner.me.oidc_access_token}"
+    BAO="http://openbao.openbao.svc:8200"
+
+    if [ -z "$JWT" ]; then
+      echo "No OIDC token for this workspace owner (automation user, or no"
+      echo "recent Keycloak login) - skipping git identity."
+      exit 0
+    fi
+
+    command -v jq >/dev/null 2>&1 || {
+      SUDO=""
+      [ "$(id -u)" = 0 ] || SUDO="sudo"
+      $SUDO apt-get update -qq
+      $SUDO DEBIAN_FRONTEND=noninteractive apt-get install -y -qq jq
+    }
+
+    # NOTE: role goes in the BODY, not the path — OpenBao 2.x only registers
+    # auth/<mount>/login (exact) as an unauthenticated route; /login/<role>
+    # falls through to ACL checks and unauthenticated callers get "permission
+    # denied" regardless of role existence.
+    RESP=$(curl -s --max-time 15 -X POST "$BAO/v1/auth/oidc/login" \
+      -H "Content-Type: application/json" \
+      -d "{\"role\":\"coder\",\"jwt\":\"$JWT\"}")
+    VT=$(printf '%s' "$RESP" | jq -r '.auth.client_token // empty')
+    if [ -z "$VT" ]; then
+      echo "OpenBao login failed - skipping git identity:"
+      printf '%s' "$RESP" | jq -r '.errors[]?' 2>/dev/null | head -3
+      exit 0
+    fi
+    USER_=$(printf '%s' "$RESP" | jq -r '.auth.alias.name')
+    echo "OpenBao login OK (user: $USER_)"
+
+    SECRET=$(curl -s --max-time 15 -H "X-Vault-Token: $VT" \
+      "$BAO/v1/secret/data/git-identities/$USER_/$IDENTITY")
+    NAME=$(printf '%s' "$SECRET" | jq -r '.data.data.name // empty')
+    EMAIL=$(printf '%s' "$SECRET" | jq -r '.data.data.email // empty')
+    PRIVKEY=$(printf '%s' "$SECRET" | jq -r '.data.data.ssh_private_key // empty')
+    PUBKEY=$(printf '%s' "$SECRET" | jq -r '.data.data.ssh_public_key // empty')
+    if [ -z "$NAME" ] || [ -z "$EMAIL" ] || [ -z "$PRIVKEY" ] || [ -z "$PUBKEY" ]; then
+      echo "Identity '$IDENTITY' not found (or incomplete) at"
+      echo "git-identities/$USER_/$IDENTITY in OpenBao."
+      echo "Populate it and restart the workspace - skipping git identity."
+      exit 0
+    fi
+
+    mkdir -p "$HOME/.ssh"
+    KEY="$HOME/.ssh/git-$IDENTITY"
+    printf '%s\n' "$PRIVKEY" > "$KEY"
+    printf '%s\n' "$PUBKEY" > "$KEY.pub"
+    chmod 600 "$KEY"
+    chmod 644 "$KEY.pub"
+
+    # Replace any previous managed block, then append this identity's.
+    touch "$HOME/.ssh/config"
+    sed -i '/# --- coder git-identity (managed)/,/# --- end coder git-identity/d' "$HOME/.ssh/config"
+    cat >> "$HOME/.ssh/config" <<SSHCFG
+    # --- coder git-identity (managed) ---
+    Host github.com
+      IdentityFile $KEY
+      IdentitiesOnly yes
+    # --- end coder git-identity ---
+SSHCFG
+
+    grep -q 'github.com ssh-ed25519' "$HOME/.ssh/known_hosts" 2>/dev/null || \
+      ssh-keyscan -t ed25519 github.com >> "$HOME/.ssh/known_hosts" 2>/dev/null
+
+    git config --global user.name "$NAME"
+    git config --global user.email "$EMAIL"
+    git config --global user.signingkey "$KEY.pub"
+    git config --global gpg.format ssh
+    git config --global commit.gpgsign true
+    # Transparently authenticate https://github.com/ clones with the key.
+    git config --global url."git@github.com:".insteadOf "https://github.com/"
+
+    echo "Git identity '$IDENTITY' configured ($NAME <$EMAIL>)."
+    echo "If commits show Unverified / pushes are rejected, register this key"
+    echo "on GitHub (Settings > SSH keys) as BOTH an authentication and a"
+    echo "signing key:"
+    cat "$KEY.pub"
+  EOT
+
+  run_on_start = true
+}
+
 resource "kubernetes_persistent_volume_claim_v1" "home" {
   metadata {
     name      = "coder-${data.coder_workspace.me.id}-home"
