@@ -609,6 +609,7 @@ SSHCFG
       # spawns pinentry-curses, which dies with "Inappropriate ioctl for
       # device" on workspace terminals.
       mkdir -p "$HOME/.gnupg"
+      chmod 700 "$HOME/.gnupg"
       cat > "$HOME/.gnupg/gpg-agent.conf" <<GPGCFG
 default-cache-ttl 28800
 max-cache-ttl 28800
