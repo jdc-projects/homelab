@@ -599,17 +599,28 @@ SSHCFG
         $SUDO DEBIAN_FRONTEND=noninteractive apt-get install -y -qq gnupg
       }
       printf '%s\n' "$GPGKEY" | gpg --batch --import >/dev/null 2>&1
+      # Mark the key ultimately trusted so verification doesn't warn
+      # "[unknown] ... not certified with a trusted signature".
+      FPR=$(gpg --list-keys --with-colons "$GPGID" 2>/dev/null | awk -F: '/^fpr:/ {print $10; exit}')
+      [ -n "$FPR" ] && printf '%s:6:\n' "$FPR" | gpg --import-ownertrust >/dev/null 2>&1
       # Cache the passphrase for the whole workspace session (one prompt per
-      # boot) and let git prompt inline instead of needing a pinentry binary.
+      # boot). Loopback pinentry must be the gpg DEFAULT (~/.gnupg/gpg.conf):
+      # git has no pinentry-mode config key, and without this the agent
+      # spawns pinentry-curses, which dies with "Inappropriate ioctl for
+      # device" on workspace terminals.
       mkdir -p "$HOME/.gnupg"
       cat > "$HOME/.gnupg/gpg-agent.conf" <<GPGCFG
 default-cache-ttl 28800
 max-cache-ttl 28800
 allow-loopback-pinentry
 GPGCFG
+      grep -q '^pinentry-mode loopback' "$HOME/.gnupg/gpg.conf" 2>/dev/null || \
+        printf 'pinentry-mode loopback\n' >> "$HOME/.gnupg/gpg.conf"
+      # Belt and braces for any tool that still wants a tty.
+      grep -q 'GPG_TTY' "$HOME/.bashrc" 2>/dev/null || \
+        printf '\nexport GPG_TTY="$(tty)"\n' >> "$HOME/.bashrc"
       echo "reloadagent" | gpg-connect-agent >/dev/null 2>&1 || true
       git config --global user.signingkey "$GPGID"
-      git config --global gpg.pinentry-mode loopback
       echo "Git identity '$IDENTITY' configured ($NAME <$EMAIL>), GPG-signed"
       echo "with $GPGID. First commit of each boot asks for the key's"
       echo "passphrase, then gpg-agent caches it for 8h."
