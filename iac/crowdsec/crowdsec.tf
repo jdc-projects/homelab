@@ -215,6 +215,17 @@ resource "helm_release" "crowdsec" {
             - filter: req.Host == "grafana.${var.server_base_domain}" && req.URL.Path startsWith "/api/ds/query"
               apply:
                 - DisableBodyInspection()
+            # coder workspace apps (opencode--…-coder.<domain>): the OpenCode web
+            # terminal PUTs /api/pty/<id> terminal-size updates. CRS only allows
+            # GET/POST/HEAD/DELETE by default, so 911100 scores every PUT, 949110
+            # trips on the anomaly score and crowdsec-appsec-outofband bans the
+            # user's IP from ~6 terminal resizes (reproduced 2026-10-28 - the ban
+            # then 403s every coder.jd-chapman.dev route incl. /cli-auth). Drop
+            # ONLY the method rule, and only for PUTs under /api/pty/ on opencode
+            # workspace-app hosts; every other CRS/vpatch rule stays active there.
+            - filter: IsOutBand && req.Host startsWith "opencode--" && req.Host endsWith "-coder.${var.server_base_domain}" && req.Method == "PUT" && req.URL.Path startsWith "/api/pty/"
+              apply:
+                - RemoveOutBandRuleByID(911100)
           on_match:
             # Scoped CRS exceptions for hosts/paths where legitimate traffic trips CRS
             # rules. Same scoping rule as pre_eval: every filter must pin req.Host.
