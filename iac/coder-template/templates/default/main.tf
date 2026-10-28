@@ -519,7 +519,12 @@ resource "coder_script" "git_identity" {
       printf '%s' "$RESP" | jq -r '.errors[]?' 2>/dev/null | head -3
       exit 0
     fi
-    USER_=$(printf '%s' "$RESP" | jq -r '.auth.alias.name')
+    # OpenBao 2.x returns auth.alias.name as null on JWT logins (a
+    # divergence from Vault) - take the username from the JWT payload itself.
+    PAYLOAD=$(printf '%s' "$JWT" | cut -d. -f2)
+    PAD=$(( (4 - $${#PAYLOAD} % 4) % 4 ))
+    [ "$PAD" -ne 0 ] && PAYLOAD="$PAYLOAD$(printf '%*s' "$PAD" '' | tr ' ' '=')"
+    USER_=$(printf '%s' "$PAYLOAD" | tr '_-' '/+' | base64 -d 2>/dev/null | jq -r '.preferred_username')
     echo "OpenBao login OK (user: $USER_)"
 
     SECRET=$(curl -s --max-time 15 -H "X-Vault-Token: $VT" \
