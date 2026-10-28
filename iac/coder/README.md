@@ -81,6 +81,44 @@ Consequences / mitigations:
   credentials). Lockout recovery: temporarily remove that env var, or mint an
   `api_keys` row via psql — `bootstrap.tf` demonstrates the latter.
 
+## Group/role sync from Keycloak (investigated, not enabled)
+
+Desired behaviour: `system_admins` (LDAP → Keycloak federation) automatically
+becomes Coder `owner` — the same system-admins-as-admin mapping Grafana,
+OpenBao and ERPNext already use.
+
+Coder has native support ([IdP sync](https://coder.com/docs/admin/users/idp-sync)):
+**role sync** (`CODER_OIDC_USER_ROLE_FIELD` + `CODER_OIDC_USER_ROLE_MAPPING`,
+e.g. `{"system_admins":["owner"]}` — `owner` is Coder's superuser; other site
+roles: `template-admin`, `user-admin`, `auditor`), **group sync**
+(`CODER_OIDC_GROUP_FIELD` — Coder-side groups gate template access), and org
+sync. **All of it is Premium-licensed**, and this deployment is OSS with no
+`CODER_LICENSE` (verified against v2.36.7 source):
+
+- `enterprise/coderd/enidpsync/role.go`: role sync entitled via
+  `FeatureUserRoleManagement`; `groups.go`: group sync via `FeatureTemplateRBAC`.
+- The AGPL fallbacks (`coderd/idpsync/role.go`) hard-return `false` and
+  `SyncRoles` no-ops when not entitled — setting the env vars is **silently
+  ignored** (known community gripe: coder/coder#13110). Only the *automatic
+  sync* is gated; role editing via API/dashboard works fine on OSS.
+
+Options if we ever want it:
+
+1. **Premium license** — native login-time sync; also unlocks HA, quotas,
+   custom roles. Keycloak side is trivial: a `groups` protocol mapper on the
+   `coder` client (the exact `../openbao-config/keycloak.tf` pattern —
+   group-membership mapper, no extra scope needed). Caveat: while role sync is
+   enabled the IdP is the source of truth and manual role editing is disabled.
+2. **OSS-compatible reconciliation (recommended)** — CronJob using the
+   `tofu-deploy` owner token already minted into `coder-api-token`
+   (bootstrap.tf): list `system_admins` members via the Keycloak admin API,
+   match Coder users by email, grant/revoke `owner` via
+   `PATCH /users/{id}/roles`. Converges on a schedule (e.g. hourly) instead of
+   at login; manage only `owner` and leave other roles untouched.
+3. **Do nothing (current)** — single-admin homelab; first-user-is-owner +
+   `tofu-deploy` cover it; a new human gets `owner` via a one-off dashboard
+   click.
+
 ## Known quirk: GitHub external-auth env var
 
 `CODER_EXTERNAL_AUTH_GITHUB_DEFAULT_PROVIDER_ENABLE` (and the deprecated
