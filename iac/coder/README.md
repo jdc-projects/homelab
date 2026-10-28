@@ -53,6 +53,14 @@ Consequences / mitigations:
 - Keycloak confidential client `coder`; redirect URI
   `https://coder.jd-chapman.dev/api/v2/users/oidc/callback` (note: differs from
   the `/oidc/callback` convention other apps use).
+- The client overrides the realm's access-token lifespan to **30m**
+  (`access_token_lifespan`, realm default is 5m). coderd refreshes the owner's
+  OIDC token at every workspace build and hands it to the build's templates
+  (`coder_workspace_owner.me.oidc_access_token`); the token is minted at
+  provision time but consumed at agent start (seconds for pods, ~2-3min for VM
+  boots), so 5m is too tight. Only affects tokens issued to coderd — nothing
+  else in the realm. Refresh itself rides the Keycloak SSO session (5-day idle
+  / 30-day max, set in `../keycloak-config/realms.tf`).
 - `CODER_OIDC_IGNORE_EMAIL_VERIFIED=true` — Keycloak/LDAP-federated emails are
   frequently unverified.
 - Password auth is disabled. **Bootstrap quirk (2.36): the `/setup` first-user

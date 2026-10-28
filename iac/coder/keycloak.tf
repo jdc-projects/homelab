@@ -23,5 +23,14 @@ resource "keycloak_openid_client" "coder" {
 
   full_scope_allowed = false
 
+  # Per-client access-token lifespan (30m), overriding the realm default (5m).
+  # coderd refreshes the workspace owner's OIDC token at every build and bakes
+  # it into the build's provisioning metadata (surfaced to templates as
+  # coder_workspace_owner.me.oidc_access_token — e.g. the vault-jwt module
+  # passes it to Vault). The token is minted at provision time but consumed at
+  # agent start: seconds later for pods, ~2-3min after a VM boot. The realm's
+  # 5m default is too tight for that window; 30m covers it comfortably.
+  access_token_lifespan = "1800"
+
   login_theme = "keycloak"
 }
