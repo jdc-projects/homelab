@@ -18,6 +18,11 @@ provisioners against the homelab k3s cluster.
 - A persistent home directory (`/home/coder`) on a ZFS-backed PVC that
   survives workspace restarts.
 - code-server (VS Code in the browser), served on a workspace subdomain.
+- Optional **Claude Code** and **OpenCode** CLI modules (mutable
+  `claude_enabled` / `opencode_enabled` parameters). OpenCode gets a
+  dashboard web app via AgentAPI. Authenticate inside the workspace
+  (`claude` → /login, `opencode` auth) — credentials persist on the home
+  volume; nothing is baked into the template.
 - Optional **docker-in-docker**: a privileged `docker:29-dind` sidecar whose
   socket is exposed to the workspace (toggle the `docker_enabled` parameter;
   CPU/memory configurable, mutable — applies on restart). Unprivileged pods

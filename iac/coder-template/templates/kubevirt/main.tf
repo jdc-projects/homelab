@@ -141,6 +141,40 @@ data "coder_parameter" "home_disk_size" {
   }
 }
 
+data "coder_parameter" "claude_enabled" {
+  name         = "claude_enabled"
+  display_name = "Claude Code"
+  description  = "Install the Claude Code CLI. Authenticate inside the workspace (claude -> /login): credentials persist on the home volume. No token is baked into the template."
+  default      = "false"
+  icon         = "/icon/claude.svg"
+  mutable      = true
+  option {
+    name  = "Enabled"
+    value = "true"
+  }
+  option {
+    name  = "Disabled"
+    value = "false"
+  }
+}
+
+data "coder_parameter" "opencode_enabled" {
+  name         = "opencode_enabled"
+  display_name = "OpenCode"
+  description  = "Install OpenCode and expose it as a workspace web app (via AgentAPI). Authenticate inside the workspace; credentials persist on the home volume."
+  default      = "false"
+  icon         = "/icon/opencode.svg"
+  mutable      = true
+  option {
+    name  = "Enabled"
+    value = "true"
+  }
+  option {
+    name  = "Disabled"
+    value = "false"
+  }
+}
+
 provider "kubernetes" {
   config_path = var.use_kubeconfig == true ? "~/.kube/config" : null
 }
@@ -199,6 +233,30 @@ module "code-server" {
 
   # Path apps are disabled on this deployment (CODER_DISABLE_PATH_APPS), so
   # code-server must be served on a workspace subdomain.
+  subdomain = true
+}
+
+# Optional Claude Code CLI (registry.coder.com/modules/coder/claude-code).
+# Auth is interactive inside the workspace — credentials land in ~/.claude
+# on the persistent home. Deliberately NOT passing claude_code_oauth_token /
+# anthropic_api_key: template-level tokens would live in tofu state and
+# apply to every workspace.
+module "claude-code" {
+  count    = data.coder_parameter.claude_enabled.value == "true" ? 1 : 0
+  source   = "registry.coder.com/coder/claude-code/coder"
+  version  = "~> 1.2"
+  agent_id = coder_agent.main.id
+}
+
+# Optional OpenCode with a dashboard web app (AgentAPI attaches to the TUI).
+# Same auth story as claude-code: interactively inside the workspace.
+module "opencode" {
+  count     = data.coder_parameter.opencode_enabled.value == "true" ? 1 : 0
+  source    = "registry.coder.com/coder-labs/opencode/coder"
+  version   = "~> 0.1"
+  agent_id  = coder_agent.main.id
+  workdir   = "/home/coder"
+  order     = 2
   subdomain = true
 }
 

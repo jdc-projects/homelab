@@ -18,6 +18,10 @@ Persistence mirrors pod workspaces: **disposable root + persistent home**.
   the golden image (see `iac/coder/golden-image.tf`) or manage via
   [dotfiles](https://coder.com/docs/dotfiles).
 - `/home/coder` is a persistent ZFS-backed PVC that survives restarts.
+- Optional **Claude Code** and **OpenCode** modules (`claude_enabled` /
+  `opencode_enabled` parameters) — CLI tools install on start, credentials
+  persist on the home volume, OpenCode gets a dashboard web app via
+  AgentAPI.
 - Docker is installed on every start (~1–2 min of apt). Bake it into the
   golden image to skip that.
 - CPU/memory are **pinned** (requests = limits): a VM reserves what it asks
