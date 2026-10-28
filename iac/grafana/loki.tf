@@ -135,8 +135,9 @@ resource "helm_release" "loki" {
   ]
 
   # this is the neatest way to put in the schema_config(s)
-  # limits_config.allow_structured_metadata must be true for promtail's
-  # structured_metadata stage to actually store (and make queryable) the traceId
+  # limits_config.allow_structured_metadata must be true for Alloy's
+  # (iac/grafana/alloy.tf) structured_metadata stage to actually store (and
+  # make queryable) the traceId
   # via LogQL `| traceId="..."`. Defaults to false in Loki 3.x; v13/tsdb schema
   # supports it.  NOTE: the chart key is loki.limits_config (snake_case), read by
   # the chart's loki.config string template via `.Values.loki.limits_config`; the

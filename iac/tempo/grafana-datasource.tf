@@ -5,8 +5,8 @@
 #
 # tracesToLogs wires Tempo traces to the existing Loki datasource: clicking a
 # span jumps to the matching Loki log lines filtered by traceId (emitted into
-# Loki structured metadata by the promtail pipeline stage added in
-# iac/grafana/promtail.tf).  The Loki datasource UID is grafana-operator
+# Loki structured metadata by the Alloy pipeline stage added in
+# iac/grafana/alloy.tf).  The Loki datasource UID is grafana-operator
 # generated (a UUID, not name-derived) — it is read here as a local so the
 # coupling is explicit.
 
@@ -44,7 +44,7 @@ resource "kubernetes_manifest" "tempo_grafana_datasource" {
           tracesToLogs = {
             datasourceUid   = local.loki_datasource_uid
             filterByTraceID = true
-            # Span attributes that map to Loki stream labels emitted by promtail.
+            # Span attributes that map to Loki stream labels emitted by Alloy.
             # The collector (iac/otel-collector/) adds matching `namespace`
             # and `pod` resource attributes via its k8sattributes processor.
             tags = ["namespace", "pod"]

@@ -8,9 +8,9 @@
 # A Service + ServiceMonitor then let the cluster-wide select-all Prometheus
 # scrape it.
 #
-# Other observability: Loki's promtail (DaemonSet in the loki namespace) already
-# tails all pod logs including calico-system, so no log change is needed. Calico
-# emits no traces, so Tempo is unaffected.
+# Other observability: Loki's Alloy log collector (DaemonSet in the loki
+# namespace) already tails all pod logs including calico-system, so no log
+# change is needed. Calico emits no traces, so Tempo is unaffected.
 
 # Idempotent: enable Felix Prometheus metrics on the operator-managed default
 # FelixConfiguration. Re-runs on Calico version bumps.
