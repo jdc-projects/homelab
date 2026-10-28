@@ -22,13 +22,15 @@ automated in-cluster (nothing passes through tofu state or the runner):
 
 1. `kubernetes_job.openbao_bootstrap` (this module) waits for the API, runs
    `bao operator init -key-shares=1 -key-threshold=1` exactly once, and stores
-   the results as Secrets in this namespace:
-   - `openbao-seal` (`unseal-key`) — consumed by the **unseal sidecar**
-     (`server.extraContainers`), which re-unseals on every pod start,
-     chart upgrade, node reboot, and hibernation wake.
-   - `openbao-bootstrap` (`root-token`) — read once to seed
-     `iac/openbao-config` (see below).
+   the unseal key as the `openbao-seal` Secret in this namespace — consumed
+   by the **unseal sidecar** (`server.extraContainers`), which re-unseals on
+   every pod start, chart upgrade, node reboot, and hibernation wake.
 2. Steady state is fully self-healing; `updateStrategyType = RollingUpdate`.
+
+The initial root token was used once to bootstrap `iac/openbao-config`'s
+Kubernetes-auth CI role and has been **revoked** — there is no standing root
+credential anywhere. Emergency admin: the Keycloak SSO admin role
+(root-equivalent policy), or `bao operator generate-root` with the unseal key.
 
 Threat model: the unseal key lives in the same trust domain as every other
 secret in this cluster (k8s Secrets + TF state). OpenBao still meaningfully
@@ -37,19 +39,18 @@ backup/DB-snapshot exfiltration. Protection *against cluster-admin
 compromise* would require real auto-unseal (cloud KMS / HSM via the `seal`
 stanza) — the escape hatch if that ever matters.
 
-Break-glass: store a copy of the unseal key in Vaultwarden (`kubectl -n
-openbao get secret openbao-seal -o jsonpath='{.data.unseal-key}' | base64 -d`).
-If the cluster dies, CNPG snapshots restore the ciphertext — the key restores
-access.
-
-## One-time (and only) manual step
-
-Feed the root token to CI for `iac/openbao-config`:
+Break-glass: the unseal key is stored as the `OPENBAO_UNSEAL_KEY` GitHub
+secret (recovery material only — nothing automated reads it; if the cluster
+dies, CNPG snapshots restore the ciphertext and the key restores access):
 
 ```bash
-kubectl -n openbao get secret openbao-bootstrap -o jsonpath='{.data.root-token}' \
-  | base64 -d | gh secret set OPENBAO_ROOT_TOKEN
+kubectl -n openbao get secret openbao-seal -o jsonpath='{.data.unseal-key}' \
+  | base64 -d | gh secret set OPENBAO_UNSEAL_KEY
 ```
+
+An additional copy outside GitHub and the cluster (e.g. Vaultwarden — noting
+it is itself hosted here — or paper) is cheap belt-and-braces; rotate with
+`bao operator rekey` (then update the GitHub secret).
 
 ## Hibernation
 
@@ -78,7 +79,7 @@ DB is back.
 - **Agent injector: purposefully not deployed.** The intended consumers are
   applications (via Kubernetes auth / API), not cluster pods. Enable
   `injector` and wire its k8s-auth role when the first consumer lands.
-- **Harden `iac/openbao-config` provider auth**: replace the root token with
-  Kubernetes-auth (`kubectl create token` for a dedicated SA in a workflow
-  pre-step) and revoke the root token (`bao token revoke`).
 - **HSM/KMS auto-unseal** if the threat model ever needs it.
+
+(Done: CI auth hardened — `iac/openbao-config` now authenticates with
+per-run minted ServiceAccount tokens and the root token is revoked.)

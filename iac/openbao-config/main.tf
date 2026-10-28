@@ -11,8 +11,13 @@ terraform {
       version = "~> 5.8"
     }
 
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 3.0"
+    }
+
     # OpenBao is API-compatible with Vault for everything managed here (JWT
-    # auth, Kubernetes auth, policies, KV mount, audit). TODO: switch to the
+    # auth, Kubernetes auth, policies, KV mount). TODO: switch to the
     # dedicated `openbao` provider once it ships (see README.md).
     vault = {
       source  = "hashicorp/vault"
@@ -28,12 +33,25 @@ provider "keycloak" {
   url       = data.terraform_remote_state.keycloak.outputs.keycloak_url
 }
 
-# Token from the one-time bootstrap (`openbao-bootstrap` secret in the openbao
-# namespace; set as the OPENBAO_ROOT_TOKEN GitHub secret). TODO: replace with
-# Kubernetes-auth and revoke root — see README.md.
+provider "kubernetes" {
+  config_path = "../cluster.yml"
+}
+
+# The provider exchanges a short-lived ServiceAccount JWT for a Vault token
+# via Kubernetes auth (role openbao-config in ci-auth.tf). The JWT is minted
+# per-run by the deploy workflow (fetch-openbao-token input).
+#
+# Bootstrap / recovery (role missing or broken): temporarily replace the
+# auth_login_jwt block with `token = <root-or-SSO-admin-token>` and apply
+# once — see README.md.
 provider "vault" {
   address = "https://${local.openbao_domain}"
-  token   = var.openbao_root_token
+
+  auth_login_jwt {
+    mount = "kubernetes"
+    role  = "openbao-config"
+    jwt   = var.openbao_k8s_jwt
+  }
 }
 
 data "terraform_remote_state" "keycloak" {

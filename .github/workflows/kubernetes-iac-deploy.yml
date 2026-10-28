@@ -28,6 +28,11 @@ on:
         required: false
         type: boolean
         default: false
+      fetch-openbao-token:
+        required: false
+        type: boolean
+        default: false
+        description: "Mint a short-lived OpenBao CI ServiceAccount token (Kubernetes auth) into TF_VAR_openbao_k8s_jwt, for the openbao-config module."
 
 env:
   # TF_PLUGIN_CACHE_DIR: "/opt/hostedtoolcache/tf-cache"
@@ -62,7 +67,6 @@ env:
   TF_VAR_k3s_ip_address: ${{ secrets.K3S_IP_ADDRESS }}
   TF_VAR_vaultwarden_push_installation_id: ${{ secrets.VAULTWARDEN_PUSH_INSTALLATION_ID }}
   TF_VAR_vaultwarden_push_installation_key: ${{ secrets.VAULTWARDEN_PUSH_INSTALLATION_KEY }}
-  TF_VAR_openbao_root_token: ${{ secrets.OPENBAO_ROOT_TOKEN }}
   TF_VAR_crowdsec_enroll_key: ${{ secrets.CROWDSEC_ENROLL_KEY }}
   TF_VAR_opnsense_nic_vendor_id: ${{ vars.OPNSENSE_NIC_VENDOR_ID }}
   TF_VAR_opnsense_nic_product_id: ${{ vars.OPNSENSE_NIC_PRODUCT_ID }}
@@ -105,6 +109,10 @@ jobs:
           ./cluster-config-write.sh
           mkdir ~/.kube
           cp cluster.yml ~/.kube/config
+      - name: "Fetch OpenBao CI token"
+        if: ${{ inputs.fetch-openbao-token }}
+        run: |
+          echo "TF_VAR_openbao_k8s_jwt=$(kubectl create token openbao-config -n openbao --audience openbao)" >> "$GITHUB_ENV"
       - name: "Connect to Tailnet"
         if: "${{ ('self-hosted' != inputs.runner-type) }}"
         uses: tailscale/github-action@v4

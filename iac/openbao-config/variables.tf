@@ -3,8 +3,8 @@ variable "server_base_domain" {
   description = "Domain for applications."
 }
 
-variable "openbao_root_token" {
+variable "openbao_k8s_jwt" {
   type        = string
-  description = "OpenBao root token (OPENBAO_ROOT_TOKEN GitHub secret), minted by the iac/openbao bootstrap job."
+  description = "Short-lived ServiceAccount JWT (kubectl create token openbao-config -n openbao --audience openbao), exchanged for a Vault token via Kubernetes auth by the provider."
   sensitive   = true
 }

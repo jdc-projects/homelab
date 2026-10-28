@@ -325,6 +325,8 @@ jobs:
 
     with:
       iac-dir: ./iac/openbao-config
+      needs-kubectl: true
+      fetch-openbao-token: true
 
   deploy-prometheus:
     needs: [

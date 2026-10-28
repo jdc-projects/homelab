@@ -18,10 +18,22 @@ Post-deploy configuration for OpenBao (deployed by `iac/openbao`), mirroring
 
 ## Applying locally
 
+The provider exchanges a short-lived ServiceAccount JWT for a Vault token
+(Kubernetes auth, role `openbao-config` — see ci-auth.tf):
+
 ```bash
-export TF_VAR_openbao_root_token="$(kubectl -n openbao get secret openbao-bootstrap -o jsonpath='{.data.root-token}' | base64 -d)"
+export TF_VAR_openbao_k8s_jwt="$(kubectl -n openbao create token openbao-config --audience openbao)"
 tofu apply -var "server_base_domain=<domain>"
 ```
+
+## Bootstrap / recovery
+
+There is no standing root credential (revoked after first bootstrap). If the
+role/SA/policy ever needs recreating from scratch: temporarily replace the
+provider's `auth_login_jwt` block with `token = <token>` — a token minted by
+an SSO admin (`bao login -method=oidc`, root-equivalent policy) or, worst
+case, `bao operator generate-root` with the unseal key — apply once, then
+restore the block.
 
 ## TODO
 
@@ -29,10 +41,8 @@ tofu apply -var "server_base_domain=<domain>"
   accepted RFC upstream; low-divergence soft-fork of `hashicorp/vault` with a
   `tofu state replace-provider` migration path). `hashicorp/vault` covers
   everything used here until then; known incompatibilities are in areas this
-  repo doesn't use (e.g. `auth_login_aws`).
-- **Replace the root token with Kubernetes-auth** for this provider (mint a
-  short-lived SA token via `kubectl create token` in a workflow pre-step)
-  and **revoke the root token** (`bao token revoke <token>`).
+  repo doesn't use (e.g. `auth_login_aws`) — plus the audit-device API
+  removal already worked around in `iac/openbao`.
 - Add per-app `vault_kubernetes_auth_backend_role`s + narrow policies when
   applications start consuming OpenBao (the agent injector in `iac/openbao`
   is deliberately off until then).
