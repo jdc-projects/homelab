@@ -158,23 +158,10 @@ data "coder_parameter" "docker_enabled" {
 data "coder_parameter" "git_identity" {
   name         = "git_identity"
   display_name = "Git identity"
-  description  = "Configure git (name, email, SSH auth + SSH commit signing) at startup from OpenBao: secret/git-identities/<your-keycloak-user>/<identity>. 'None' leaves git unconfigured."
+  description  = "Name of a git identity in OpenBao (secret/git-identities/<your-keycloak-user>/<identity>); configures name, email, SSH auth and signing at startup. Free text - if the name doesn't exist, the startup log lists what does. 'none' leaves git unconfigured."
   default      = "none"
   icon         = "/icon/git.svg"
   mutable      = true
-
-  option {
-    name  = "None (leave git unconfigured)"
-    value = "none"
-  }
-  option {
-    name  = "Personal"
-    value = "personal"
-  }
-  option {
-    name  = "Work"
-    value = "work"
-  }
 }
 
 data "coder_parameter" "docker_cpu" {
@@ -536,7 +523,17 @@ resource "coder_script" "git_identity" {
     if [ -z "$NAME" ] || [ -z "$EMAIL" ] || [ -z "$PRIVKEY" ] || [ -z "$PUBKEY" ]; then
       echo "Identity '$IDENTITY' not found (or incomplete) at"
       echo "git-identities/$USER_/$IDENTITY in OpenBao."
-      echo "Populate it and restart the workspace - skipping git identity."
+      LIST=$(curl -s --max-time 15 -X LIST -H "X-Vault-Token: $VT" \
+        "$BAO/v1/secret/metadata/git-identities/$USER_")
+      AVAIL=$(printf '%s' "$LIST" | jq -r '.data.keys[]?' 2>/dev/null | sed 's:/$::' | paste -sd, -)
+      if [ -n "$AVAIL" ]; then
+        echo "Available: $AVAIL"
+        echo "Set git_identity to one of these and restart the workspace."
+      else
+        echo "No identities banked yet - populate one with:"
+        echo "  bao kv put secret/git-identities/$USER_/<name> name=... email=... ssh_private_key=@... ssh_public_key=@..."
+      fi
+      echo "- skipping git identity."
       exit 0
     fi
 

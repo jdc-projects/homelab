@@ -50,5 +50,14 @@ resource "vault_policy" "git_identity" {
     path "secret/data/git-identities/{{identity.entity.aliases.${vault_jwt_auth_backend.oidc.accessor}.name}}/*" {
       capabilities = ["read"]
     }
+
+    # Listing (KV v2 lists via the metadata path): lets the workspace script
+    # enumerate the user's available identities for self-describing misses.
+    path "secret/metadata/git-identities/{{identity.entity.aliases.${vault_jwt_auth_backend.oidc.accessor}.name}}" {
+      capabilities = ["list"]
+    }
+    path "secret/metadata/git-identities/{{identity.entity.aliases.${vault_jwt_auth_backend.oidc.accessor}.name}}/*" {
+      capabilities = ["list"]
+    }
   EOT
 }
