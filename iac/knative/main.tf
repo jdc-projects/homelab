@@ -68,10 +68,22 @@ resource "kubernetes_namespace" "knative_serving" {
   metadata {
     name = "knative-serving"
   }
+
+  # The knative operator labels namespaces it manages (app.kubernetes.io/name
+  # and a per-release app.kubernetes.io/version that changes on upgrades).
+  # Don't fight it — stripping those labels makes the namespace update fail
+  # API validation (and the operator would re-add them anyway).
+  lifecycle {
+    ignore_changes = [metadata[0].labels]
+  }
 }
 
 resource "kubernetes_namespace" "knative_eventing" {
   metadata {
     name = "knative-eventing"
+  }
+
+  lifecycle {
+    ignore_changes = [metadata[0].labels]
   }
 }
