@@ -472,9 +472,9 @@ resource "coder_app" "opencode" {
 # script logs into OpenBao with it (auth/oidc role "coder" — azp-bound JWT
 # login, user-scoped via the git-identity policy in iac/openbao-config) and
 # reads secret/git-identities/<keycloak-username>/<identity>: {name, email,
-# ssh_private_key, ssh_public_key}. The selected identity wires git identity
-# + SSH auth + SSH signing (gpg.format ssh) — one key registered on GitHub as
-# both an authentication and a signing key shows commits as Verified.
+# ssh_private_key, ssh_public_key} for auth, plus OPTIONAL {gpg_private_key,
+# gpg_key_id} to sign with the user's existing GPG key instead of SSH
+# signing — keeping their established signature identity on GitHub.
 #
 # Graceful skips (exit 0, never fails the workspace): no OIDC token (owner
 # not OIDC-logged-in / automation user), OpenBao unreachable/login failure,
@@ -499,9 +499,9 @@ resource "coder_script" "git_identity" {
       exit 0
     fi
 
+    SUDO=""
+    [ "$(id -u)" = 0 ] || SUDO="sudo"
     command -v jq >/dev/null 2>&1 || {
-      SUDO=""
-      [ "$(id -u)" = 0 ] || SUDO="sudo"
       $SUDO apt-get update -qq
       $SUDO DEBIAN_FRONTEND=noninteractive apt-get install -y -qq jq
     }
@@ -558,17 +558,44 @@ SSHCFG
 
     git config --global user.name "$NAME"
     git config --global user.email "$EMAIL"
-    git config --global user.signingkey "$KEY.pub"
-    git config --global gpg.format ssh
-    git config --global commit.gpgsign true
     # Transparently authenticate https://github.com/ clones with the key.
     git config --global url."git@github.com:".insteadOf "https://github.com/"
+    git config --global commit.gpgsign true
 
-    echo "Git identity '$IDENTITY' configured ($NAME <$EMAIL>)."
-    echo "If commits show Unverified / pushes are rejected, register this key"
-    echo "on GitHub (Settings > SSH keys) as BOTH an authentication and a"
-    echo "signing key:"
-    cat "$KEY.pub"
+    # Signing: GPG when the entry banks a GPG key (keeps the user's existing
+    # signature identity — same key, same fingerprint, already registered on
+    # GitHub), SSH with the auth key otherwise.
+    GPGKEY=$(printf '%s' "$SECRET" | jq -r '.data.data.gpg_private_key // empty')
+    GPGID=$(printf '%s' "$SECRET" | jq -r '.data.data.gpg_key_id // empty')
+    if [ -n "$GPGKEY" ] && [ -n "$GPGID" ]; then
+      command -v gpg >/dev/null 2>&1 || {
+        $SUDO apt-get update -qq
+        $SUDO DEBIAN_FRONTEND=noninteractive apt-get install -y -qq gnupg
+      }
+      printf '%s\n' "$GPGKEY" | gpg --batch --import >/dev/null 2>&1
+      # Cache the passphrase for the whole workspace session (one prompt per
+      # boot) and let git prompt inline instead of needing a pinentry binary.
+      mkdir -p "$HOME/.gnupg"
+      cat > "$HOME/.gnupg/gpg-agent.conf" <<GPGCFG
+default-cache-ttl 28800
+max-cache-ttl 28800
+allow-loopback-pinentry
+GPGCFG
+      echo "reloadagent" | gpg-connect-agent >/dev/null 2>&1 || true
+      git config --global user.signingkey "$GPGID"
+      git config --global gpg.pinentry-mode loopback
+      echo "Git identity '$IDENTITY' configured ($NAME <$EMAIL>), GPG-signed"
+      echo "with $GPGID. First commit of each boot asks for the key's"
+      echo "passphrase, then gpg-agent caches it for 8h."
+    else
+      git config --global user.signingkey "$KEY.pub"
+      git config --global gpg.format ssh
+      echo "Git identity '$IDENTITY' configured ($NAME <$EMAIL>), SSH-signed."
+      echo "If commits show Unverified / pushes are rejected, register this key"
+      echo "on GitHub (Settings > SSH keys) as BOTH an authentication and a"
+      echo "signing key:"
+      cat "$KEY.pub"
+    fi
   EOT
 
   run_on_start = true

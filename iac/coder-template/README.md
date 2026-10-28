@@ -48,9 +48,12 @@ SSH commit signing (`gpg.format ssh`), known_hosts.
   `secret/git-identities/<self>/*` via identity templating.
 - **Login must POST the role in the body** (`auth/oidc/login`, role param) —
   OpenBao 2.x doesn't register `login/<role>` as an unauthenticated route.
-- **Identity entry shape** (KV v2): `name`, `email`, `ssh_private_key`,
-  `ssh_public_key`. The key should be registered on GitHub as both an
-  authentication and a signing key for Verified commits.
+- **Identity entry shape** (KV v2): required `name`, `email`,
+  `ssh_private_key`, `ssh_public_key` (SSH auth; `insteadOf` rewrites
+  https://github.com/ to git@). Optional `gpg_private_key` (armored) +
+  `gpg_key_id` to sign with an existing GPG key instead of SSH signing —
+  keeps the user's established signature identity; passphrase is prompted
+  once per workspace boot (gpg-agent caches it for 8h).
 - The script never fails a workspace: no OIDC token (automation users like
   `tofu-deploy` have none), OpenBao unreachable, or missing entry → log +
   skip. Testing the full path therefore requires an OIDC-logged-in user's
