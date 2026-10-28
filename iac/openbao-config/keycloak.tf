@@ -30,12 +30,15 @@ resource "keycloak_openid_client" "openbao" {
 
 # Emit the user's group memberships as the `groups` claim; the OpenBao admin
 # role bound_claims on it (system_admins -> openbao-admin policy).
+# full_path=false emits bare group names — with full paths Keycloak emits
+# "/system_admins", which does not string-match the bound claim value.
 resource "keycloak_openid_group_membership_protocol_mapper" "groups" {
   realm_id  = data.terraform_remote_state.keycloak.outputs.primary_realm_id
   client_id = keycloak_openid_client.openbao.id
   name      = "groups"
 
   claim_name          = "groups"
+  full_path           = false
   add_to_id_token     = true
   add_to_access_token = true
   add_to_userinfo     = true
