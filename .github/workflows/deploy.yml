@@ -300,6 +300,32 @@ jobs:
       resource-name: null_resource.ocis_helm_repo_clone
       force-apply-all: true
 
+  # --- OpenBao ---
+  # Dedicated jobs (not in deploy-bulk): openbao-config applies after
+  # openbao's one-time in-cluster bootstrap (init job) has completed, and
+  # consumes the OPENBAO_ROOT_TOKEN secret.
+  deploy-openbao:
+    needs: [
+      deploy-cloudnative-pg,
+      deploy-traefik-config,
+    ]
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
+    secrets: inherit
+
+    with:
+      iac-dir: ./iac/openbao
+
+  deploy-openbao-config:
+    needs: [
+      deploy-openbao,
+      deploy-keycloak-config,
+    ]
+    uses: ./.github/workflows/kubernetes-iac-deploy.yml
+    secrets: inherit
+
+    with:
+      iac-dir: ./iac/openbao-config
+
   deploy-prometheus:
     needs: [
       deploy-prometheus-operator,

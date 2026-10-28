@@ -62,6 +62,7 @@ env:
   TF_VAR_k3s_ip_address: ${{ secrets.K3S_IP_ADDRESS }}
   TF_VAR_vaultwarden_push_installation_id: ${{ secrets.VAULTWARDEN_PUSH_INSTALLATION_ID }}
   TF_VAR_vaultwarden_push_installation_key: ${{ secrets.VAULTWARDEN_PUSH_INSTALLATION_KEY }}
+  TF_VAR_openbao_root_token: ${{ secrets.OPENBAO_ROOT_TOKEN }}
   TF_VAR_crowdsec_enroll_key: ${{ secrets.CROWDSEC_ENROLL_KEY }}
   TF_VAR_opnsense_nic_vendor_id: ${{ vars.OPNSENSE_NIC_VENDOR_ID }}
   TF_VAR_opnsense_nic_product_id: ${{ vars.OPNSENSE_NIC_PRODUCT_ID }}
