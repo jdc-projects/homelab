@@ -57,8 +57,13 @@ SSH commit signing (`gpg.format ssh`), known_hosts.
   workspace.
 - OpenBao is reached in-cluster only: `http://openbao.openbao.svc:8200`.
 
-**Populating an identity** (one-time, per user, from any machine with `bao`
-and the key files — e.g. your laptop's `~/.ssh/id_ed25519_personal`):
+**Populating an identity** (one-time, per user). Either via the **Web UI**
+(`https://bao.jd-chapman.dev/ui` → OIDC login → `secret/` → create secret at
+`git-identities/<keycloak-user>/<identity>` with the fields below), or via
+the OpenBao CLI. NOTE the binary collision: Homebrew's `bao` formula is the
+unrelated Rust BAO hash tool; OpenBao's CLI is ALSO named `bao` and the two
+formulas conflict — `brew uninstall bao && brew install openbao` if you want
+the CLI and don't use the Rust tool. (`vault` CLI also works against OpenBao.)
 
 ```sh
 export VAULT_ADDR=https://bao.jd-chapman.dev
