@@ -248,16 +248,54 @@ module "claude-code" {
   agent_id = coder_agent.main.id
 }
 
-# Optional OpenCode with a dashboard web app (AgentAPI attaches to the TUI).
-# Same auth story as claude-code: interactively inside the workspace.
-module "opencode" {
-  count     = data.coder_parameter.opencode_enabled.value == "true" ? 1 : 0
-  source    = "registry.coder.com/coder-labs/opencode/coder"
-  version   = "~> 0.1"
-  agent_id  = coder_agent.main.id
-  workdir   = "/home/coder"
-  order     = 2
-  subdomain = true
+# Optional OpenCode (opencode.ai) with its NATIVE web app (`opencode serve`
+# on localhost, proxied by Coder — it authenticates in front). Deliberately
+# not the registry module (registry.coder.com/coder-labs/opencode): that one
+# wraps the TUI in AgentAPI (a browser-terminal mirror that renders the
+# opencode TUI poorly) and its installer SKIPS when a binary exists —
+# freezing the version forever on our persistent homes. Instead: run the
+# official installer on EVERY start (Claude-Code-module style — always the
+# latest stable) and serve the web UI. Auth/config live under
+# ~/.local/share/opencode on the persistent home, so logins survive
+# restarts; only the binary is refreshed per start.
+resource "coder_script" "opencode" {
+  count        = data.coder_parameter.opencode_enabled.value == "true" ? 1 : 0
+  agent_id     = coder_agent.main.id
+  display_name = "OpenCode"
+  icon         = "/icon/opencode.svg"
+
+  script = <<-EOT
+    #!/usr/bin/env sh
+    set -eu
+    # Always run the official installer: fetches the latest stable and
+    # replaces any existing binary.
+    curl -fsSL https://opencode.ai/install | bash
+    mkdir -p "$HOME/.cache"
+    # Restart-not-reboot safe: kill a previous serve before starting.
+    pkill -f "[o]pencode serve" 2>/dev/null || true
+    nohup "$HOME/.opencode/bin/opencode" serve --port 13338 \
+      > "$HOME/.cache/opencode-serve.log" 2>&1 &
+  EOT
+
+  run_on_start = true
+}
+
+resource "coder_app" "opencode" {
+  count        = data.coder_parameter.opencode_enabled.value == "true" ? 1 : 0
+  agent_id     = coder_agent.main.id
+  slug         = "opencode"
+  display_name = "OpenCode"
+  url          = "http://localhost:13338"
+  icon         = "/icon/opencode.svg"
+  subdomain    = true
+  share        = "owner"
+  order        = 2
+
+  healthcheck {
+    url       = "http://localhost:13338"
+    interval  = 10
+    threshold = 8
+  }
 }
 
 locals {
