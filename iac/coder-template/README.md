@@ -57,18 +57,32 @@ SSH commit signing (`gpg.format ssh`), known_hosts.
   workspace.
 - OpenBao is reached in-cluster only: `http://openbao.openbao.svc:8200`.
 
-**Populating an identity** (one-time, per user, from anywhere with `bao`):
+**Populating an identity** (one-time, per user, from any machine with `bao`
+and the key files — e.g. your laptop's `~/.ssh/id_ed25519_personal`):
 
 ```sh
+export VAULT_ADDR=https://bao.jd-chapman.dev
 bao login -method=oidc   # Keycloak SSO (openbao-admin)
-ssh-keygen -t ed25519 -f /tmp/git-personal -N '' -C 'jack.chapman personal'
 bao kv put secret/git-identities/jack.chapman/personal \
   name='Jack Chapman' email=personal@example.com \
-  ssh_private_key=@/tmp/git-personal ssh_public_key=@/tmp/git-personal.pub
+  ssh_private_key=@$HOME/.ssh/id_ed25519_personal \
+  ssh_public_key=@$HOME/.ssh/id_ed25519_personal.pub
 ```
 
-(repeat for `work` with the work email + its own key; register each pubkey on
-the matching GitHub account as auth + signing key)
+Notes:
+
+- Use `@$HOME/...`, not `@~/...` — the `@` makes it a CLI file-argument, and
+  the shell does not expand `~` mid-word.
+- If the key has a passphrase, workspace git operations will prompt for it on
+  every use (ssh-agent isn't running there). Prefer a passphrase-less copy in
+  the bank: `cp ~/.ssh/id_ed25519_personal /tmp/git-personal && ssh-keygen -p
+  -f /tmp/git-personal -P '<old>' -N ''` and upload that.
+- Repeat for `work` with the work email and its own key (generate one if
+  there isn't a dedicated key yet: `ssh-keygen -t ed25519 -N ''`).
+- Register each pubkey on the matching GitHub account as **both** an
+  authentication and a signing key (`gh ssh-key add --type signing` / web UI).
+  If `id_ed25519_personal` already authenticates you to GitHub, only the
+  signing-key registration is new.
 
 ## Auth (auto-minted)
 
