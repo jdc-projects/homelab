@@ -1,6 +1,6 @@
 # KubeVirt VM workspaces — bespoke (no upstream template exists), modelled on
 # the aws-linux example (VM + cloud-init agent injection) and the repo's own
-# opnsense VM patterns.
+# opnsense VM patterns. (Param tiers unified with the pod template.)
 #
 # Persistence model mirrors templates/default (pod workspaces): disposable
 # root + persistent home.

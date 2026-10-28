@@ -81,19 +81,11 @@ locals {
     local.memory_min * pow(2, i)
   ]
 
-  docker_cpu_min  = 2
-  docker_cpu_max  = 8
-  docker_cpu_tiers = [
-    for i in range(0, floor(log(local.docker_cpu_max / local.docker_cpu_min, 2)) + 1) :
-    local.docker_cpu_min * pow(2, i)
-  ]
-
-  docker_memory_min  = 2
-  docker_memory_max  = 16
-  docker_memory_tiers = [
-    for i in range(0, floor(log(local.docker_memory_max / local.docker_memory_min, 2)) + 1) :
-    local.docker_memory_min * pow(2, i)
-  ]
+  # Main-container CPU tiers, kept in a local so the docker sidecar parameter
+  # offers the identical list (the upstream template's tiers — 6 is not a
+  # power of two, hence an explicit list rather than the memory-tiers
+  # parametric generation above).
+  cpu_tiers = [2, 4, 6, 8]
 }
 
 data "coder_parameter" "cpu" {
@@ -103,21 +95,14 @@ data "coder_parameter" "cpu" {
   default      = "2"
   icon         = "/icon/memory.svg"
   mutable      = true
-  option {
-    name  = "2 Cores"
-    value = "2"
-  }
-  option {
-    name  = "4 Cores"
-    value = "4"
-  }
-  option {
-    name  = "6 Cores"
-    value = "6"
-  }
-  option {
-    name  = "8 Cores"
-    value = "8"
+
+  dynamic "option" {
+    for_each = local.cpu_tiers
+
+    content {
+      name  = "${option.value} Cores"
+      value = tostring(option.value)
+    }
   }
 }
 
@@ -179,7 +164,7 @@ data "coder_parameter" "docker_cpu" {
   mutable      = true
 
   dynamic "option" {
-    for_each = local.docker_cpu_tiers
+    for_each = local.cpu_tiers
 
     content {
       name  = "${option.value} Cores"
@@ -197,7 +182,7 @@ data "coder_parameter" "docker_memory" {
   mutable      = true
 
   dynamic "option" {
-    for_each = local.docker_memory_tiers
+    for_each = local.memory_tiers
 
     content {
       name  = "${option.value} GB"
