@@ -52,6 +52,31 @@ token lives in tofu state, the same trust model as `sentry_auth_token` /
   deployment-wide (`CODER_DISABLE_PATH_APPS`), so a path-based app would be
   unreachable.
 
+## OpenCode workspaces (v2)
+
+Both templates' optional OpenCode tooling deliberately avoids the registry
+module and wires v2 itself:
+
+- **Install**: the official v2 installer (`opencode.ai/v2/install`) runs on
+  every start — always the latest stable v2, replacing any binary on the
+  persistent home. (The legacy `opencode.ai/install` URL only serves the v1
+  line, which is still maintained in parallel — don't "fix" the URL back.)
+- **Web app without sign-in**: OpenCode v2 *always* enforces auth on its web
+  UI — an empty `OPENCODE_PASSWORD` just regenerates one; there is no disable
+  option (verified against 2.2.0: env scan, `service set`, serve flags, docs).
+  Coder's app proxy can't inject headers, so the dashboard button points at a
+  localhost nginx (`nginx-light`, per-start apt) on **13339** that stamps
+  Basic auth onto every request (websockets included) before forwarding to
+  `opencode serve` on **13338**. The browser never sees a sign-in screen.
+- **Password**: generated once into `~/.opencode-password` (0600, persistent
+  home) so sessions survive restarts; `cat ~/.opencode-password` if a client
+  ever needs it. It never leaves the workspace.
+- **nginx as non-root**: all five nginx temp-path directives must point into
+  `~/.cache/nginx-tmp` — nginx mkdirs temp dirs for every proxy module at
+  startup, and the compiled-in `/var/lib/nginx` defaults are root-only.
+- The `[o]pencode serve` pkill bracket trick is load-bearing: startup scripts
+  run via `sh -c`, so an unbracketed pattern matches the script itself.
+
 ## Application of this module
 
 Standard flow: commit to trunk → `utils/check-tf-locks.sh` →

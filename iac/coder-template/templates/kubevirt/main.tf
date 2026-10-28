@@ -248,16 +248,28 @@ module "claude-code" {
   agent_id = coder_agent.main.id
 }
 
-# Optional OpenCode (opencode.ai) with its NATIVE web app (`opencode serve`
-# on localhost, proxied by Coder — it authenticates in front). Deliberately
+# Optional OpenCode v2 (opencode.ai) with its native web app. Deliberately
 # not the registry module (registry.coder.com/coder-labs/opencode): that one
 # wraps the TUI in AgentAPI (a browser-terminal mirror that renders the
 # opencode TUI poorly) and its installer SKIPS when a binary exists —
 # freezing the version forever on our persistent homes. Instead: run the
-# official installer on EVERY start (Claude-Code-module style — always the
-# latest stable) and serve the web UI. Auth/config live under
-# ~/.local/share/opencode on the persistent home, so logins survive
-# restarts; only the binary is refreshed per start.
+# official V2 installer on EVERY start (Claude-Code-module style — always
+# the latest stable v2) and serve the web UI.
+#
+# OpenCode v2 ALWAYS enforces auth on its web UI (empty password just
+# regenerates one; there is no disable option — verified against 2.2.0).
+# Coder's app proxy can't inject headers, so the dashboard button points at
+# a localhost nginx that stamps Basic auth onto every request (websockets
+# included) before forwarding to `opencode serve`. The browser never sees a
+# sign-in screen; Coder still authenticates the user in front; the password
+# never leaves the workspace.
+#
+#   Coder proxy -> 127.0.0.1:13339 (nginx, injects auth) -> 127.0.0.1:13338 (serve)
+#
+# State on the persistent home: the password at ~/.opencode-password
+# (generated once; `cat ~/.opencode-password` if a client ever asks for
+# it), auth/config under ~/.local/share/opencode. Only the binary and the
+# nginx config are refreshed per start.
 resource "coder_script" "opencode" {
   count        = data.coder_parameter.opencode_enabled.value == "true" ? 1 : 0
   agent_id     = coder_agent.main.id
@@ -267,14 +279,74 @@ resource "coder_script" "opencode" {
   script = <<-EOT
     #!/usr/bin/env sh
     set -eu
-    # Always run the official installer: fetches the latest stable and
-    # replaces any existing binary.
-    curl -fsSL https://opencode.ai/install | bash
-    mkdir -p "$HOME/.cache"
-    # Restart-not-reboot safe: kill a previous serve before starting.
+    # Always run the official v2 installer: fetches the latest stable v2
+    # and replaces any existing binary.
+    curl -fsSL https://opencode.ai/v2/install | bash
+    mkdir -p "$HOME/.cache" "$HOME/.opencode"
+
+    # Stable web-UI password on the persistent home: v2 requires auth no
+    # matter what, so generate once and reuse forever — sessions survive
+    # restarts instead of dying with every regenerated password.
+    if [ ! -s "$HOME/.opencode-password" ]; then
+      (LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 40) \
+        > "$HOME/.opencode-password"
+      chmod 600 "$HOME/.opencode-password"
+    fi
+    PW="$(cat "$HOME/.opencode-password")"
+
+    # nginx: auth-injecting proxy for the web UI (see comment above).
+    SUDO=""
+    [ "$(id -u)" = 0 ] || SUDO="sudo"
+    $SUDO apt-get update -qq
+    $SUDO DEBIAN_FRONTEND=noninteractive apt-get install -y -qq nginx-light
+    NGINX_BIN="$(command -v nginx || echo /usr/sbin/nginx)"
+    BASIC="$(printf 'opencode:%s' "$PW" | base64)"
+    # All five temp paths must be overridden: nginx mkdirs them for every
+    # proxy module at startup (not just the ones in use), and the compiled-in
+    # defaults under /var/lib/nginx are root-only.
+    mkdir -p "$HOME/.cache/nginx-tmp/body" "$HOME/.cache/nginx-tmp/proxy" \
+      "$HOME/.cache/nginx-tmp/fastcgi" "$HOME/.cache/nginx-tmp/uwsgi" \
+      "$HOME/.cache/nginx-tmp/scgi"
+    cat > "$HOME/.opencode/nginx.conf" <<CONF
+    pid $HOME/.cache/opencode-nginx.pid;
+    error_log $HOME/.cache/opencode-nginx-error.log;
+    events { worker_connections 128; }
+    http {
+      access_log off;
+      client_body_temp_path $HOME/.cache/nginx-tmp/body;
+      proxy_temp_path $HOME/.cache/nginx-tmp/proxy;
+      fastcgi_temp_path $HOME/.cache/nginx-tmp/fastcgi;
+      uwsgi_temp_path $HOME/.cache/nginx-tmp/uwsgi;
+      scgi_temp_path $HOME/.cache/nginx-tmp/scgi;
+      map \$http_upgrade \$connection_upgrade {
+        default upgrade;
+        ''      close;
+      }
+      server {
+        listen 127.0.0.1:13339;
+        location / {
+          proxy_pass http://127.0.0.1:13338;
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade \$http_upgrade;
+          proxy_set_header Connection \$connection_upgrade;
+          proxy_set_header Authorization "Basic $BASIC";
+          proxy_buffering off;
+          proxy_request_buffering off;
+          proxy_read_timeout 3600s;
+        }
+      }
+    }
+    CONF
+
+    # Restart-not-reboot safe: kill a previous serve and nginx first.
     pkill -f "[o]pencode serve" 2>/dev/null || true
-    nohup "$HOME/.opencode/bin/opencode" serve --port 13338 \
+    if [ -f "$HOME/.cache/opencode-nginx.pid" ]; then
+      kill "$(cat "$HOME/.cache/opencode-nginx.pid")" 2>/dev/null || true
+    fi
+
+    OPENCODE_PASSWORD="$PW" nohup "$HOME/.opencode/bin/opencode" serve --port 13338 \
       > "$HOME/.cache/opencode-serve.log" 2>&1 &
+    nohup "$NGINX_BIN" -c "$HOME/.opencode/nginx.conf" >/dev/null 2>&1 &
   EOT
 
   run_on_start = true
@@ -285,16 +357,16 @@ resource "coder_app" "opencode" {
   agent_id     = coder_agent.main.id
   slug         = "opencode"
   display_name = "OpenCode"
-  url          = "http://localhost:13338"
+  url          = "http://localhost:13339"
   icon         = "/icon/opencode.svg"
   subdomain    = true
   share        = "owner"
   order        = 2
 
   healthcheck {
-    url       = "http://localhost:13338"
+    url       = "http://localhost:13339"
     interval  = 10
-    threshold = 8
+    threshold = 15
   }
 }
 
