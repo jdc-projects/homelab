@@ -1,10 +1,8 @@
 # CI authentication for this module: short-lived, per-run Kubernetes-auth
-# tokens instead of a permanent root token in GitHub secrets.
-#
-# The deploy workflow (kubernetes-iac-deploy.yml, fetch-openbao-token input)
-# mints a ServiceAccount token with `kubectl create token openbao-config` and
-# feeds it to this provider via TF_VAR_openbao_token. The role below
-# authorizes that SA against a scoped policy.
+# tokens. The JWT is minted INSIDE tofu by the external data source in
+# main.tf (data sources run at plan and apply, so it is always fresh; the
+# minted token lands in tofu state - accepted, it is <=1h and scoped to the
+# role below).
 #
 # Bootstrap note: the role/policy/SA below were originally created by the
 # one-time root token (the role cannot authorize its own creation). The root

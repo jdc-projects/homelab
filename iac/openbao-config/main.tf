@@ -23,6 +23,11 @@ terraform {
       source  = "hashicorp/vault"
       version = "~> 5.0"
     }
+
+    external = {
+      source  = "hashicorp/external"
+      version = "~> 2.3"
+    }
   }
 }
 
@@ -37,9 +42,21 @@ provider "kubernetes" {
   config_path = "../cluster.yml"
 }
 
-# The provider exchanges a short-lived ServiceAccount JWT for a Vault token
-# via Kubernetes auth (role openbao-config in ci-auth.tf). The JWT is minted
-# per-run by the deploy workflow (fetch-openbao-token input).
+# Mint the short-lived Kubernetes-auth JWT inside tofu (data sources run at
+# plan AND apply, so the token is always fresh - a null_resource/local-exec
+# approach would only mint at apply, leaving plans to fail on stale tokens).
+# cluster.yml resolves at ../cluster.yml both locally and in CI, matching the
+# kubernetes provider's config_path. The minted token lands in tofu state;
+# accepted trade-off - it is <=1h and scoped to the openbao-config role.
+data "external" "openbao_token" {
+  program = [
+    "sh", "-c",
+    "T=$(KUBECONFIG=../cluster.yml kubectl -n openbao create token openbao-config --audience openbao) && printf '{\"jwt\":\"%s\"}' \"$T\"",
+  ]
+}
+
+# The provider exchanges that ServiceAccount JWT for a Vault token
+# (Kubernetes auth, role openbao-config in ci-auth.tf).
 #
 # Bootstrap / recovery (role missing or broken): temporarily replace the
 # auth_login_jwt block with `token = <root-or-SSO-admin-token>` and apply
@@ -50,7 +67,7 @@ provider "vault" {
   auth_login_jwt {
     mount = "kubernetes"
     role  = "openbao-config"
-    jwt   = var.openbao_k8s_jwt
+    jwt   = data.external.openbao_token.result.jwt
   }
 }
 

@@ -18,13 +18,16 @@ Post-deploy configuration for OpenBao (deployed by `iac/openbao`), mirroring
 
 ## Applying locally
 
-The provider exchanges a short-lived ServiceAccount JWT for a Vault token
-(Kubernetes auth, role `openbao-config` — see ci-auth.tf):
+The provider's Kubernetes-auth JWT is minted inside tofu (external data
+source in `main.tf`), so local applies need nothing special — just the usual
+`cluster.yml` next to the module:
 
 ```bash
-export TF_VAR_openbao_k8s_jwt="$(kubectl -n openbao create token openbao-config --audience openbao)"
 tofu apply -var "server_base_domain=<domain>"
 ```
+
+(The minted token lands in tofu state; accepted trade-off — it is ≤1h and
+scoped to the `openbao-config` role.)
 
 ## Bootstrap / recovery
 
