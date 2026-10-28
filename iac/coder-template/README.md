@@ -31,6 +31,45 @@ first 12 chars of a content hash over `templates/default/*`. Unchanged
 content is a no-op apply. New active versions do **not** restart running
 workspaces; users get an "update workspace" prompt.
 
+## Git identities (OpenBao-backed)
+
+Both templates expose a `git_identity` parameter (`none`/`personal`/`work`,
+mutable). Non-`none` values run a startup script that logs the workspace
+**owner** into OpenBao with the Keycloak OIDC token coderd bakes into every
+build (`coder_workspace_owner.me.oidc_access_token` — refreshed per build,
+30m lifespan via `../coder/keycloak.tf`), then reads
+`secret/git-identities/<keycloak-username>/<identity>` and wires git:
+name/email, SSH auth (`insteadOf` rewrites https://github.com/ to git@),
+SSH commit signing (`gpg.format ssh`), known_hosts.
+
+- **OpenBao side** (`../openbao-config/git-identity.tf`): `auth/oidc` role
+  `coder` (role_type=jwt, `azp=coder` bound claim — Keycloak access tokens
+  have no `aud`), policy `git-identity` scopes reads to
+  `secret/git-identities/<self>/*` via identity templating.
+- **Login must POST the role in the body** (`auth/oidc/login`, role param) —
+  OpenBao 2.x doesn't register `login/<role>` as an unauthenticated route.
+- **Identity entry shape** (KV v2): `name`, `email`, `ssh_private_key`,
+  `ssh_public_key`. The key should be registered on GitHub as both an
+  authentication and a signing key for Verified commits.
+- The script never fails a workspace: no OIDC token (automation users like
+  `tofu-deploy` have none), OpenBao unreachable, or missing entry → log +
+  skip. Testing the full path therefore requires an OIDC-logged-in user's
+  workspace.
+- OpenBao is reached in-cluster only: `http://openbao.openbao.svc:8200`.
+
+**Populating an identity** (one-time, per user, from anywhere with `bao`):
+
+```sh
+bao login -method=oidc   # Keycloak SSO (openbao-admin)
+ssh-keygen -t ed25519 -f /tmp/git-personal -N '' -C 'jack.chapman personal'
+bao kv put secret/git-identities/jack.chapman/personal \
+  name='Jack Chapman' email=personal@example.com \
+  ssh_private_key=@/tmp/git-personal ssh_public_key=@/tmp/git-personal.pub
+```
+
+(repeat for `work` with the work email + its own key; register each pubkey on
+the matching GitHub account as auth + signing key)
+
 ## Auth (auto-minted)
 
 No GitHub secrets, no manual logins. The `iac/coder` bootstrap job
