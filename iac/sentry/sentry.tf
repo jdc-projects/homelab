@@ -122,6 +122,13 @@ resource "helm_release" "sentry" {
       singleOrganization: true
       web:
         existingSecretEnv: "sentry-secrets"
+      # Keep failed cleanup jobs for one day only: KubeJobFailed keeps firing
+      # while a failed Job object exists, so the chart default of 5 leaves
+      # alerts dangling for days after a transient failure (e.g. the nightly
+      # OIDC discovery read-timeout against keycloak).
+      cleanup:
+        failedJobsHistoryLimit: 1
+        successfulJobsHistoryLimit: 3
       # The cluster has no default StorageClass; the chart's taskBroker PVC
       # defaults to "" and never binds. Pin it to the no-backup bulk class —
       # taskbroker queues are ephemeral and excluded from velero backups.
