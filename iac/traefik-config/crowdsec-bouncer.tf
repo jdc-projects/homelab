@@ -21,6 +21,12 @@ resource "kubernetes_manifest" "crowdsec_bouncer_traefik_plugin_middleware" {
           CrowdsecLapiScheme    = "http"
           CrowdsecLapiHost      = "${data.terraform_remote_state.crowdsec.outputs.crowdsec_helm_release_name}-service.${data.terraform_remote_state.crowdsec.outputs.crowdsec_namespace}:8080"
           CrowdsecLapiKey       = data.terraform_remote_state.crowdsec.outputs.traefik_api_key
+          # Fail fast when LAPI/AppSec cannot answer. The plugin default 10s let
+          # a wedged appsec engine stall every edge request for a full 10s
+          # before the fail-closed 403 (reproduced 2026-10-29 during an OCIS
+          # upload). Baseline bouncer overhead is <100ms, so 5s is generous
+          # headroom. Deliberately still fail-closed (no fail-open).
+          HTTPTimeoutSeconds = "5"
           ClientTrustedIPs = [
             "192.168.100.0/24",
           ]
@@ -51,6 +57,9 @@ resource "kubernetes_manifest" "crowdsec_bouncer_without_appsec_traefik_plugin_m
           CrowdsecLapiScheme    = "http"
           CrowdsecLapiHost      = "${data.terraform_remote_state.crowdsec.outputs.crowdsec_helm_release_name}-service.${data.terraform_remote_state.crowdsec.outputs.crowdsec_namespace}:8080"
           CrowdsecLapiKey       = data.terraform_remote_state.crowdsec.outputs.traefik_api_key
+          # Must match the crowdsec-bouncer middleware above - the plugin only
+          # honours one effective instance for shared parameters.
+          HTTPTimeoutSeconds = "5"
           ClientTrustedIPs = [
             "192.168.100.0/24",
           ]
