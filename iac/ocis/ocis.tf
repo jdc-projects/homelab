@@ -1,13 +1,14 @@
 resource "null_resource" "ocis_helm_repo_clone" {
   triggers = {
     always_run = timestamp()
-    # The owncloud/ocis-charts repo does not publish versioned releases and is still on
-    # chart appVersion 7.1.4 (no ocis 8.x chart yet), even though the ocis app itself is
-    # at 8.x. Pinned to a commit on `main` to pick up chart fixes/improvements (e.g. the
-    # bitnami kubectl image replacement, persistentStore for public-link attempts) while
-    # the maintainers work toward an 8.x chart. Get the latest SHA from:
-    # https://github.com/ownCloud/ocis-charts/commits/main/
-    commit_sha = "f74482907354113162c928690753c7c9df23613e"
+    # The owncloud/ocis-charts repo does not publish versioned releases, so we
+    # pin to a commit on `main` and bump deliberately. This pin is chart 0.8.0
+    # (appVersion 8.2.0): the 8.x app baseline, the storage-users
+    # clean-expired-uploads CronJob NATS fix, and optional (off by default)
+    # MFA/Vault chart support. Note the 0.7 -> 0.8 jump also upgrades the ocis
+    # app itself 7.1.4 -> 8.2.0. Get the latest SHA from:
+    # https://github.com/owncloud/ocis-charts/commits/main/
+    commit_sha = "36a4490a94c033c610fcda0de7a62d25206bff02"
   }
 
   provisioner "local-exec" {
@@ -115,6 +116,19 @@ resource "helm_release" "ocis" {
     {
       name  = "features.externalUserManagement.oidc.accessTokenVerifyMethod"
       value = "jwt"
+    },
+    {
+      # Validate tokens locally (JWKS) and read claims - including the `roles`
+      # role-assignment claim, which the Keycloak mapper adds to the access
+      # token (see keycloak-roles.tf) - without a per-request call to
+      # Keycloak's userinfo endpoint. That call left the cluster via the
+      # public URL (pod -> Cloudflare -> Traefik -> crowdsec bouncer ->
+      # Keycloak), making OCIS auth hostage to edge health: when appsec
+      # fail-closed during file uploads (2026-10-29), every authenticated
+      # OCIS request 401'd. Trade-off: role changes apply at the next token
+      # refresh instead of the next request.
+      name  = "features.externalUserManagement.oidc.skipUserInfo"
+      value = "true"
     },
     {
       name  = "features.externalUserManagement.oidc.roleAssignment.enabled"

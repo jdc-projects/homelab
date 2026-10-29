@@ -126,7 +126,14 @@ resource "keycloak_openid_user_client_role_protocol_mapper" "ocis_claim_mapper" 
 
   multivalued = "true"
 
-  add_to_id_token     = "false"
-  add_to_access_token = "false"
+  add_to_id_token = "false"
+  # The `roles` claim must ride in the access token: OCIS runs with
+  # skipUserInfo=true (see ocis.tf) and reads role assignments straight from
+  # the verified JWT instead of calling Keycloak's userinfo endpoint on every
+  # request. That per-request userinfo call hairpinned through the public edge
+  # (pod -> Cloudflare -> Traefik -> crowdsec bouncer -> Keycloak), so any
+  # edge degradation (e.g. appsec fail-closed during file uploads,
+  # 2026-10-29) broke OCIS authentication outright.
+  add_to_access_token = "true"
   add_to_userinfo     = "true"
 }
