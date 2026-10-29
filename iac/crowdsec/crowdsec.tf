@@ -146,6 +146,15 @@ resource "helm_release" "crowdsec" {
       value = "APPSEC_RULES"
     },
     {
+      # The appsec engine runs the CRS OOB body scans for every body-bearing
+      # request on the edge. The chart default 500m limit let a single binary
+      # upload body starve it past the bouncer's HTTP timeout, which then
+      # fail-closed 403'd every edge request for the upload's duration
+      # (reproduced 2026-10-29 - see the ocis entry in pre_eval below).
+      name  = "appsec.resources.limits.cpu"
+      value = "1000m"
+    },
+    {
       # base-config sets coraza body processors. The nextcloud CRS exclusion
       # plugin suppresses the well-known WebDAV/file-upload CRS false positives
       # on ownCloud/Nextcloud-style apps (OCIS shares the /remote.php/dav/*
@@ -203,7 +212,21 @@ resource "helm_release" "crowdsec" {
             # Each filter MUST be scoped to the app hostname via req.Host so it
             # does not leak to other apps sharing the same AppSec engine. Add
             # new entries when an app has request bodies that trip CRS rules.
-            - filter: req.Host == "ocis.${var.server_base_domain}" && req.URL.Path startsWith "/dav/"
+            # ocis: WebDAV/file-upload surface, served at files.<domain> (see
+            # local.ocis_domain in iac/ocis/ocis.tf - NOT ocis.<domain>; an
+            # earlier revision of this filter matched the wrong hostname, so
+            # the exemption never fired for any request). The web client
+            # uploads via POST /remote.php/dav/spaces/... and desktop/legacy
+            # clients via /remote.php/dav or /remote.php/webdav (plus the
+            # short /dav/ alias), so ALL of those prefixes must be matched.
+            # Bodies are raw file bytes: CRS inspection adds nothing there and
+            # its OOB scan of a binary upload stalled the appsec runner past
+            # the bouncer's timeout, fail-closing (403) ALL edge traffic for
+            # the upload's duration and cascading into OCIS auth failures
+            # (reproduced 2026-10-29, X-Request-Id
+            # 0c7ef6b7-b6ec-410d-ba20-a502529024ef). The surface is protected
+            # by OCIS's own OIDC bearer auth.
+            - filter: req.Host == "files.${var.server_base_domain}" && (req.URL.Path startsWith "/dav/" || req.URL.Path startsWith "/remote.php/dav/" || req.URL.Path startsWith "/remote.php/webdav/")
               apply:
                 - DisableBodyInspection()
             - filter: req.Host == "outline.${var.server_base_domain}" && ((req.URL.Path startsWith "/api/documents") || (req.URL.Path startsWith "/api/attachments") || (req.URL.Path startsWith "/api/hooks"))
