@@ -25,6 +25,15 @@ locals {
       }
     }
 
+    # Top-level telemetry stanza is REQUIRED for /v1/sys/metrics to serve
+    # Prometheus format — without it the endpoint 400s ("prometheus is not
+    # enabled") and the ServiceMonitor target stays down. The listener-level
+    # telemetry block above only lifts authentication.
+    telemetry {
+      prometheus_retention_time = "24h"
+      disable_hostname          = true
+    }
+
     storage "postgresql" {
       # Injected at runtime via BAO_PG_CONNECTION_URL (db-credentials secret,
       # wired through server.extraSecretEnvironmentVars below).
@@ -57,12 +66,17 @@ locals {
     command = ["/bin/sh", "-c"]
     args = [
       <<-EOT
+        # Hot path is busybox wget+grep (sub-millisecond CPU) — invoking the
+        # `bao` CLI every poll starts a fresh Go binary whose startup burst
+        # blows any CPU limit's per-period quota and trips CPUThrottlingHigh
+        # (~80% of active cfs periods throttled even at 250m). The CLI is
+        # only used in the rare sealed -> unseal path.
         while true; do
           if [ -f /openbao/seal/unseal-key ]; then
-            bao status >/dev/null 2>&1
-            rc=$?
-            # 0 = unsealed, 1 = error (e.g. storage down), 2 = sealed
-            if [ "$rc" -eq 2 ]; then
+            # seal-status is unauthenticated; "sealed":true means rc would
+            # be 2 from `bao status` (0 = unsealed, 1 = error e.g. storage
+            # down — wget fails, nothing to do, retry next tick).
+            if wget -qO- "$${BAO_ADDR}/v1/sys/seal-status" 2>/dev/null | grep -q '"sealed":true'; then
               echo "sealed; unsealing..."
               bao operator unseal "$(cat /openbao/seal/unseal-key)" >/dev/null 2>&1 || true
             fi
@@ -87,14 +101,18 @@ locals {
       },
     ]
 
+    # Limits sized for the rare `bao operator unseal` invocation (Go binary
+    # startup burst); the wget+grep poll loop itself is sub-millisecond.
+    # History: a 100m limit on a `bao status`-per-poll loop throttled to
+    # ~92% of cfs periods (CPUThrottlingHigh) — see the script comment above.
     resources = {
       requests = {
-        cpu    = "10m"
+        cpu    = "25m"
         memory = "64Mi"
       }
 
       limits = {
-        cpu    = "100m"
+        cpu    = "250m"
         memory = "128Mi"
       }
     }
