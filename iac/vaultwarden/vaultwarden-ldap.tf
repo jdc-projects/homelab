@@ -5,7 +5,12 @@ resource "kubernetes_config_map" "vaultwarden_ldap_env" {
   }
 
   data = {
-    APP_VAULTWARDEN_URL            = "https://vault.${var.server_base_domain}"
+    # In-cluster service, NOT the public URL: the vaultwarden-admin ingress
+    # puts interactive OIDC in front of /admin, which this sync (admin-token
+    # auth only) can never complete — through the ingress it 401s forever.
+    # The internal service bypasses Traefik entirely; ADMIN_TOKEN still
+    # authenticates to vaultwarden itself.
+    APP_VAULTWARDEN_URL            = "http://vaultwarden-internal.${kubernetes_namespace.vaultwarden.metadata[0].name}.svc.cluster.local"
     APP_LDAP_HOST                  = "idm.${var.server_base_domain}"
     APP_LDAP_SSL                   = "true"
     APP_LDAP_BIND_DN               = "uid=${data.terraform_remote_state.openldap.outputs.admin_username},ou=people,dc=idm,dc=homelab"
