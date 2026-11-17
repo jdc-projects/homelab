@@ -271,7 +271,19 @@ jobs:
         run: kubectl delete pods -n ${{ matrix.cluster.namespace }} -l strimzi.io/cluster=${{ matrix.cluster.name }} --timeout=10m
       - name: "Wait for Kafka Ready"
         if: ${{ !inputs.do-hibernate }}
-        run: kubectl -n ${{ matrix.cluster.namespace }} wait kafka ${{ matrix.cluster.name }} --timeout 30m --for "jsonpath={.status.conditions[?(@.type==\"Ready\")].status}=True"
+        run: |
+          NS=${{ matrix.cluster.namespace }}
+          CLUSTER=${{ matrix.cluster.name }}
+          # The hibernate leg deletes broker pods but never touches the Kafka CR,
+          # so its status keeps a stale Ready=True across the whole window and
+          # "kubectl wait kafka" returns immediately even with zero brokers.
+          # Wait on the pods the operator must recreate instead (broker pods are
+          # labelled strimzi.io/broker-role=true), then assert the CR fresh.
+          echo "Waiting for broker pods to be created..."
+          timeout 10m bash -c "while [ -z \$(kubectl get pods -n $NS -l strimzi.io/cluster=$CLUSTER,strimzi.io/broker-role=true -o jsonpath='{.items[*].metadata.name}' 2>/dev/null) ]; do sleep 5; done"
+          echo "Waiting for broker pods to be Ready..."
+          kubectl -n "$NS" wait pod -l strimzi.io/cluster=$CLUSTER,strimzi.io/broker-role=true --for=condition=Ready --timeout=30m
+          kubectl -n "$NS" wait kafka $CLUSTER --timeout 10m --for "jsonpath={.status.conditions[?(@.type==\"Ready\")].status}=True"
 
   get-opensearch-clusters:
     runs-on: self-hosted
