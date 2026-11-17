@@ -1,0 +1,29 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: homelab-backup-tripwire
+  namespace: default
+spec:
+  groups:
+  - name: homelab-backup-tripwire
+    rules:
+    - alert: NightlyBackupSilenceStuckActive
+      # The nightly backup silences every datastore namespace while it
+      # hibernates/backs-up/restarts them (see .github/workflows/alertmanager-silence.yml).
+      # The silence normally lives ~25-75m; the slowest legitimate run on record
+      # took 2h11m (2026-11-02). The only silences created on this cluster are
+      # nightly-backup ones, so a silence still active after 3h means the
+      # pipeline stalled mid-hibernate — on 2026-11-17 a GitHub dispatch outage
+      # wedged the run between the hibernate and restart legs and every
+      # datastore stayed down for ~7h until dispatch resumed. This fires ~3h
+      # into a repeat instead of waiting for the silence's own 6h safety-net
+      # expiry to unmute ~100 alerts. Recovery: run databases-hibernate.yml
+      # with do-hibernate=false (or un-hibernate manually) and cancel the
+      # stuck Nightly Backup run.
+      expr: alertmanager_silences{state="active"} >= 1
+      for: 3h
+      labels:
+        severity: warning
+      annotations:
+        summary: "Nightly backup alert silence active for over 3h"
+        description: "A silence (normally only the nightly backup's) has been active for more than 3h. The backup pipeline has likely stalled mid-hibernation with all datastores still down. Restore with databases-hibernate.yml (do-hibernate=false) and cancel the stuck Nightly Backup run."
